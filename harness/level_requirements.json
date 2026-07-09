@@ -1,0 +1,155 @@
+{
+  "project": "wordgame",
+  "version": "0.1.0",
+  "levels": [
+    {
+      "id": "sword",
+      "title": "贝克思贝斯之剑关卡包",
+      "feature_ids": ["F018", "F019", "F020", "F021", "F022"],
+      "source_references": [
+        "参考资料/视频参考/剑关卡.mp4",
+        "参考资料/图片参考/贝克思贝斯之剑流程.docx",
+        "参考资料/文字游戏源码/文字遊戲_pck/res"
+      ],
+      "required_segments": [
+        "获得剑后的教学段",
+        "史莱姆段",
+        "蛇妖段",
+        "村中溶解显现段"
+      ],
+      "required_baselines": [
+        "video",
+        "screenshot",
+        "grid",
+        "behavior",
+        "animation",
+        "audio",
+        "source_index"
+      ],
+      "required_states": [
+        "initial",
+        "tutorial_success",
+        "slime_success",
+        "slime_failure",
+        "snake_initial",
+        "snake_attack",
+        "snake_damage",
+        "snake_failure",
+        "village_dissolve_start",
+        "village_dissolve_end",
+        "transition_out"
+      ],
+      "p0_animations": [
+        "S-01 删除字动画",
+        "S-02 解密成功后句子高亮动画",
+        "S-03 打字机效果",
+        "S-04 “我”字呼吸动画",
+        "S-05 34:13 “爱”字替代动画",
+        "S-06 蛇妖摆动动画",
+        "S-07 受伤害闪烁动画",
+        "S-08 房子被撞碎动画",
+        "S-09 30:30 “仓”调到蛇上的动画",
+        "S-10 35:19 蛇跳动动画",
+        "S-11 画面闪白动画",
+        "S-12 35:21 发射媚眼",
+        "S-13 36:53 蛇被剥一层皮动画",
+        "S-14 37:40 蛇抖动动画",
+        "S-15 38:17 村中溶解显现效果"
+      ],
+      "completion_gate": "15 个 P0 动画、所有关键状态、成功/失败路线、自动演示、截图对比和音频触发全部通过。"
+    },
+    {
+      "id": "glove",
+      "title": "杜尔手套关卡包",
+      "feature_ids": ["F023", "F024", "F025", "F026"],
+      "source_references": [
+        "参考资料/视频参考/手套关卡全录屏.mkv",
+        "参考资料/图片参考/手套流程.docx",
+        "参考资料/文字游戏源码/文字遊戲_pck/res"
+      ],
+      "required_segments": [
+        "手套关卡全流程",
+        "正确路线",
+        "错误路线",
+        "填字变手势",
+        "删除“不”后的放开状态",
+        "手掌碰撞和通路变化"
+      ],
+      "required_baselines": [
+        "video",
+        "screenshot",
+        "grid",
+        "behavior",
+        "animation",
+        "audio",
+        "source_index"
+      ],
+      "required_states": [
+        "initial",
+        "correct_route_step",
+        "wrong_route_step",
+        "gesture_changed",
+        "released_after_delete_no",
+        "collision_changed",
+        "path_opened",
+        "failure_feedback",
+        "transition_out"
+      ],
+      "completion_gate": "每个有效手势字均确认来源，每个手势状态均有截图、地图、碰撞基准，正确和错误路线全部通过。"
+    },
+    {
+      "id": "helmet",
+      "title": "四目头盔过河六关",
+      "feature_ids": ["F027", "F028", "F029", "F030", "F031"],
+      "source_references": [
+        "参考资料/视频参考/四目头盔视频.mp4",
+        "参考资料/图片参考/四目头盔流程.docx",
+        "参考资料/文字游戏源码/文字遊戲_pck/res"
+      ],
+      "required_segments": [
+        "第一关 36:57-38:34",
+        "第二关 38:35-44:04",
+        "第三关 44:05-45:49",
+        "第四关 45:50-46:26",
+        "第五关 46:27-49:04",
+        "第六关 49:05-50:19",
+        "收尾 50:20 后",
+        "50:59 拆解动画变回玩家"
+      ],
+      "required_baselines": [
+        "video",
+        "screenshot",
+        "grid",
+        "behavior",
+        "animation",
+        "audio",
+        "source_index",
+        "animation_reuse"
+      ],
+      "required_states": [
+        "river_1_initial",
+        "river_1_bridge_built",
+        "river_2_initial",
+        "river_2_bridge_built",
+        "river_3_initial",
+        "river_3_bridge_collapse_failure",
+        "river_3_bridge_restored",
+        "river_4_initial",
+        "river_4_bridge_split",
+        "river_5_initial",
+        "river_5_water_removed",
+        "river_6_initial",
+        "river_6_goose_crossing",
+        "ending_player_restored"
+      ],
+      "required_animation_reuse_classes": [
+        "溪水持续动画",
+        "树叶摇曳动画",
+        "字合成黄色光效",
+        "搭桥动画",
+        "拆解动画"
+      ],
+      "completion_gate": "六关和收尾均有完整基准、成功解法、错误反馈、视觉对比和自动演示；第五、第六关不得存在待确认项。"
+    }
+  ]
+}

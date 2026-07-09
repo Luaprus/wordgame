@@ -1,0 +1,1333 @@
+{
+  "project": "wordgame",
+  "version": "0.1.0",
+  "status_values": ["todo", "claimed", "in_progress", "review", "blocked", "done"],
+  "governance": {
+    "progress_source": "harness/progress.jsonl",
+    "rules": [
+      "没有 feature_id，不允许写代码。",
+      "没有 acceptance_criteria，不允许开始实现。",
+      "没有测试脚本，不允许标记完成。",
+      "测试失败，不允许交付。",
+      "修改超出 allowed_files，必须先更新 harness/plan.md 并说明原因。",
+      "任何架构级改动必须先更新 harness/contracts.md。",
+      "多人合作时，以 harness/progress.jsonl 为唯一进度来源。"
+    ]
+  },
+  "features": [
+    {
+      "id": "HARNESS-001",
+      "title": "建立可追踪验收 harness",
+      "description": "生成需求整理、功能清单、计划、契约、测试矩阵、视觉规则、关卡要求和一键测试入口。",
+      "priority": "must",
+      "status": "done",
+      "owner": "planner",
+      "depends_on": [],
+      "allowed_files": [
+        "docs/requirements.md",
+        "harness/*",
+        "tools/run_all_tests.ps1",
+        "tools/capture_visual_smoke.ps1"
+      ],
+      "forbidden_files": [
+        "新建游戏项目/scripts/*",
+        "新建游戏项目/tests/*",
+        "新建游戏项目/Main.tscn"
+      ],
+      "acceptance_criteria": [
+        "所有指定 harness 文件均存在",
+        "features.json 可被 JSON 解析且每个功能有 id、验收标准、文件范围、依赖、测试和完成条件",
+        "run_all_tests.ps1 可从工作区根目录执行",
+        "capture_visual_smoke.ps1 可从工作区根目录执行并委托到 Godot 工程截图验证",
+        "progress.jsonl 记录 harness 创建和测试证据"
+      ],
+      "tests": [
+        {
+          "type": "schema",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        },
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "harness 文件已生成",
+        "一键测试脚本返回退出码 0",
+        "视觉截图脚本返回退出码 0",
+        "progress.jsonl 已记录 test_passed 与 completed 事件"
+      ]
+    },
+    {
+      "id": "F001",
+      "title": "原版资料索引与基准表结构",
+      "description": "建立视频、截图、地图、行为、动画、音频、源码索引的机器可读表结构和唯一 ID 规则。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["HARNESS-001"],
+      "allowed_files": [
+        "harness/baselines/schema/*",
+        "harness/baselines/index/*",
+        "tools/baseline_*.ps1",
+        "tools/baseline_*.py",
+        "docs/baseline_schema.md"
+      ],
+      "forbidden_files": [
+        "新建游戏项目/scripts/*",
+        "新建游戏项目/Main.tscn"
+      ],
+      "acceptance_criteria": [
+        "七类基准表均有字段定义和 ID 命名规则",
+        "每个基准项可追溯 source_path、source_timecode 或 source_scene",
+        "缺失来源的基准项被标记为 blocked，不允许进入实现",
+        "基准结构可被自动校验脚本读取"
+      ],
+      "tests": [
+        {
+          "type": "schema",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "基准 schema 已实现",
+        "校验脚本通过",
+        "无未处理 TODO",
+        "progress.jsonl 已记录测试证据"
+      ]
+    },
+    {
+      "id": "F002",
+      "title": "视频基准提取",
+      "description": "从三个录屏提取元数据、目标章节时间段、关键事件时间码和帧号。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F001"],
+      "allowed_files": [
+        "harness/baselines/video/*",
+        "tools/extract_video_baselines.*",
+        "tools/ffmpeg_helpers.*",
+        "docs/video_baselines.md"
+      ],
+      "forbidden_files": [
+        "新建游戏项目/scripts/*",
+        "新建游戏项目/tests/*"
+      ],
+      "acceptance_criteria": [
+        "剑关卡、手套关卡、四目头盔录屏均有元数据记录",
+        "每个目标段落有起止时间码和起止帧",
+        "四目头盔六关时间码事件全部进入视频基准表",
+        "无法确认的事件被记录为 blocked 并说明所需补充资料"
+      ],
+      "tests": [
+        {
+          "type": "baseline",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "视频基准表已生成",
+        "自动校验通过",
+        "关键事件无空来源",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F003",
+      "title": "DOCX 截图基准提取",
+      "description": "从三份流程 docx 导出图片并建立截图基准表。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F001"],
+      "allowed_files": [
+        "harness/baselines/screenshots/*",
+        "tools/extract_docx_images.*",
+        "docs/screenshot_baselines.md"
+      ],
+      "forbidden_files": [
+        "新建游戏项目/scripts/*",
+        "新建游戏项目/Main.tscn"
+      ],
+      "acceptance_criteria": [
+        "剑关卡 37 张、手套 18 张、四目头盔 31 张截图均有导出记录或差异说明",
+        "每张截图记录来源文件、顺序、关卡、状态名称和原图尺寸",
+        "每张截图都有后续复刻截图和差异图路径字段",
+        "截图缺口不会被标记为已完成"
+      ],
+      "tests": [
+        {
+          "type": "baseline",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "截图全部导出或缺口明确 blocked",
+        "截图基准表校验通过",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F004",
+      "title": "原版源码与资源索引",
+      "description": "索引原版解包资源中的目标场景、脚本、动画、音频、字体和地图事件。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F001"],
+      "allowed_files": [
+        "harness/baselines/source_index/*",
+        "tools/index_original_sources.*",
+        "docs/source_index.md"
+      ],
+      "forbidden_files": [
+        "参考资料/文字游戏源码/*",
+        "新建游戏项目/scripts/*"
+      ],
+      "acceptance_criteria": [
+        "目标地图 .tscn 路径全部登记",
+        "目标脚本、事件、commands、switch、variable 全部登记",
+        "目标动画 AnimationPlayer、轨道和关键帧来源全部登记",
+        "目标音效/BGM 文件名和触发命令全部登记"
+      ],
+      "tests": [
+        {
+          "type": "baseline",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "源码索引表已生成",
+        "所有目标条目有原版路径",
+        "校验脚本通过",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F005",
+      "title": "基准数据校验器与报告",
+      "description": "实现基准表完整性检查、缺口报告和阻塞项报告。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F001", "F002", "F003", "F004"],
+      "allowed_files": [
+        "tools/validate_baselines.*",
+        "harness/reports/baseline/*",
+        "docs/baseline_validation.md"
+      ],
+      "forbidden_files": [
+        "新建游戏项目/scripts/*"
+      ],
+      "acceptance_criteria": [
+        "能检查必填字段、来源路径、时间码、帧号和资源路径",
+        "能输出 blocked 基准项列表",
+        "blocked 项存在时，对应实现 feature 不允许进入 done",
+        "报告包含机器可读和人工可读版本"
+      ],
+      "tests": [
+        {
+          "type": "baseline",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "校验器已实现",
+        "报告可生成",
+        "故意缺字段样例能触发失败",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F006",
+      "title": "玩家“我”状态模型",
+      "description": "实现玩家格子坐标、朝向、移动状态、输入冷却、事件锁和能力集合。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F005"],
+      "allowed_files": [
+        "新建游戏项目/scripts/grid_world.gd",
+        "新建游戏项目/scripts/word_entity.gd",
+        "新建游戏项目/tests/test_gameplay_core.gd",
+        "新建游戏项目/tests/test_precision_movement.gd"
+      ],
+      "forbidden_files": [
+        "harness/baselines/*",
+        "参考资料/*"
+      ],
+      "acceptance_criteria": [
+        "玩家显示为“我”",
+        "玩家状态可查询当前格子、朝向、是否移动、冷却、事件锁和能力",
+        "外部行为与原版方向语义一致",
+        "状态变化有单元测试覆盖"
+      ],
+      "tests": [
+        {
+          "type": "unit",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "代码已实现",
+        "测试全部通过",
+        "无未处理 TODO",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F007",
+      "title": "格子移动与朝向优先",
+      "description": "实现方向键/WASD、连续移动、格子中心停靠和第一下转向第二下移动。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F006"],
+      "allowed_files": [
+        "新建游戏项目/scripts/precision_movement.gd",
+        "新建游戏项目/scripts/grid_world.gd",
+        "新建游戏项目/tests/test_precision_movement.gd"
+      ],
+      "forbidden_files": [
+        "新建游戏项目/scripts/level_loader.gd",
+        "harness/baselines/*"
+      ],
+      "acceptance_criteria": [
+        "方向键和 WASD 均可移动",
+        "第一下不同方向输入只转向不移动",
+        "第二下同方向输入移动一格",
+        "长按连续移动不跳格、不半格停留、不累计漂移",
+        "移动结束停在格子中心"
+      ],
+      "tests": [
+        {
+          "type": "unit",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        },
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "移动测试覆盖转向、连续移动和中心停靠",
+        "一键测试通过",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F008",
+      "title": "面向交互门禁",
+      "description": "所有确认、删除、拆字、拉取、推字、合字、填字操作都必须要求玩家面向目标。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F006", "F007"],
+      "allowed_files": [
+        "新建游戏项目/scripts/grid_world.gd",
+        "新建游戏项目/tests/test_gameplay_core.gd"
+      ],
+      "forbidden_files": [
+        "新建游戏项目/scripts/demo_runner.gd",
+        "harness/baselines/*"
+      ],
+      "acceptance_criteria": [
+        "玩家从侧面不能操作目标字",
+        "玩家从背后不能操作目标字",
+        "面向目标时可按规则触发交互",
+        "所有交互入口复用同一面向判定契约"
+      ],
+      "tests": [
+        {
+          "type": "unit",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "面向门禁测试通过",
+        "没有绕过入口",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F009",
+      "title": "Backspace 删除",
+      "description": "实现面前可删字删除、失败反馈、删除动画触发和句子状态重检。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F008"],
+      "allowed_files": [
+        "新建游戏项目/scripts/grid_world.gd",
+        "新建游戏项目/scripts/word_entity.gd",
+        "新建游戏项目/tests/test_gameplay_core.gd",
+        "新建游戏项目/tests/test_visual_resources.gd",
+        "新建游戏项目/assets/animations/delete/*"
+      ],
+      "forbidden_files": [
+        "harness/baselines/*"
+      ],
+      "acceptance_criteria": [
+        "面前一格有可删除字时删除成功",
+        "不可删除时触发失败反馈",
+        "删除后重新检查句子和关卡状态",
+        "删除动画来源与基准表关联"
+      ],
+      "tests": [
+        {
+          "type": "unit",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        },
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "成功和失败路径均有测试",
+        "动画资源引用校验通过",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F010",
+      "title": "Tab 拆字",
+      "description": "实现可拆字规则、拆出部件实体、失败反馈和状态重检。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F008"],
+      "allowed_files": [
+        "新建游戏项目/scripts/grid_world.gd",
+        "新建游戏项目/scripts/word_entity.gd",
+        "新建游戏项目/tests/test_gameplay_core.gd",
+        "新建游戏项目/assets/animations/split/*"
+      ],
+      "forbidden_files": [
+        "harness/baselines/*"
+      ],
+      "acceptance_criteria": [
+        "面前一格有可拆字且规则存在时拆字成功",
+        "拆出的部件作为真实地图文字存在",
+        "不可拆时触发失败反馈",
+        "拆字后重新检查句子和状态"
+      ],
+      "tests": [
+        {
+          "type": "unit",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "拆字成功和失败测试通过",
+        "部件实体参与碰撞和规则判定",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F011",
+      "title": "推字、合字与挤压规则",
+      "description": "实现可推字移动、不可推阻挡、连锁推动、合字、挤压和句子重检。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F007", "F008", "F010"],
+      "allowed_files": [
+        "新建游戏项目/scripts/grid_world.gd",
+        "新建游戏项目/scripts/word_entity.gd",
+        "新建游戏项目/tests/test_gameplay_core.gd"
+      ],
+      "forbidden_files": [
+        "harness/baselines/*"
+      ],
+      "acceptance_criteria": [
+        "可推字沿玩家移动方向移动",
+        "不可推字阻挡玩家",
+        "连锁推动按基准表结果执行",
+        "合字生成正确目标字并保留状态记录",
+        "推动后重新检查句子规则"
+      ],
+      "tests": [
+        {
+          "type": "unit",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "推字、阻挡、连锁和合字测试通过",
+        "所有行为有基准项映射",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F012",
+      "title": "Alt 拉字",
+      "description": "实现 Alt 锁定面前可拉字、仅允许向拉方向移动、松开解除锁定。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F007", "F008", "F011"],
+      "allowed_files": [
+        "新建游戏项目/scripts/grid_world.gd",
+        "新建游戏项目/tests/test_gameplay_core.gd",
+        "新建游戏项目/tests/test_precision_movement.gd",
+        "新建游戏项目/assets/animations/pull/*"
+      ],
+      "forbidden_files": [
+        "harness/baselines/*"
+      ],
+      "acceptance_criteria": [
+        "按住 Alt 时锁定面前可拉/可推字",
+        "拉取期间只能朝远离目标字的方向移动",
+        "朝推方向或垂直方向移动被拒绝",
+        "松开 Alt 后解除锁定",
+        "拉字动画和拉线效果有基准来源"
+      ],
+      "tests": [
+        {
+          "type": "unit",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        },
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "合法和非法拉取路径均有测试",
+        "一键测试通过",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F013",
+      "title": "打字机系统",
+      "description": "复刻剧情/教学文字逐字出现、等待、清除、换行和生成可交互文字实体。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F006", "F011"],
+      "allowed_files": [
+        "新建游戏项目/scripts/typewriter.gd",
+        "新建游戏项目/scripts/grid_world.gd",
+        "新建游戏项目/tests/test_gameplay_core.gd",
+        "新建游戏项目/tests/test_visual_resources.gd"
+      ],
+      "forbidden_files": [
+        "harness/baselines/*"
+      ],
+      "acceptance_criteria": [
+        "支持逐字出现、等待、换行和清除",
+        "支持内联字属性",
+        "生成的字可参与碰撞、删除、推拉、拆字、合字和句子判定",
+        "节奏参数来自动画或行为基准表"
+      ],
+      "tests": [
+        {
+          "type": "unit",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        },
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "打字机行为测试通过",
+        "生成文字实体测试通过",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F014",
+      "title": "句子规则与高亮",
+      "description": "实现横向/纵向扫描、句子匹配、变量开关、高亮动画和状态撤销规则。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F011", "F013"],
+      "allowed_files": [
+        "新建游戏项目/scripts/grid_world.gd",
+        "新建游戏项目/scripts/rule_engine.gd",
+        "新建游戏项目/tests/test_gameplay_core.gd",
+        "新建游戏项目/assets/animations/highlight/*"
+      ],
+      "forbidden_files": [
+        "harness/baselines/*"
+      ],
+      "acceptance_criteria": [
+        "能横向和纵向扫描地图文字",
+        "能匹配目标句子并设置开关/变量",
+        "成功时播放高亮动画",
+        "字被移走或状态变化时按基准撤销或保持状态"
+      ],
+      "tests": [
+        {
+          "type": "unit",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        },
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "句子成立和撤销测试通过",
+        "高亮资源引用校验通过",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F015",
+      "title": "音频事件系统",
+      "description": "复刻 BGM、音效触发、停止、循环、音量、延迟和淡入淡出日志。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F004", "F014"],
+      "allowed_files": [
+        "新建游戏项目/scripts/audio_event_bus.gd",
+        "新建游戏项目/tests/test_gameplay_core.gd",
+        "新建游戏项目/tests/test_visual_resources.gd",
+        "harness/reports/audio/*"
+      ],
+      "forbidden_files": [
+        "参考资料/文字游戏源码/*"
+      ],
+      "acceptance_criteria": [
+        "每个音频事件引用音频基准表",
+        "能记录触发时间、延迟、音量、循环和停止条件",
+        "测试能验证关键事件写入音频触发日志",
+        "无法分发的原版素材仍保留本地研究版触发点记录"
+      ],
+      "tests": [
+        {
+          "type": "unit",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "音频触发日志测试通过",
+        "音频基准映射完整",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F016",
+      "title": "自动演示与回放框架",
+      "description": "实现按基准输入序列自动运行关卡、导出状态和复刻截图。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F014", "F015"],
+      "allowed_files": [
+        "新建游戏项目/scripts/demo_runner.gd",
+        "新建游戏项目/tests/test_visual_smoke_entry.gd",
+        "harness/demo_routes/*",
+        "harness/reports/demo/*"
+      ],
+      "forbidden_files": [
+        "harness/baselines/schema/*"
+      ],
+      "acceptance_criteria": [
+        "每条演示路线绑定 feature_id 和基准段落",
+        "能自动输入移动、交互、删除、拆字、拉字",
+        "能导出关键状态截图和状态日志",
+        "演示失败时返回非零退出码"
+      ],
+      "tests": [
+        {
+          "type": "integration",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        },
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "自动演示可运行",
+        "截图和状态日志生成",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F017",
+      "title": "视觉截图对比框架",
+      "description": "生成原图、复刻图、差异图和视觉验收报告，默认零容差。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F003", "F016"],
+      "allowed_files": [
+        "tools/capture_visual_smoke.ps1",
+        "tools/compare_screenshots.*",
+        "harness/reports/visual/*",
+        "harness/visual_checks.md"
+      ],
+      "forbidden_files": [
+        "新建游戏项目/scripts/grid_world.gd"
+      ],
+      "acceptance_criteria": [
+        "每个截图基准点能关联原图、复刻图和差异图",
+        "默认逐像素零容差",
+        "Godot 3 到 Godot 4 渲染差异必须单独登记并由甲方批准",
+        "对比失败时一键测试失败"
+      ],
+      "tests": [
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        },
+        {
+          "type": "integration",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "视觉对比报告可生成",
+        "失败样例能触发非零退出码",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F018",
+      "title": "剑关卡地图与流程基准导入",
+      "description": "导入剑关卡教学、史莱姆、蛇妖、村中显现的地图、截图、行为、动画和音频基准。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F002", "F003", "F004", "F005"],
+      "allowed_files": [
+        "harness/baselines/levels/sword/*",
+        "harness/level_requirements.json",
+        "harness/reports/baseline/sword/*"
+      ],
+      "forbidden_files": [
+        "新建游戏项目/scripts/*"
+      ],
+      "acceptance_criteria": [
+        "教学段、史莱姆段、蛇妖段、村中显现段均有基准记录",
+        "每个影响视觉、玩法、动画、声音、状态的内容都有基准项",
+        "15 个 P0 动画均有来源和验收字段",
+        "未确认项全部 blocked，不进入实现"
+      ],
+      "tests": [
+        {
+          "type": "baseline",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "剑关卡基准校验通过",
+        "P0 动画基准完整",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F019",
+      "title": "剑关卡教学与史莱姆段实现",
+      "description": "实现剑教学段、史莱姆段的地图、流程、行为、视觉和音频触发。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F018", "F014", "F016", "F017"],
+      "allowed_files": [
+        "新建游戏项目/levels/sword/*",
+        "新建游戏项目/scripts/levels/sword/*",
+        "新建游戏项目/tests/test_sword_level.gd",
+        "harness/demo_routes/sword/*"
+      ],
+      "forbidden_files": [
+        "harness/baselines/schema/*"
+      ],
+      "acceptance_criteria": [
+        "教学段可按基准路线自动演示",
+        "史莱姆段成功和失败路径与基准一致",
+        "对应截图对比通过",
+        "对应音频触发日志通过"
+      ],
+      "tests": [
+        {
+          "type": "integration",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        },
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "自动演示通过",
+        "视觉对比通过",
+        "行为测试通过",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F020",
+      "title": "剑关卡蛇妖段实现",
+      "description": "实现蛇妖阶段的地图状态、敌人行为、攻击、受伤、失败和动画触发。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F018", "F019", "F022"],
+      "allowed_files": [
+        "新建游戏项目/levels/sword/*",
+        "新建游戏项目/scripts/levels/sword/*",
+        "新建游戏项目/tests/test_sword_level.gd",
+        "harness/demo_routes/sword/*"
+      ],
+      "forbidden_files": [
+        "新建游戏项目/scripts/grid_world.gd"
+      ],
+      "acceptance_criteria": [
+        "蛇妖移动、摆动、攻击与基准一致",
+        "受伤闪烁、闪白、媚眼、剥皮、抖动动画按基准触发",
+        "失败和重试状态与基准一致",
+        "自动演示和视觉对比通过"
+      ],
+      "tests": [
+        {
+          "type": "integration",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        },
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "蛇妖段成功和失败路径通过",
+        "P0 动画触发测试通过",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F021",
+      "title": "剑关卡村中溶解显现实现",
+      "description": "实现村中溶解显现段、房屋破碎、显现效果和收束状态。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F018", "F019", "F022"],
+      "allowed_files": [
+        "新建游戏项目/levels/sword/*",
+        "新建游戏项目/scripts/levels/sword/*",
+        "新建游戏项目/tests/test_sword_level.gd",
+        "harness/demo_routes/sword/*"
+      ],
+      "forbidden_files": [
+        "harness/baselines/schema/*"
+      ],
+      "acceptance_criteria": [
+        "房子被撞碎动画按基准触发",
+        "村中溶解显现效果逐关键帧对齐",
+        "段落前后状态和转场一致",
+        "截图差异报告通过"
+      ],
+      "tests": [
+        {
+          "type": "integration",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        },
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "自动演示通过",
+        "视觉对比通过",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F022",
+      "title": "剑关卡 15 个 P0 动画",
+      "description": "实现并验证剑关卡全部 P0 动画实例及其触发条件。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F018", "F017"],
+      "allowed_files": [
+        "新建游戏项目/assets/animations/sword/*",
+        "新建游戏项目/scripts/animation_player_bridge.gd",
+        "新建游戏项目/tests/test_visual_resources.gd",
+        "harness/reports/visual/sword/*"
+      ],
+      "forbidden_files": [
+        "harness/baselines/video/*"
+      ],
+      "acceptance_criteria": [
+        "15 个 P0 动画全部实现或有甲方批准替代方案",
+        "每个动画记录来源时间码、起止帧和实现位置",
+        "每个动画有触发测试",
+        "逐帧或逐关键帧视觉核验通过"
+      ],
+      "tests": [
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        },
+        {
+          "type": "integration",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "15 个动画均有测试证据",
+        "视觉报告通过",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F023",
+      "title": "手套关卡基准导入",
+      "description": "导入手套关卡全流程、正确/错误路线、填字手势、碰撞和通路变化基准。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F002", "F003", "F004", "F005"],
+      "allowed_files": [
+        "harness/baselines/levels/glove/*",
+        "harness/level_requirements.json",
+        "harness/reports/baseline/glove/*"
+      ],
+      "forbidden_files": [
+        "新建游戏项目/scripts/*"
+      ],
+      "acceptance_criteria": [
+        "正确路线和错误路线均有行为基准",
+        "每个有效手势字均从录屏、截图或源码确认",
+        "每个手势状态有截图、地图和碰撞基准",
+        "删除“不”后的放开状态有基准记录"
+      ],
+      "tests": [
+        {
+          "type": "baseline",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "手套基准校验通过",
+        "缺口全部 blocked",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F024",
+      "title": "手套关卡全流程与路线实现",
+      "description": "实现手套关卡正确路线、错误路线、失败反馈和流程推进。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F023", "F014", "F016", "F017"],
+      "allowed_files": [
+        "新建游戏项目/levels/glove/*",
+        "新建游戏项目/scripts/levels/glove/*",
+        "新建游戏项目/tests/test_glove_level.gd",
+        "harness/demo_routes/glove/*"
+      ],
+      "forbidden_files": [
+        "harness/baselines/schema/*"
+      ],
+      "acceptance_criteria": [
+        "正确路线可自动演示通关",
+        "错误路线触发原版一致反馈",
+        "所有关键状态截图对比通过",
+        "流程推进状态变量与基准一致"
+      ],
+      "tests": [
+        {
+          "type": "integration",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        },
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "正确和错误路线均测试通过",
+        "视觉对比通过",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F025",
+      "title": "手套填字手势与碰撞状态",
+      "description": "实现句子填入对应字后手掌变手势、碰撞和通路状态变化。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F023", "F024"],
+      "allowed_files": [
+        "新建游戏项目/levels/glove/*",
+        "新建游戏项目/scripts/levels/glove/*",
+        "新建游戏项目/tests/test_glove_level.gd",
+        "新建游戏项目/assets/animations/glove/*"
+      ],
+      "forbidden_files": [
+        "新建游戏项目/scripts/grid_world.gd"
+      ],
+      "acceptance_criteria": [
+        "填入对应字后手掌变成对应手势",
+        "手势切换不复制、吞掉或错位正在推动的动态字",
+        "每个手势状态碰撞与通路变化符合基准",
+        "删除“不”后进入放开状态"
+      ],
+      "tests": [
+        {
+          "type": "integration",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        },
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "手势状态测试通过",
+        "碰撞和通路测试通过",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F026",
+      "title": "手套错误反馈与边界行为",
+      "description": "实现手套关卡所有错误路线、无效输入、碰撞失败和重试反馈。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F023", "F024", "F025"],
+      "allowed_files": [
+        "新建游戏项目/levels/glove/*",
+        "新建游戏项目/scripts/levels/glove/*",
+        "新建游戏项目/tests/test_glove_level.gd",
+        "harness/demo_routes/glove/*"
+      ],
+      "forbidden_files": [
+        "harness/baselines/schema/*"
+      ],
+      "acceptance_criteria": [
+        "所有基准表登记的错误路线均可自动演示",
+        "无效操作反馈与原版一致",
+        "失败后重试状态与原版一致",
+        "音效和动画触发日志通过"
+      ],
+      "tests": [
+        {
+          "type": "integration",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        },
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "错误反馈全覆盖",
+        "自动演示和截图对比通过",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F027",
+      "title": "四目头盔过河六关基准导入",
+      "description": "导入过河六关和收尾流程的视频、截图、地图、行为、动画、音频基准。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F002", "F003", "F004", "F005"],
+      "allowed_files": [
+        "harness/baselines/levels/helmet/*",
+        "harness/level_requirements.json",
+        "harness/reports/baseline/helmet/*"
+      ],
+      "forbidden_files": [
+        "新建游戏项目/scripts/*"
+      ],
+      "acceptance_criteria": [
+        "第一至第六关均有完整流程基准",
+        "每关初始、正确解法、错误/无效反馈均有基准",
+        "第五、第六关不存在待确认项进入最终验收",
+        "收尾流程和 50:59 拆解回玩家状态有基准"
+      ],
+      "tests": [
+        {
+          "type": "baseline",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "六关基准校验通过",
+        "缺口全部 blocked",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F028",
+      "title": "过河第一至第二关实现",
+      "description": "实现四目头盔过河第一、第二关流程、交互提示、合成和搭桥动画。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F027", "F031", "F014", "F016", "F017"],
+      "allowed_files": [
+        "新建游戏项目/levels/helmet/*",
+        "新建游戏项目/scripts/levels/helmet/*",
+        "新建游戏项目/tests/test_helmet_level.gd",
+        "harness/demo_routes/helmet/*"
+      ],
+      "forbidden_files": [
+        "harness/baselines/schema/*"
+      ],
+      "acceptance_criteria": [
+        "第一关 36:57-38:34 流程与基准一致",
+        "第二关 38:35-44:04 流程与基准一致",
+        "交互提示、合成、搭桥和持续动画触发正确",
+        "截图对比和自动演示通过"
+      ],
+      "tests": [
+        {
+          "type": "integration",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        },
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "第一至第二关自动演示通过",
+        "视觉对比通过",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F029",
+      "title": "过河第三至第四关实现",
+      "description": "实现第三、第四关流程、垮桥失败、提示、合成、水难、支撑和拆解动画。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F027", "F028", "F031"],
+      "allowed_files": [
+        "新建游戏项目/levels/helmet/*",
+        "新建游戏项目/scripts/levels/helmet/*",
+        "新建游戏项目/tests/test_helmet_level.gd",
+        "harness/demo_routes/helmet/*"
+      ],
+      "forbidden_files": [
+        "新建游戏项目/scripts/grid_world.gd"
+      ],
+      "acceptance_criteria": [
+        "第三关 44:05-45:49 流程与基准一致",
+        "桥垮和“我淹死了”失败反馈一致",
+        "第四关 45:50-46:26 流程与基准一致",
+        "对岸桥拆解动画按基准播放"
+      ],
+      "tests": [
+        {
+          "type": "integration",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        },
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "第三至第四关自动演示通过",
+        "失败反馈测试通过",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F030",
+      "title": "过河第五至第六关与收尾实现",
+      "description": "实现第五、第六关、最右侧溪水消失、鹅过河、收尾和拆解回玩家。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F027", "F029", "F031"],
+      "allowed_files": [
+        "新建游戏项目/levels/helmet/*",
+        "新建游戏项目/scripts/levels/helmet/*",
+        "新建游戏项目/tests/test_helmet_level.gd",
+        "harness/demo_routes/helmet/*"
+      ],
+      "forbidden_files": [
+        "harness/baselines/schema/*"
+      ],
+      "acceptance_criteria": [
+        "第五关 46:27-49:04 流程与基准一致",
+        "第六关 49:05-50:19 流程与基准一致",
+        "50:15 鹅过河动画路径、速度、层级和终点一致",
+        "50:59 拆解回玩家状态一致",
+        "不存在待确认项进入验收"
+      ],
+      "tests": [
+        {
+          "type": "integration",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        },
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "第五至第六关和收尾自动演示通过",
+        "视觉对比通过",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F031",
+      "title": "过河通用动画复用判定",
+      "description": "建立溪水、树叶、合成、搭桥、拆解动画的复用判定表，并实现可复用动画配置。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": ["F027", "F017"],
+      "allowed_files": [
+        "harness/baselines/levels/helmet/animation_reuse.*",
+        "新建游戏项目/assets/animations/helmet/*",
+        "新建游戏项目/scripts/levels/helmet/animation_config.gd",
+        "新建游戏项目/tests/test_helmet_level.gd"
+      ],
+      "forbidden_files": [
+        "harness/baselines/schema/*"
+      ],
+      "acceptance_criteria": [
+        "不得仅凭名称假定动画可复用",
+        "每个动画实例有起止帧、时长、位置、方向、层级和最终状态",
+        "仅坐标不同的实例可参数化复用",
+        "时长、方向、关键帧、遮挡层级或最终状态不同的实例必须独立配置"
+      ],
+      "tests": [
+        {
+          "type": "baseline",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        },
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "复用判定表完整",
+        "复用和独立配置测试通过",
+        "progress.jsonl 已记录完成证据"
+      ]
+    },
+    {
+      "id": "F032",
+      "title": "总体验收报告与人工复核记录",
+      "description": "汇总截图差异、行为测试、动画核验、音频触发和甲方人工验收记录。",
+      "priority": "must",
+      "status": "todo",
+      "owner": null,
+      "depends_on": [
+        "F019",
+        "F020",
+        "F021",
+        "F022",
+        "F024",
+        "F025",
+        "F026",
+        "F028",
+        "F029",
+        "F030"
+      ],
+      "allowed_files": [
+        "harness/reports/final/*",
+        "harness/acceptance.md",
+        "tools/generate_acceptance_report.*"
+      ],
+      "forbidden_files": [
+        "新建游戏项目/scripts/*",
+        "新建游戏项目/levels/*"
+      ],
+      "acceptance_criteria": [
+        "全部截图差异报告通过或有甲方批准差异",
+        "全部行为测试报告通过",
+        "全部动画核验报告通过",
+        "全部音频触发报告通过",
+        "甲方人工验收记录已归档"
+      ],
+      "tests": [
+        {
+          "type": "acceptance",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1",
+          "required": true
+        },
+        {
+          "type": "visual",
+          "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "最终验收清单全部勾选",
+        "一键测试通过",
+        "人工验收记录归档",
+        "progress.jsonl 已记录完成证据"
+      ]
+    }
+  ]
+}
