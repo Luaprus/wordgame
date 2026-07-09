@@ -72,6 +72,16 @@
 
 缺少来源的基准项必须标记为 `blocked`。实现 feature 不得依赖 blocked 基准项进入完成。
 
+### 基准回写规则
+
+- 视频人工复核结果只能通过 `harness/baselines/video/video_event_overrides.json` 回写到 `harness/baselines/video/video_baselines.json` 和 `harness/manual_tables/video_events_to_fill.csv`。
+- 当某个视频记录下所有事件均已 `confirmed`，且不存在 `blocked` / `manual_required` 子事件时，父视频记录状态必须自动收口为 `confirmed`。
+- 截图人工复核结果只能通过 `harness/baselines/screenshots/screenshot_overrides.json` 回写到截图基线和人工表；没有人工确认的截图不得伪装成“人工 confirmed”。
+- 对于明确不属于目标游戏流程、且已由人工确认可忽略的截图，允许标记为 `excluded`；`excluded` 代表“保留来源记录，但从当前复刻验收范围中排除”，不得再计入 `manual_required`，也不得阻塞 F003/F005 验收。
+- 源码归属分析由 AI 负责，不进入人工复核网页。AI 分析结果只能通过 `harness/source_analysis/source_analysis.json` 回写到 `harness/baselines/source_index/source_index.json` 和 `harness/manual_tables/source_index_to_fill.csv`，并保留置信度与分析备注。
+- `source_index` 中只有高置信度且有明确映射证据的记录可以回写为 `confirmed`；中低置信度记录必须保持 `ai_analysis_required`。
+- `.gdc` 编译脚本在未反编译前，不允许声称 commands、switches、variables 已被逐行确认；相关结论只能作为 AI 推断证据保留在备注字段中。
+
 ## Godot 基座契约
 
 基座模块对关卡层暴露稳定行为，不允许关卡脚本复制核心逻辑：

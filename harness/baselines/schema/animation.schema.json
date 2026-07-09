@@ -1,0 +1,28 @@
+{
+  "schema_id": "wordgame.baseline.animation.v1",
+  "required_fields": [
+    "id",
+    "feature_id",
+    "level_id",
+    "source_type",
+    "source_path",
+    "source_timecode",
+    "source_frame",
+    "source_scene",
+    "status",
+    "notes",
+    "animation_id",
+    "animation_name",
+    "animation_player",
+    "start_frame",
+    "end_frame",
+    "frame_count",
+    "duration_seconds",
+    "keyframes",
+    "interruptible",
+    "input_locked",
+    "triggered_audio",
+    "implementation_path"
+  ],
+  "status_values": ["confirmed", "manual_required", "blocked"]
+}

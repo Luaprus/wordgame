@@ -1,0 +1,31 @@
+{
+  "schema_id": "wordgame.baseline.behavior.v1",
+  "required_fields": [
+    "id",
+    "feature_id",
+    "level_id",
+    "source_type",
+    "source_path",
+    "source_timecode",
+    "source_frame",
+    "source_scene",
+    "status",
+    "notes",
+    "behavior_id",
+    "input",
+    "pre_state",
+    "player_grid",
+    "player_direction",
+    "target_object",
+    "success_condition",
+    "failure_condition",
+    "original_result",
+    "replay_result",
+    "input_locked",
+    "cooldown_seconds",
+    "triggered_animation",
+    "triggered_audio",
+    "post_state"
+  ],
+  "status_values": ["confirmed", "manual_required", "blocked"]
+}

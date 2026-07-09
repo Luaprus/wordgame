@@ -1,0 +1,1770 @@
+{
+  "generated_at": "2026-07-09T12:57:27.119Z",
+  "source_files": [
+    {
+      "source_file": "C:/Users/Mrluaprus/xwechat_files/wxid_ynvokoaw0h7z22_9ecd/msg/file/2026-07/wordgame_review_result.json",
+      "exported_at": "2026-07-09T09:55:06.726Z",
+      "source_generated_at": "2026-07-09T07:53:16.866Z",
+      "total_entries": 55,
+      "imported_entries": 55,
+      "ignored_entries": 0
+    },
+    {
+      "source_file": "C:/Users/Mrluaprus/xwechat_files/wxid_ynvokoaw0h7z22_9ecd/msg/file/2026-07/wordgame_review_result(1).json",
+      "exported_at": "2026-07-09T09:55:24.321Z",
+      "source_generated_at": "2026-07-09T07:53:16.866Z",
+      "total_entries": 33,
+      "imported_entries": 31,
+      "ignored_entries": 3
+    }
+  ],
+  "ignored_entries": [
+    {
+      "screenshot_id": "SWORD-SHOT-001",
+      "reason": "minority_prefix_in_file",
+      "source_file": "C:/Users/Mrluaprus/xwechat_files/wxid_ynvokoaw0h7z22_9ecd/msg/file/2026-07/wordgame_review_result(1).json",
+      "prefix": "SWORD",
+      "allowed_prefixes": [
+        "HELMET"
+      ]
+    },
+    {
+      "screenshot_id": "HELMET-SHOT-001",
+      "reason": "excluded_from_scope",
+      "source_file": "C:/Users/Mrluaprus/xwechat_files/wxid_ynvokoaw0h7z22_9ecd/msg/file/2026-07/wordgame_review_result(1).json",
+      "reviewer_note": "误保存，暂时不做这张图"
+    },
+    {
+      "screenshot_id": "SWORD-SHOT-002",
+      "reason": "minority_prefix_in_file",
+      "source_file": "C:/Users/Mrluaprus/xwechat_files/wxid_ynvokoaw0h7z22_9ecd/msg/file/2026-07/wordgame_review_result(1).json",
+      "prefix": "SWORD",
+      "allowed_prefixes": [
+        "HELMET"
+      ]
+    }
+  ],
+  "duplicate_ids": [],
+  "reviewer_state": {
+    "GLOVE-SHOT-001": {
+      "kind": "screenshot",
+      "title": "glove / 维塔之手-巨掌迷宫/手势切换状态01",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "1",
+        "fill_state_name": "维塔之手-巨掌迷宫/手势切换状态01",
+        "fill_player_grid_x": "20",
+        "fill_player_grid_y": "15",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "中部和右侧由“掌”字组成巨掌边界，左侧有剧情说明，底部有“俯瞰这一个巨大手掌，是零的手势”说明。",
+        "fill_dynamic_objects": "玩家字、勇者字、剑/手势字、巨掌墙体、可切换的手势或按钮文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核手势名称、按钮状态和玩家位置。 玩家格子坐标=AI测算(6,6)；坐标由低置信“我”字模板补洞测算，置信度0.36。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "GLOVE-SHOT-002": {
+      "kind": "screenshot",
+      "title": "glove / 维塔之手-巨掌迷宫/手势切换状态02",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "2",
+        "fill_state_name": "维塔之手-巨掌迷宫/手势切换状态02",
+        "fill_player_grid_x": "26",
+        "fill_player_grid_y": "15",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "中部和右侧由“掌”字组成巨掌边界，左侧有剧情说明，底部有“俯瞰这一个巨大手掌，是赞的手势”说明。",
+        "fill_dynamic_objects": "玩家字、勇者字、剑/手势字、巨掌墙体、可切换的手势或按钮文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核手势名称、按钮状态和玩家位置。 玩家格子坐标=AI测算(25,13)；坐标由“我”字模板匹配测算，置信度0.63。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "GLOVE-SHOT-003": {
+      "kind": "screenshot",
+      "title": "glove / 维塔之手-巨掌迷宫/手势切换状态03",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "3",
+        "fill_state_name": "维塔之手-巨掌迷宫/手势切换状态03",
+        "fill_player_grid_x": "26",
+        "fill_player_grid_y": "15",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "中部和右侧由“掌”字组成巨掌边界，左侧有剧情说明，底部有“俯瞰这一个巨大手掌，是赞的手势”说明。",
+        "fill_dynamic_objects": "玩家字、勇者字、剑/手势字、巨掌墙体、可切换的手势或按钮文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核手势名称、按钮状态和玩家位置。 玩家格子坐标=AI测算(26,14)；坐标由黄色高亮玩家字测算，像素中心约(1335,834)。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "GLOVE-SHOT-004": {
+      "kind": "screenshot",
+      "title": "glove / 维塔之手-巨掌迷宫/手势切换状态04",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "4",
+        "fill_state_name": "维塔之手-巨掌迷宫/手势切换状态04",
+        "fill_player_grid_x": "26",
+        "fill_player_grid_y": "15",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "中部和右侧由“掌”字组成巨掌边界，左侧有剧情说明，底部有“俯瞰这一个巨大手掌，是二的手势”说明。",
+        "fill_dynamic_objects": "玩家字、勇者字、剑/手势字、巨掌墙体、可切换的手势或按钮文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核手势名称、按钮状态和玩家位置。 玩家格子坐标=AI测算(25,15)；坐标由“我”字模板匹配测算，置信度0.63。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "GLOVE-SHOT-005": {
+      "kind": "screenshot",
+      "title": "glove / 维塔之手-巨掌迷宫/手势切换状态05",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "5",
+        "fill_state_name": "维塔之手-巨掌迷宫/手势切换状态05",
+        "fill_player_grid_x": "26",
+        "fill_player_grid_y": "15",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "中部和右侧由“掌”字组成巨掌边界，左侧有剧情说明，底部有“俯瞰这一个巨大手掌，是赢的手势”说明。",
+        "fill_dynamic_objects": "玩家字、勇者字、剑/手势字、巨掌墙体、可切换的手势或按钮文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核手势名称、按钮状态和玩家位置。 玩家格子坐标=AI测算(26,16)；坐标由黄色高亮玩家字测算，像素中心约(1335,834)。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "GLOVE-SHOT-006": {
+      "kind": "screenshot",
+      "title": "glove / 维塔之手-巨掌迷宫/手势切换状态06",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "6",
+        "fill_state_name": "维塔之手-巨掌迷宫/手势切换状态06",
+        "fill_player_grid_x": "26",
+        "fill_player_grid_y": "15",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "中部和右侧由“掌”字组成巨掌边界，左侧有剧情说明，底部有“俯瞰这一个巨大手掌，是赢的手势”说明。",
+        "fill_dynamic_objects": "玩家字、勇者字、剑/手势字、巨掌墙体、可切换的手势或按钮文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核手势名称、按钮状态和玩家位置。 玩家格子坐标=AI测算(25,15)；坐标由“我”字模板匹配测算，置信度0.63。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "GLOVE-SHOT-007": {
+      "kind": "screenshot",
+      "title": "glove / 维塔之手-巨掌迷宫/手势切换状态07",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "7",
+        "fill_state_name": "维塔之手-巨掌迷宫/手势切换状态07",
+        "fill_player_grid_x": "6",
+        "fill_player_grid_y": "4",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "中部和右侧由“掌”字组成巨掌边界，左侧有剧情说明与提示文字，底部有“俯瞰这一个巨大手掌，是好的手势”说明。",
+        "fill_dynamic_objects": "玩家字、勇者字、剑/手势字、巨掌墙体、可切换的手势或按钮文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核手势名称、按钮状态和玩家位置。 玩家格子坐标=AI测算(6,1)；坐标由低置信“我”字模板补洞测算，置信度0.45。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "GLOVE-SHOT-008": {
+      "kind": "screenshot",
+      "title": "glove / 维塔之手-巨掌迷宫/手势切换状态08",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "8",
+        "fill_state_name": "维塔之手-巨掌迷宫/手势切换状态08",
+        "fill_player_grid_x": "6",
+        "fill_player_grid_y": "4",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "中部和右侧由“掌”字组成巨掌边界，左侧有剧情说明，底部有“俯瞰这一个巨大手掌，是赞的手势”说明。",
+        "fill_dynamic_objects": "玩家字、勇者字、剑/手势字、巨掌墙体、可切换的手势或按钮文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核手势名称、按钮状态和玩家位置。 玩家格子坐标=AI测算(5,4)；坐标由“我”字模板匹配测算，置信度0.59。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "GLOVE-SHOT-009": {
+      "kind": "screenshot",
+      "title": "glove / 维塔之手-黑屏剧情对白状态",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "9",
+        "fill_state_name": "维塔之手-黑屏剧情对白状态",
+        "fill_player_grid_x": "24",
+        "fill_player_grid_y": "5",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "左侧有对白，右侧竖排角色字。",
+        "fill_dynamic_objects": "剧情对白、角色字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核对白原文。 玩家格子坐标=AI测算(23,3)；坐标由“我”字模板匹配测算，置信度0.74。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "GLOVE-SHOT-010": {
+      "kind": "screenshot",
+      "title": "glove / 维塔之手-勇者包围/结局或失败提示状态",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "10",
+        "fill_state_name": "维塔之手-勇者包围/结局或失败提示状态",
+        "fill_player_grid_x": "15",
+        "fill_player_grid_y": "10",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "左右两侧和顶部密集“勇”字形成包围；中部有较长对白和“世界由…来拯救”类文字。",
+        "fill_dynamic_objects": "大量勇者字、玩家字、对白文字、结局/失败提示。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核这是失败、结局还是特殊剧情分支。 玩家格子坐标=AI测算(28,0)；坐标由低置信“我”字模板补洞测算，置信度0.35。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "GLOVE-SHOT-011": {
+      "kind": "screenshot",
+      "title": "glove / 维塔之手-路径/手势提示红框标注状态",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "11",
+        "fill_state_name": "维塔之手-路径/手势提示红框标注状态",
+        "fill_player_grid_x": "20",
+        "fill_player_grid_y": "16",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "中部和右侧由“掌”字组成巨掌边界，左侧有剧情说明与提示文字，底部有“俯瞰这一个巨大手掌，是零的手势”说明。",
+        "fill_dynamic_objects": "玩家字、巨掌墙体、手势文字、红框注释、提示文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 红框属于参考标注还是游戏内效果需人工确认。 玩家格子坐标=AI测算(20,14)；坐标由“我”字模板匹配测算，置信度0.74。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "GLOVE-SHOT-012": {
+      "kind": "screenshot",
+      "title": "glove / 维塔之手-巨掌迷宫/手势切换状态12",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "12",
+        "fill_state_name": "维塔之手-巨掌迷宫/手势切换状态12",
+        "fill_player_grid_x": "14",
+        "fill_player_grid_y": "14",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "中部和右侧由“掌”字组成巨掌边界，左侧有剧情说明与提示文字，底部有“俯瞰这一个巨大手掌，是零的手势”说明。",
+        "fill_dynamic_objects": "玩家字、勇者字、剑/手势字、巨掌墙体、可切换的手势或按钮文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核手势名称、按钮状态和玩家位置。 玩家格子坐标=AI测算(14,12)；坐标由黄色高亮玩家字测算，像素中心约(730,773)。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "GLOVE-SHOT-013": {
+      "kind": "screenshot",
+      "title": "glove / 维塔之手-巨掌迷宫/手势切换状态13",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "13",
+        "fill_state_name": "维塔之手-巨掌迷宫/手势切换状态13",
+        "fill_player_grid_x": "14",
+        "fill_player_grid_y": "14",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "中部和右侧由“掌”字组成巨掌边界，左侧有剧情说明与提示文字，底部有“俯瞰这一个巨大手掌，是零的手势”说明。",
+        "fill_dynamic_objects": "玩家字、勇者字、剑/手势字、巨掌墙体、可切换的手势或按钮文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核手势名称、按钮状态和玩家位置。 玩家格子坐标=AI测算(13,12)；坐标由“我”字模板匹配测算，置信度0.69。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "GLOVE-SHOT-014": {
+      "kind": "screenshot",
+      "title": "glove / 维塔之手-巨掌迷宫/手势切换状态14",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "14",
+        "fill_state_name": "维塔之手-巨掌迷宫/手势切换状态14",
+        "fill_player_grid_x": "26",
+        "fill_player_grid_y": "15",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "中部和右侧由“掌”字组成巨掌边界，左侧有剧情说明与提示文字，底部有“俯瞰这一个巨大手掌，是一的手势”说明。",
+        "fill_dynamic_objects": "玩家字、勇者字、剑/手势字、巨掌墙体、可切换的手势或按钮文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核手势名称、按钮状态和玩家位置。 玩家格子坐标=AI测算(26,14)；坐标由黄色高亮玩家字测算，像素中心约(1335,835)。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "GLOVE-SHOT-015": {
+      "kind": "screenshot",
+      "title": "glove / 维塔之手-巨掌迷宫/手势切换状态15",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "15",
+        "fill_state_name": "维塔之手-巨掌迷宫/手势切换状态15",
+        "fill_player_grid_x": "26",
+        "fill_player_grid_y": "15",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "中部和右侧由“掌”字组成巨掌边界，左侧有剧情说明与提示文字，底部有“俯瞰这一个巨大手掌，是一的手势”说明。",
+        "fill_dynamic_objects": "玩家字、勇者字、剑/手势字、巨掌墙体、可切换的手势或按钮文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核手势名称、按钮状态和玩家位置。 玩家格子坐标=AI测算(25,15)；坐标由“我”字模板匹配测算，置信度0.73。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "GLOVE-SHOT-016": {
+      "kind": "screenshot",
+      "title": "glove / 维塔之手-巨掌迷宫/手势切换状态16",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "16",
+        "fill_state_name": "维塔之手-巨掌迷宫/手势切换状态16",
+        "fill_player_grid_x": "26",
+        "fill_player_grid_y": "15",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "中部和右侧由“掌”字组成巨掌边界，左侧有剧情说明与提示文字，底部有“俯瞰这一个巨大手掌，是好的手势”说明。",
+        "fill_dynamic_objects": "玩家字、勇者字、剑/手势字、巨掌墙体、可切换的手势或按钮文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核手势名称、按钮状态和玩家位置。 玩家格子坐标=AI测算(26,14)；坐标由黄色高亮玩家字测算，像素中心约(1335,834)。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "GLOVE-SHOT-017": {
+      "kind": "screenshot",
+      "title": "glove / 维塔之手-巨掌迷宫/手势切换状态17",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "17",
+        "fill_state_name": "维塔之手-巨掌迷宫/手势切换状态17",
+        "fill_player_grid_x": "26",
+        "fill_player_grid_y": "15",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "中部和右侧由“掌”字组成巨掌边界，左侧有剧情说明与提示文字，底部有“俯瞰这一个巨大手掌，是好的手势”说明。",
+        "fill_dynamic_objects": "玩家字、勇者字、剑/手势字、巨掌墙体、可切换的手势或按钮文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核手势名称、按钮状态和玩家位置。 玩家格子坐标=AI测算(25,13)；坐标由“我”字模板匹配测算，置信度0.63。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "GLOVE-SHOT-018": {
+      "kind": "screenshot",
+      "title": "glove / 维塔之手-巨掌迷宫/手势切换状态18",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "18",
+        "fill_state_name": "维塔之手-巨掌迷宫/手势切换状态18",
+        "fill_player_grid_x": "26",
+        "fill_player_grid_y": "15",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "中部和右侧由“掌”字组成巨掌边界，左侧有剧情说明与提示文字，底部有“俯瞰这一个巨大手掌，是赞的手势”说明。",
+        "fill_dynamic_objects": "玩家字、勇者字、剑/手势字、巨掌墙体、可切换的手势或按钮文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核手势名称、按钮状态和玩家位置。 玩家格子坐标=AI测算(26,14)；坐标由黄色高亮玩家字测算，像素中心约(1335,834)。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-001": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-开场宽地图/森林入口状态",
+      "review_status": "excluded",
+      "reviewer_note": "误保存，暂时不做这张图",
+      "values": {
+        "fill_source_page": "1",
+        "fill_state_name": "卡泽之盔-开场宽地图/森林入口状态",
+        "fill_player_grid_x": "4",
+        "fill_player_grid_y": "14",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "大范围文字地图，左侧密集墙体/地形，中央有青色高亮区域，右侧为竖向墙体。",
+        "fill_dynamic_objects": "玩家字、地形字、青色高亮区域、入口提示文字。",
+        "fill_related_video_timecode": "36:57-38:34",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核青色区域含义与开场目标。 玩家格子坐标=AI测算(4,14)；坐标由“我”字模板匹配测算，置信度0.66。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "excluded"
+      }
+    },
+    "HELMET-SHOT-002": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第一阶段洞穴/盔提示状态02",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "2",
+        "fill_state_name": "卡泽之盔-第一阶段洞穴/盔提示状态02",
+        "fill_player_grid_x": "15",
+        "fill_player_grid_y": "9",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "右侧竖向河流为主，左侧有多行说明文字，局部出现玩家字和地形连接。",
+        "fill_dynamic_objects": "玩家字、墙体字、盔/帽相关文字、桥或道路字。",
+        "fill_related_video_timecode": "36:57-38:34",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核盔/帽触发点与玩家位置。 玩家格子坐标=AI测算(13,9)；坐标由“我”字模板匹配测算，置信度0.90。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-003": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第一阶段洞穴/盔提示状态03",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "3",
+        "fill_state_name": "卡泽之盔-第一阶段洞穴/盔提示状态03",
+        "fill_player_grid_x": "8",
+        "fill_player_grid_y": "6",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "右侧竖向墙体为主，左侧有多行说明文字，局部出现玩家字和地形连接。",
+        "fill_dynamic_objects": "玩家字、墙体字、盔/帽相关文字、桥或道路字。",
+        "fill_related_video_timecode": "36:57-38:34",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核盔/帽触发点与玩家位置。 玩家格子坐标=AI测算(6,6)；坐标由“我”字模板匹配测算，置信度0.90。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-004": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第一阶段洞穴/盔提示状态04",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "4",
+        "fill_state_name": "卡泽之盔-第一阶段洞穴/盔提示状态04",
+        "fill_player_grid_x": "16",
+        "fill_player_grid_y": "3",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "右侧竖向河流为主，左侧有多行说明文字，局部出现玩家字和地形连接。",
+        "fill_dynamic_objects": "玩家字、墙体字、盔/帽相关文字、桥或道路字。",
+        "fill_related_video_timecode": "36:57-38:34",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核盔/帽触发点与玩家位置。 玩家格子坐标=AI测算(14,3)；坐标由“我”字模板匹配测算，置信度0.52。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-005": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-红框路线/机关提示状态05",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "5",
+        "fill_state_name": "卡泽之盔-红框路线/机关提示状态05",
+        "fill_player_grid_x": "18",
+        "fill_player_grid_y": "7",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴文字地图，左侧说明文字较多，画面有红色箭头或红框标注关键移动/触发路径。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/路字、红框注释、机关提示文字。",
+        "fill_related_video_timecode": "38:35-44:04",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 红框可能是攻略标注，需确认是否进入最终视觉基准。 玩家格子坐标=AI测算(16,7)；坐标由低置信“我”字模板补洞测算，置信度0.63。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-006": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第一阶段洞穴/盔提示状态06",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "6",
+        "fill_state_name": "卡泽之盔-第一阶段洞穴/盔提示状态06",
+        "fill_player_grid_x": "2",
+        "fill_player_grid_y": "13",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "右侧竖向河流为主，左侧有多行说明文字，局部出现玩家字和地形连接。",
+        "fill_dynamic_objects": "玩家字、墙体字、盔/帽相关文字、桥或道路字。",
+        "fill_related_video_timecode": "36:57-38:34",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核盔/帽触发点与玩家位置。 玩家格子坐标=AI测算(0,13)；坐标由低置信“我”字模板补洞测算，置信度0.53。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-007": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-黑屏竖排过渡状态07",
+      "review_status": "modified",
+      "reviewer_note": "玩家掉进河里淹死之后的提示",
+      "values": {
+        "fill_source_page": "7",
+        "fill_state_name": "卡泽之盔-黑屏竖排过渡状态07",
+        "fill_player_grid_x": "0",
+        "fill_player_grid_y": "0",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "黑底画面，仅有少量竖排文字，疑似剧情转场或提示。",
+        "fill_dynamic_objects": "转场文字、玩家/叙述字。",
+        "fill_related_video_timecode": "38:35-44:04",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核该状态的触发条件和对白内容。 玩家格子坐标=AI测算(0,0)；坐标由“我”字模板匹配测算，置信度0.90。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-008": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第一阶段洞穴/盔提示状态08",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "8",
+        "fill_state_name": "卡泽之盔-第一阶段洞穴/盔提示状态08",
+        "fill_player_grid_x": "12",
+        "fill_player_grid_y": "10",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "右侧竖向河流为主，左侧有多行说明文字，局部出现玩家字和地形连接。",
+        "fill_dynamic_objects": "玩家字、墙体字、盔/帽相关文字、桥或道路字。",
+        "fill_related_video_timecode": "36:57-38:34",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核盔/帽触发点与玩家位置。 玩家格子坐标=AI测算(0,11)；坐标由低置信“我”字模板补洞测算，置信度0.42。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-009": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第一阶段洞穴/盔提示状态09",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "9",
+        "fill_state_name": "卡泽之盔-第一阶段洞穴/盔提示状态09",
+        "fill_player_grid_x": "12",
+        "fill_player_grid_y": "10",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "右侧竖向河流为主，左侧有多行说明文字，局部出现玩家字和地形连接。",
+        "fill_dynamic_objects": "玩家字、墙体字、盔/帽相关文字、桥或道路字。",
+        "fill_related_video_timecode": "36:57-38:34",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核盔/帽触发点与玩家位置。 玩家格子坐标=AI测算(10,10)；坐标由“我”字模板匹配测算，置信度0.90。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-010": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第二阶段洞穴推进状态10",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "10",
+        "fill_state_name": "卡泽之盔-第二阶段洞穴推进状态10",
+        "fill_player_grid_x": "7",
+        "fill_player_grid_y": "4",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "右侧为竖向的河流和桥梁，左侧上方为提示文字",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/路/断裂地形、提示文字。",
+        "fill_related_video_timecode": "38:35-44:04",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核桥、路、断裂地形的规则。 玩家格子坐标=AI测算(5,5)；坐标由低置信“我”字模板补洞测算，置信度0.90。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-011": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第二阶段洞穴推进状态11",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "11",
+        "fill_state_name": "卡泽之盔-第二阶段洞穴推进状态11",
+        "fill_player_grid_x": "16",
+        "fill_player_grid_y": "2",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴墙体和竖向河流明显，左侧说明文字提示无法直接前进或需要改变状态。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/路/断裂地形、提示文字。",
+        "fill_related_video_timecode": "38:35-44:04",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核桥、路、断裂地形的规则。 玩家格子坐标=AI测算(16,2)；坐标由低置信“我”字模板补洞测算，置信度0.90。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-012": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第二阶段洞穴推进状态12",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "12",
+        "fill_state_name": "卡泽之盔-第二阶段洞穴推进状态12",
+        "fill_player_grid_x": "6",
+        "fill_player_grid_y": "4",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴墙体和竖向河流明显，左侧说明文字提示无法直接前进或需要改变状态。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/路/断裂地形、提示文字。",
+        "fill_related_video_timecode": "38:35-44:04",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核桥、路、断裂地形的规则。 玩家格子坐标=AI测算(4,4)；坐标由低置信“我”字模板补洞测算，置信度0.37。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-013": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第二阶段洞穴推进状态13",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "13",
+        "fill_state_name": "卡泽之盔-第二阶段洞穴推进状态13",
+        "fill_player_grid_x": "6",
+        "fill_player_grid_y": "4",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴墙体和竖向河流明显，左侧说明文字提示无法直接前进或需要改变状态。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/路/断裂地形、提示文字。",
+        "fill_related_video_timecode": "38:35-44:04",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核桥、路、断裂地形的规则。 玩家格子坐标=AI测算(4,4)；坐标由“我”字模板匹配测算，置信度0.52。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-014": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-红框路线/机关提示状态14",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "14",
+        "fill_state_name": "卡泽之盔-红框路线/机关提示状态14",
+        "fill_player_grid_x": "16",
+        "fill_player_grid_y": "7",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴文字地图，左侧说明文字较多，画面有红色箭头或红框标注关键移动/触发路径。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/路字、红框注释、机关提示文字。",
+        "fill_related_video_timecode": "38:35-44:04",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 红框可能是攻略标注，需确认是否进入最终视觉基准。 玩家格子坐标=AI测算(14,7)；坐标由“我”字模板匹配测算，置信度0.90。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-015": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第二阶段洞穴推进状态15",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "15",
+        "fill_state_name": "卡泽之盔-第二阶段洞穴推进状态15",
+        "fill_player_grid_x": "16",
+        "fill_player_grid_y": "3",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴墙体和竖向河流明显，左侧说明文字提示无法直接前进或需要改变状态。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/路/断裂地形、提示文字。",
+        "fill_related_video_timecode": "38:35-44:04",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核桥、路、断裂地形的规则。 玩家格子坐标=AI测算(14,3)；坐标由低置信“我”字模板补洞测算，置信度0.70。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-016": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第二阶段洞穴推进状态16",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "16",
+        "fill_state_name": "卡泽之盔-第二阶段洞穴推进状态16",
+        "fill_player_grid_x": "1",
+        "fill_player_grid_y": "11",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴墙体和竖向河流明显，左侧说明文字提示无法直接前进或需要改变状态。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/路/断裂地形、提示文字。",
+        "fill_related_video_timecode": "38:35-44:04",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核桥、路、断裂地形的规则。 玩家格子坐标=AI测算(1,11)；坐标由低置信“我”字模板补洞测算，置信度0.70。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-017": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第二阶段洞穴推进状态17",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "17",
+        "fill_state_name": "卡泽之盔-第二阶段洞穴推进状态17",
+        "fill_player_grid_x": "7",
+        "fill_player_grid_y": "13",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴墙体和竖向河流明显，左侧说明文字提示无法直接前进或需要改变状态。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/路/断裂地形、提示文字。",
+        "fill_related_video_timecode": "38:35-44:04",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核桥、路、断裂地形的规则。 玩家格子坐标=AI测算(3,6)；坐标由低置信“我”字模板补洞测算，置信度0.43。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-018": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第二阶段洞穴推进状态18",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "18",
+        "fill_state_name": "卡泽之盔-第二阶段洞穴推进状态18",
+        "fill_player_grid_x": "7",
+        "fill_player_grid_y": "13",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴墙体和竖向河流明显，左侧说明文字提示无法直接前进或需要改变状态。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/路/断裂地形、提示文字。",
+        "fill_related_video_timecode": "38:35-44:04",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核桥、路、断裂地形的规则。 玩家格子坐标=AI测算(5,13)；坐标由“我”字模板匹配测算，置信度0.90。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-019": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第三阶段路径恢复/绕行状态19",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "19",
+        "fill_state_name": "卡泽之盔-第三阶段路径恢复/绕行状态19",
+        "fill_player_grid_x": "3",
+        "fill_player_grid_y": "4",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "左侧叙述文字变多，右侧河流保持，部分画面出现更开阔的底部区域。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/道路字、状态提示文字。",
+        "fill_related_video_timecode": "44:05-46:26",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核阶段切换点和地图变化。 玩家格子坐标=AI测算(1,5)；坐标由“我”字模板匹配测算，置信度0.90。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-020": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第三阶段路径恢复/绕行状态20",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "20",
+        "fill_state_name": "卡泽之盔-第三阶段路径恢复/绕行状态20",
+        "fill_player_grid_x": "20",
+        "fill_player_grid_y": "5",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "左侧叙述文字变多，右侧河流保持，部分画面出现更开阔的底部区域。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/道路字、状态提示文字。",
+        "fill_related_video_timecode": "44:05-46:26",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核阶段切换点和地图变化。 玩家格子坐标=AI测算(0,8)；坐标由低置信“我”字模板补洞测算，置信度0.39。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-021": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第三阶段路径恢复/绕行状态21",
+      "review_status": "modified",
+      "reviewer_note": "“我”和“鸟”合成了“鹅”，坐标（7，4）是玩家",
+      "values": {
+        "fill_source_page": "21",
+        "fill_state_name": "卡泽之盔-第三阶段路径恢复/绕行状态21",
+        "fill_player_grid_x": "7",
+        "fill_player_grid_y": "4",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "左侧叙述文字变多，右侧通道/墙体保持，部分画面出现更开阔的底部区域。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/道路字、状态提示文字。",
+        "fill_related_video_timecode": "44:05-46:26",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核阶段切换点和地图变化。 玩家格子坐标=AI测算(5,4)；坐标由低置信“我”字模板补洞测算，置信度0.41。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-022": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第三阶段路径恢复/绕行状态22",
+      "review_status": "modified",
+      "reviewer_note": "在本图中“鹅”是玩家",
+      "values": {
+        "fill_source_page": "22",
+        "fill_state_name": "卡泽之盔-第三阶段路径恢复/绕行状态22",
+        "fill_player_grid_x": "23",
+        "fill_player_grid_y": "5",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "左侧叙述文字变多，右侧河流保持，部分画面出现更开阔的底部区域。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/道路字、状态提示文字。",
+        "fill_related_video_timecode": "44:05-46:26",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核阶段切换点和地图变化。 玩家格子坐标=AI测算(7,8)；坐标由低置信“我”字模板补洞测算，置信度0.41。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-023": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-红框路线/机关提示状态23",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "23",
+        "fill_state_name": "卡泽之盔-红框路线/机关提示状态23",
+        "fill_player_grid_x": "19",
+        "fill_player_grid_y": "5",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴文字地图，左侧说明文字较多，画面有红色箭头或红框标注关键移动/触发路径。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/路字、红框注释、机关提示文字。",
+        "fill_related_video_timecode": "46:27-50:19",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 红框可能是攻略标注，需确认是否进入最终视觉基准。 玩家格子坐标=AI测算(17,5)；坐标由“我”字模板匹配测算，置信度0.68。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-024": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-第三阶段路径恢复/绕行状态24",
+      "review_status": "modified",
+      "reviewer_note": "在本图中“鹅”是玩家",
+      "values": {
+        "fill_source_page": "24",
+        "fill_state_name": "卡泽之盔-第三阶段路径恢复/绕行状态24",
+        "fill_player_grid_x": "29",
+        "fill_player_grid_y": "4",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "左侧叙述文字变多，右侧通道/墙体保持，部分画面出现更开阔的底部区域。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/道路字、状态提示文字。",
+        "fill_related_video_timecode": "44:05-46:26",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核阶段切换点和地图变化。 玩家格子坐标=AI测算(6,3)；坐标由低置信“我”字模板补洞测算，置信度0.38。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-025": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-黑屏竖排过渡状态25",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "25",
+        "fill_state_name": "卡泽之盔-黑屏竖排过渡状态25",
+        "fill_player_grid_x": "7",
+        "fill_player_grid_y": "12",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "黑底画面，仅有少量竖排文字，疑似剧情转场或提示。",
+        "fill_dynamic_objects": "转场文字、玩家/叙述字。",
+        "fill_related_video_timecode": "46:27-49:04",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核该状态的触发条件和对白内容。 玩家格子坐标=AI测算(6,12)；坐标由“我”字模板匹配测算，置信度0.88。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-026": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-后段机关/结尾状态26",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "26",
+        "fill_state_name": "卡泽之盔-后段机关/结尾状态26",
+        "fill_player_grid_x": "16",
+        "fill_player_grid_y": "3",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "后段洞穴地图，右侧密集河流，左侧说明文字提示最终机关或收束状态。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/路字、机关提示、结尾对白。",
+        "fill_related_video_timecode": "46:27-50:59",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核结尾触发、恢复状态和最终对白。 玩家格子坐标=AI测算(14,3)；坐标由低置信“我”字模板补洞测算，置信度0.70。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-027": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-后段机关/结尾状态27",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "27",
+        "fill_state_name": "卡泽之盔-后段机关/结尾状态27",
+        "fill_player_grid_x": "16",
+        "fill_player_grid_y": "3",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "后段洞穴地图，右侧密集河流和桥梁，左侧说明文字提示最终机关或收束状态。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/路字、机关提示、结尾对白。",
+        "fill_related_video_timecode": "46:27-50:59",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核结尾触发、恢复状态和最终对白。 玩家格子坐标=AI测算(14,3)；坐标由低置信“我”字模板补洞测算，置信度0.54。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-028": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-后段机关/结尾状态28",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "28",
+        "fill_state_name": "卡泽之盔-后段机关/结尾状态28",
+        "fill_player_grid_x": "6",
+        "fill_player_grid_y": "4",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "后段洞穴地图，右侧密集河流，左侧说明文字提示最终机关或收束状态。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/路字、机关提示、结尾对白。",
+        "fill_related_video_timecode": "46:27-50:59",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核结尾触发、恢复状态和最终对白。 玩家格子坐标=AI测算(4,4)；坐标由“我”字模板匹配测算，置信度0.90。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-029": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-后段机关/结尾状态29",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "29",
+        "fill_state_name": "卡泽之盔-后段机关/结尾状态29",
+        "fill_player_grid_x": "16",
+        "fill_player_grid_y": "3",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "后段洞穴地图，右侧密集河流和桥梁，左侧说明文字提示最终机关或收束状态。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/路字、机关提示、结尾对白。",
+        "fill_related_video_timecode": "46:27-50:59",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核结尾触发、恢复状态和最终对白。 玩家格子坐标=AI测算(14,3)；坐标由低置信“我”字模板补洞测算，置信度0.41。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-030": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-红框路线/机关提示状态30",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "30",
+        "fill_state_name": "卡泽之盔-红框路线/机关提示状态30",
+        "fill_player_grid_x": "20",
+        "fill_player_grid_y": "5",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴文字地图，左侧说明文字较多，画面有红色箭头或红框标注关键移动/触发路径。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/路字、红框注释、机关提示文字。",
+        "fill_related_video_timecode": "46:27-50:19",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 红框可能是攻略标注，需确认是否进入最终视觉基准。 玩家格子坐标=AI测算(18,5)；坐标由“我”字模板匹配测算，置信度0.68。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "HELMET-SHOT-031": {
+      "kind": "screenshot",
+      "title": "helmet / 卡泽之盔-后段机关/结尾状态31",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "31",
+        "fill_state_name": "卡泽之盔-后段机关/结尾状态31",
+        "fill_player_grid_x": "8",
+        "fill_player_grid_y": "9",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "后段洞穴地图，右侧密集河流和桥梁，左侧说明文字提示最终机关或收束状态。",
+        "fill_dynamic_objects": "玩家字、墙体字、桥/路字、机关提示、结尾对白。",
+        "fill_related_video_timecode": "46:27-50:59",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核结尾触发、恢复状态和最终对白。 玩家格子坐标=AI测算(5,13)；坐标由低置信“我”字模板补洞测算，置信度0.38。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-001": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-洞穴教学状态01",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "1",
+        "fill_state_name": "贝克思贝斯之剑-洞穴教学状态01",
+        "fill_player_grid_x": "4",
+        "fill_player_grid_y": "11",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图；上方或中部有横向叙述/提示文字，角色字位于洞穴内。",
+        "fill_dynamic_objects": "玩家字、墙体字、教学提示文字、可交互文字/道路。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核教学提示原文和起始位置。 玩家格子坐标=AI测算(4,11)；坐标由“我”字模板匹配测算，置信度0.64。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-002": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-洞穴教学状态02",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "2",
+        "fill_state_name": "贝克思贝斯之剑-洞穴教学状态02",
+        "fill_player_grid_x": "10",
+        "fill_player_grid_y": "16",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图；中部有横向叙述/提示文字，角色字位于洞穴内，中部具有可以触发的句子。",
+        "fill_dynamic_objects": "玩家字、墙体字、教学提示文字、可交互文字/道路。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核教学提示原文和起始位置。 玩家格子坐标=AI测算(11,9)；坐标由低置信“我”字模板补洞测算，置信度0.45。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-003": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-洞穴教学状态03",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "3",
+        "fill_state_name": "贝克思贝斯之剑-洞穴教学状态03",
+        "fill_player_grid_x": "28",
+        "fill_player_grid_y": "10",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图；中部有横向叙述/提示文字，角色字位于洞穴内右侧，右侧岩石有一个通道",
+        "fill_dynamic_objects": "玩家字、墙体字、教学提示文字、可交互文字/道路。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核教学提示原文和起始位置。 玩家格子坐标=AI测算(28,10)；坐标由“我”字模板匹配测算，置信度0.86。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-004": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-洞穴教学状态04",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "4",
+        "fill_state_name": "贝克思贝斯之剑-洞穴教学状态04",
+        "fill_player_grid_x": "8",
+        "fill_player_grid_y": "11",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图；中部有横向叙述/提示文字，角色字位于洞穴内，右侧有史莱姆文字。",
+        "fill_dynamic_objects": "玩家字、墙体字、教学提示文字、可交互文字/道路。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核教学提示原文和起始位置。 玩家格子坐标=AI测算(8,11)；坐标由“我”字模板匹配测算，置信度0.66。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-005": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-洞穴教学状态05",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "5",
+        "fill_state_name": "贝克思贝斯之剑-洞穴教学状态05",
+        "fill_player_grid_x": "12",
+        "fill_player_grid_y": "8",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图；中部有横向叙述/提示文字，角色字位于洞穴内，右侧、下侧有史莱姆文字。",
+        "fill_dynamic_objects": "玩家字、墙体字、教学提示文字、可交互文字/道路。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核教学提示原文和起始位置。 玩家格子坐标=AI测算(18,7)；坐标由低置信“我”字模板补洞测算，置信度0.44。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-006": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-洞穴教学状态06",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "6",
+        "fill_state_name": "贝克思贝斯之剑-洞穴教学状态06",
+        "fill_player_grid_x": "13",
+        "fill_player_grid_y": "9",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图；中部有横向叙述/提示文字，角色字位于洞穴内，右侧、下侧有史莱姆",
+        "fill_dynamic_objects": "玩家字、墙体字、教学提示文字、可交互文字/道路。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核教学提示原文和起始位置。 玩家格子坐标=AI测算(13,9)；坐标由“我”字模板匹配测算，置信度0.66。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-007": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-洞穴教学状态07",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "7",
+        "fill_state_name": "贝克思贝斯之剑-洞穴教学状态07",
+        "fill_player_grid_x": "17",
+        "fill_player_grid_y": "8",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图；中部有横向叙述/提示文字，角色字位于洞穴内，右侧、下侧有史莱姆文字。",
+        "fill_dynamic_objects": "玩家字、墙体字、教学提示文字、可交互文字/道路。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核教学提示原文和起始位置。 玩家格子坐标=AI测算(9,7)；坐标由低置信“我”字模板补洞测算，置信度0.45。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-008": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-洞穴教学状态08",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "8",
+        "fill_state_name": "贝克思贝斯之剑-洞穴教学状态08",
+        "fill_player_grid_x": "17",
+        "fill_player_grid_y": "9",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图；中部有横向叙述/提示文字，角色字位于洞穴内，右侧、下侧有史莱姆文字。",
+        "fill_dynamic_objects": "玩家字、墙体字、教学提示文字、可交互文字/道路。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核教学提示原文和起始位置。 玩家格子坐标=AI测算(17,9)；坐标由“我”字模板匹配测算，置信度0.66。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-009": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-黑屏竖排对白/转场09",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "9",
+        "fill_state_name": "贝克思贝斯之剑-黑屏竖排对白/转场09",
+        "fill_player_grid_x": "17",
+        "fill_player_grid_y": "9",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "黑底画面，仅有少量竖排文字或单个角色字，“我”死亡。",
+        "fill_dynamic_objects": "对白文字、玩家/叙述字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核该图是否属于转场、死亡提示或剧情对白。 玩家格子坐标=AI测算(0,0)；坐标由“我”字模板匹配测算，置信度0.88。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-010": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-洞穴机关/剑提示状态10",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "10",
+        "fill_state_name": "贝克思贝斯之剑-洞穴机关/剑提示状态10",
+        "fill_player_grid_x": "16",
+        "fill_player_grid_y": "8",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图；上方或中部有横向叙述/提示文字，角色字位于洞穴内，右侧、下侧有史莱姆文字。",
+        "fill_dynamic_objects": "玩家字、剑相关文字、提示条、洞穴墙体、可触发文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核剑、空、墙等关键字的触发关系。 玩家格子坐标=AI测算(12,7)；坐标由低置信“我”字模板补洞测算，置信度0.43。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-011": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-洞穴机关/剑提示状态11",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "11",
+        "fill_state_name": "贝克思贝斯之剑-洞穴机关/剑提示状态11",
+        "fill_player_grid_x": "16",
+        "fill_player_grid_y": "8",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图；上方或中部有横向叙述/提示文字，角色字位于洞穴内，右侧、下侧有史莱姆文字。",
+        "fill_dynamic_objects": "玩家字、剑相关文字、提示条、洞穴墙体、可触发文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核剑、空、墙等关键字的触发关系。 玩家格子坐标=AI测算(16,9)；坐标由“我”字模板匹配测算，置信度0.66。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-012": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-洞穴机关/剑提示状态12",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "12",
+        "fill_state_name": "贝克思贝斯之剑-洞穴机关/剑提示状态12",
+        "fill_player_grid_x": "17",
+        "fill_player_grid_y": "10",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图，石墙文字减少；下方有横向叙述/提示文字，角色字位于洞穴内。",
+        "fill_dynamic_objects": "玩家字、剑相关文字、提示条、洞穴墙体、可触发文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核剑、空、墙等关键字的触发关系。 玩家格子坐标=AI测算(6,15)；坐标由“我”字模板匹配测算，置信度0.69。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-013": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-洞穴机关/剑提示状态13",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "13",
+        "fill_state_name": "贝克思贝斯之剑-洞穴机关/剑提示状态13",
+        "fill_player_grid_x": "21",
+        "fill_player_grid_y": "8",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图；中部有横向叙述/提示文字，角色字位于洞穴内，右侧、下侧有史莱姆文字。",
+        "fill_dynamic_objects": "玩家字、剑相关文字、提示条、洞穴墙体、可触发文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核剑、空、墙等关键字的触发关系。 玩家格子坐标=AI测算(21,8)；坐标由“我”字模板匹配测算，置信度0.66。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-014": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-洞穴机关/剑提示状态14",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "14",
+        "fill_state_name": "贝克思贝斯之剑-洞穴机关/剑提示状态14",
+        "fill_player_grid_x": "4",
+        "fill_player_grid_y": "8",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图；中部有横向叙述/提示文字，角色字位于洞穴内，右侧、下侧史莱姆文字消失，变为“柠”字。",
+        "fill_dynamic_objects": "玩家字、剑相关文字、提示条、洞穴墙体、可触发文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核剑、空、墙等关键字的触发关系。 玩家格子坐标=AI测算(4,8)；坐标由低置信“我”字模板补洞测算，置信度0.42。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-015": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-洞穴机关/剑提示状态15",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "15",
+        "fill_state_name": "贝克思贝斯之剑-洞穴机关/剑提示状态15",
+        "fill_player_grid_x": "8",
+        "fill_player_grid_y": "8",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图；中部有横向叙述/提示文字，角色字位于洞穴内，右侧、下侧有史莱姆文字。",
+        "fill_dynamic_objects": "玩家字、剑相关文字、提示条、洞穴墙体、可触发文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核剑、空、墙等关键字的触发关系。 玩家格子坐标=AI测算(8,8)；坐标由低置信“我”字模板补洞测算，置信度0.41。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-016": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-洞穴机关/剑提示状态16",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "16",
+        "fill_state_name": "贝克思贝斯之剑-洞穴机关/剑提示状态16",
+        "fill_player_grid_x": "8",
+        "fill_player_grid_y": "8",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图；中部有横向触发剧情文字，角色字位于洞穴内，右侧、下侧有史莱姆文字。",
+        "fill_dynamic_objects": "玩家字、剑相关文字、提示条、洞穴墙体、可触发文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核剑、空、墙等关键字的触发关系。 玩家格子坐标=AI测算(8,8)；坐标由低置信“我”字模板补洞测算，置信度0.42。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-017": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-洞穴机关/剑提示状态17",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "17",
+        "fill_state_name": "贝克思贝斯之剑-洞穴机关/剑提示状态17",
+        "fill_player_grid_x": "14",
+        "fill_player_grid_y": "9",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图；中部有横向叙述/提示文字，角色字位于洞穴内，右侧、下侧有史莱姆文字。",
+        "fill_dynamic_objects": "玩家字、剑相关文字、提示条、洞穴墙体、可触发文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核剑、空、墙等关键字的触发关系。 玩家格子坐标=AI测算(14,9)；坐标由“我”字模板匹配测算，置信度0.66。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-018": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-黑屏竖排对白/转场18",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "18",
+        "fill_state_name": "贝克思贝斯之剑-黑屏竖排对白/转场18",
+        "fill_player_grid_x": "14",
+        "fill_player_grid_y": "9",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "黑底画面，中部竖排文字或单个角色字，“我”谁死了场景。",
+        "fill_dynamic_objects": "对白文字、玩家/叙述字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核该图是否属于转场、死亡提示或剧情对白。 玩家格子坐标=AI测算(0,0)；坐标由“我”字模板匹配测算，置信度0.88。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-019": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-洞穴机关/剑提示状态19",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "19",
+        "fill_state_name": "贝克思贝斯之剑-洞穴机关/剑提示状态19",
+        "fill_player_grid_x": "22",
+        "fill_player_grid_y": "8",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图；中部有横向提示文字，角色字位于洞穴内，右侧、下侧有史莱姆文字。",
+        "fill_dynamic_objects": "玩家字、剑相关文字、提示条、洞穴墙体、可触发文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核剑、空、墙等关键字的触发关系。 玩家格子坐标=AI测算(8,8)；坐标由低置信“我”字模板补洞测算，置信度0.41。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-020": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-洞穴机关/剑提示状态20",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "20",
+        "fill_state_name": "贝克思贝斯之剑-洞穴机关/剑提示状态20",
+        "fill_player_grid_x": "22",
+        "fill_player_grid_y": "8",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图；中部有横向叙述文字，角色字位于洞穴内。",
+        "fill_dynamic_objects": "玩家字、剑相关文字、提示条、洞穴墙体、可触发文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核剑、空、墙等关键字的触发关系。 玩家格子坐标=AI测算(22,8)；坐标由“我”字模板匹配测算，置信度0.66。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-021": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-外部遗迹/敌人区域状态21",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "21",
+        "fill_state_name": "贝克思贝斯之剑-外部遗迹/敌人区域状态21",
+        "fill_player_grid_x": "16",
+        "fill_player_grid_y": "4",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "浅色外部区域字，由无动画字构成，“蛇”字构成的物体在追逐。",
+        "fill_dynamic_objects": "玩家字、敌人/障碍字、石墙字、竖向道路或场景说明文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核敌人、机关、通路和胜负状态。 玩家格子坐标=AI测算(14,15)；坐标由低置信“我”字模板补洞测算，置信度0.31。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-022": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-外部遗迹/敌人区域状态22",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "22",
+        "fill_state_name": "贝克思贝斯之剑-外部遗迹/敌人区域状态22",
+        "fill_player_grid_x": "12",
+        "fill_player_grid_y": "6",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "浅色外部区域字，由无动画字构成，“蛇”字构成的物体在追逐，上方出现障碍字阻断逃跑路线。并发射“媚眼”。",
+        "fill_dynamic_objects": "玩家字、敌人/障碍字、石墙字、竖向道路或场景说明文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核敌人、机关、通路和胜负状态。 玩家格子坐标=AI测算(13,13)；坐标由低置信“我”字模板补洞测算，置信度0.33。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-023": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-外部遗迹/敌人区域状态23",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "23",
+        "fill_state_name": "贝克思贝斯之剑-外部遗迹/敌人区域状态23",
+        "fill_player_grid_x": "22",
+        "fill_player_grid_y": "7",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "浅色外部区域字，由石墙文字块组成，下部有提示文字。",
+        "fill_dynamic_objects": "玩家字、敌人/障碍字、石墙字、竖向道路或场景说明文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核敌人、机关、通路和胜负状态。 玩家格子坐标=AI测算(16,1)；坐标由“我”字模板匹配测算，置信度0.88。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-024": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-黑屏竖排对白/转场24",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "24",
+        "fill_state_name": "贝克思贝斯之剑-黑屏竖排对白/转场24",
+        "fill_player_grid_x": "16",
+        "fill_player_grid_y": "7",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "死亡场景，中部有竖排文字，“我”被射死了场景。",
+        "fill_dynamic_objects": "对白文字、玩家/叙述字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核该图是否属于转场、死亡提示或剧情对白。 玩家格子坐标=AI测算(0,0)；坐标由“我”字模板匹配测算，置信度0.81。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-025": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-外部遗迹/敌人区域状态25",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "25",
+        "fill_state_name": "贝克思贝斯之剑-外部遗迹/敌人区域状态25",
+        "fill_player_grid_x": "18",
+        "fill_player_grid_y": "4",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "浅色外部区域字，由无动画字构成，“蛇”字构成的物体在追逐，上方出现障碍字阻断逃跑路线。",
+        "fill_dynamic_objects": "玩家字、敌人/障碍字、石墙字、竖向道路或场景说明文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核敌人、机关、通路和胜负状态。 玩家格子坐标=AI测算(16,17)；坐标由低置信“我”字模板补洞测算，置信度0.39。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-026": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-外部遗迹/敌人区域状态26",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "26",
+        "fill_state_name": "贝克思贝斯之剑-外部遗迹/敌人区域状态26",
+        "fill_player_grid_x": "13",
+        "fill_player_grid_y": "4",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "浅色外部区域字，由无动画字构成，“蛇”字构成的物体在追逐，上方出现障碍字阻断逃跑路线。",
+        "fill_dynamic_objects": "玩家字、敌人/障碍字、石墙字、竖向道路或场景说明文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核敌人、机关、通路和胜负状态。 玩家格子坐标=AI测算(18,3)；坐标由低置信“我”字模板补洞测算，置信度0.38。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-027": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-外部遗迹/敌人区域状态27",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "27",
+        "fill_state_name": "贝克思贝斯之剑-外部遗迹/敌人区域状态27",
+        "fill_player_grid_x": "22",
+        "fill_player_grid_y": "3",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "浅色外部区域字，由无动画字构成，“蛇”字构成的物体在追逐，上方出现障碍字阻断逃跑路线。",
+        "fill_dynamic_objects": "玩家字、敌人/障碍字、石墙字、竖向道路或场景说明文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核敌人、机关、通路和胜负状态。 玩家格子坐标=AI测算(27,2)；坐标由低置信“我”字模板补洞测算，置信度0.34。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-028": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-外部遗迹/敌人区域状态28",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "28",
+        "fill_state_name": "贝克思贝斯之剑-外部遗迹/敌人区域状态28",
+        "fill_player_grid_x": "15",
+        "fill_player_grid_y": "4",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "浅色外部区域字，由无动画字构成，“蛇”字构成的物体在追逐，上方出现障碍字阻断逃跑路线。",
+        "fill_dynamic_objects": "玩家字、敌人/障碍字、石墙字、竖向道路或场景说明文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核敌人、机关、通路和胜负状态。 玩家格子坐标=AI测算(13,15)；坐标由低置信“我”字模板补洞测算，置信度0.41。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-029": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-外部遗迹/敌人区域状态29",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "29",
+        "fill_state_name": "贝克思贝斯之剑-外部遗迹/敌人区域状态29",
+        "fill_player_grid_x": "14",
+        "fill_player_grid_y": "2",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "浅色外部区域字，由无动画字构成，“蛇”字构成的物体在追逐，上方出现障碍字阻断逃跑路线。",
+        "fill_dynamic_objects": "玩家字、敌人/障碍字、石墙字、竖向道路或场景说明文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核敌人、机关、通路和胜负状态。 玩家格子坐标=AI测算(14,2)；坐标由低置信“我”字模板补洞测算，置信度0.56。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-030": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-外部遗迹/敌人区域状态30",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "30",
+        "fill_state_name": "贝克思贝斯之剑-外部遗迹/敌人区域状态30",
+        "fill_player_grid_x": "10",
+        "fill_player_grid_y": "4",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "浅色外部区域字，由无动画字构成，“蛇”字构成的物体在追逐，上方出现障碍字阻断逃跑路线。",
+        "fill_dynamic_objects": "玩家字、敌人/障碍字、石墙字、竖向道路或场景说明文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核敌人、机关、通路和胜负状态。 玩家格子坐标=AI测算(17,3)；坐标由低置信“我”字模板补洞测算，置信度0.45。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-031": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-外部遗迹/敌人区域状态31",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "31",
+        "fill_state_name": "贝克思贝斯之剑-外部遗迹/敌人区域状态31",
+        "fill_player_grid_x": "16",
+        "fill_player_grid_y": "8",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "上方出现叙述文字，下方“蛇”追逐物体被消灭。",
+        "fill_dynamic_objects": "玩家字、敌人/障碍字、石墙字、竖向道路或场景说明文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核敌人、机关、通路和胜负状态。 玩家格子坐标=AI测算(7,7)；坐标由“我”字模板匹配测算，置信度0.88。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-032": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-结尾对白/收束状态32",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "32",
+        "fill_state_name": "贝克思贝斯之剑-结尾对白/收束状态32",
+        "fill_player_grid_x": "22",
+        "fill_player_grid_y": "8",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图，石墙文字减少；上方有横向叙述/提示文字，角色字位于洞穴内。",
+        "fill_dynamic_objects": "剧情对白、玩家字、洞穴墙体或转场文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核结尾对白顺序与通关触发条件。 玩家格子坐标=AI测算(22,9)；坐标由“我”字模板匹配测算，置信度0.88。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-033": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-结尾对白/收束状态33",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "33",
+        "fill_state_name": "贝克思贝斯之剑-结尾对白/收束状态33",
+        "fill_player_grid_x": "12",
+        "fill_player_grid_y": "8",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图，石墙文字减少；下方有横向叙述/提示文字，角色字位于洞穴内。",
+        "fill_dynamic_objects": "剧情对白、玩家字、洞穴墙体或转场文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核结尾对白顺序与通关触发条件。 玩家格子坐标=AI测算(12,8)；坐标由“我”字模板匹配测算，置信度0.88。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-034": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-结尾对白/收束状态34",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "34",
+        "fill_state_name": "贝克思贝斯之剑-结尾对白/收束状态34",
+        "fill_player_grid_x": "12",
+        "fill_player_grid_y": "12",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图，石墙文字减少，下方出现一条通道，上方有横向叙述/提示文字，角色字位于洞穴内开始掉落。",
+        "fill_dynamic_objects": "剧情对白、玩家字、洞穴墙体或转场文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核结尾对白顺序与通关触发条件。 玩家格子坐标=AI测算(14,1)；坐标由低置信“我”字模板补洞测算，置信度0.38。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-035": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-结尾对白/收束状态35",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "35",
+        "fill_state_name": "贝克思贝斯之剑-结尾对白/收束状态35",
+        "fill_player_grid_x": "20",
+        "fill_player_grid_y": "6",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图，中部有横向叙述/提示文字，角色字位于洞穴内。",
+        "fill_dynamic_objects": "剧情对白、玩家字、洞穴墙体或转场文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核结尾对白顺序与通关触发条件。 玩家格子坐标=AI测算(20,6)；坐标由“我”字模板匹配测算，置信度0.88。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-036": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-结尾对白/收束状态36",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "36",
+        "fill_state_name": "贝克思贝斯之剑-结尾对白/收束状态36",
+        "fill_player_grid_x": "18",
+        "fill_player_grid_y": "7",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "洞穴石墙包围的文字地图，中部有横向叙述/提示文字，角色字位于洞穴内。",
+        "fill_dynamic_objects": "剧情对白、玩家字、洞穴墙体或转场文字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核结尾对白顺序与通关触发条件。 玩家格子坐标=AI测算(15,8)；坐标由低置信“我”字模板补洞测算，置信度0.45。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    },
+    "SWORD-SHOT-037": {
+      "kind": "screenshot",
+      "title": "sword / 贝克思贝斯之剑-黑屏竖排对白/转场37",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_source_page": "37",
+        "fill_state_name": "贝克思贝斯之剑-黑屏竖排对白/转场37",
+        "fill_player_grid_x": "18",
+        "fill_player_grid_y": "7",
+        "fill_player_direction": "",
+        "fill_camera_x": "",
+        "fill_camera_y": "",
+        "fill_visible_text_layout": "竖排文字，“我”摔死了。",
+        "fill_dynamic_objects": "对白文字、玩家/叙述字。",
+        "fill_related_video_timecode": "",
+        "fill_notes": "AI初标，待人工确认；根据截图联络表粗略识别，坐标、朝向、帧号未精确标注。 重点复核该图是否属于转场、死亡提示或剧情对白。 玩家格子坐标=AI测算(0,0)；坐标由“我”字模板匹配测算，置信度0.88。 朝向按要求暂不填写；镜头位置字段暂留空。",
+        "status": "manual_required"
+      }
+    }
+  }
+}

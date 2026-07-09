@@ -1,0 +1,108 @@
+$ErrorActionPreference = "Stop"
+
+$WorkspaceRoot = Split-Path -Parent $PSScriptRoot
+$OutDir = Join-Path $WorkspaceRoot "harness/baselines/source_index"
+New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
+
+$SourceRoot = Get-ChildItem -LiteralPath $WorkspaceRoot -Recurse -Directory -Filter "res" |
+    Where-Object {
+        (Test-Path -LiteralPath (Join-Path $_.FullName "Scripts")) -and
+        (Test-Path -LiteralPath (Join-Path $_.FullName "Scenes")) -and
+        (Test-Path -LiteralPath (Join-Path $_.FullName "Sounds"))
+    } |
+    Select-Object -First 1 -ExpandProperty FullName
+if ($SourceRoot) {
+    $SourceRoot = [string]$SourceRoot
+}
+
+function Get-Sha256($Path) {
+    try {
+        return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()
+    }
+    catch {
+        return $null
+    }
+}
+
+$patterns = @(
+    @{ level_id = "core"; reason = "core script"; globs = @("Scripts/BaseCharacter*", "Scripts/Player*", "Scripts/MainMap*", "Scripts/Typewriter*", "Scripts/FixedMap*", "Scripts/Event*", "Scripts/BigEvent*") },
+    @{ level_id = "sword"; reason = "sword key resource"; globs = @("Scenes/Animations/Backspace*", "Scenes/Animations/slime*", "Scenes/Animations/ch5_slime_cut*", "Scenes/Animations/snake*", "Scenes/Animations/ch5_snake*", "Scripts/snake*", "Scripts/SnakeHouse*", "Scripts/Use_once/ch2_slimeEvent*") },
+    @{ level_id = "glove"; reason = "glove candidate resource"; globs = @("Scenes/Animations/ch3*", "Sprites/ch3*", "Sounds/bgm/ch3*", "Scripts/*glove*", "Scripts/*hand*") },
+    @{ level_id = "helmet"; reason = "helmet key resource"; globs = @("Scenes/Animations/Bridge*", "Scenes/Animations/Helmet*", "Scenes/Animations/ch4_helmet*", "Scenes/Animations/ch4_Ace*", "Sounds/bgm/ch4*") },
+    @{ level_id = "audio"; reason = "audio resource"; globs = @("Sounds/*.ogg", "Sounds/*.wav") },
+    @{ level_id = "font"; reason = "font resource"; globs = @("Fonts/*") }
+)
+
+$records = New-Object System.Collections.Generic.List[object]
+if (-not $SourceRoot) {
+    $records.Add([ordered]@{
+        id = "SRC-ROOT-MISSING"
+        feature_id = "F004"
+        level_id = "core"
+        source_type = "source_tree"
+        source_path = "reference_source_root"
+        source_timecode = $null
+        source_frame = $null
+        source_scene = $null
+        status = "blocked"
+        notes = "Original unpacked source root was not found."
+        resource_kind = "missing"
+        resource_path = "reference_source_root"
+        resource_name = "res"
+        matched_reason = "source root missing"
+        file_size = $null
+        sha256 = $null
+    })
+}
+else {
+    $sourceRootRelative = $SourceRoot.Substring($WorkspaceRoot.Length + 1).Replace("\", "/")
+    $allFiles = @(Get-ChildItem -LiteralPath $SourceRoot -Recurse -File)
+    $seen = @{}
+    foreach ($group in $patterns) {
+        foreach ($glob in $group.globs) {
+            foreach ($file in $allFiles) {
+                $relative = $file.FullName.Substring($SourceRoot.Length + 1).Replace("\", "/")
+                if (-not ($relative -like $glob)) { continue }
+                $key = "$($group.level_id)|$relative|$($group.reason)"
+                if ($seen.ContainsKey($key)) { continue }
+                $seen[$key] = $true
+                $kind = if ($relative -like "Scenes/*") { "scene" } elseif ($relative -like "Scripts/*") { "script" } elseif ($relative -like "Sounds/*") { "audio" } elseif ($relative -like "Fonts/*") { "font" } elseif ($relative -like "Sprites/*") { "sprite" } else { "resource" }
+                $records.Add([ordered]@{
+                    id = "SRC-" + (($records.Count + 1).ToString("D5"))
+                    feature_id = "F004"
+                    level_id = $group.level_id
+                    source_type = "source_tree"
+                    source_path = $sourceRootRelative
+                    source_timecode = $null
+                    source_frame = $null
+                    source_scene = if ($kind -eq "scene") { $relative } else { $null }
+                    status = "ai_analysis_required"
+                    notes = "Resource indexed. Source ownership and behavior mapping are assigned to AI analysis, not human manual review."
+                    resource_kind = $kind
+                    resource_path = "$sourceRootRelative/$relative"
+                    resource_name = $file.Name
+                    matched_reason = $group.reason
+                    file_size = $file.Length
+                    sha256 = Get-Sha256 $file.FullName
+                })
+            }
+        }
+    }
+}
+
+@{
+    generated_at = (Get-Date).ToString("o")
+    generator = "tools/index_original_sources.ps1"
+    source_root = if ($SourceRoot) { $SourceRoot.Substring($WorkspaceRoot.Length + 1).Replace("\", "/") } else { $null }
+    records = @($records.ToArray())
+} | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $OutDir "source_index.json") -Encoding UTF8
+
+@"
+# Source Index
+
+Generated by `tools/index_original_sources.ps1`.
+
+The script locates the unpacked original `res` directory by structure and indexes core scripts, key sword resources, glove candidates, helmet resources, audio, and fonts. The index proves resource presence and SHA256 only; exact level/event ownership is assigned to AI source analysis.
+"@ | Set-Content -LiteralPath (Join-Path $WorkspaceRoot "docs/source_index.md") -Encoding UTF8
+
+Write-Host "Source index generated."

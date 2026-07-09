@@ -1,0 +1,29 @@
+{
+  "schema_id": "wordgame.baseline.screenshot.v1",
+  "required_fields": [
+    "id",
+    "feature_id",
+    "level_id",
+    "source_type",
+    "source_path",
+    "source_timecode",
+    "source_frame",
+    "source_scene",
+    "status",
+    "notes",
+    "screenshot_id",
+    "source_page",
+    "state_name",
+    "original_image_path",
+    "original_width",
+    "original_height",
+    "player_grid",
+    "player_direction",
+    "camera_position",
+    "visible_text_layout",
+    "dynamic_objects",
+    "replay_image_path",
+    "diff_image_path"
+  ],
+  "status_values": ["confirmed", "manual_required", "blocked", "excluded"]
+}

@@ -1,0 +1,3058 @@
+[
+  {
+    "event_id": "SHARED-AUDIO-CANDIDATE",
+    "event_name": "SHARED-AUDIO-CANDIDATE",
+    "resources": 404,
+    "confirmed_like": 0,
+    "scenes": [],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch1/BGM_1_10_rookie_village_A.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch1/BGM_1_10_rookie_village_AB.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch1/BGM_1_17_shop.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch1/BGM_1_1_room1.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch1/BGM_1_28_elder.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch1/BGM_1_31_faith_A.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch1/BGM_1_31_faith_AB.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch1/BGM_1_32_intro.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch1/BGM_1_33_holy_tower.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch1/BGM_1_6_room2.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch1/BGM_title.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch1/Room_whitenoise_louder.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_19_outpost.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_20_maze.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_21_vault_intro.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_29_vault_A.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_29_vault_AB.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_2_outpost_outside.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_34_giant_intro_2_A.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_34_giant_intro_2_AB.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_38_illusion.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_38_illusion_1.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_38_illusion_2.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_38_illusion_3.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_38_illusion_4.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_3_church.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_49_giant_A.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_49_giant_AB.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_61.1_giant_2.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_61.1_giant_2_A.ogg",
+        "confidence": "medium"
+      }
+    ],
+    "scripts": [],
+    "map_sources": [
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/backspace_1.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第一章/XX_再生父母之塔.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第七章/09_魔龍_黑洞.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第五章/26_議事廳_踩巨人.tscn",
+        "event_name": "MAP-CANDIDATE"
+      }
+    ],
+    "notes": [
+      "推断事件：SHARED-AUDIO-CANDIDATE。",
+      "推断事件：SHARED-AUDIO-CANDIDATE。",
+      "推断事件：SHARED-AUDIO-CANDIDATE。",
+      "推断事件：SHARED-AUDIO-CANDIDATE。",
+      "推断事件：SHARED-AUDIO-CANDIDATE。",
+      "推断事件：SHARED-AUDIO-CANDIDATE。",
+      "推断事件：SHARED-AUDIO-CANDIDATE。",
+      "推断事件：SHARED-AUDIO-CANDIDATE。",
+      "推断事件：SHARED-AUDIO-CANDIDATE。",
+      "推断事件：SHARED-AUDIO-CANDIDATE。"
+    ]
+  },
+  {
+    "event_id": "HELMET-AUDIO-CANDIDATE",
+    "event_name": "HELMET-AUDIO-CANDIDATE",
+    "resources": 117,
+    "confirmed_like": 0,
+    "scenes": [],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第八章 音效/SE_4_10_machine.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/MEL/MEL_4_21_word_join.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/MEL/MEL_4_21_word_leave.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/MEL/MEL_4_4_success.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_12_dragon_back_A.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_12_dragon_back_B.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_12_dragon_back_C.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_12_dragon_back_D.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_12_dragon_back_E.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_12_dragon_back_F.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_12_dragon_back_G.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_12_dragon_back_H.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_1_snow_little_A.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_1_snow_little_B.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_1_snow_little_C.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_1_snow_little_D.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_24_walk_Stone_A.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_24_walk_Stone_B.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_24_walk_Stone_C.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_24_walk_Stone_D.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_4_ruin_A.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_4_ruin_B.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_4_ruin_C.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_4_ruin_D.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_9.1_abstract_A.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_9.1_abstract_B.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_9.1_abstract_C.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_9.1_abstract_D.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第七章 音效/SE_4_13_button_push.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第七章 音效/SE_4_15.1_seal_break_A.wav",
+        "confidence": "medium"
+      }
+    ],
+    "scripts": [],
+    "map_sources": [
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第一章/XX_再生父母之塔.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第八章/家/t1.tscn",
+        "event_name": "MAP-CANDIDATE"
+      }
+    ],
+    "notes": [
+      "推断事件：HELMET-AUDIO-CANDIDATE。",
+      "推断事件：HELMET-AUDIO-CANDIDATE。",
+      "推断事件：HELMET-AUDIO-CANDIDATE。",
+      "推断事件：HELMET-AUDIO-CANDIDATE。",
+      "推断事件：HELMET-AUDIO-CANDIDATE。",
+      "推断事件：HELMET-AUDIO-CANDIDATE。",
+      "推断事件：HELMET-AUDIO-CANDIDATE。",
+      "推断事件：HELMET-AUDIO-CANDIDATE。",
+      "推断事件：HELMET-AUDIO-CANDIDATE。",
+      "推断事件：HELMET-AUDIO-CANDIDATE。"
+    ]
+  },
+  {
+    "event_id": "SWORD-SEG-SNAKE",
+    "event_name": "剑关-蛇妖段",
+    "resources": 62,
+    "confirmed_like": 54,
+    "scenes": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/snake_hurt.tscn",
+        "animations": [
+          {
+            "name": "hurt",
+            "length": "0.5",
+            "track_count": 3
+          },
+          {
+            "name": "hurt",
+            "length": "0.5",
+            "track_count": 3
+          },
+          {
+            "name": "hurt",
+            "length": "0.5",
+            "track_count": 3
+          },
+          {
+            "name": "hurt",
+            "length": "0.5",
+            "track_count": 3
+          },
+          {
+            "name": "hurt",
+            "length": "0.5",
+            "track_count": 3
+          },
+          {
+            "name": "hurt",
+            "length": "0.5",
+            "track_count": 3
+          },
+          {
+            "name": "hurt",
+            "length": "0.5",
+            "track_count": 3
+          },
+          {
+            "name": "hurt",
+            "length": "0.5",
+            "track_count": 3
+          },
+          {
+            "name": "really_hurt",
+            "length": "1.5",
+            "track_count": 9
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/snake_ray.tscn",
+        "animations": [
+          {
+            "name": "default",
+            "length": "0.5",
+            "track_count": 2
+          },
+          {
+            "name": "default",
+            "length": "0.5",
+            "track_count": 2
+          },
+          {
+            "name": "default",
+            "length": "0.5",
+            "track_count": 2
+          },
+          {
+            "name": "default",
+            "length": "0.5",
+            "track_count": 2
+          },
+          {
+            "name": "hit",
+            "length": "0.5",
+            "track_count": 6
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch5_snake_circle.tscn",
+        "animations": [
+          {
+            "name": "Breathe",
+            "length": "5.0",
+            "track_count": 1
+          },
+          {
+            "name": "Setup",
+            "length": "0.001",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "3.0",
+            "track_count": 9
+          },
+          {
+            "name": "CircleB",
+            "length": "3.0",
+            "track_count": 9
+          },
+          {
+            "name": "CircleIn",
+            "length": "4.0",
+            "track_count": 9
+          },
+          {
+            "name": "Setup",
+            "length": "0.001",
+            "track_count": 9
+          },
+          {
+            "name": "Stare",
+            "length": "",
+            "track_count": 10
+          },
+          {
+            "name": "default",
+            "length": "3.0",
+            "track_count": 9
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch5_snake_stair.tscn",
+        "animations": [
+          {
+            "name": "SnakeAppear",
+            "length": "5.0",
+            "track_count": 6
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch5_snake_trans.tscn",
+        "animations": [
+          {
+            "name": "Wave",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Wave",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Wave",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Wave",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Wave",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Wave",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Wave",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Wave",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Wave",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Wave",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "Tooth",
+            "length": "",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "1.2",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "8.5",
+            "track_count": 46
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch5_snake_trans_new.tscn",
+        "animations": [],
+        "text_nodes": [],
+        "confidence": "high"
+      }
+    ],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_16_snake_fight_A.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_16_snake_fight_AB.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_16_snake_fight_AtonalLoop.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_16_snake_fight_B.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_16_snake_fight_C.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_40.1_snake_fight_second_A.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_40.1_snake_fight_second_AB.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/SE_5_12_s_snake_move_loop.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch5/BGM_5_13_snake_show_A.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch5/BGM_5_13_snake_show_AB.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch5/BGM_5_14_snake_1_A.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch5/BGM_5_14_snake_1_AB.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch5/BGM_5_14_snake_1_AtonalLoop.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch5/BGM_5_14_snake_1_B.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch5/BGM_5_14_snake_1_C.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch5/BGM_5_16_snake_2_A.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch5/BGM_5_16_snake_2_AB.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch5/BGM_5_20_snake_3_A.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch5/BGM_5_20_snake_3_AB.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch5/BGM_5_20_snake_3_C.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch8/BGM_8_14_true_ending.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_16_snake_fight_D.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/typewriter/type_snake_A.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/typewriter/type_snake_B.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/typewriter/type_snake_C.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_10_snake_move_C.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_13_snake_big_hiss_A.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_13_snake_big_hiss_A效果.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_13_snake_big_hiss_B.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_13_snake_big_hiss_B效果.wav",
+        "confidence": "high"
+      }
+    ],
+    "scripts": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/MainMap.gd.remap",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/MainMap.gdc",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/snake.gd.remap",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/snake.gdc",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/SnakeHouse.gd.remap",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/SnakeHouse.gdc",
+        "confidence": "low"
+      }
+    ],
+    "map_sources": [
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第二章/04_初戰蛇妖.tscn",
+        "event_name": "剑关-蛇妖段"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第二章/10_修復村莊.tscn",
+        "event_name": "剑关-蛇妖段"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第二章/11_再戰蛇妖_test.tscn",
+        "event_name": "剑关-蛇妖段"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第五章/11_蛇妖_四階.tscn",
+        "event_name": "剑关-蛇妖段"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第五章/05_蛇妖_蛇型樓梯.tscn",
+        "event_name": "剑关-蛇妖段"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第五章/09_蛇妖_三階.tscn",
+        "event_name": "剑关-蛇妖段"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第八章/Credit.tscn",
+        "event_name": "剑关-蛇妖段"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第二章/11_再戰蛇妖.tscn",
+        "event_name": "剑关-蛇妖段"
+      }
+    ],
+    "notes": [
+      ".gdc 编译脚本不可直接阅读，当前只能按文件名、引用和场景依赖推断；如需逐行逻辑需另行反编译。 地图引用证据：04_初戰蛇妖.tscn -> 剑关-蛇妖段。 地图事件推断为 SWORD-SEG-SNAKE，直接规则推断为 CORE-SYSTEM，最终采用 SWORD-SEG-SNAKE。 推断事件：SWORD-SEG-SNAKE。",
+      ".gdc 编译脚本不可直接阅读，当前只能按文件名、引用和场景依赖推断；如需逐行逻辑需另行反编译。 地图引用证据：04_初戰蛇妖.tscn -> 剑关-蛇妖段。 地图事件推断为 SWORD-SEG-SNAKE，直接规则推断为 CORE-SYSTEM，最终采用 SWORD-SEG-SNAKE。 推断事件：SWORD-SEG-SNAKE。",
+      "可读场景含动画：hurt(0.5s)、hurt(0.5s)、hurt(0.5s)、hurt(0.5s)、hurt(0.5s)、hurt(0.5s)、hurt(0.5s)、hurt(0.5s)、really_hurt(1.5s)。 推断事件：SWORD-SEG-SNAKE。",
+      "可读场景含动画：default(0.5s)、default(0.5s)、default(0.5s)、default(0.5s)、hit(0.5s)。 地图引用证据：10_修復村莊.tscn -> 剑关-蛇妖段；11_再戰蛇妖_test.tscn -> 剑关-蛇妖段。 推断事件：SWORD-SEG-SNAKE。",
+      "可读场景含动画：Breathe(5.0s)、Setup(0.001s)、default(3.0s)、CircleB(3.0s)、CircleIn(4.0s)、Setup(0.001s)、Stare(?s)、default(3.0s)。 地图引用证据：11_蛇妖_四階.tscn -> 剑关-蛇妖段。 推断事件：SWORD-SEG-SNAKE。",
+      "可读场景含动画：SnakeAppear(5.0s)。 地图引用证据：05_蛇妖_蛇型樓梯.tscn -> 剑关-蛇妖段。 推断事件：SWORD-SEG-SNAKE。",
+      "可读场景含动画：Wave(1.2s)、Wave(1.2s)、Wave(1.2s)、Wave(1.2s)、Wave(1.2s)、Wave(1.2s)、Wave(1.2s)、Wave(1.2s)、Wave(1.2s)、Wave(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、Tooth(?s)、default(1.2s)、default(8.5s)。 推断事件：SWORD-SEG-SNAKE。",
+      "地图引用证据：09_蛇妖_三階.tscn -> 剑关-蛇妖段。 推断事件：SWORD-SEG-SNAKE。",
+      ".gdc 编译脚本不可直接阅读，当前只能按文件名、引用和场景依赖推断；如需逐行逻辑需另行反编译。 推断事件：SWORD-SEG-SNAKE。",
+      ".gdc 编译脚本不可直接阅读，当前只能按文件名、引用和场景依赖推断；如需逐行逻辑需另行反编译。 推断事件：SWORD-SEG-SNAKE。"
+    ]
+  },
+  {
+    "event_id": "GLOVE-SEG-CORRECT",
+    "event_name": "手套关-正确路线",
+    "resources": 51,
+    "confirmed_like": 39,
+    "scenes": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch3_church_loop_chain.tscn",
+        "animations": [
+          {
+            "name": "ChainLoop",
+            "length": "4.0",
+            "track_count": 1
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch3_church_loop_skull.tscn",
+        "animations": [
+          {
+            "name": "SwingLoop",
+            "length": "10.0",
+            "track_count": 3
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch3_opening.tscn",
+        "animations": [
+          {
+            "name": "ani",
+            "length": "5.0",
+            "track_count": 13
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch3_wine.tscn",
+        "animations": [
+          {
+            "name": "Drink",
+            "length": "3.0",
+            "track_count": 4
+          },
+          {
+            "name": "default",
+            "length": "2.0",
+            "track_count": 4
+          },
+          {
+            "name": "Setup",
+            "length": "0.001",
+            "track_count": 4
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "high"
+      }
+    ],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第七章 音效/SE_3_49_dragon_kill.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第七章 音效/SE_3_49_dragon_scrape.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第七章 音效/SE_3_49_dragon_shake.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_12_block.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_15_wine_glass_put.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_16.1_wine_glass_drink.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_16_wine_glass_slide.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_16_wine_glass_多給倒酒聲A.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_17_sword_draw.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_1_shrink.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_20_sword_hand_over.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_23_rock_remove.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_29_giant_walk_踏踩正常版A.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_2_expand.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_34_bone_crack.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_35_door_stone_A.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_35_door_stone_B.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_36_fire_lit_A.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_36_fire_lit_B.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_36_fire_lit_C.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_37_bone_crash.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_38_bone_transform.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_39_bone_break.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_3_smash_ground_單字_大.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_3_smash_ground_單字_字.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_3_smash_ground_單字_文.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_3_smash_ground_單字_特.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_49_dragon.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_4_bottle_give.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_57_crowd_yell.wav",
+        "confidence": "high"
+      }
+    ],
+    "scripts": [],
+    "map_sources": [
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/10_人骨教堂.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/01_開場.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/03_酒館.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第六章/16_遊覽車_酒館.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/04_手套教學.tscn",
+        "event_name": "手套关-正确路线"
+      }
+    ],
+    "notes": [
+      "可读场景含动画：ChainLoop(4.0s)。 地图引用证据：10_人骨教堂.tscn -> MAP-CANDIDATE。 推断事件：GLOVE-SEG-CORRECT。",
+      "可读场景含动画：SwingLoop(10.0s)。 地图引用证据：10_人骨教堂.tscn -> MAP-CANDIDATE。 推断事件：GLOVE-SEG-CORRECT。",
+      "可读场景含动画：ani(5.0s)。 引用音频：res://Sounds/se/第三章 音效/SE_3_3_smash_ground_單字_特.wav；res://Sounds/se/第三章 音效/SE_3_3_smash_ground_單字_文.wav；res://Sounds/se/第三章 音效/SE_3_3_smash_ground_單字_字.wav；res://Sounds/se/第三章 音效/SE_3_2_expand.wav；res://Sounds/se/第三章 音效/SE_3_1_shrink.wav；res://Sounds/se/第三章 音效/SE_3_3_smash_ground_單字_大.wav。 地图引用证据：01_開場.tscn -> MAP-CANDIDATE。 推断事件：GLOVE-SEG-CORRECT。",
+      "可读场景含动画：Drink(3.0s)、default(2.0s)、Setup(0.001s)。 地图引用证据：03_酒館.tscn -> MAP-CANDIDATE；16_遊覽車_酒館.tscn -> MAP-CANDIDATE。 推断事件：GLOVE-SEG-CORRECT。",
+      "地图引用证据：10_人骨教堂.tscn -> MAP-CANDIDATE。 推断事件：GLOVE-SEG-CORRECT。",
+      "地图引用证据：10_人骨教堂.tscn -> MAP-CANDIDATE。 推断事件：GLOVE-SEG-CORRECT。",
+      "地图引用证据：10_人骨教堂.tscn -> MAP-CANDIDATE。 推断事件：GLOVE-SEG-CORRECT。",
+      "地图引用证据：10_人骨教堂.tscn -> MAP-CANDIDATE。 推断事件：GLOVE-SEG-CORRECT。",
+      "地图引用证据：10_人骨教堂.tscn -> MAP-CANDIDATE。 推断事件：GLOVE-SEG-CORRECT。",
+      "推断事件：GLOVE-SEG-CORRECT。"
+    ]
+  },
+  {
+    "event_id": "SWORD-AUDIO-CANDIDATE",
+    "event_name": "SWORD-AUDIO-CANDIDATE",
+    "resources": 49,
+    "confirmed_like": 0,
+    "scenes": [],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_18_cave.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_1_qwerty_forest.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_20_cave_sword_A.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_20_cave_sword_AB.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_28.3_cave_intense.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_50_qwerty_happy.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_7_qwerty_sad.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_Next_Village.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/Switch2.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_11_cloth_grab.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_12_word_crash_A.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_12_word_crash_B.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_12_word_crash_C.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_12_word_crash_D.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_17_move_dusty_E.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_21_sword_crash_A.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_21_sword_crash_B.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_21_sword_crash_C.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_21_sword_crash_D.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_21_sword_crash_E.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_21_sword_crash_F.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_22_sword_vanish_A.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_22_sword_vanish_B.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_23_sword_big_swing_A.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_23_sword_big_swing_B.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_23_sword_big_swing_C.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_25_sword_return.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_26_wind_fill_C.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_27_rock_break.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_28.1_landing_smash.wav",
+        "confidence": "medium"
+      }
+    ],
+    "scripts": [],
+    "map_sources": [
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第二章/06_墜落.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第二章/01_庫爾堤樹林.tscn",
+        "event_name": "MAP-CANDIDATE"
+      }
+    ],
+    "notes": [
+      "推断事件：SWORD-AUDIO-CANDIDATE。",
+      "推断事件：SWORD-AUDIO-CANDIDATE。",
+      "推断事件：SWORD-AUDIO-CANDIDATE。",
+      "推断事件：SWORD-AUDIO-CANDIDATE。",
+      "推断事件：SWORD-AUDIO-CANDIDATE。",
+      "推断事件：SWORD-AUDIO-CANDIDATE。",
+      "推断事件：SWORD-AUDIO-CANDIDATE。",
+      "推断事件：SWORD-AUDIO-CANDIDATE。",
+      "推断事件：SWORD-AUDIO-CANDIDATE。",
+      "推断事件：SWORD-AUDIO-CANDIDATE。"
+    ]
+  },
+  {
+    "event_id": "GLOVE-LEVEL-CANDIDATE",
+    "event_name": "GLOVE-LEVEL-CANDIDATE",
+    "resources": 48,
+    "confirmed_like": 0,
+    "scenes": [],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_11_herotown_peace_A.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_11_herotown_peace_A.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_11_herotown_peace_AB.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_11_herotown_peace_AB.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_13_bar.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_13_bar.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_18_fate_road_A.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_18_fate_road_A.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_18_fate_road_AB.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_18_fate_road_AB.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_32.1_bone.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_32.1_bone.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_64_hero_road_A.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_64_hero_road_A.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_64_hero_road_B.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_64_hero_road_B.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_64_hero_road_C.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_64_hero_road_C.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_64_hero_road_D.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_64_hero_road_D.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_64_hero_road_E.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_64_hero_road_E.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_9_herotown_outside_A.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_9_herotown_outside_A.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_9_herotown_outside_AB.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_9_herotown_outside_AB.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_4_34_giant_intro_phrase.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_4_34_giant_intro_phrase.ogg.import",
+        "confidence": "medium"
+      }
+    ],
+    "scripts": [],
+    "map_sources": [
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/02_1_幻覺.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/02_勇者之村.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/99_勇者之村.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/X02_勇者之村.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/05_宿命小徑.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/X05_宿命小徑.tscn",
+        "event_name": "MAP-CANDIDATE"
+      }
+    ],
+    "notes": [
+      "地图引用证据：02_1_幻覺.tscn -> MAP-CANDIDATE；02_勇者之村.tscn -> MAP-CANDIDATE；99_勇者之村.tscn -> MAP-CANDIDATE；X02_勇者之村.tscn -> MAP-CANDIDATE。 推断事件：GLOVE-LEVEL-CANDIDATE。",
+      "推断事件：GLOVE-LEVEL-CANDIDATE。",
+      "推断事件：GLOVE-LEVEL-CANDIDATE。",
+      "推断事件：GLOVE-LEVEL-CANDIDATE。",
+      "推断事件：GLOVE-LEVEL-CANDIDATE。",
+      "推断事件：GLOVE-LEVEL-CANDIDATE。",
+      "推断事件：GLOVE-LEVEL-CANDIDATE。",
+      "推断事件：GLOVE-LEVEL-CANDIDATE。",
+      "地图引用证据：02_1_幻覺.tscn -> MAP-CANDIDATE；02_勇者之村.tscn -> MAP-CANDIDATE；99_勇者之村.tscn -> MAP-CANDIDATE；X02_勇者之村.tscn -> MAP-CANDIDATE。 推断事件：GLOVE-LEVEL-CANDIDATE。",
+      "推断事件：GLOVE-LEVEL-CANDIDATE。"
+    ]
+  },
+  {
+    "event_id": "HELMET-LEVEL-CANDIDATE",
+    "event_name": "HELMET-LEVEL-CANDIDATE",
+    "resources": 42,
+    "confirmed_like": 0,
+    "scenes": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch4_Ace.tscn",
+        "animations": [
+          {
+            "name": "ClimbAlongHorn",
+            "length": "2.25",
+            "track_count": 2
+          },
+          {
+            "name": "ClimbAlongHornNJump",
+            "length": "",
+            "track_count": 2
+          },
+          {
+            "name": "JumpDown",
+            "length": "1.8",
+            "track_count": 2
+          },
+          {
+            "name": "JumpLeft",
+            "length": "1.5",
+            "track_count": 2
+          },
+          {
+            "name": "JumpRight",
+            "length": "1.5",
+            "track_count": 2
+          },
+          {
+            "name": "LeftIn",
+            "length": "0.25",
+            "track_count": 2
+          },
+          {
+            "name": "RightIn",
+            "length": "0.25",
+            "track_count": 2
+          },
+          {
+            "name": "default",
+            "length": "0.05",
+            "track_count": 1
+          },
+          {
+            "name": "02_簡單助跑後，＿斯奮力一躍。安穩地降落在巨人的左胸口。",
+            "length": "0.05",
+            "track_count": 1
+          },
+          {
+            "name": "03_「而且，原本抓著的人呢？」左手腕扣住右手腕嚴厲地說。",
+            "length": "0.05",
+            "track_count": 1
+          },
+          {
+            "name": "04_手臂陰影下，＿斯避過視線，跳上巨人表皮粗糙的左膝蓋。",
+            "length": "0.05",
+            "track_count": 1
+          },
+          {
+            "name": "05_「你看看自己的手！人呢？」長瘤的頭吸回臉上鼻血，說。",
+            "length": "0.05",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "3.0",
+            "track_count": 2
+          },
+          {
+            "name": "default",
+            "length": "0.05",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "0.05",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "0.05",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "0.05",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "0.05",
+            "track_count": 1
+          },
+          {
+            "name": "default",
+            "length": "3.0",
+            "track_count": 2
+          },
+          {
+            "name": "default",
+            "length": "3.0",
+            "track_count": 2
+          },
+          {
+            "name": "default",
+            "length": "3.0",
+            "track_count": 2
+          },
+          {
+            "name": "大跳_3",
+            "length": "3.0",
+            "track_count": 2
+          },
+          {
+            "name": "大跳_4",
+            "length": "3.0",
+            "track_count": 2
+          },
+          {
+            "name": "艾斯降落",
+            "length": "1.8",
+            "track_count": 1
+          },
+          {
+            "name": "Tear",
+            "length": "",
+            "track_count": 3
+          },
+          {
+            "name": "Tear",
+            "length": "10.0",
+            "track_count": 3
+          },
+          {
+            "name": "TearLoop",
+            "length": "0.12",
+            "track_count": 1
+          },
+          {
+            "name": "TearStart",
+            "length": "0.24",
+            "track_count": 1
+          },
+          {
+            "name": "Tear",
+            "length": "11.0",
+            "track_count": 8
+          },
+          {
+            "name": "Tear",
+            "length": "",
+            "track_count": 3
+          },
+          {
+            "name": "Tear",
+            "length": "10.0",
+            "track_count": 3
+          },
+          {
+            "name": "TearLoop",
+            "length": "0.12",
+            "track_count": 1
+          },
+          {
+            "name": "TearStart",
+            "length": "0.24",
+            "track_count": 1
+          },
+          {
+            "name": "Tear",
+            "length": "11.0",
+            "track_count": 8
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch4_Ace_split.tscn",
+        "animations": [
+          {
+            "name": "FloatStable",
+            "length": "6.0",
+            "track_count": 2
+          },
+          {
+            "name": "Tear",
+            "length": "5.0",
+            "track_count": 3
+          },
+          {
+            "name": "default",
+            "length": "15.0",
+            "track_count": 15
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "medium"
+      }
+    ],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_19_outpost.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_19_outpost.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_20_maze.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_20_maze.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_21_vault_intro.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_21_vault_intro.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_29_vault_A.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_29_vault_A.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_29_vault_AB.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_29_vault_AB.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_2_outpost_outside.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_2_outpost_outside.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_34_giant_intro_2_A.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_34_giant_intro_2_A.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_34_giant_intro_2_AB.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_34_giant_intro_2_AB.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_38_illusion.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_38_illusion.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_38_illusion_1.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_38_illusion_1.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_38_illusion_2.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_38_illusion_2.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_38_illusion_3.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_38_illusion_3.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_38_illusion_4.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_38_illusion_4.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_3_church.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_3_church.ogg.import",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_49_giant_A.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch4/BGM_4_49_giant_A.ogg.import",
+        "confidence": "medium"
+      }
+    ],
+    "scripts": [],
+    "map_sources": [],
+    "notes": [
+      "可读场景含动画：ClimbAlongHorn(2.25s)、ClimbAlongHornNJump(?s)、JumpDown(1.8s)、JumpLeft(1.5s)、JumpRight(1.5s)、LeftIn(0.25s)、RightIn(0.25s)、default(0.05s)、02_簡單助跑後，＿斯奮力一躍。安穩地降落在巨人的左胸口。(0.05s)、03_「而且，原本抓著的人呢？」左手腕扣住右手腕嚴厲地說。(0.05s)、04_手臂陰影下，＿斯避過視線，跳上巨人表皮粗糙的左膝蓋。(0.05s)、05_「你看看自己的手！人呢？」長瘤的頭吸回臉上鼻血，說。(0.05s)、default(3.0s)、default(0.05s)、default(0.05s)、default(0.05s)、default(0.05s)、default(0.05s)、default(3.0s)、default(3.0s)、default(3.0s)、大跳_3(3.0s)、大跳_4(3.0s)、艾斯降落(1.8s)、Tear(?s)、Tear(10.0s)、TearLoop(0.12s)、TearStart(0.24s)、Tear(11.0s)、Tear(?s)、Tear(10.0s)、TearLoop(0.12s)、TearStart(0.24s)、Tear(11.0s)。 推断事件：HELMET-LEVEL-CANDIDATE。",
+      "可读场景含动画：FloatStable(6.0s)、Tear(5.0s)、default(15.0s)。 推断事件：HELMET-LEVEL-CANDIDATE。",
+      "推断事件：HELMET-LEVEL-CANDIDATE。",
+      "推断事件：HELMET-LEVEL-CANDIDATE。",
+      "推断事件：HELMET-LEVEL-CANDIDATE。",
+      "推断事件：HELMET-LEVEL-CANDIDATE。",
+      "推断事件：HELMET-LEVEL-CANDIDATE。",
+      "推断事件：HELMET-LEVEL-CANDIDATE。",
+      "推断事件：HELMET-LEVEL-CANDIDATE。",
+      "推断事件：HELMET-LEVEL-CANDIDATE。"
+    ]
+  },
+  {
+    "event_id": "GLOVE-SEG-GESTURES",
+    "event_name": "手套关-手势变化",
+    "resources": 24,
+    "confirmed_like": 18,
+    "scenes": [],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_42_template_intro.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_42_template_intro.ogg.import",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_43_template_A.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_43_template_A.ogg.import",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_43_template_AB.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_43_template_AB.ogg.import",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_42_template_intro.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_43_template_A.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_43_template_AB.ogg",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/MEL/MEL_3_19.1_gloves.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/ENV_3_40_fly.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_19_glove_put_on.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_59_giant_fist_smash_單下.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SFX_template_1.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SFX_template_2.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SFX_template_3.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SFX_template_4.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_41_fist_hit_A.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第四章 音效/SE_4_53_giant_fist_smash.wav",
+        "confidence": "high"
+      }
+    ],
+    "scripts": [],
+    "map_sources": [
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/14_添譜來堂_拳頭轉場.tscn",
+        "event_name": "手套关-手势变化"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/11_添譜來堂_開場.tscn",
+        "event_name": "手套关-手势变化"
+      }
+    ],
+    "notes": [
+      "地图引用证据：14_添譜來堂_拳頭轉場.tscn -> 手套关-手势变化。 推断事件：GLOVE-SEG-GESTURES。",
+      "地图引用证据：11_添譜來堂_開場.tscn -> 手套关-手势变化。 地图事件推断为 GLOVE-SEG-GESTURES，直接规则推断为 GLOVE-LEVEL-CANDIDATE，最终采用 GLOVE-SEG-GESTURES。 推断事件：GLOVE-SEG-GESTURES。",
+      "地图引用证据：11_添譜來堂_開場.tscn -> 手套关-手势变化。 地图事件推断为 GLOVE-SEG-GESTURES，直接规则推断为 GLOVE-LEVEL-CANDIDATE，最终采用 GLOVE-SEG-GESTURES。 推断事件：GLOVE-SEG-GESTURES。",
+      "地图引用证据：11_添譜來堂_開場.tscn -> 手套关-手势变化。 推断事件：GLOVE-SEG-GESTURES。",
+      "推断事件：GLOVE-SEG-GESTURES。",
+      "推断事件：GLOVE-SEG-GESTURES。",
+      "推断事件：GLOVE-SEG-GESTURES。",
+      "推断事件：GLOVE-SEG-GESTURES。",
+      "推断事件：GLOVE-SEG-GESTURES。",
+      "推断事件：GLOVE-SEG-GESTURES。"
+    ]
+  },
+  {
+    "event_id": "SWORD-SEG-SLIME",
+    "event_name": "剑关-史莱姆段",
+    "resources": 20,
+    "confirmed_like": 8,
+    "scenes": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/slime.tscn",
+        "animations": [],
+        "text_nodes": [],
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/slime2.tscn",
+        "animations": [
+          {
+            "name": "slime_move",
+            "length": "0.35",
+            "track_count": 3
+          },
+          {
+            "name": "slime_squeeze",
+            "length": "1.6",
+            "track_count": 4
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/slime_move.tres",
+        "animations": [],
+        "text_nodes": [],
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/slime_walk_animation.tres",
+        "animations": [],
+        "text_nodes": [],
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch5_slime_cut.tscn",
+        "animations": [
+          {
+            "name": "Loop",
+            "length": "",
+            "track_count": 2
+          },
+          {
+            "name": "Std",
+            "length": "0.1",
+            "track_count": 2
+          },
+          {
+            "name": "Loop",
+            "length": "",
+            "track_count": 2
+          },
+          {
+            "name": "Std",
+            "length": "0.1",
+            "track_count": 2
+          },
+          {
+            "name": "default",
+            "length": "0.1",
+            "track_count": 3
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "high"
+      }
+    ],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/slime_hit_1.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/slime_hit_2.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/slime_move_1.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/slime_move_2.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/slime_tranform_1.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/slime_vanish_1.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/slime_vanish_2.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_5_slime_move_A.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_5_slime_move_B.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_5_slime_move_C.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_5_slime_move_D.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_6_slime_dead_A.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_6_slime_dead_B.wav",
+        "confidence": "high"
+      }
+    ],
+    "scripts": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/Use_once/ch2_slimeEvent.gd.remap",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/Use_once/ch2_slimeEvent.gdc",
+        "confidence": "low"
+      }
+    ],
+    "map_sources": [
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第二章/02_初戰無名怪.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第五章/03_魔龍城外_門前.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第二章/07_史萊姆洞窟.tscn",
+        "event_name": "剑关-史莱姆段"
+      }
+    ],
+    "notes": [
+      "推断事件：SWORD-SEG-SLIME。",
+      "可读场景含动画：slime_move(0.35s)、slime_squeeze(1.6s)。 推断事件：SWORD-SEG-SLIME。",
+      "地图引用证据：02_初戰無名怪.tscn -> MAP-CANDIDATE。 推断事件：SWORD-SEG-SLIME。",
+      "推断事件：SWORD-SEG-SLIME。",
+      "可读场景含动画：Loop(?s)、Std(0.1s)、Loop(?s)、Std(0.1s)、default(0.1s)。 地图引用证据：03_魔龍城外_門前.tscn -> MAP-CANDIDATE。 推断事件：SWORD-SEG-SLIME。",
+      ".gdc 编译脚本不可直接阅读，当前只能按文件名、引用和场景依赖推断；如需逐行逻辑需另行反编译。 地图引用证据：02_初戰無名怪.tscn -> MAP-CANDIDATE；07_史萊姆洞窟.tscn -> 剑关-史莱姆段。 推断事件：SWORD-SEG-SLIME。",
+      ".gdc 编译脚本不可直接阅读，当前只能按文件名、引用和场景依赖推断；如需逐行逻辑需另行反编译。 地图引用证据：02_初戰無名怪.tscn -> MAP-CANDIDATE；07_史萊姆洞窟.tscn -> 剑关-史莱姆段。 推断事件：SWORD-SEG-SLIME。",
+      "推断事件：SWORD-SEG-SLIME。",
+      "推断事件：SWORD-SEG-SLIME。",
+      "推断事件：SWORD-SEG-SLIME。"
+    ]
+  },
+  {
+    "event_id": "CORE-SYSTEM",
+    "event_name": "CORE-SYSTEM",
+    "resources": 16,
+    "confirmed_like": 0,
+    "scenes": [],
+    "audio": [],
+    "scripts": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/BaseCharacter.gd.remap",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/BaseCharacter.gdc",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/Player.gd.remap",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/Player.gdc",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/PlayerPerson.gd.remap",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/PlayerPerson.gdc",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/MainMapContainer.gd.remap",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/MainMapContainer.gdc",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/Typewriter.gd.remap",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/Typewriter.gdc",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/FixedMap.gd.remap",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/FixedMap.gdc",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/Event.gd.remap",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/Event.gdc",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/BigEvent.gd.remap",
+        "confidence": "low"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/BigEvent.gdc",
+        "confidence": "low"
+      }
+    ],
+    "map_sources": [
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/1.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/falling_cutscene.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第二章/06_墜落.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/2.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/ch5_giant_bgm_test.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/DC_test_ch1_1.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/font_test.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/human_se_test.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/test-map-save2.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/tttttttt.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第五章/99_測試用任意門.tscn",
+        "event_name": "MAP-CANDIDATE"
+      }
+    ],
+    "notes": [
+      ".gdc 编译脚本不可直接阅读，当前只能按文件名、引用和场景依赖推断；如需逐行逻辑需另行反编译。 推断事件：CORE-SYSTEM。",
+      ".gdc 编译脚本不可直接阅读，当前只能按文件名、引用和场景依赖推断；如需逐行逻辑需另行反编译。 推断事件：CORE-SYSTEM。",
+      ".gdc 编译脚本不可直接阅读，当前只能按文件名、引用和场景依赖推断；如需逐行逻辑需另行反编译。 地图引用证据：1.tscn -> MAP-CANDIDATE；falling_cutscene.tscn -> MAP-CANDIDATE；06_墜落.tscn -> MAP-CANDIDATE。 推断事件：CORE-SYSTEM。",
+      ".gdc 编译脚本不可直接阅读，当前只能按文件名、引用和场景依赖推断；如需逐行逻辑需另行反编译。 地图引用证据：1.tscn -> MAP-CANDIDATE；falling_cutscene.tscn -> MAP-CANDIDATE；06_墜落.tscn -> MAP-CANDIDATE。 推断事件：CORE-SYSTEM。",
+      ".gdc 编译脚本不可直接阅读，当前只能按文件名、引用和场景依赖推断；如需逐行逻辑需另行反编译。 推断事件：CORE-SYSTEM。",
+      ".gdc 编译脚本不可直接阅读，当前只能按文件名、引用和场景依赖推断；如需逐行逻辑需另行反编译。 推断事件：CORE-SYSTEM。",
+      ".gdc 编译脚本不可直接阅读，当前只能按文件名、引用和场景依赖推断；如需逐行逻辑需另行反编译。 推断事件：CORE-SYSTEM。",
+      ".gdc 编译脚本不可直接阅读，当前只能按文件名、引用和场景依赖推断；如需逐行逻辑需另行反编译。 推断事件：CORE-SYSTEM。",
+      ".gdc 编译脚本不可直接阅读，当前只能按文件名、引用和场景依赖推断；如需逐行逻辑需另行反编译。 推断事件：CORE-SYSTEM。",
+      ".gdc 编译脚本不可直接阅读，当前只能按文件名、引用和场景依赖推断；如需逐行逻辑需另行反编译。 推断事件：CORE-SYSTEM。"
+    ]
+  },
+  {
+    "event_id": "HELMET-R6-ME-BIRD",
+    "event_name": "头盔-第6关我与鸟合成",
+    "resources": 15,
+    "confirmed_like": 12,
+    "scenes": [],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/bird_1.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/bird_2.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/bird_3.wav",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第一章 音效/SE_1_13_bird中.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第五章 音效/SE_5_50_bird_short_A.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第五章 音效/SE_5_50_bird_short_B.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第五章 音效/SE_5_51_bird_normal_A.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第五章 音效/SE_5_51_bird_normal_B.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第五章 音效/SE_5_51_bird_normal_C.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第五章 音效/SE_5_51_bird_normal_D.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第五章 音效/SE_5_51_bird_normal_E.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第五章 音效/SE_5_52_bird_nervous.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第四章 音效/SE_4_48_bird_A.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第四章 音效/SE_4_48_bird_B.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第四章 音效/SE_4_48_bird_C.wav",
+        "confidence": "high"
+      }
+    ],
+    "scripts": [],
+    "map_sources": [],
+    "notes": [
+      "推断事件：HELMET-R6-ME-BIRD。",
+      "推断事件：HELMET-R6-ME-BIRD。",
+      "推断事件：HELMET-R6-ME-BIRD。",
+      "推断事件：HELMET-R6-ME-BIRD。",
+      "推断事件：HELMET-R6-ME-BIRD。",
+      "推断事件：HELMET-R6-ME-BIRD。",
+      "推断事件：HELMET-R6-ME-BIRD。",
+      "推断事件：HELMET-R6-ME-BIRD。",
+      "推断事件：HELMET-R6-ME-BIRD。",
+      "推断事件：HELMET-R6-ME-BIRD。"
+    ]
+  },
+  {
+    "event_id": "GLOVE-AUDIO-CANDIDATE",
+    "event_name": "GLOVE-AUDIO-CANDIDATE",
+    "resources": 14,
+    "confirmed_like": 0,
+    "scenes": [],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_11_herotown_peace_A.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_11_herotown_peace_AB.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_13_bar.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_18_fate_road_A.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_18_fate_road_AB.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_32.1_bone.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_64_hero_road_A.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_64_hero_road_B.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_64_hero_road_C.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_64_hero_road_D.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_64_hero_road_E.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_9_herotown_outside_A.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_9_herotown_outside_AB.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_4_34_giant_intro_phrase.ogg",
+        "confidence": "medium"
+      }
+    ],
+    "scripts": [],
+    "map_sources": [],
+    "notes": [
+      "推断事件：GLOVE-AUDIO-CANDIDATE。",
+      "推断事件：GLOVE-AUDIO-CANDIDATE。",
+      "推断事件：GLOVE-AUDIO-CANDIDATE。",
+      "推断事件：GLOVE-AUDIO-CANDIDATE。",
+      "推断事件：GLOVE-AUDIO-CANDIDATE。",
+      "推断事件：GLOVE-AUDIO-CANDIDATE。",
+      "推断事件：GLOVE-AUDIO-CANDIDATE。",
+      "推断事件：GLOVE-AUDIO-CANDIDATE。",
+      "推断事件：GLOVE-AUDIO-CANDIDATE。",
+      "推断事件：GLOVE-AUDIO-CANDIDATE。"
+    ]
+  },
+  {
+    "event_id": "HELMET-R5-WATER-GONE",
+    "event_name": "头盔-第5关最右侧水消失",
+    "resources": 13,
+    "confirmed_like": 12,
+    "scenes": [],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/cave_waterdrop.ogg",
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_39_riverside_A.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_39_riverside_B.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_39_riverside_C.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_39_riverside_D.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_39_riverside_E.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_39_riverside_F.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_39_riverside_G.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_39_riverside_H.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第五章 音效/SE_5_54_water_jet.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第五章 音效/SE_5_65_water_fall.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第五章 音效/SE_5_88_waterfall_loop.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第四章 音效/SE_4_43_water_fall_in.wav",
+        "confidence": "high"
+      }
+    ],
+    "scripts": [],
+    "map_sources": [
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/slime_cave.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/test-map-save3.tscn",
+        "event_name": "MAP-CANDIDATE"
+      }
+    ],
+    "notes": [
+      "地图引用证据：slime_cave.tscn -> MAP-CANDIDATE；test-map-save3.tscn -> MAP-CANDIDATE。 推断事件：HELMET-R5-WATER-GONE。",
+      "推断事件：HELMET-R5-WATER-GONE。",
+      "推断事件：HELMET-R5-WATER-GONE。",
+      "推断事件：HELMET-R5-WATER-GONE。",
+      "推断事件：HELMET-R5-WATER-GONE。",
+      "推断事件：HELMET-R5-WATER-GONE。",
+      "推断事件：HELMET-R5-WATER-GONE。",
+      "推断事件：HELMET-R5-WATER-GONE。",
+      "推断事件：HELMET-R5-WATER-GONE。",
+      "推断事件：HELMET-R5-WATER-GONE。"
+    ]
+  },
+  {
+    "event_id": "HELMET-R6-GOOSE",
+    "event_name": "头盔-第6关鹅过河",
+    "resources": 12,
+    "confirmed_like": 12,
+    "scenes": [],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_45_goose_A.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_45_goose_B.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_45_goose_C.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_45_goose_D.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_46_goose_swim_A.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_46_goose_swim_B.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_46_goose_swim_C.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_46_goose_swim_D.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/walk/WALK_4_46_goose_swim_E.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第四章 音效/SE_4_44_goose_A.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第四章 音效/SE_4_44_goose_B.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第四章 音效/SE_4_44_goose_C.wav",
+        "confidence": "high"
+      }
+    ],
+    "scripts": [],
+    "map_sources": [],
+    "notes": [
+      "推断事件：HELMET-R6-GOOSE。",
+      "推断事件：HELMET-R6-GOOSE。",
+      "推断事件：HELMET-R6-GOOSE。",
+      "推断事件：HELMET-R6-GOOSE。",
+      "推断事件：HELMET-R6-GOOSE。",
+      "推断事件：HELMET-R6-GOOSE。",
+      "推断事件：HELMET-R6-GOOSE。",
+      "推断事件：HELMET-R6-GOOSE。",
+      "推断事件：HELMET-R6-GOOSE。",
+      "推断事件：HELMET-R6-GOOSE。"
+    ]
+  },
+  {
+    "event_id": "HELMET-END-RESTORE",
+    "event_name": "头盔-结尾恢复玩家",
+    "resources": 8,
+    "confirmed_like": 8,
+    "scenes": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/Helmet.tscn",
+        "animations": [
+          {
+            "name": "unzip",
+            "length": "1.1",
+            "track_count": 4
+          },
+          {
+            "name": "zip",
+            "length": "1.4",
+            "track_count": 4
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch4_helmet.tscn",
+        "animations": [
+          {
+            "name": "shake",
+            "length": "0.8",
+            "track_count": 6
+          },
+          {
+            "name": "drop",
+            "length": "3.1",
+            "track_count": 1
+          },
+          {
+            "name": "HelmetDrop",
+            "length": "4.0",
+            "track_count": 2
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "high"
+      }
+    ],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/MEL/MEL_4_33.1_helmet.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第七章 音效/SE_4_33_dragon_tear.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第四章 音效/SE_4_32_helmet_drop_D.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第四章 音效/SE_4_33.2_giant_break_vault.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第四章 音效/SE_4_33_helmet_put_on_B.wav",
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第四章 音效/SE_4_47_helmet_knock.wav",
+        "confidence": "high"
+      }
+    ],
+    "scripts": [],
+    "map_sources": [
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/test3.tscn",
+        "event_name": "头盔-结尾流程"
+      }
+    ],
+    "notes": [
+      "可读场景含动画：unzip(1.1s)、zip(1.4s)。 地图引用证据：test3.tscn -> 头盔-结尾流程。 地图事件推断为 HELMET-END，直接规则推断为 HELMET-END-RESTORE，最终采用 HELMET-END-RESTORE。 推断事件：HELMET-END-RESTORE。",
+      "可读场景含动画：shake(0.8s)、drop(3.1s)、HelmetDrop(4.0s)。 推断事件：HELMET-END-RESTORE。",
+      "推断事件：HELMET-END-RESTORE。",
+      "推断事件：HELMET-END-RESTORE。",
+      "推断事件：HELMET-END-RESTORE。",
+      "推断事件：HELMET-END-RESTORE。",
+      "推断事件：HELMET-END-RESTORE。",
+      "推断事件：HELMET-END-RESTORE。"
+    ]
+  },
+  {
+    "event_id": "SWORD-SEG-TUTORIAL",
+    "event_name": "剑关-教学段",
+    "resources": 5,
+    "confirmed_like": 3,
+    "scenes": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/Backspace.gd.remap",
+        "animations": [],
+        "text_nodes": [],
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/Backspace.gdc",
+        "animations": [],
+        "text_nodes": [],
+        "confidence": "medium"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/Backspace.tscn",
+        "animations": [
+          {
+            "name": "New Anim",
+            "length": "1.15",
+            "track_count": 1
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/Backspace_fail.tscn",
+        "animations": [
+          {
+            "name": "fail",
+            "length": "0.8",
+            "track_count": 1
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "high"
+      }
+    ],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/MEL/MEL_2_24_sword.wav",
+        "confidence": "high"
+      }
+    ],
+    "scripts": [],
+    "map_sources": [],
+    "notes": [
+      "推断事件：SWORD-SEG-TUTORIAL。",
+      "推断事件：SWORD-SEG-TUTORIAL。",
+      "可读场景含动画：New Anim(1.15s)。 推断事件：SWORD-SEG-TUTORIAL。",
+      "可读场景含动画：fail(0.8s)。 推断事件：SWORD-SEG-TUTORIAL。",
+      "推断事件：SWORD-SEG-TUTORIAL。"
+    ]
+  },
+  {
+    "event_id": "HELMET-END",
+    "event_name": "头盔-结尾流程",
+    "resources": 4,
+    "confirmed_like": 4,
+    "scenes": [],
+    "audio": [],
+    "scripts": [],
+    "map_sources": [
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/16_添譜來堂_尾聲.tscn",
+        "event_name": "头盔-结尾流程"
+      }
+    ],
+    "notes": [
+      "地图引用证据：16_添譜來堂_尾聲.tscn -> 头盔-结尾流程。 地图事件推断为 HELMET-END，直接规则推断为 GLOVE-LEVEL-CANDIDATE，最终采用 HELMET-END。 推断事件：HELMET-END。",
+      "地图引用证据：16_添譜來堂_尾聲.tscn -> 头盔-结尾流程。 地图事件推断为 HELMET-END，直接规则推断为 GLOVE-LEVEL-CANDIDATE，最终采用 HELMET-END。 推断事件：HELMET-END。",
+      "地图引用证据：16_添譜來堂_尾聲.tscn -> 头盔-结尾流程。 地图事件推断为 HELMET-END，直接规则推断为 GLOVE-LEVEL-CANDIDATE，最终采用 HELMET-END。 推断事件：HELMET-END。",
+      "地图引用证据：16_添譜來堂_尾聲.tscn -> 头盔-结尾流程。 地图事件推断为 HELMET-END，直接规则推断为 GLOVE-LEVEL-CANDIDATE，最终采用 HELMET-END。 推断事件：HELMET-END。"
+    ]
+  },
+  {
+    "event_id": "HELMET-R3-COLLAPSE",
+    "event_name": "头盔-第3关桥断裂",
+    "resources": 4,
+    "confirmed_like": 4,
+    "scenes": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/Bridge.tscn",
+        "animations": [
+          {
+            "name": "LooseBreak",
+            "length": "3.0",
+            "track_count": 54
+          },
+          {
+            "name": "default",
+            "length": "0.5",
+            "track_count": 54
+          },
+          {
+            "name": "default",
+            "length": "2.0",
+            "track_count": 54
+          },
+          {
+            "name": "default",
+            "length": "0.5",
+            "track_count": 54
+          },
+          {
+            "name": "Broken",
+            "length": "5.0",
+            "track_count": 2
+          },
+          {
+            "name": "default",
+            "length": "5.0",
+            "track_count": 2
+          },
+          {
+            "name": "default",
+            "length": "10.5",
+            "track_count": 1
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/Bridge1.tscn",
+        "animations": [
+          {
+            "name": "default",
+            "length": "3.0",
+            "track_count": 54
+          },
+          {
+            "name": "default",
+            "length": "0.5",
+            "track_count": 54
+          },
+          {
+            "name": "default",
+            "length": "2.0",
+            "track_count": 54
+          },
+          {
+            "name": "default",
+            "length": "0.5",
+            "track_count": 54
+          },
+          {
+            "name": "default",
+            "length": "5.0",
+            "track_count": 4
+          },
+          {
+            "name": "default",
+            "length": "10.5",
+            "track_count": 1
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "high"
+      },
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/Bridge2.tscn",
+        "animations": [
+          {
+            "name": "default",
+            "length": "3.0",
+            "track_count": 48
+          },
+          {
+            "name": "default",
+            "length": "0.5",
+            "track_count": 48
+          },
+          {
+            "name": "default",
+            "length": "2.0",
+            "track_count": 48
+          },
+          {
+            "name": "default",
+            "length": "0.5",
+            "track_count": 48
+          },
+          {
+            "name": "default",
+            "length": "5.0",
+            "track_count": 3
+          },
+          {
+            "name": "default",
+            "length": "10.5",
+            "track_count": 1
+          }
+        ],
+        "text_nodes": [],
+        "confidence": "high"
+      }
+    ],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第四章 音效/SE_4_42_block_break.wav",
+        "confidence": "high"
+      }
+    ],
+    "scripts": [],
+    "map_sources": [],
+    "notes": [
+      "可读场景含动画：LooseBreak(3.0s)、default(0.5s)、default(2.0s)、default(0.5s)、Broken(5.0s)、default(5.0s)、default(10.5s)。 推断事件：HELMET-R3-COLLAPSE。",
+      "可读场景含动画：default(3.0s)、default(0.5s)、default(2.0s)、default(0.5s)、default(5.0s)、default(10.5s)。 推断事件：HELMET-R3-COLLAPSE。",
+      "可读场景含动画：default(3.0s)、default(0.5s)、default(2.0s)、default(0.5s)、default(5.0s)、default(10.5s)。 推断事件：HELMET-R3-COLLAPSE。",
+      "推断事件：HELMET-R3-COLLAPSE。"
+    ]
+  },
+  {
+    "event_id": "FONT-CANDIDATE",
+    "event_name": "FONT-CANDIDATE",
+    "resources": 4,
+    "confirmed_like": 0,
+    "scenes": [],
+    "audio": [],
+    "scripts": [],
+    "map_sources": [
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/font_test.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/pixel_test.tscn",
+        "event_name": "MAP-CANDIDATE"
+      },
+      {
+        "map_source_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第八章/心智打字機/MindTyper.tscn",
+        "event_name": "MAP-CANDIDATE"
+      }
+    ],
+    "notes": [
+      "地图引用证据：font_test.tscn -> MAP-CANDIDATE。 推断事件：FONT-CANDIDATE。",
+      "推断事件：FONT-CANDIDATE。",
+      "地图引用证据：font_test.tscn -> MAP-CANDIDATE。 推断事件：FONT-CANDIDATE。",
+      "地图引用证据：pixel_test.tscn -> MAP-CANDIDATE；MindTyper.tscn -> MAP-CANDIDATE。 推断事件：FONT-CANDIDATE。"
+    ]
+  },
+  {
+    "event_id": "HELMET-R5-PLANT-SPLIT",
+    "event_name": "头盔-第5关草字拆分",
+    "resources": 1,
+    "confirmed_like": 1,
+    "scenes": [],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第四章 音效/SE_4_36_plant_glow.wav",
+        "confidence": "high"
+      }
+    ],
+    "scripts": [],
+    "map_sources": [],
+    "notes": [
+      "推断事件：HELMET-R5-PLANT-SPLIT。"
+    ]
+  },
+  {
+    "event_id": "HELMET-R1-TREE-PROMPT",
+    "event_name": "头盔-第1关树木提示",
+    "resources": 1,
+    "confirmed_like": 1,
+    "scenes": [],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第四章 音效/SE_4_40_leaf_windy.wav",
+        "confidence": "high"
+      }
+    ],
+    "scripts": [],
+    "map_sources": [],
+    "notes": [
+      "推断事件：HELMET-R1-TREE-PROMPT。"
+    ]
+  },
+  {
+    "event_id": "HELMET-R1-BRIDGE-BUILD",
+    "event_name": "头盔-第1关桥生成",
+    "resources": 1,
+    "confirmed_like": 1,
+    "scenes": [],
+    "audio": [
+      {
+        "resource_path": "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第四章 音效/SE_4_41_block_build.wav",
+        "confidence": "high"
+      }
+    ],
+    "scripts": [],
+    "map_sources": [],
+    "notes": [
+      "推断事件：HELMET-R1-BRIDGE-BUILD。"
+    ]
+  }
+]

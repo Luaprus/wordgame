@@ -1,0 +1,22 @@
+{
+  "schema_id": "wordgame.baseline.video.v1",
+  "required_fields": [
+    "id",
+    "feature_id",
+    "level_id",
+    "source_type",
+    "source_path",
+    "source_timecode",
+    "source_frame",
+    "source_scene",
+    "status",
+    "notes",
+    "video_file",
+    "resolution",
+    "fps",
+    "duration_seconds",
+    "total_frames",
+    "events"
+  ],
+  "status_values": ["confirmed", "manual_required", "blocked"]
+}

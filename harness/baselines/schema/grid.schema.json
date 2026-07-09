@@ -1,0 +1,22 @@
+{
+  "schema_id": "wordgame.baseline.grid.v1",
+  "required_fields": [
+    "id",
+    "feature_id",
+    "level_id",
+    "source_type",
+    "source_path",
+    "source_timecode",
+    "source_frame",
+    "source_scene",
+    "status",
+    "notes",
+    "state_id",
+    "map_size",
+    "cell_size",
+    "player_initial_grid",
+    "player_initial_direction",
+    "objects"
+  ],
+  "status_values": ["confirmed", "manual_required", "blocked"]
+}

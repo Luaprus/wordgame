@@ -31,3 +31,12 @@ export_credentials.cfg
 *.tmp
 *.bak
 __pycache__/
+node_modules/
+*.inspect.ndjson
+~$*.xlsx
+harness/tmp_import/
+harness/manual_review_package/
+harness/manual_tables/manual_annotation_tables.xlsx
+harness/manual_tables/manual_annotation_tables_cn_*.xlsx
+harness/reports/baseline/contact_sheets/
+harness/reports/baseline/coord_review/

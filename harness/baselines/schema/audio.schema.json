@@ -1,0 +1,27 @@
+{
+  "schema_id": "wordgame.baseline.audio.v1",
+  "required_fields": [
+    "id",
+    "feature_id",
+    "level_id",
+    "source_type",
+    "source_path",
+    "source_timecode",
+    "source_frame",
+    "source_scene",
+    "status",
+    "notes",
+    "audio_id",
+    "audio_file",
+    "trigger_level",
+    "trigger_behavior",
+    "trigger_time",
+    "delay_seconds",
+    "volume_db",
+    "pan",
+    "loop",
+    "fade",
+    "stop_condition"
+  ],
+  "status_values": ["confirmed", "manual_required", "blocked"]
+}

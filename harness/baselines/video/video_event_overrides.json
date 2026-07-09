@@ -1,0 +1,587 @@
+{
+  "generated_at": "2026-07-09T09:07:53.079Z",
+  "source_review_file": "E:/wordgame copy/harness/manual_review_results/video_review_result.json",
+  "source_exported_at": "2026-07-09T09:05:00.060Z",
+  "source_generated_at": "2026-07-09T08:44:14.900Z",
+  "ignored_non_video_entries": 2,
+  "video_overrides": [
+    {
+      "baseline_id": "GLOVE-SEG-CORRECT",
+      "title": "手套关 / 手套关-正确路线",
+      "event_name": "手套关-正确路线",
+      "review_status": "modified",
+      "reviewer_note": "这个视频的游玩流程就是正确路线，没有错误路线演示",
+      "values": {
+        "fill_start_timecode": "0:03",
+        "fill_end_timecode": "2:14",
+        "fill_start_frame": "AI待核",
+        "fill_end_frame": "AI待核",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "手套关-正确路线",
+        "fill_notes": "确认所有正确路线的时间范围。 AI预填：事件归属=手套关-正确路线；时间码模式=missing。 本地视频元数据：2560x1440, fps=50, duration=02:54。 无法从时间码计算帧号。 无法从时间码计算帧号。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "GLOVE-SEG-GESTURES",
+      "title": "手套关 / 手套关-手势变化",
+      "event_name": "手套关-手势变化",
+      "review_status": "modified",
+      "reviewer_note": "多次变换手势，每次变化几乎就在我标注的前后一秒钟",
+      "values": {
+        "fill_start_timecode": "0:08，0:11，0:42，1:31，1:59",
+        "fill_end_timecode": "0:08，0:11，0:42，1:31，1:59",
+        "fill_start_frame": "AI待核",
+        "fill_end_frame": "AI待核",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "手套关-手势变化",
+        "fill_notes": "确认有效字形、截图状态和碰撞变化。 AI预填：事件归属=手套关-手势变化；时间码模式=missing。 本地视频元数据：2560x1440, fps=50, duration=02:54。 无法从时间码计算帧号。 无法从时间码计算帧号。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "GLOVE-SEG-WRONG",
+      "title": "手套关 / 手套关-错误路线/失败反馈",
+      "event_name": "手套关-错误路线/失败反馈",
+      "review_status": "modified",
+      "reviewer_note": "这个视频的游玩流程就是正确路线，没有错误路线演示",
+      "values": {
+        "fill_start_timecode": "AI待核：原视频需人工定位开始点",
+        "fill_end_timecode": "AI待核：原视频需人工定位结束点",
+        "fill_start_frame": "AI待核",
+        "fill_end_frame": "AI待核",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "手套关-错误路线/失败反馈",
+        "fill_notes": "确认错误路线和失败反馈的时间范围。 AI预填：事件归属=手套关-错误路线/失败反馈；时间码模式=missing。 本地视频元数据：2560x1440, fps=50, duration=02:54。 无法从时间码计算帧号。 无法从时间码计算帧号。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-END",
+      "title": "四目头盔 / 头盔-结尾流程",
+      "event_name": "头盔-结尾流程",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "50:20",
+        "fill_end_timecode": "后续到结尾，结束点需人工确认",
+        "fill_start_frame": "90600",
+        "fill_end_frame": "AI待核",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-结尾恢复",
+        "fill_notes": "补齐结尾截图和事件。 AI预填：事件归属=四目头盔-结尾恢复；时间码模式=onward。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。 无法从时间码计算帧号。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-END-RESTORE",
+      "title": "四目头盔 / 头盔-结尾恢复玩家",
+      "event_name": "头盔-结尾恢复玩家",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "50:59",
+        "fill_end_timecode": "50:59",
+        "fill_start_frame": "91770",
+        "fill_end_frame": "91770",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-结尾恢复",
+        "fill_notes": "确认最终可控制状态。 AI预填：事件归属=四目头盔-结尾恢复；时间码模式=point。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R1",
+      "title": "四目头盔 / 头盔-过河第1关完整流程",
+      "event_name": "头盔-过河第1关完整流程",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "36:57",
+        "fill_end_timecode": "38:34",
+        "fill_start_frame": "66510",
+        "fill_end_frame": "69420",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第1关",
+        "fill_notes": "拆分关键帧和截图点。 AI预填：事件归属=四目头盔-过河第1关；时间码模式=range。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R1-BRIDGE-BUILD",
+      "title": "四目头盔 / 头盔-第1关桥生成",
+      "event_name": "头盔-第1关桥生成",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "38:26",
+        "fill_end_timecode": "38:26",
+        "fill_start_frame": "69180",
+        "fill_end_frame": "69180",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第1关",
+        "fill_notes": "确认桥的位置、持续时间和层级。 AI预填：事件归属=四目头盔-过河第1关；时间码模式=point。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R1-LEAVES",
+      "title": "四目头盔 / 头盔-第1关树叶摆动循环",
+      "event_name": "头盔-第1关树叶摆动循环",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "36:57",
+        "fill_end_timecode": "循环段，结束点需人工确认",
+        "fill_start_frame": "66510",
+        "fill_end_frame": "AI待核",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第1关",
+        "fill_notes": "确认周期、幅度和层级。 AI预填：事件归属=四目头盔-过河第1关；时间码模式=continuous。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。 无法从时间码计算帧号。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R1-MERGE-BRIDGE",
+      "title": "四目头盔 / 头盔-第1关合成桥",
+      "event_name": "头盔-第1关合成桥",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "38:20",
+        "fill_end_timecode": "38:20",
+        "fill_start_frame": "69000",
+        "fill_end_frame": "69000",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第1关",
+        "fill_notes": "确认黄色效果和高亮帧。 AI预填：事件归属=四目头盔-过河第1关；时间码模式=point。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R1-TREE-PROMPT",
+      "title": "四目头盔 / 头盔-第1关树木提示",
+      "event_name": "头盔-第1关树木提示",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "37:11",
+        "fill_end_timecode": "37:11",
+        "fill_start_frame": "66930",
+        "fill_end_frame": "66930",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第1关",
+        "fill_notes": "截取提示关键帧。 AI预填：事件归属=四目头盔-过河第1关；时间码模式=point。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R1-WATER",
+      "title": "四目头盔 / 头盔-第1关水流循环",
+      "event_name": "头盔-第1关水流循环",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "36:57",
+        "fill_end_timecode": "循环段，结束点需人工确认",
+        "fill_start_frame": "66510",
+        "fill_end_frame": "AI待核",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第1关",
+        "fill_notes": "确认循环周期、方向、速度和透明度。 AI预填：事件归属=四目头盔-过河第1关；时间码模式=continuous。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。 无法从时间码计算帧号。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R2",
+      "title": "四目头盔 / 头盔-过河第2关完整流程",
+      "event_name": "头盔-过河第2关完整流程",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "38:35",
+        "fill_end_timecode": "44:04",
+        "fill_start_frame": "69450",
+        "fill_end_frame": "79320",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第2关",
+        "fill_notes": "拆分关键帧和截图点。 AI预填：事件归属=四目头盔-过河第2关；时间码模式=range。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R2-BRIDGE-A",
+      "title": "四目头盔 / 头盔-第2关第一次合成搭桥",
+      "event_name": "头盔-第2关第一次合成搭桥",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "40:48",
+        "fill_end_timecode": "40:48",
+        "fill_start_frame": "73440",
+        "fill_end_frame": "73440",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第2关",
+        "fill_notes": "确认合成对象和桥的位置。 AI预填：事件归属=四目头盔-过河第2关；时间码模式=point。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R2-BRIDGE-B",
+      "title": "四目头盔 / 头盔-第2关第二次合成搭桥",
+      "event_name": "头盔-第2关第二次合成搭桥",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "43:55",
+        "fill_end_timecode": "43:55",
+        "fill_start_frame": "79050",
+        "fill_end_frame": "79050",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第2关",
+        "fill_notes": "确认触发时机。 AI预填：事件归属=四目头盔-过河第2关；时间码模式=point。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R2-CONTINUOUS",
+      "title": "四目头盔 / 头盔-第2关连续动画",
+      "event_name": "头盔-第2关连续动画",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "38:35",
+        "fill_end_timecode": "循环段，结束点需人工确认",
+        "fill_start_frame": "69450",
+        "fill_end_frame": "AI待核",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第2关",
+        "fill_notes": "确认是否复用第1关动画。 AI预填：事件归属=四目头盔-过河第2关；时间码模式=continuous。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。 无法从时间码计算帧号。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R2-ONE-TWO-THREE",
+      "title": "四目头盔 / 头盔-第2关一二三合成",
+      "event_name": "头盔-第2关一二三合成",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "43:40",
+        "fill_end_timecode": "43:40",
+        "fill_start_frame": "78600",
+        "fill_end_frame": "78600",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第2关",
+        "fill_notes": "确认树向右移动三格。 AI预填：事件归属=四目头盔-过河第2关；时间码模式=point。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R2-WOOD-PROMPT",
+      "title": "四目头盔 / 头盔-第2关木字提示",
+      "event_name": "头盔-第2关木字提示",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "43:26",
+        "fill_end_timecode": "43:26",
+        "fill_start_frame": "78180",
+        "fill_end_frame": "78180",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第2关",
+        "fill_notes": "确认文字和位置。 AI预填：事件归属=四目头盔-过河第2关；时间码模式=point。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R3",
+      "title": "四目头盔 / 头盔-过河第3关完整流程",
+      "event_name": "头盔-过河第3关完整流程",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "44:05",
+        "fill_end_timecode": "45:49",
+        "fill_start_frame": "79350",
+        "fill_end_frame": "82470",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第3关",
+        "fill_notes": "拆分关键帧和截图点。 AI预填：事件归属=四目头盔-过河第3关；时间码模式=range。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R3-COLLAPSE",
+      "title": "四目头盔 / 头盔-第3关桥断裂",
+      "event_name": "头盔-第3关桥断裂",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "44:21",
+        "fill_end_timecode": "44:21",
+        "fill_start_frame": "79830",
+        "fill_end_frame": "79830",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第3关",
+        "fill_notes": "确认变形、下落和最终状态。 AI预填：事件归属=四目头盔-过河第3关；时间码模式=point。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R3-DROWN",
+      "title": "四目头盔 / 头盔-第3关玩家落水失败",
+      "event_name": "头盔-第3关玩家落水失败",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "44:26",
+        "fill_end_timecode": "44:26",
+        "fill_start_frame": "79980",
+        "fill_end_frame": "79980",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第3关",
+        "fill_notes": "确认下沉动画和失败文字。 AI预填：事件归属=四目头盔-过河第3关；时间码模式=point。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R3-RESTORE",
+      "title": "四目头盔 / 头盔-第3关桥恢复",
+      "event_name": "头盔-第3关桥恢复",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "45:45",
+        "fill_end_timecode": "45:45",
+        "fill_start_frame": "82350",
+        "fill_end_frame": "82350",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第3关",
+        "fill_notes": "确认最终碰撞状态。 AI预填：事件归属=四目头盔-过河第3关；时间码模式=point。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R4",
+      "title": "四目头盔 / 头盔-过河第4关完整流程",
+      "event_name": "头盔-过河第4关完整流程",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "45:50",
+        "fill_end_timecode": "46:26",
+        "fill_start_frame": "82500",
+        "fill_end_frame": "83580",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第4关",
+        "fill_notes": "拆分关键帧和截图点。 AI预填：事件归属=四目头盔-过河第4关；时间码模式=range。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R4-BRIDGE-BUILD",
+      "title": "四目头盔 / 头盔-第4关近处桥生成",
+      "event_name": "头盔-第4关近处桥生成",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "46:05",
+        "fill_end_timecode": "46:05",
+        "fill_start_frame": "82950",
+        "fill_end_frame": "82950",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第4关",
+        "fill_notes": "确认桥的位置和可通行状态。 AI预填：事件归属=四目头盔-过河第4关；时间码模式=point。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R4-BRIDGE-SPLIT",
+      "title": "四目头盔 / 头盔-第4关远处桥拆分",
+      "event_name": "头盔-第4关远处桥拆分",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "46:18",
+        "fill_end_timecode": "46:18",
+        "fill_start_frame": "83340",
+        "fill_end_frame": "83340",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第4关",
+        "fill_notes": "确认拆分动画。 AI预填：事件归属=四目头盔-过河第4关；时间码模式=point。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R5",
+      "title": "四目头盔 / 头盔-过河第5关完整流程",
+      "event_name": "头盔-过河第5关完整流程",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "46:27",
+        "fill_end_timecode": "49:04",
+        "fill_start_frame": "83610",
+        "fill_end_frame": "88320",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第5关",
+        "fill_notes": "拆分关键帧和截图点。 AI预填：事件归属=四目头盔-过河第5关；时间码模式=range。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R5-PLANT-SPLIT",
+      "title": "四目头盔 / 头盔-第5关草字拆分",
+      "event_name": "头盔-第5关草字拆分",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "48:10",
+        "fill_end_timecode": "48:10",
+        "fill_start_frame": "86700",
+        "fill_end_frame": "86700",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第5关",
+        "fill_notes": "确认部件位置。 AI预填：事件归属=四目头盔-过河第5关；时间码模式=point。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R5-WATER-GONE",
+      "title": "四目头盔 / 头盔-第5关最右侧水消失",
+      "event_name": "头盔-第5关最右侧水消失",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "48:56",
+        "fill_end_timecode": "48:56",
+        "fill_start_frame": "88080",
+        "fill_end_frame": "88080",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第5关",
+        "fill_notes": "确认视觉层级和可通行状态。 AI预填：事件归属=四目头盔-过河第5关；时间码模式=point。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R6",
+      "title": "四目头盔 / 头盔-过河第6关完整流程",
+      "event_name": "头盔-过河第6关完整流程",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "49:05",
+        "fill_end_timecode": "50:19",
+        "fill_start_frame": "88350",
+        "fill_end_frame": "90570",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第6关",
+        "fill_notes": "拆分关键帧和截图点。 AI预填：事件归属=四目头盔-过河第6关；时间码模式=range。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R6-GOOSE",
+      "title": "四目头盔 / 头盔-第6关鹅过河",
+      "event_name": "头盔-第6关鹅过河",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "50:15",
+        "fill_end_timecode": "50:15",
+        "fill_start_frame": "90450",
+        "fill_end_frame": "90450",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第6关",
+        "fill_notes": "确认路径、速度、层级和终点。 AI预填：事件归属=四目头盔-过河第6关；时间码模式=point。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "HELMET-R6-ME-BIRD",
+      "title": "四目头盔 / 头盔-第6关我与鸟合成",
+      "event_name": "头盔-第6关我与鸟合成",
+      "review_status": "confirmed",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "50:06",
+        "fill_end_timecode": "50:06",
+        "fill_start_frame": "90180",
+        "fill_end_frame": "90180",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "四目头盔-过河第6关",
+        "fill_notes": "确认玩家和对象状态。 AI预填：事件归属=四目头盔-过河第6关；时间码模式=point。 本地视频元数据：640x360, fps=30, duration=01:22:12。 头盔视频时间轴规则：所有时间码、抽帧和流程分析均使用整章原视频时间；仅 36:50-51:00 片段属于复刻范围，不再换算片段内时间码。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "SWORD-SEG-SLIME",
+      "title": "剑关 / 剑关-史莱姆段",
+      "event_name": "剑关-史莱姆段",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "3:10",
+        "fill_end_timecode": "5:44",
+        "fill_start_frame": "AI待核",
+        "fill_end_frame": "AI待核",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "剑关-史莱姆段",
+        "fill_notes": "从视频中确认开始/结束时间码和帧号。 AI预填：事件归属=剑关-史莱姆段；时间码模式=missing。 本地视频元数据：1920x1080, fps=30, duration=11:21。 无法从时间码计算帧号。 无法从时间码计算帧号。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "SWORD-SEG-SNAKE",
+      "title": "剑关 / 剑关-蛇妖段",
+      "event_name": "剑关-蛇妖段",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "5:45",
+        "fill_end_timecode": "11:20",
+        "fill_start_frame": "AI待核",
+        "fill_end_frame": "AI待核",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "剑关-蛇妖段",
+        "fill_notes": "从视频中确认开始/结束时间码和帧号。 AI预填：事件归属=剑关-蛇妖段；时间码模式=missing。 本地视频元数据：1920x1080, fps=30, duration=11:21。 无法从时间码计算帧号。 无法从时间码计算帧号。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "SWORD-SEG-TUTORIAL",
+      "title": "剑关 / 剑关-教学段",
+      "event_name": "剑关-教学段",
+      "review_status": "modified",
+      "reviewer_note": "",
+      "values": {
+        "fill_start_timecode": "0:26",
+        "fill_end_timecode": "3:10",
+        "fill_start_frame": "AI待核",
+        "fill_end_frame": "AI待核",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "剑关-洞穴教学",
+        "fill_notes": "从视频中确认开始/结束时间码和帧号。 AI预填：事件归属=剑关-洞穴教学；时间码模式=missing。 本地视频元数据：1920x1080, fps=30, duration=11:21。 无法从时间码计算帧号。 无法从时间码计算帧号。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    },
+    {
+      "baseline_id": "SWORD-SEG-VILLAGE",
+      "title": "剑关 / 剑关-村庄溶解显现段",
+      "event_name": "剑关-村庄溶解显现段",
+      "review_status": "modified",
+      "reviewer_note": "删除这个关键点，这个片段包含在同关卡的其他标注片段里。",
+      "values": {
+        "fill_start_timecode": "AI待核：原视频需人工定位开始点",
+        "fill_end_timecode": "AI待核：原视频需人工定位结束点",
+        "fill_start_frame": "AI待核",
+        "fill_end_frame": "AI待核",
+        "fill_keyframe_paths": "AI待核：审核网页中按截图/视频核验后补关键帧路径",
+        "fill_source_scene": "剑关-村庄溶解显现",
+        "fill_notes": "从视频中确认开始/结束时间码和帧号。 AI预填：事件归属=剑关-村庄溶解显现；时间码模式=missing。 本地视频元数据：1920x1080, fps=30, duration=11:21。 无法从时间码计算帧号。 无法从时间码计算帧号。"
+      },
+      "imported_at": "2026-07-09T09:07:53.079Z"
+    }
+  ]
+}

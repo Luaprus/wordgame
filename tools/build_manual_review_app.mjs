@@ -1,0 +1,601 @@
+import fs from "node:fs/promises";
+import path from "node:path";
+
+const root = process.cwd();
+const manualDir = path.join(root, "harness", "manual_tables");
+const outDir = path.join(root, "harness", "manual_review");
+
+function parseCsv(text) {
+  const rows = [];
+  let row = [];
+  let cell = "";
+  let inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    const next = text[i + 1];
+    if (inQuotes) {
+      if (ch === '"' && next === '"') {
+        cell += '"';
+        i++;
+      } else if (ch === '"') {
+        inQuotes = false;
+      } else {
+        cell += ch;
+      }
+    } else if (ch === '"') {
+      inQuotes = true;
+    } else if (ch === ",") {
+      row.push(cell);
+      cell = "";
+    } else if (ch === "\n") {
+      row.push(cell.replace(/\r$/, ""));
+      rows.push(row);
+      row = [];
+      cell = "";
+    } else {
+      cell += ch;
+    }
+  }
+  if (cell.length || row.length) rows.push([...row, cell.replace(/\r$/, "")]);
+  return rows.filter((r) => r.some((c) => c !== ""));
+}
+
+async function readCsv(name) {
+  const rows = parseCsv(await fs.readFile(path.join(manualDir, name), "utf8"));
+  rows[0][0] = rows[0][0].replace(/^\uFEFF/, "");
+  const headers = rows[0];
+  return rows.slice(1).map((row) => Object.fromEntries(headers.map((header, index) => [header, row[index] ?? ""])));
+}
+
+function relFromReview(filePath) {
+  if (!filePath) return "";
+  return path.posix.join("..", ...filePath.replace(/\\/g, "/").split("/").slice(1));
+}
+
+function sourcePreviewPath(row) {
+  const ext = path.extname(row.resource_name || "").toLowerCase();
+  if (![".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"].includes(ext)) return "";
+  return path.posix.join("..", "..", row.resource_path.replace(/\\/g, "/"));
+}
+
+function fieldSpec(kind) {
+  if (kind === "video") {
+    return [
+      "fill_start_timecode",
+      "fill_end_timecode",
+      "fill_start_frame",
+      "fill_end_frame",
+      "fill_keyframe_paths",
+      "fill_source_scene",
+      "fill_notes",
+      "status",
+    ];
+  }
+  if (kind === "screenshot") {
+    return [
+      "fill_source_page",
+      "fill_state_name",
+      "fill_player_grid_x",
+      "fill_player_grid_y",
+      "fill_visible_text_layout",
+      "fill_dynamic_objects",
+      "fill_related_video_timecode",
+      "fill_notes",
+      "status",
+    ];
+  }
+  return [
+    "fill_confirmed_level",
+    "fill_event_id",
+    "fill_source_scene",
+    "fill_animation_player",
+    "fill_commands",
+    "fill_switches",
+    "fill_variables",
+    "fill_notes",
+    "status",
+  ];
+}
+
+function levelLabel(levelId) {
+  return {
+    sword: "剑关",
+    glove: "手套关",
+    helmet: "四目头盔",
+    core: "通用系统",
+    audio: "音频资源",
+    font: "字体资源",
+  }[levelId] || levelId || "";
+}
+
+const labelMap = {
+  baseline_id: "基准ID",
+  level_id: "关卡",
+  video_file: "视频文件",
+  event_name: "事件名称",
+  source_path: "来源路径",
+  known_timecode: "原始时间码",
+  fill_start_timecode: "开始时间码",
+  fill_end_timecode: "结束时间码",
+  fill_start_frame: "开始帧",
+  fill_end_frame: "结束帧",
+  fill_keyframe_paths: "关键帧截图路径",
+  fill_source_scene: "对应原版场景",
+  fill_notes: "备注",
+  status: "状态",
+  screenshot_id: "截图ID",
+  image_path: "图片路径",
+  image_width: "图片宽度",
+  image_height: "图片高度",
+  fill_source_page: "页码",
+  fill_state_name: "状态名",
+  fill_player_grid_x: "玩家格子X",
+  fill_player_grid_y: "玩家格子Y",
+  fill_player_direction: "玩家朝向",
+  fill_camera_x: "镜头X",
+  fill_camera_y: "镜头Y",
+  fill_visible_text_layout: "可见文字布局",
+  fill_dynamic_objects: "动态对象",
+  fill_related_video_timecode: "对应视频时间码",
+  source_id: "资源ID",
+  resource_kind: "资源类型",
+  resource_name: "资源名",
+  resource_path: "资源路径",
+  matched_reason: "命中原因",
+  file_size: "文件大小",
+  fill_confirmed_level: "确认关卡",
+  fill_event_id: "对应事件ID",
+  fill_animation_player: "AnimationPlayer",
+  fill_commands: "核验命令/操作",
+  fill_switches: "开关",
+  fill_variables: "变量",
+};
+
+const videoRows = (await readCsv("video_events_to_fill.csv")).map((row) => ({
+  kind: "video",
+  id: row.baseline_id,
+  title: `${levelLabel(row.level_id)} / ${row.event_name}`,
+  preview: "",
+  fields: fieldSpec("video"),
+  row,
+}));
+
+const screenshotRows = (await readCsv("screenshots_to_fill.csv")).map((row) => ({
+  kind: "screenshot",
+  id: row.screenshot_id,
+  title: `${levelLabel(row.level_id)} / ${row.fill_state_name || row.screenshot_id}`,
+  preview: relFromReview(row.image_path),
+  fields: fieldSpec("screenshot"),
+  row,
+})).filter((item) => item.row.status !== "excluded");
+
+const sourceRows = (await readCsv("source_index_to_fill.csv")).map((row) => ({
+  kind: "source",
+  id: row.source_id,
+  title: `${levelLabel(row.level_id)} / ${row.resource_name}`,
+  preview: sourcePreviewPath(row),
+  fields: fieldSpec("source"),
+  row,
+}));
+
+const reviewItems = [...videoRows, ...screenshotRows];
+
+const data = {
+  generated_at: new Date().toISOString(),
+  counts: {
+    video: videoRows.length,
+    screenshot: screenshotRows.length,
+    source: 0,
+    source_ai_only: sourceRows.length,
+  },
+  notes: {
+    source_ai_only: "源码归属表不进入人工审核网页，由 AI 自动分析；人工组员只复核视频事件和截图语义。",
+    helmet_video_scope: "四目头盔使用整章原视频时间轴，仅 36:50-51:00 片段属于复刻范围。",
+  },
+  items: reviewItems,
+};
+
+const html = `<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>文字游戏人工复核台</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f8;
+      --panel: #ffffff;
+      --ink: #1d242b;
+      --muted: #64717f;
+      --line: #d8dee5;
+      --brand: #1769aa;
+      --ok: #197b4d;
+      --warn: #a15c00;
+      --bad: #b3261e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 14px/1.45 "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+    }
+    header {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+    h1 { margin: 0; font-size: 18px; font-weight: 700; }
+    button, select, input, textarea {
+      font: inherit;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+    }
+    button {
+      padding: 8px 11px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    button.primary { background: var(--brand); color: #fff; border-color: var(--brand); }
+    button.ok { background: var(--ok); color: #fff; border-color: var(--ok); }
+    button.warn { background: #fff7e8; color: var(--warn); border-color: #d6a75a; }
+    .shell {
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) 1fr;
+      min-height: calc(100vh - 56px);
+    }
+    aside {
+      border-right: 1px solid var(--line);
+      background: var(--panel);
+      min-width: 0;
+    }
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .filters input { grid-column: 1 / -1; padding: 8px 10px; min-width: 0; }
+    .filters select { padding: 8px 10px; min-width: 0; }
+    .list {
+      height: calc(100vh - 141px);
+      overflow: auto;
+    }
+    .item {
+      width: 100%;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+      text-align: left;
+      border-radius: 0;
+      padding: 10px 12px;
+    }
+    .item.active { background: #e8f2fb; }
+    .item-title { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .item-meta { margin-top: 4px; color: var(--muted); font-size: 12px; display: flex; justify-content: space-between; gap: 8px; }
+    main {
+      padding: 18px;
+      min-width: 0;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .detail {
+      display: grid;
+      grid-template-columns: minmax(320px, 46vw) 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      min-width: 0;
+    }
+    .preview {
+      min-height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #101418;
+      overflow: auto;
+    }
+    .preview img {
+      max-width: 100%;
+      max-height: 70vh;
+      image-rendering: pixelated;
+      display: block;
+    }
+    .no-preview {
+      color: #cbd5df;
+      text-align: center;
+      padding: 24px;
+      max-width: 520px;
+      white-space: pre-wrap;
+    }
+    dl {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 6px 10px;
+      margin: 12px 0 0;
+    }
+    dt { color: var(--muted); }
+    dd { margin: 0; word-break: break-all; }
+    label {
+      display: block;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    textarea, input[type="text"] {
+      width: 100%;
+      min-width: 0;
+      margin-top: 4px;
+      padding: 8px 9px;
+    }
+    textarea { min-height: 70px; resize: vertical; }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: #eef2f6;
+      color: var(--muted);
+    }
+    .status.confirmed { background: #e4f5ec; color: var(--ok); }
+    .status.needs_change { background: #fff0ef; color: var(--bad); }
+    .status.modified { background: #fff7e8; color: var(--warn); }
+    .empty { color: var(--muted); }
+    @media (max-width: 980px) {
+      .shell, .detail { grid-template-columns: 1fr; }
+      .list { height: 320px; }
+      aside { border-right: 0; border-bottom: 1px solid var(--line); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>文字游戏人工复核台</h1>
+    <div class="toolbar">
+      <button id="exportBtn" class="primary">导出审核结果</button>
+      <button id="clearBtn">清空本机审核状态</button>
+    </div>
+  </header>
+  <div class="shell">
+    <aside>
+      <div class="filters">
+        <select id="kindFilter">
+          <option value="all">全部表格</option>
+          <option value="video">视频事件</option>
+          <option value="screenshot">截图语义</option>
+        </select>
+        <select id="reviewFilter">
+          <option value="all">全部状态</option>
+          <option value="pending">待审核</option>
+          <option value="confirmed">已确认</option>
+          <option value="needs_change">需修改</option>
+          <option value="modified">已修改</option>
+        </select>
+        <input id="searchBox" placeholder="搜索 ID、关卡、资源名、备注">
+      </div>
+      <div id="list" class="list"></div>
+    </aside>
+    <main>
+      <div class="toolbar">
+        <button id="confirmBtn" class="ok">确认</button>
+        <button id="changeBtn" class="warn">需要修改</button>
+        <button id="saveBtn" class="primary">保存修改</button>
+        <span id="currentStatus" class="status">待审核</span>
+      </div>
+      <section class="detail">
+        <div class="panel">
+          <div id="preview" class="preview"></div>
+          <dl id="meta"></dl>
+        </div>
+        <div class="panel">
+          <div id="editor"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="review_data.js"></script>
+  <script>
+    const storageKey = "wordgame-review-state-v1";
+    const data = window.REVIEW_DATA;
+    const labelMap = ${JSON.stringify(labelMap, null, 6)};
+    let state = JSON.parse(localStorage.getItem(storageKey) || "{}");
+    let activeId = data.items[0]?.id || "";
+
+    const listEl = document.getElementById("list");
+    const previewEl = document.getElementById("preview");
+    const metaEl = document.getElementById("meta");
+    const editorEl = document.getElementById("editor");
+    const statusEl = document.getElementById("currentStatus");
+    const kindFilter = document.getElementById("kindFilter");
+    const reviewFilter = document.getElementById("reviewFilter");
+    const searchBox = document.getElementById("searchBox");
+
+    function itemState(id) {
+      return state[id] || { review_status: "pending", values: {}, reviewer_note: "" };
+    }
+    function saveState() {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+    }
+    function mergedRow(item) {
+      return { ...item.row, ...(itemState(item.id).values || {}) };
+    }
+    function reviewLabel(value) {
+      return { pending: "待审核", confirmed: "已确认", needs_change: "需修改", modified: "已修改" }[value] || value;
+    }
+    function fieldLabel(key) {
+      return labelMap[key] || key;
+    }
+    function valueLabel(key, value) {
+      if (key === "level_id") {
+        return { sword: "剑关", glove: "手套关", helmet: "四目头盔", core: "通用系统", audio: "音频资源", font: "字体资源" }[value] || value;
+      }
+      return value;
+    }
+    function filteredItems() {
+      const kind = kindFilter.value;
+      const review = reviewFilter.value;
+      const q = searchBox.value.trim().toLowerCase();
+      return data.items.filter((item) => {
+        const st = itemState(item.id).review_status;
+        const hay = JSON.stringify(item).toLowerCase();
+        return (kind === "all" || item.kind === kind) && (review === "all" || st === review) && (!q || hay.includes(q));
+      });
+    }
+    function renderList() {
+      const items = filteredItems();
+      if (!items.find((item) => item.id === activeId) && items[0]) activeId = items[0].id;
+      listEl.innerHTML = "";
+      for (const item of items) {
+        const button = document.createElement("button");
+        button.className = "item" + (item.id === activeId ? " active" : "");
+        const st = itemState(item.id).review_status;
+        button.innerHTML = '<div class="item-title">' + item.title + '</div><div class="item-meta"><span>' + item.id + '</span><span>' + reviewLabel(st) + '</span></div>';
+        button.onclick = () => { activeId = item.id; render(); };
+        listEl.appendChild(button);
+      }
+      if (!items.length) listEl.innerHTML = '<div class="empty" style="padding:16px">没有匹配项</div>';
+    }
+    function renderPreview(item, row) {
+      previewEl.innerHTML = "";
+      if (item.preview) {
+        const img = document.createElement("img");
+        img.src = encodeURI(item.preview);
+        img.alt = item.id;
+        img.onerror = () => {
+          previewEl.innerHTML = '<div class="no-preview">预览加载失败\\n' + item.preview + '</div>';
+        };
+        previewEl.appendChild(img);
+      } else {
+        const text = item.kind === "video"
+          ? "视频事件项没有内嵌截图。请按来源路径和时间码打开原视频核验。\\n" + (row.source_path || "")
+          : "该资源不是可直接预览的图片。\\n" + (row.resource_path || "");
+        previewEl.innerHTML = '<div class="no-preview">' + text + '</div>';
+      }
+    }
+    function renderMeta(item, row) {
+      const keys = item.kind === "video"
+        ? ["level_id", "video_file", "source_path", "known_timecode", "event_name"]
+        : item.kind === "screenshot"
+          ? ["level_id", "source_path", "image_path", "image_width", "image_height"]
+          : ["level_id", "resource_kind", "resource_name", "resource_path", "matched_reason", "file_size"];
+      metaEl.innerHTML = keys.map((key) => '<dt>' + fieldLabel(key) + '</dt><dd>' + (valueLabel(key, row[key]) || '<span class="empty">空</span>') + '</dd>').join("");
+    }
+    function renderEditor(item, row) {
+      editorEl.innerHTML = "";
+      for (const key of item.fields) {
+        const label = document.createElement("label");
+        label.textContent = fieldLabel(key);
+        const value = row[key] || "";
+        const input = value.length > 60 || key.includes("notes") || key.includes("layout") || key.includes("commands")
+          ? document.createElement("textarea")
+          : document.createElement("input");
+        if (input.tagName === "INPUT") input.type = "text";
+        input.value = value;
+        input.dataset.field = key;
+        label.appendChild(input);
+        editorEl.appendChild(label);
+      }
+      const noteLabel = document.createElement("label");
+      noteLabel.textContent = "审核员备注";
+      const note = document.createElement("textarea");
+      note.dataset.field = "__reviewer_note";
+      note.value = itemState(item.id).reviewer_note || "";
+      noteLabel.appendChild(note);
+      editorEl.appendChild(noteLabel);
+    }
+    function renderDetail() {
+      const item = data.items.find((entry) => entry.id === activeId) || data.items[0];
+      if (!item) return;
+      activeId = item.id;
+      const row = mergedRow(item);
+      const st = itemState(item.id).review_status;
+      statusEl.textContent = reviewLabel(st);
+      statusEl.className = "status " + st;
+      renderPreview(item, row);
+      renderMeta(item, row);
+      renderEditor(item, row);
+    }
+    function collectEditorValues() {
+      const item = data.items.find((entry) => entry.id === activeId);
+      if (!item) return;
+      const values = {};
+      let reviewer_note = "";
+      for (const control of editorEl.querySelectorAll("input, textarea")) {
+        if (control.dataset.field === "__reviewer_note") reviewer_note = control.value;
+        else values[control.dataset.field] = control.value;
+      }
+      state[item.id] = { ...itemState(item.id), review_status: "modified", values, reviewer_note, kind: item.kind, title: item.title };
+      saveState();
+      render();
+    }
+    function mark(status) {
+      const item = data.items.find((entry) => entry.id === activeId);
+      if (!item) return;
+      const values = {};
+      let reviewer_note = "";
+      for (const control of editorEl.querySelectorAll("input, textarea")) {
+        if (control.dataset.field === "__reviewer_note") reviewer_note = control.value;
+        else values[control.dataset.field] = control.value;
+      }
+      state[item.id] = { ...itemState(item.id), review_status: status, values, reviewer_note, kind: item.kind, title: item.title };
+      saveState();
+      render();
+    }
+    function exportState() {
+      const payload = {
+        exported_at: new Date().toISOString(),
+        source_generated_at: data.generated_at,
+        reviewer_state: state,
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "wordgame_review_result.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+    function render() {
+      renderList();
+      renderDetail();
+    }
+    document.getElementById("confirmBtn").onclick = () => mark("confirmed");
+    document.getElementById("changeBtn").onclick = () => mark("needs_change");
+    document.getElementById("saveBtn").onclick = collectEditorValues;
+    document.getElementById("exportBtn").onclick = exportState;
+    document.getElementById("clearBtn").onclick = () => { if (confirm("清空本机审核状态？")) { state = {}; saveState(); render(); } };
+    kindFilter.onchange = render;
+    reviewFilter.onchange = render;
+    searchBox.oninput = render;
+    render();
+  </script>
+</body>
+</html>`;
+
+await fs.mkdir(outDir, { recursive: true });
+await fs.writeFile(path.join(outDir, "review_data.js"), `window.REVIEW_DATA = ${JSON.stringify(data, null, 2)};\n`, "utf8");
+await fs.writeFile(path.join(outDir, "review.html"), html, "utf8");
+console.log(`Manual review app saved: ${path.join(outDir, "review.html")}`);
+console.log(`Review items: video=${data.counts.video}; screenshot=${data.counts.screenshot}; source=${data.counts.source}`);

@@ -1,0 +1,22 @@
+{
+  "schema_id": "wordgame.baseline.source_index.v1",
+  "required_fields": [
+    "id",
+    "feature_id",
+    "level_id",
+    "source_type",
+    "source_path",
+    "source_timecode",
+    "source_frame",
+    "source_scene",
+    "status",
+    "notes",
+    "resource_kind",
+    "resource_path",
+    "resource_name",
+    "matched_reason",
+    "file_size",
+    "sha256"
+  ],
+  "status_values": ["confirmed", "manual_required", "ai_analysis_required", "blocked"]
+}

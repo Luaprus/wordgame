@@ -66,7 +66,7 @@
       "title": "原版资料索引与基准表结构",
       "description": "建立视频、截图、地图、行为、动画、音频、源码索引的机器可读表结构和唯一 ID 规则。",
       "priority": "must",
-      "status": "todo",
+      "status": "done",
       "owner": null,
       "depends_on": ["HARNESS-001"],
       "allowed_files": [
@@ -105,14 +105,18 @@
       "title": "视频基准提取",
       "description": "从三个录屏提取元数据、目标章节时间段、关键事件时间码和帧号。",
       "priority": "must",
-      "status": "todo",
+      "status": "done",
       "owner": null,
       "depends_on": ["F001"],
       "allowed_files": [
         "harness/baselines/video/*",
         "tools/extract_video_baselines.*",
+        "tools/import_video_review_result.mjs",
+        "tools/apply_video_review_overrides.mjs",
+        "tools/build_manual_review.ps1",
         "tools/ffmpeg_helpers.*",
-        "docs/video_baselines.md"
+        "docs/video_baselines.md",
+        "tools/validate_baselines.ps1"
       ],
       "forbidden_files": [
         "新建游戏项目/scripts/*",
@@ -143,12 +147,15 @@
       "title": "DOCX 截图基准提取",
       "description": "从三份流程 docx 导出图片并建立截图基准表。",
       "priority": "must",
-      "status": "todo",
+      "status": "done",
       "owner": null,
       "depends_on": ["F001"],
       "allowed_files": [
         "harness/baselines/screenshots/*",
         "tools/extract_docx_images.*",
+        "tools/import_screenshot_review_result.mjs",
+        "tools/apply_screenshot_review_overrides.mjs",
+        "tools/build_manual_review.ps1",
         "docs/screenshot_baselines.md"
       ],
       "forbidden_files": [
@@ -177,15 +184,20 @@
     {
       "id": "F004",
       "title": "原版源码与资源索引",
-      "description": "索引原版解包资源中的目标场景、脚本、动画、音频、字体和地图事件。",
+      "description": "索引原版解包资源中的目标场景、脚本、动画、音频、字体和地图事件，并将 AI 源码归属分析回写到基准表。",
       "priority": "must",
-      "status": "todo",
+      "status": "done",
       "owner": null,
       "depends_on": ["F001"],
       "allowed_files": [
         "harness/baselines/source_index/*",
         "tools/index_original_sources.*",
-        "docs/source_index.md"
+        "tools/analyze_original_sources.mjs",
+        "tools/apply_source_analysis_to_manual_table.mjs",
+        "tools/build_manual_review.ps1",
+        "tools/validate_baselines.ps1",
+        "docs/source_index.md",
+        "docs/source_analysis.md"
       ],
       "forbidden_files": [
         "参考资料/文字游戏源码/*",
@@ -193,9 +205,9 @@
       ],
       "acceptance_criteria": [
         "目标地图 .tscn 路径全部登记",
-        "目标脚本、事件、commands、switch、variable 全部登记",
-        "目标动画 AnimationPlayer、轨道和关键帧来源全部登记",
-        "目标音效/BGM 文件名和触发命令全部登记"
+        "目标脚本、事件、AnimationPlayer、音效/BGM 候选和地图引用证据全部登记",
+        "AI 分析结果已回写 source_index 基线和 source_index_to_fill 表格，并保留 confidence 与分析备注",
+        ".gdc 未反编译部分必须明确标记为 ai_analysis_required 或低置信度推断，不能伪装成已确认的 commands/switches/variables"
       ],
       "tests": [
         {
@@ -206,7 +218,7 @@
       ],
       "definition_of_done": [
         "源码索引表已生成",
-        "所有目标条目有原版路径",
+        "所有目标条目有原版路径和 AI 分析状态",
         "校验脚本通过",
         "progress.jsonl 已记录完成证据"
       ]
@@ -216,7 +228,7 @@
       "title": "基准数据校验器与报告",
       "description": "实现基准表完整性检查、缺口报告和阻塞项报告。",
       "priority": "must",
-      "status": "todo",
+      "status": "done",
       "owner": null,
       "depends_on": ["F001", "F002", "F003", "F004"],
       "allowed_files": [
