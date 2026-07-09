@@ -264,7 +264,7 @@
       "title": "玩家“我”状态模型",
       "description": "实现玩家格子坐标、朝向、移动状态、输入冷却、事件锁和能力集合。",
       "priority": "must",
-      "status": "todo",
+      "status": "done",
       "owner": null,
       "depends_on": ["F005"],
       "allowed_files": [
