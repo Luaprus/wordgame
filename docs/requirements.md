@@ -49,6 +49,7 @@
 10. 修改超出 allowed_files，必须先更新 `harness/plan.md` 并说明原因。
 11. 任何架构级改动必须先更新 `harness/contracts.md`。
 12. 多人合作时，以 `harness/progress.jsonl` 为唯一进度来源。
+13. 每次提交前必须从 GitHub 远端全量拉取并完成同步；未同步、未解决冲突、未重新测试，不允许提交或推送。
 
 ## 基准库交付
 

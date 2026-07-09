@@ -27,6 +27,33 @@
 7. Record：追加写入 `harness/progress.jsonl`。
 8. Deliver：提交功能说明和测试证据。
 
+## GitHub 版本控制规则
+
+每次提交前必须执行完整远端同步：
+
+1. 确认当前分支和远端：`git status`、`git remote -v`。
+2. 拉取远端最新历史：`git fetch origin --prune`。
+3. 将本地分支同步到远端目标分支最新状态：优先使用 `git pull --rebase origin main`；如果团队明确要求 merge，再使用 `git pull --no-rebase origin main`。
+4. 如有冲突，必须解决冲突，并在 `harness/progress.jsonl` 记录 `sync_conflict_resolved` 事件。
+5. 同步完成后重新运行必需测试；未重新测试通过，不允许提交。
+6. 提交后推送：`git push origin main`。
+
+禁止：
+
+- 未拉取远端最新状态就提交。
+- 有冲突未解决就提交。
+- 测试失败仍提交或推送。
+- 使用强推覆盖他人提交，除非甲方明确批准并记录原因。
+
+推荐提交前检查命令：
+
+```powershell
+git fetch origin --prune
+git pull --rebase origin main
+powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1
+git status --short
+```
+
 ## 阶段顺序
 
 ### 阶段 0：Harness 治理

@@ -40,6 +40,21 @@
 - `test_passed` 必须包含 command。
 - `blocked` 必须说明缺失资料或阻塞条件。
 
+## GitHub 版本控制契约
+
+所有提交和推送必须遵守“先全量拉取，再测试，再提交”的顺序：
+
+1. `git fetch origin --prune`
+2. `git pull --rebase origin main`
+3. 解决冲突；若发生冲突，追加 `sync_conflict_resolved` 到 `harness/progress.jsonl`
+4. 运行 feature 要求的全部测试，至少包括 `tools/run_all_tests.ps1`
+5. `git commit`
+6. `git push origin main`
+
+如果远端分支不是 `main`，必须在局部计划中写明目标分支，并把上述命令中的 `main` 替换成目标分支。
+
+任何未同步远端、未解决冲突、未重新测试的提交都不符合验收契约。禁止强推覆盖远端历史，除非甲方明确批准并在 `progress.jsonl` 中记录原因、影响范围和恢复方案。
+
 ## 基准数据契约
 
 七类基准表必须包含公共字段：
