@@ -1,6 +1,14 @@
 $ErrorActionPreference = "Stop"
 
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot
+$GameplayReviewBuilder = Join-Path $WorkspaceRoot "tools/build_gameplay_review_app.mjs"
+if (-not (Test-Path -LiteralPath $GameplayReviewBuilder)) {
+    throw "Gameplay review builder missing: $GameplayReviewBuilder"
+}
+& node $GameplayReviewBuilder
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+}
 $ProjectCandidates = Get-ChildItem -LiteralPath $WorkspaceRoot -Directory |
     Where-Object { Test-Path -LiteralPath (Join-Path $_.FullName "project.godot") }
 $ProjectRoot = $null
@@ -54,7 +62,22 @@ $RequiredFiles = @(
     "harness/source_analysis/source_event_summary.json",
     "harness/source_analysis/map_event_links.json",
     "docs/source_analysis.md",
-    "docs/source_map_links.md"
+    "docs/source_map_links.md",
+    "tools/gameplay_flow_lib.mjs",
+    "tools/validate_gameplay_flow.mjs",
+    "tools/import_gameplay_review_result.mjs",
+    "tools/build_gameplay_review_app.mjs",
+    "tools/test_gameplay_flow.mjs",
+    "harness/baselines/schema/gameplay_flow.schema.json",
+    "harness/gameplay_flow/sword.review.json",
+    "harness/gameplay_flow/glove.review.json",
+    "harness/gameplay_flow/helmet.review.json",
+    "harness/gameplay_review/index.html",
+    "harness/gameplay_review/sword.html",
+    "harness/gameplay_review/glove.html",
+    "harness/gameplay_review/helmet.html",
+    "harness/gameplay_review/review_data.js",
+    "harness/gameplay_review/README.md"
 )
 
 foreach ($relativePath in $RequiredFiles) {
@@ -265,6 +288,16 @@ if ($ReviewData.items.Count -ne ($VideoRows.Count + $ActiveScreenshotRows.Count)
 $ReviewZip = Join-Path $WorkspaceRoot "harness/manual_review_package.zip"
 if ((Get-Item -LiteralPath $ReviewZip).Length -lt 1000000) {
     throw "Manual review package zip is unexpectedly small."
+}
+
+& node --test (Join-Path $WorkspaceRoot "tools/test_gameplay_flow.mjs")
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+}
+
+& node (Join-Path $WorkspaceRoot "tools/validate_gameplay_flow.mjs")
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
 }
 
 $ProjectTestScript = Join-Path $ProjectRoot "tools/run_all_tests.ps1"

@@ -215,3 +215,11 @@ test("builder generates a Chinese total page and three isolated level pages", as
   assert.match(gloveHtml, /wordgame-flow-review-v1:glove/);
   assert.match(helmetHtml, /wordgame-flow-review-v1:helmet/);
 });
+
+test("one-click harness runner builds and validates gameplay review artifacts", async () => {
+  const runner = await fs.readFile(path.join(root, "tools", "run_all_tests.ps1"), "utf8");
+
+  assert.match(runner, /build_gameplay_review_app\.mjs/);
+  assert.match(runner, /test_gameplay_flow\.mjs/);
+  assert.match(runner, /validate_gameplay_flow\.mjs/);
+});
