@@ -137,3 +137,9 @@
 2. 更新受影响 feature 的 `allowed_files`、依赖和测试。
 3. 在 `progress.jsonl` 写入 `contract_updated` 事件。
 4. 再进入实现。
+## F034 Visual Smoothing Contract
+
+- Visual smoothing is presentation-only.
+- It may interpolate screen-space motion between two valid grid states.
+- It must not mutate gameplay truth in `新建游戏项目/scripts/grid_world.gd`.
+- The final rendered position after interpolation must equal the exact target grid cell position.

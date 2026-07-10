@@ -6,6 +6,7 @@ const HelmetR1 = preload("res://levels/helmet/helmet_r1.gd")
 const PageCamera = preload("res://scripts/page_camera.gd")
 const PrecisionMovement = preload("res://scripts/precision_movement.gd")
 const DemoRunner = preload("res://scripts/demo_runner.gd")
+const SmoothGridMover = preload("res://scripts/smooth_grid_mover.gd")
 const OriginalFont = preload("res://Fonts/Zpix.tres")
 
 const MOVE_REPEAT_INTERVAL := 0.28
@@ -15,18 +16,45 @@ const WORD_FONT_SIZE := 42
 var world := GridWorld.new()
 var page_camera := PageCamera.new()
 var demo := DemoRunner.new()
+var player_mover := SmoothGridMover.new()
+var entity_movers: Dictionary = {}
 var entity_labels: Dictionary = {}
 var player_label: Label
 var map_layer: Node2D
 var demo_timer: Timer
 var held_move_directions: Array[Vector2i] = []
 var move_repeat_elapsed := 0.0
+var move_visual_duration := 0.12
+var _player_visual_ready := false
 
 func _ready() -> void:
 	world.load_level(HelmetR1.build_level())
 	page_camera.sync_to_world(world)
 	_build_scene()
 	_refresh_view()
+
+func _process(delta: float) -> void:
+	var direction := _current_held_direction()
+	if direction == Vector2i.ZERO:
+		move_repeat_elapsed = 0.0
+	else:
+		move_repeat_elapsed += delta
+		var interval := FAST_MOVE_REPEAT_INTERVAL if Input.is_key_pressed(KEY_SHIFT) else MOVE_REPEAT_INTERVAL
+		while move_repeat_elapsed >= interval:
+			move_repeat_elapsed -= interval
+			_apply_direction_step(direction)
+
+	var changed := false
+	if _player_visual_ready:
+		var previous_player := player_mover.current_position
+		player_mover.advance(delta)
+		changed = changed or previous_player != player_mover.current_position
+	for mover in entity_movers.values():
+		var previous_position: Vector2 = mover.current_position
+		mover.advance(delta)
+		changed = changed or previous_position != mover.current_position
+	if changed:
+		_apply_visual_positions()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not event is InputEventKey:
@@ -55,17 +83,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_TAB:
 			_apply_result(world.split_front())
 
-func _process(delta: float) -> void:
-	var direction := _current_held_direction()
-	if direction == Vector2i.ZERO:
-		move_repeat_elapsed = 0.0
-		return
-	move_repeat_elapsed += delta
-	var interval := FAST_MOVE_REPEAT_INTERVAL if Input.is_key_pressed(KEY_SHIFT) else MOVE_REPEAT_INTERVAL
-	while move_repeat_elapsed >= interval:
-		move_repeat_elapsed -= interval
-		_apply_direction_step(direction)
-
 func _build_scene() -> void:
 	map_layer = Node2D.new()
 	map_layer.name = "MapLayer"
@@ -88,10 +105,16 @@ func _build_ui() -> void:
 
 func _refresh_view(_message := "") -> void:
 	_sync_entity_labels()
-	player_label.position = _grid_to_pixels(world.player_pos)
-	player_label.move_to_front()
 	page_camera.sync_to_world(world)
 	map_layer.position = page_camera.offset_pixels()
+	var player_target := _grid_to_pixels(world.player_pos)
+	if not _player_visual_ready:
+		player_mover.snap_to(player_target)
+		_player_visual_ready = true
+	else:
+		player_mover.move_to(player_target, move_visual_duration)
+	_apply_visual_positions()
+	player_label.move_to_front()
 
 func _sync_entity_labels() -> void:
 	var alive := {}
@@ -102,12 +125,24 @@ func _sync_entity_labels() -> void:
 			group = Node2D.new()
 			entity_labels[entity.id] = group
 			map_layer.add_child(group)
-		group.position = _grid_to_pixels(entity.grid_pos)
+			var mover = SmoothGridMover.new()
+			mover.snap_to(_grid_to_pixels(entity.grid_pos))
+			entity_movers[entity.id] = mover
+		var entity_mover = entity_movers.get(entity.id)
+		entity_mover.move_to(_grid_to_pixels(entity.grid_pos), move_visual_duration)
 		_sync_entity_label_group(group, entity)
 	for id in entity_labels.keys():
 		if not alive.has(id):
 			entity_labels[id].queue_free()
 			entity_labels.erase(id)
+			entity_movers.erase(id)
+
+func _apply_visual_positions() -> void:
+	player_label.position = player_mover.current_position
+	for id in entity_labels.keys():
+		var mover = entity_movers.get(id)
+		if mover:
+			entity_labels[id].position = mover.current_position
 
 func _sync_entity_label_group(group: Node2D, entity) -> void:
 	var text := str(entity.text)

@@ -143,3 +143,9 @@ git status --short
 - F007 的验收标准包含 “方向键和 WASD 均可移动”。
 - 真实键位入口位于 `新建游戏项目/scripts/main.gd`，如果不允许修改该文件，WASD 无法进入实际运行链路，验收会失真。
 - 因此 F007 的 `allowed_files` 补充 `新建游戏项目/scripts/main.gd`，用途仅限把方向键/WASD 映射复用到同一移动入口，不允许在该文件扩展与 F007 无关的玩法逻辑。
+## F034 Grid Visual Smoothing
+
+- Goal: make on-screen movement continuous while preserving exact grid landing positions.
+- Scope: presentation layer only; no gameplay-rule edits in `grid_world.gd`.
+- Files: `新建游戏项目/scripts/main.gd`, `新建游戏项目/scripts/smooth_grid_mover.gd`, `新建游戏项目/tests/test_smooth_grid_mover.gd`, `新建游戏项目/tools/run_all_tests.ps1`.
+- Proof: red-green test for interpolation contract plus full one-click test run.
