@@ -9,6 +9,11 @@ var pushable := false
 var deletable := false
 var splittable := false
 var interact_text := ""
+var interact_caption_lines: Array = []
+var interact_caption_pos := Vector2i.ZERO
+var has_interact_caption_pos := false
+var interact_caption_solid := false
+var split_positions: Array[Vector2i] = []
 var highlighted := false
 
 func _init(entity_id := "", entity_text := "", pos := Vector2i.ZERO, occupied_cells: Array[Vector2i] = []) -> void:
@@ -26,6 +31,11 @@ func set_from_config(config: Dictionary) -> void:
 	deletable = config.get("deletable", deletable)
 	splittable = config.get("splittable", splittable)
 	interact_text = config.get("interact_text", interact_text)
+	interact_caption_lines = config.get("interact_caption_lines", interact_caption_lines)
+	if config.has("interact_caption_pos"):
+		interact_caption_pos = config.interact_caption_pos
+		has_interact_caption_pos = true
+	interact_caption_solid = config.get("interact_caption_solid", interact_caption_solid)
 
 func move_by(delta: Vector2i) -> void:
 	grid_pos += delta

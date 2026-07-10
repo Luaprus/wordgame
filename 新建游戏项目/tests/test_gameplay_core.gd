@@ -12,6 +12,7 @@ func _init() -> void:
 	test_split_merge_and_sentence_rule()
 	test_pull_direction_is_locked_to_player_side()
 	test_push_into_merge_target_auto_merges()
+	test_merged_word_splits_to_source_cells_and_moves_player()
 	test_sentence_caption_is_map_collision_text()
 	test_interaction_prompt_stays_as_map_collision_text()
 
@@ -259,6 +260,23 @@ func test_push_into_merge_target_auto_merges() -> void:
 	assert_equal(world.get_entity_at(Vector2i(9, 4)).text, "戏", "pushed parts automatically merge at target cell")
 	assert_equal(world.player_pos, Vector2i(8, 4), "player moves into pushed word's old cell")
 	assert_equal(world.get_entity_at(Vector2i(8, 4)), null, "source part cell is freed after merge")
+
+func test_merged_word_splits_to_source_cells_and_moves_player() -> void:
+	var world = GridWorld.new()
+	world.split_rules = {"戏": ["又", "戈"]}
+	world.merge_rules = {"戈+又": "戏"}
+	world.add_entity("又", Vector2i(8, 4), {"solid": true, "pushable": true})
+	world.add_entity("戈", Vector2i(9, 4), {"solid": true, "pushable": true})
+	var merged = world.try_merge_entities(Vector2i(9, 4), Vector2i(8, 4))
+	assert_true(merged.success, "merge records original source cells")
+	assert_equal(world.get_entity_at(Vector2i(8, 4)).text, "戏", "merged word appears at merge destination")
+	world.player_pos = Vector2i(9, 4)
+	world.facing = Vector2i.LEFT
+	var split = world.split_front()
+	assert_true(split.success, "merged word splits back to remembered cells")
+	assert_equal(world.player_pos, Vector2i(10, 4), "player is pushed out of the returning second part cell")
+	assert_equal(world.get_entity_at(Vector2i(8, 4)).text, "又", "first part returns to original cell")
+	assert_equal(world.get_entity_at(Vector2i(9, 4)).text, "戈", "second part returns to original cell")
 
 func test_sentence_caption_is_map_collision_text() -> void:
 	var world = make_world()

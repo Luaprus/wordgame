@@ -26,6 +26,11 @@ var rows: Array = []
 var split_rules: Dictionary = {}
 var merge_rules: Dictionary = {}
 var sentence_rules: Dictionary = {}
+var ignored_row_texts := PackedStringArray(["我"])
+var entity_configs: Dictionary = {}
+var cell_entity_configs: Dictionary = {}
+var merge_effects: Dictionary = {}
+var split_effects: Dictionary = {}
 
 var _next_id := 1
 var _map_caption_ids: Dictionary = {}
@@ -41,10 +46,15 @@ func load_level(level: Dictionary) -> void:
 	player_input_locked = bool(level.get("player_input_locked", false))
 	player_event_locked = bool(level.get("player_event_locked", false))
 	set_player_abilities(level.get("player_abilities", []))
+	set_ignored_row_texts(level.get("ignored_row_texts", ["我"]))
+	entity_configs = level.get("entities", {})
+	cell_entity_configs = level.get("cell_entity_configs", {})
 	split_rules = level.get("split_rules", {})
 	merge_rules = level.get("merge_rules", {})
 	sentence_rules = level.get("sentence_rules", {})
-	_parse_rows(rows, level.get("entities", {}))
+	merge_effects = level.get("merge_effects", {})
+	split_effects = level.get("split_effects", {})
+	_parse_rows(rows)
 	update_page()
 
 func clear() -> void:
@@ -56,6 +66,11 @@ func clear() -> void:
 	player_input_locked = false
 	player_event_locked = false
 	player_abilities = PackedStringArray()
+	ignored_row_texts = PackedStringArray(["我"])
+	entity_configs.clear()
+	cell_entity_configs.clear()
+	merge_effects.clear()
+	split_effects.clear()
 	current_page_origin = Vector2i.ZERO
 	_next_id = 1
 	_map_caption_ids.clear()
@@ -107,6 +122,14 @@ func set_player_abilities(abilities: Array) -> void:
 			normalized.append(ability_name)
 	player_abilities = normalized
 
+func set_ignored_row_texts(texts: Array) -> void:
+	var normalized := PackedStringArray()
+	for text in texts:
+		var value := str(text)
+		if not normalized.has(value):
+			normalized.append(value)
+	ignored_row_texts = normalized
+
 func player_has_ability(ability: String) -> bool:
 	return player_abilities.has(ability)
 
@@ -155,7 +178,7 @@ func interact_front() -> Dictionary:
 	var entity: WordEntity = front_target.entity
 	if entity.interact_text:
 		last_message = entity.interact_text
-		spawn_map_caption(entity.interact_text, entity.grid_pos + Vector2i(0, 1))
+		_spawn_interaction_caption(entity)
 		return {"success": true, "message": entity.interact_text}
 	return {"success": false, "message": "not interactable"}
 
@@ -188,13 +211,24 @@ func split_front() -> Dictionary:
 	var parts: Array = split_rules[entity.text]
 	if parts.size() != 2:
 		return {"success": false, "message": "split rule needs two parts"}
-	var stay_pos := entity.grid_pos
-	var move_pos := stay_pos + facing
-	if get_entity_at(move_pos) and get_entity_at(move_pos).id != entity.id:
-		return {"success": false, "message": "split target blocked"}
+	var split_positions := _split_positions_for(entity)
+	if split_positions.size() != 2:
+		return {"success": false, "message": "split rule needs two positions"}
+	var space_result := _make_room_for_split(entity, split_positions)
+	if not space_result.success:
+		return space_result
 	entities.erase(entity.id)
-	add_entity(str(parts[0]), stay_pos, {"solid": true, "pushable": true, "splittable": true})
-	add_entity(str(parts[1]), move_pos, {"solid": true, "pushable": true, "splittable": true})
+	_apply_map_effect(split_effects.get(entity.text, {}))
+	add_entity(str(parts[0]), split_positions[0], _config_for_text_at(str(parts[0]), split_positions[0], {
+		"solid": true,
+		"pushable": true,
+		"splittable": true
+	}))
+	add_entity(str(parts[1]), split_positions[1], _config_for_text_at(str(parts[1]), split_positions[1], {
+		"solid": true,
+		"pushable": true,
+		"splittable": true
+	}))
 	check_sentence_rules()
 	return {"success": true}
 
@@ -265,9 +299,16 @@ func try_merge_entities(from_pos: Vector2i, to_pos: Vector2i) -> Dictionary:
 	if not merge_rules.has(key):
 		return {"success": false, "message": "no merge rule"}
 	var merged_text := str(merge_rules[key])
+	var split_positions := _merge_split_positions(merged_text, first, second)
 	entities.erase(first.id)
 	entities.erase(second.id)
-	add_entity(merged_text, to_pos, {"solid": true, "pushable": true, "splittable": split_rules.has(merged_text)})
+	var merged := add_entity(merged_text, to_pos, _config_for_text_at(merged_text, to_pos, {
+		"solid": true,
+		"pushable": true,
+		"splittable": split_rules.has(merged_text)
+	}))
+	merged.split_positions = split_positions
+	_apply_map_effect(merge_effects.get(key, {}))
 	check_sentence_rules()
 	return {"success": true}
 
@@ -299,6 +340,12 @@ func update_page() -> void:
 func get_entity_at(pos: Vector2i) -> WordEntity:
 	for entity in entities.values():
 		if entity.solid and entity.cells.has(pos):
+			return entity
+	return null
+
+func get_any_entity_at(pos: Vector2i) -> WordEntity:
+	for entity in entities.values():
+		if entity.cells.has(pos):
 			return entity
 	return null
 
@@ -344,6 +391,108 @@ func _spawn_sentence_caption(sentence: String, config: Dictionary, cells: Array[
 		return
 	spawn_map_caption(caption_text, cells[0] + Vector2i(0, 1), config)
 
+func _spawn_interaction_caption(entity: WordEntity) -> void:
+	if entity.interact_caption_lines.is_empty():
+		spawn_map_caption(entity.interact_text, entity.grid_pos + Vector2i(0, 1))
+		return
+	var pos := entity.grid_pos + Vector2i(0, 1)
+	if entity.has_interact_caption_pos:
+		pos = entity.interact_caption_pos
+	for i in range(entity.interact_caption_lines.size()):
+		spawn_map_caption(str(entity.interact_caption_lines[i]), pos + Vector2i(0, i), {
+			"caption_solid": entity.interact_caption_solid
+		})
+
+func _split_positions_for(entity: WordEntity) -> Array[Vector2i]:
+	if not entity.split_positions.is_empty():
+		return entity.split_positions.duplicate()
+	return [entity.grid_pos, entity.grid_pos + facing]
+
+func _make_room_for_split(entity: WordEntity, split_positions: Array[Vector2i]) -> Dictionary:
+	var split_direction := Vector2i.RIGHT
+	if split_positions.size() >= 2 and split_positions[0] != split_positions[1]:
+		split_direction = split_positions[1] - split_positions[0]
+	for i in range(split_positions.size()):
+		var pos: Vector2i = split_positions[i]
+		if player_pos == pos:
+			var push_direction := split_direction
+			if i == 0:
+				push_direction = -split_direction
+			var pushed_pos := player_pos + push_direction
+			if get_entity_at(pushed_pos):
+				return {"success": false, "message": "player split target blocked"}
+			player_pos = pushed_pos
+		var blocker := get_entity_at(pos)
+		if blocker and blocker.id != entity.id:
+			return {"success": false, "message": "split target blocked"}
+	return {"success": true}
+
+func _merge_split_positions(merged_text: String, first: WordEntity, second: WordEntity) -> Array[Vector2i]:
+	var parts: Array = split_rules.get(merged_text, [])
+	if parts.size() != 2:
+		return [first.grid_pos, second.grid_pos]
+	var sources := [first, second]
+	var used := {}
+	var result: Array[Vector2i] = []
+	for part in parts:
+		var matched: WordEntity = null
+		for i in range(sources.size()):
+			if used.has(i):
+				continue
+			if sources[i].text == str(part):
+				matched = sources[i]
+				used[i] = true
+				break
+		if matched:
+			result.append(matched.grid_pos)
+	if result.size() == 2:
+		return result
+	return [first.grid_pos, second.grid_pos]
+
+func _apply_map_effect(config: Dictionary) -> void:
+	for pos in config.get("remove_at", []):
+		_erase_entities_at(pos)
+	for replace_config in config.get("replace_text", []):
+		_replace_text_if_present(replace_config)
+	for spawn_config in config.get("spawn", []):
+		var entry: Dictionary = spawn_config
+		var text := str(entry.get("text", ""))
+		if text.is_empty() or not entry.has("pos"):
+			continue
+		var pos: Vector2i = entry.pos
+		var overrides: Dictionary = entry.get("config", {})
+		add_entity(text, pos, _config_for_text_at(text, pos, overrides))
+
+func _erase_entities_at(pos: Vector2i) -> void:
+	var erased_ids: Array[String] = []
+	for entity in entities.values():
+		if entity.cells.has(pos) and not erased_ids.has(entity.id):
+			erased_ids.append(entity.id)
+	for id in erased_ids:
+		var entity: WordEntity = entities.get(id)
+		if entity and _map_caption_ids.get(entity.text, "") == id:
+			_map_caption_ids.erase(entity.text)
+		entities.erase(id)
+
+func _replace_text_if_present(replace_config: Dictionary) -> void:
+	var from_text := str(replace_config.get("from", ""))
+	var to_text := str(replace_config.get("to", ""))
+	if from_text.is_empty() or to_text.is_empty():
+		return
+	var pos: Vector2i = replace_config.get("pos", Vector2i.ZERO)
+	var target: WordEntity = null
+	for entity in entities.values():
+		if entity.text == from_text and entity.grid_pos == pos:
+			target = entity
+			break
+	if not target:
+		return
+	entities.erase(target.id)
+	if _map_caption_ids.get(from_text, "") == target.id:
+		_map_caption_ids.erase(from_text)
+	var replacement := add_entity(to_text, pos, _config_for_text_at(to_text, pos, replace_config.get("config", {})))
+	_map_caption_ids[to_text] = replacement.id
+
 func _find_free_caption_pos(start: Vector2i, text_length: int) -> Vector2i:
 	for distance in range(0, 8):
 		for offset in [Vector2i(0, distance), Vector2i(0, -distance), Vector2i(distance, 0), Vector2i(-distance, 0)]:
@@ -359,7 +508,7 @@ func _can_place_text(pos: Vector2i, text_length: int) -> bool:
 			return false
 	return true
 
-func _parse_rows(level_rows: Array, entity_configs: Dictionary) -> void:
+func _parse_rows(level_rows: Array) -> void:
 	var multi_texts := _get_multi_texts(entity_configs)
 	var covered := {}
 	for y in range(level_rows.size()):
@@ -372,20 +521,24 @@ func _parse_rows(level_rows: Array, entity_configs: Dictionary) -> void:
 				continue
 			var matched := _match_multi_text(line, x, multi_texts)
 			if matched:
-				var config: Dictionary = entity_configs.get(matched, {})
-				add_entity(matched, pos, _default_config_for(matched, config))
+				add_entity(matched, pos, _config_for_text_at(matched, pos))
 				for offset in range(matched.length()):
 					covered[pos + Vector2i(offset, 0)] = true
 				x += matched.length()
 				continue
 			var ch := line.substr(x, 1)
-			if ch != " " and ch != "我":
-				var config: Dictionary = entity_configs.get(ch, {})
-				add_entity(ch, pos, _default_config_for(ch, config))
+			if ch != " " and not ignored_row_texts.has(ch):
+				add_entity(ch, pos, _config_for_text_at(ch, pos))
 			x += 1
 
-func _default_config_for(text: String, overrides: Dictionary) -> Dictionary:
+func _config_for_text_at(text: String, pos: Vector2i, overrides := {}) -> Dictionary:
 	var config := {"solid": true}
+	var text_config: Dictionary = entity_configs.get(text, {})
+	for key in text_config.keys():
+		config[key] = text_config[key]
+	var cell_config: Dictionary = cell_entity_configs.get(pos, {})
+	for key in cell_config.keys():
+		config[key] = cell_config[key]
 	for key in overrides.keys():
 		config[key] = overrides[key]
 	return config
