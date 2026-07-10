@@ -3,6 +3,7 @@ extends Node2D
 const GridWorld = preload("res://scripts/grid_world.gd")
 const LevelLoader = preload("res://scripts/level_loader.gd")
 const PageCamera = preload("res://scripts/page_camera.gd")
+const PrecisionMovement = preload("res://scripts/precision_movement.gd")
 const DemoRunner = preload("res://scripts/demo_runner.gd")
 const OriginalFont = preload("res://Fonts/Zpix.tres")
 
@@ -21,10 +22,12 @@ func _ready() -> void:
 	_refresh_view()
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not event is InputEventKey or not event.pressed or event.echo:
+	if not event is InputEventKey:
 		return
 	var key_event := event as InputEventKey
 	var direction := _direction_from_key(key_event.keycode)
+	if not PrecisionMovement.should_process_key_event(key_event.pressed, key_event.echo, direction):
+		return
 	if key_event.keycode == KEY_F5:
 		demo.start()
 		_run_demo_step()
@@ -97,16 +100,7 @@ func _run_demo_step() -> void:
 		demo_timer.start()
 
 func _direction_from_key(keycode: Key) -> Vector2i:
-	match keycode:
-		KEY_RIGHT:
-			return Vector2i(1, 0)
-		KEY_LEFT:
-			return Vector2i(-1, 0)
-		KEY_DOWN:
-			return Vector2i(0, 1)
-		KEY_UP:
-			return Vector2i(0, -1)
-	return Vector2i.ZERO
+	return PrecisionMovement.direction_from_keycode(keycode)
 
 func _grid_to_pixels(pos: Vector2i) -> Vector2:
 	return Vector2(pos.x * world.cell_size, pos.y * world.cell_size)

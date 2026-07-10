@@ -7,6 +7,7 @@ var failures: Array[String] = []
 func _init() -> void:
 	test_player_state_model_api()
 	test_movement_collision_and_page_shift()
+	test_facing_gate_requires_target_in_front()
 	test_interact_delete_push_pull()
 	test_split_merge_and_sentence_rule()
 	test_pull_direction_is_locked_to_player_side()
@@ -123,14 +124,65 @@ func test_movement_collision_and_page_shift() -> void:
 	assert_true(world.try_move_player(Vector2i(1, 0)).success, "player can move into empty grid cell")
 	assert_equal(world.player_pos, Vector2i(2, 1), "player moved right")
 	world.player_pos = Vector2i(1, 1)
-	assert_false(world.try_move_player(Vector2i(-1, 0)).success, "player cannot move into wall")
+	world.facing = Vector2i.RIGHT
+	var turn_left = world.try_move_player(Vector2i(-1, 0))
+	assert_true(turn_left.success, "first opposite direction input is accepted as a turn")
+	assert_equal(world.facing, Vector2i.LEFT, "first opposite direction input updates facing")
+	assert_equal(world.player_pos, Vector2i(1, 1), "first opposite direction input does not move into wall")
+	assert_false(world.try_move_player(Vector2i(-1, 0)).success, "player cannot move into wall on the second same-direction input")
 
 	world.player_pos = Vector2i(31, 1)
+	world.facing = Vector2i.DOWN
 	world.update_page()
 	assert_equal(world.current_page_origin, Vector2i(0, 0), "page before crossing right edge")
-	assert_true(world.try_move_player(Vector2i(1, 0)).success, "player can cross page boundary")
+	var turn_right = world.try_move_player(Vector2i(1, 0))
+	assert_true(turn_right.success, "first right input at the page edge turns before moving")
+	assert_equal(world.player_pos, Vector2i(31, 1), "turning at the page edge keeps the player in place")
+	assert_true(world.try_move_player(Vector2i(1, 0)).success, "player can cross page boundary on the second same-direction input")
 	assert_equal(world.current_page_origin, Vector2i(32, 0), "page shifts by one screen after crossing right edge")
 	assert_no_overlap(world)
+
+func test_facing_gate_requires_target_in_front() -> void:
+	var interact_world = make_world()
+	interact_world.player_pos = Vector2i(3, 1)
+	interact_world.facing = Vector2i.DOWN
+	var side_interact = interact_world.interact_front()
+	assert_false(side_interact.success, "player cannot interact from the side of a target")
+	assert_equal(side_interact.get("message", ""), "target not in front", "side interaction shares the same facing gate message")
+	interact_world.facing = Vector2i.LEFT
+	var back_interact = interact_world.interact_front()
+	assert_false(back_interact.success, "player cannot interact from behind a target")
+	assert_equal(back_interact.get("message", ""), "target not in front", "back interaction shares the same facing gate message")
+
+	var delete_world = make_world()
+	delete_world.player_pos = Vector2i(4, 2)
+	delete_world.facing = Vector2i.DOWN
+	var side_delete = delete_world.delete_front()
+	assert_false(side_delete.success, "player cannot delete from the side of a target")
+	assert_equal(side_delete.get("message", ""), "target not in front", "delete shares the same facing gate message")
+
+	var split_world = make_world()
+	split_world.player_pos = Vector2i(7, 2)
+	split_world.facing = Vector2i.DOWN
+	var side_split = split_world.split_front()
+	assert_false(side_split.success, "player cannot split from the side of a target")
+	assert_equal(side_split.get("message", ""), "target not in front", "split shares the same facing gate message")
+
+	var pull_world = make_pull_fixture()
+	pull_world.facing = Vector2i.RIGHT
+	var side_pull = pull_world.pull_front(Vector2i.LEFT)
+	assert_false(side_pull.success, "player cannot pull without facing the target")
+	assert_equal(side_pull.get("message", ""), "target not in front", "pull shares the same facing gate message")
+
+	var push_world = make_world()
+	push_world.player_pos = Vector2i(6, 1)
+	push_world.facing = Vector2i.DOWN
+	var push_turn = push_world.try_move_player(Vector2i(1, 0))
+	assert_true(push_turn.success, "push entry first accepts the turn")
+	assert_equal(push_world.player_pos, Vector2i(6, 1), "first push-direction input only turns")
+	assert_equal(push_world.get_entity_at(Vector2i(7, 1)).text, "石", "first push-direction input does not move the target")
+	assert_true(push_world.try_move_player(Vector2i(1, 0)).success, "second push-direction input moves the target")
+	assert_equal(push_world.player_pos, Vector2i(7, 1), "second push-direction input advances the player")
 
 func test_interact_delete_push_pull() -> void:
 	var world = make_world()

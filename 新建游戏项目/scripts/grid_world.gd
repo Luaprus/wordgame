@@ -1,5 +1,6 @@
 extends RefCounted
 
+const PrecisionMovement = preload("res://scripts/precision_movement.gd")
 const WordEntity = preload("res://scripts/word_entity.gd")
 
 const ACTION_MOVE := "move"
@@ -116,7 +117,10 @@ func try_move_player(direction: Vector2i) -> Dictionary:
 		return {"success": false, "message": "input locked"}
 	if player_move_cooldown > 0:
 		return {"success": false, "message": "cooldown"}
-	facing = direction
+	var intent := PrecisionMovement.resolve_turn_or_move(facing, direction)
+	facing = intent.facing
+	if intent.should_turn:
+		return {"success": true, "turned": true, "moved": false}
 	player_moving = true
 	var target := player_pos + direction
 	var entity := get_entity_at(target)
@@ -134,26 +138,36 @@ func try_move_player(direction: Vector2i) -> Dictionary:
 	player_moving = false
 	return {"success": true}
 
+func _get_front_target() -> Dictionary:
+	var entity := get_entity_at(player_pos + facing)
+	if not entity:
+		return {"success": false, "message": "target not in front"}
+	return {"success": true, "entity": entity}
+
 func interact_front() -> Dictionary:
 	if player_input_locked:
 		return {"success": false, "message": "input locked"}
 	if player_event_locked:
 		return {"success": false, "message": "event locked"}
-	var entity := get_entity_at(player_pos + facing)
-	if entity and entity.interact_text:
+	var front_target := _get_front_target()
+	if not front_target.success:
+		return front_target
+	var entity: WordEntity = front_target.entity
+	if entity.interact_text:
 		last_message = entity.interact_text
 		spawn_map_caption(entity.interact_text, entity.grid_pos + Vector2i(0, 1))
 		return {"success": true, "message": entity.interact_text}
-	return {"success": false, "message": ""}
+	return {"success": false, "message": "not interactable"}
 
 func delete_front() -> Dictionary:
 	if player_input_locked:
 		return {"success": false, "message": "input locked"}
 	if player_event_locked:
 		return {"success": false, "message": "event locked"}
-	var entity := get_entity_at(player_pos + facing)
-	if not entity:
-		return {"success": false, "message": "no word"}
+	var front_target := _get_front_target()
+	if not front_target.success:
+		return front_target
+	var entity: WordEntity = front_target.entity
 	if not entity.deletable:
 		return {"success": false, "message": "not deletable"}
 	entities.erase(entity.id)
@@ -165,9 +179,10 @@ func split_front() -> Dictionary:
 		return {"success": false, "message": "input locked"}
 	if player_event_locked:
 		return {"success": false, "message": "event locked"}
-	var entity := get_entity_at(player_pos + facing)
-	if not entity:
-		return {"success": false, "message": "no word"}
+	var front_target := _get_front_target()
+	if not front_target.success:
+		return front_target
+	var entity: WordEntity = front_target.entity
 	if not entity.splittable or not split_rules.has(entity.text):
 		return {"success": false, "message": "not splittable"}
 	var parts: Array = split_rules[entity.text]
@@ -192,8 +207,11 @@ func pull_front(move_direction: Vector2i) -> Dictionary:
 		return {"success": false, "message": "event locked"}
 	if player_move_cooldown > 0:
 		return {"success": false, "message": "cooldown"}
-	var entity := get_entity_at(player_pos + facing)
-	if not entity or not entity.pushable:
+	var front_target := _get_front_target()
+	if not front_target.success:
+		return front_target
+	var entity: WordEntity = front_target.entity
+	if not entity.pushable:
 		return {"success": false, "message": "nothing pullable"}
 	if move_direction != -facing:
 		return {"success": false, "message": "pull direction locked"}

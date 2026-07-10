@@ -12,7 +12,8 @@
       "修改超出 allowed_files，必须先更新 harness/plan.md 并说明原因。",
       "任何架构级改动必须先更新 harness/contracts.md。",
       "多人合作时，以 harness/progress.jsonl 为唯一进度来源。",
-      "每次提交前必须先从 GitHub 远端全量拉取并完成同步；未同步、未解决冲突、未重新测试，不允许提交或推送。"
+      "每次提交前必须先从 GitHub 远端全量拉取并完成同步；未同步、未解决冲突、未重新测试，不允许提交或推送。",
+      "开发期间每 1 小时至少向 GitHub 提交并推送 1 次，并在 harness/progress.jsonl 记录同步证据。"
     ]
   },
   "features": [
@@ -302,12 +303,13 @@
       "title": "格子移动与朝向优先",
       "description": "实现方向键/WASD、连续移动、格子中心停靠和第一下转向第二下移动。",
       "priority": "must",
-      "status": "todo",
-      "owner": null,
+      "status": "done",
+      "owner": "ai-worker-1",
       "depends_on": ["F006"],
       "allowed_files": [
         "新建游戏项目/scripts/precision_movement.gd",
         "新建游戏项目/scripts/grid_world.gd",
+        "新建游戏项目/scripts/main.gd",
         "新建游戏项目/tests/test_precision_movement.gd"
       ],
       "forbidden_files": [
@@ -344,8 +346,8 @@
       "title": "面向交互门禁",
       "description": "所有确认、删除、拆字、拉取、推字、合字、填字操作都必须要求玩家面向目标。",
       "priority": "must",
-      "status": "todo",
-      "owner": null,
+      "status": "done",
+      "owner": "ai-worker-1",
       "depends_on": ["F006", "F007"],
       "allowed_files": [
         "新建游戏项目/scripts/grid_world.gd",

@@ -134,3 +134,9 @@ git status --short
 - `completed`
 
 完成事件必须包含测试命令或报告路径。没有测试证据的 feature 不允许写 `completed`。
+
+## 2026-07-10 范围修正
+
+- F007 的验收标准包含 “方向键和 WASD 均可移动”。
+- 真实键位入口位于 `新建游戏项目/scripts/main.gd`，如果不允许修改该文件，WASD 无法进入实际运行链路，验收会失真。
+- 因此 F007 的 `allowed_files` 补充 `新建游戏项目/scripts/main.gd`，用途仅限把方向键/WASD 映射复用到同一移动入口，不允许在该文件扩展与 F007 无关的玩法逻辑。
