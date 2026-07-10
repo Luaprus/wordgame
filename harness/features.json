@@ -1352,6 +1352,56 @@
         "人工验收记录归档",
         "progress.jsonl 已记录完成证据"
       ]
+    },
+    {
+      "id": "F033",
+      "title": "自然语言玩法流程标注系统",
+      "description": "建立剑关、手套关、头盔关三个独立中文审核页，记录不限数量的情境、操作、条件、结果、证据和人工备注，并只导出已确认玩法。",
+      "priority": "must",
+      "status": "in_progress",
+      "owner": "codex",
+      "depends_on": ["F001", "F002", "F003", "F004", "F005"],
+      "allowed_files": [
+        "harness/gameplay_flow/*",
+        "harness/gameplay_review/*",
+        "harness/baselines/schema/gameplay_flow.schema.json",
+        "tools/gameplay_flow_lib.mjs",
+        "tools/validate_gameplay_flow.mjs",
+        "tools/import_gameplay_review_result.mjs",
+        "tools/build_gameplay_review_app.mjs",
+        "tools/test_gameplay_flow.mjs",
+        "tools/run_all_tests.ps1",
+        "harness/features.json",
+        "harness/contracts.md",
+        "harness/plan.md",
+        "harness/test_matrix.md",
+        "harness/acceptance.md",
+        "harness/progress.jsonl"
+      ],
+      "forbidden_files": [
+        "新建游戏项目/*",
+        "harness/manual_review/*",
+        "harness/baselines/levels/helmet/*"
+      ],
+      "acceptance_criteria": [
+        "剑关、手套关、头盔关各有独立中文审核页面，且页面数据与编辑状态互不混入",
+        "审核者可不限数量新增情境、操作、结果和任意层级人工备注，并保留无效、失败、重置和终局分支",
+        "已确认记录必须有明确条件、结果、证据和复查信息；缺项、断链、跨关引用或冲突信息必须阻止导出为实现事实",
+        "导出结果将 confirmed_flow 与 review_manifest 隔离，未确认内容不得进入 confirmed_flow",
+        "导入导出往返后，中文原话、备注、状态和证据不丢失",
+        "一键测试覆盖 schema、分支完整性、关卡隔离、状态门禁、导入导出和页面烟雾检查"
+      ],
+      "tests": [
+        {"type": "schema", "command": "node --test tools/test_gameplay_flow.mjs", "required": true},
+        {"type": "integration", "command": "powershell -ExecutionPolicy Bypass -File tools/run_all_tests.ps1", "required": true},
+        {"type": "visual", "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1", "required": true}
+      ],
+      "definition_of_done": [
+        "三个独立审核页与总入口已生成",
+        "校验器、导入器、导出器和一键测试已通过",
+        "人工中文原话与备注可追溯，未确认信息不会进入实现基线",
+        "progress.jsonl 已记录测试与视觉复查证据"
+      ]
     }
   ]
 }

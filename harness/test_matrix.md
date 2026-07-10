@@ -42,3 +42,8 @@
 - `definition_of_done` 全部满足。
 - `progress.jsonl` 写入 `test_passed` 和 `completed`。
 - 若涉及视觉，必须有截图或差异报告证据。
+# F033 玩法流程审核测试
+
+| Feature | 必跑测试 | 额外证据 |
+| --- | --- | --- |
+| F033 | `node --test tools/test_gameplay_flow.mjs`, `tools/run_all_tests.ps1`, `tools/capture_visual_smoke.ps1` | 三关页面、数据契约、状态门禁、导入导出和页面烟雾检查 |

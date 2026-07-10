@@ -137,3 +137,11 @@
 2. 更新受影响 feature 的 `allowed_files`、依赖和测试。
 3. 在 `progress.jsonl` 写入 `contract_updated` 事件。
 4. 再进入实现。
+# 玩法流程审核契约
+
+- `harness/gameplay_flow/<level_id>.review.json` 是人工玩法审核源；`level_id` 只能是 `sword`、`glove` 或 `helmet`。
+- 数据流固定为：审核源 -> 浏览器导出的审核结果 -> 导入器 -> `confirmed_flow` 与 `review_manifest`。
+- 情境、操作、结果、证据和备注都必须属于同一个 `level_id`；结果为跳转时只能指向本关存在的情境，禁止跨关引用。
+- `confirmed_flow` 只包含已确认且校验通过的玩法事实，后续实现 feature 只能读取这一部分。
+- `review_manifest` 仅保留人工原话、备注、待复查项、排除项和验收追溯信息；不得被实现代码当作玩法事实读取。
+- 未确认、证据冲突、条件不完整、结果不完整或跳转断开的记录必须保持待补充或待复查，不能由工具猜测补全。
