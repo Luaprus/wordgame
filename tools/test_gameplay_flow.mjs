@@ -1,6 +1,18 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createConfirmedExport, validateFlowDocument } from "./gameplay_flow_lib.mjs";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
+import { createConfirmedExport, mergeReviewerResult, validateFlowDocument } from "./gameplay_flow_lib.mjs";
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+
+async function writeJson(filePath, value) {
+  await fs.mkdir(path.dirname(filePath), { recursive: true });
+  await fs.writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+}
 
 function evidence(reference = "video:36:50") {
   return [{ type: "video", reference, note_cn: "原版录屏" }];
@@ -95,4 +107,77 @@ test("confirmed export isolates confirmed gameplay from review-only data", () =>
   assert.equal(exported.review_manifest.states.length, 3);
   assert.equal(exported.review_manifest.states[2].raw_statement_cn, "还没有复查完成。");
   assert.equal("raw_statement_cn" in exported.confirmed_flow.states[0], false);
+});
+
+test("reviewer merge preserves original statement while retaining result notes", () => {
+  const source = validSwordDocument();
+  source.states[0].raw_statement_cn = "原始人工原话，不能被导出结果覆盖。";
+  const reviewed = structuredClone(source);
+  reviewed.states[0].raw_statement_cn = "错误覆盖文本";
+  reviewed.states[0].actions[0].result.note_cn = "第二人已复核。";
+
+  const merged = mergeReviewerResult(source, {
+    schema_id: "wordgame.gameplay-review-result.v1",
+    level_id: "sword",
+    document: reviewed,
+  });
+
+  assert.equal(merged.states[0].raw_statement_cn, "原始人工原话，不能被导出结果覆盖。");
+  assert.equal(merged.states[0].actions[0].result.note_cn, "第二人已复核。");
+});
+
+test("reviewer merge rejects a result for another level", () => {
+  const source = validSwordDocument();
+  const result = {
+    schema_id: "wordgame.gameplay-review-result.v1",
+    level_id: "glove",
+    document: { ...validSwordDocument(), level_id: "glove", level_title_cn: "手套关" },
+  };
+
+  assert.throws(() => mergeReviewerResult(source, result), /关卡不一致/);
+});
+
+test("validator accepts a valid standalone level document", async () => {
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "wordgame-flow-validator-"));
+  const sourcePath = path.join(tempDir, "sword.review.json");
+  await writeJson(sourcePath, validSwordDocument());
+
+  const result = spawnSync(process.execPath, ["tools/validate_gameplay_flow.mjs", "--file", sourcePath], {
+    cwd: root,
+    encoding: "utf8",
+  });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+});
+
+test("importer preserves source statement and writes isolated confirmed export", async () => {
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "wordgame-flow-import-"));
+  const flowDir = path.join(tempDir, "flow");
+  const sourcePath = path.join(flowDir, "sword.review.json");
+  const resultPath = path.join(tempDir, "review-result.json");
+  const source = validSwordDocument();
+  source.states[0].raw_statement_cn = "原始原话必须保留。";
+  const reviewed = structuredClone(source);
+  reviewed.states[0].actions[0].result.note_cn = "人工已确认。";
+  await writeJson(sourcePath, source);
+  await writeJson(resultPath, {
+    schema_id: "wordgame.gameplay-review-result.v1",
+    level_id: "sword",
+    document: reviewed,
+  });
+
+  const result = spawnSync(process.execPath, [
+    "tools/import_gameplay_review_result.mjs",
+    "--input", resultPath,
+    "--level", "sword",
+    "--flow-dir", flowDir,
+  ], { cwd: root, encoding: "utf8" });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const merged = JSON.parse(await fs.readFile(sourcePath, "utf8"));
+  const exported = JSON.parse(await fs.readFile(path.join(flowDir, "sword.confirmed.json"), "utf8"));
+  assert.equal(merged.states[0].raw_statement_cn, "原始原话必须保留。");
+  assert.equal(merged.states[0].actions[0].result.note_cn, "人工已确认。");
+  assert.equal(exported.confirmed_flow.states.length, 2);
+  assert.equal(exported.review_manifest.states.length, 3);
 });

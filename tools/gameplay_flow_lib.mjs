@@ -150,3 +150,30 @@ export function createConfirmedExport(document) {
     },
   };
 }
+
+export function mergeReviewerResult(sourceDocument, reviewerResult) {
+  if (!isObject(sourceDocument) || !isObject(reviewerResult) || !isObject(reviewerResult.document)) {
+    throw new Error("审核结果缺少文档内容");
+  }
+  if (sourceDocument.level_id !== reviewerResult.level_id || sourceDocument.level_id !== reviewerResult.document.level_id) {
+    throw new Error("审核结果与源文件关卡不一致");
+  }
+
+  const merged = clone(reviewerResult.document);
+  const sourceStates = new Map((sourceDocument.states || []).map((state) => [state.id, state]));
+  const reviewedStateIds = new Set((merged.states || []).map((state) => state.id));
+
+  for (const sourceState of sourceStates.values()) {
+    if (!reviewedStateIds.has(sourceState.id)) {
+      throw new Error(`审核结果丢失既有情境：${sourceState.id}`);
+    }
+  }
+  for (const reviewedState of merged.states || []) {
+    const sourceState = sourceStates.get(reviewedState.id);
+    if (sourceState && isNonEmptyText(sourceState.raw_statement_cn)) {
+      reviewedState.raw_statement_cn = sourceState.raw_statement_cn;
+    }
+  }
+
+  return merged;
+}
