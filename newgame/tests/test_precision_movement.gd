@@ -2,6 +2,8 @@ extends SceneTree
 
 const GridWorld = preload("res://scripts/grid_world.gd")
 const PrecisionMovement = preload("res://scripts/precision_movement.gd")
+const PlayerDirectionMarker = preload("res://scripts/player_moving/player_direction_marker.gd")
+const PlayerDirectionDemoScene = preload("res://scenes/player_moving/PlayerDirectionDemo.tscn")
 
 var failures: Array[String] = []
 
@@ -11,6 +13,8 @@ func _init() -> void:
 	test_repeated_pixel_moves_do_not_accumulate_drift()
 	test_direction_keys_and_wasd_share_mapping()
 	test_direction_echo_is_allowed_for_continuous_move()
+	test_direction_marker_points_face_the_input()
+	test_direction_demo_scene_loads()
 
 	if failures.is_empty():
 		print("precision_movement tests passed")
@@ -81,6 +85,22 @@ func test_direction_echo_is_allowed_for_continuous_move() -> void:
 		PrecisionMovement.should_process_key_event(false, false, Vector2i.RIGHT),
 		"released keys should not be processed"
 	)
+
+func test_direction_marker_points_face_the_input() -> void:
+	var right_points := PlayerDirectionMarker.local_points(60.0, Vector2i.RIGHT)
+	assert_true(right_points[2].x > right_points[0].x, "right-facing triangle apex extends further right than its base")
+	assert_true(right_points[2].x > right_points[1].x, "right-facing triangle apex is the furthest-right point")
+	assert_equal(PlayerDirectionMarker.anchor_offset(60.0, Vector2i.RIGHT), Vector2(37.2, 0), "right-facing marker anchor sits in front of the player")
+
+	var up_points := PlayerDirectionMarker.local_points(60.0, Vector2i.UP)
+	assert_true(up_points[2].y < up_points[0].y, "up-facing triangle apex extends above its base")
+	assert_true(up_points[2].y < up_points[1].y, "up-facing triangle apex is the highest point")
+
+func test_direction_demo_scene_loads() -> void:
+	var scene := PlayerDirectionDemoScene.instantiate()
+	assert_true(scene != null, "standalone player direction demo scene loads")
+	if scene != null:
+		scene.queue_free()
 
 func make_world() -> RefCounted:
 	var world = GridWorld.new()
