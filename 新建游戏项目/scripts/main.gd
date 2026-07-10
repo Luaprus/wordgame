@@ -10,6 +10,7 @@ const OriginalFont = preload("res://Fonts/Zpix.tres")
 
 const MOVE_REPEAT_INTERVAL := 0.28
 const FAST_MOVE_REPEAT_INTERVAL := 0.12
+const WORD_FONT_SIZE := 42
 
 var world := GridWorld.new()
 var page_camera := PageCamera.new()
@@ -96,19 +97,32 @@ func _sync_entity_labels() -> void:
 	var alive := {}
 	for entity in world.entities.values():
 		alive[entity.id] = true
-		var label: Label = entity_labels.get(entity.id)
-		if not label:
-			label = _make_word_label(entity.text)
-			entity_labels[entity.id] = label
-			map_layer.add_child(label)
-		label.text = entity.text
-		label.position = _grid_to_pixels(entity.grid_pos)
-		label.size = Vector2(max(1, entity.text.length()) * world.cell_size, world.cell_size)
-		label.add_theme_color_override("font_color", Color(1.0, 0.95, 0.32) if entity.highlighted else Color.WHITE)
+		var group: Node2D = entity_labels.get(entity.id)
+		if not group:
+			group = Node2D.new()
+			entity_labels[entity.id] = group
+			map_layer.add_child(group)
+		group.position = _grid_to_pixels(entity.grid_pos)
+		_sync_entity_label_group(group, entity)
 	for id in entity_labels.keys():
 		if not alive.has(id):
 			entity_labels[id].queue_free()
 			entity_labels.erase(id)
+
+func _sync_entity_label_group(group: Node2D, entity) -> void:
+	var text := str(entity.text)
+	while group.get_child_count() > text.length():
+		var child := group.get_child(group.get_child_count() - 1)
+		group.remove_child(child)
+		child.queue_free()
+	while group.get_child_count() < text.length():
+		group.add_child(_make_word_label(""))
+	for i in range(text.length()):
+		var label := group.get_child(i) as Label
+		label.text = text.substr(i, 1)
+		label.position = Vector2(i * world.cell_size, -2)
+		label.size = Vector2(world.cell_size, world.cell_size + 4)
+		label.add_theme_color_override("font_color", Color(1.0, 0.95, 0.32) if entity.highlighted else Color.WHITE)
 
 func _apply_result(result: Dictionary) -> void:
 	_refresh_view(str(result.get("message", "")))
@@ -141,20 +155,22 @@ func _direction_from_key(keycode: Key) -> Vector2i:
 func _grid_to_pixels(pos: Vector2i) -> Vector2:
 	return Vector2(pos.x * world.cell_size, pos.y * world.cell_size)
 
-func _make_word_label(text: String, font_color := Color.WHITE, bg_color := Color.BLACK) -> Label:
+func _make_word_label(text: String, font_color := Color.WHITE, bg_color := Color.TRANSPARENT) -> Label:
 	var label := Label.new()
 	label.text = text
 	label.size = Vector2(max(1, text.length()) * world.cell_size, world.cell_size)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", 44)
+	label.clip_contents = false
+	label.add_theme_font_size_override("font_size", WORD_FONT_SIZE)
 	label.add_theme_font_override("font", OriginalFont)
 	label.add_theme_color_override("font_color", font_color)
-	var style := StyleBoxFlat.new()
-	style.bg_color = bg_color
-	style.content_margin_left = 0
-	style.content_margin_right = 0
-	style.content_margin_top = 0
-	style.content_margin_bottom = 0
-	label.add_theme_stylebox_override("normal", style)
+	if bg_color.a > 0.0:
+		var style := StyleBoxFlat.new()
+		style.bg_color = bg_color
+		style.content_margin_left = 0
+		style.content_margin_right = 0
+		style.content_margin_top = 0
+		style.content_margin_bottom = 0
+		label.add_theme_stylebox_override("normal", style)
 	return label

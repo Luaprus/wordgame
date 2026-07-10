@@ -80,14 +80,14 @@ static func _tree_cells() -> Array[Vector2i]:
 
 static func _creek_replaced_cells() -> Array[Vector2i]:
 	var cells: Array[Vector2i] = []
-	for y in [9, 10, 11]:
+	for y in [8, 9, 10]:
 		for x in range(21, 26):
 			cells.append(Vector2i(x, y))
 	return cells
 
 static func _river_bridge_cells() -> Array[Vector2i]:
-	var cells: Array[Vector2i] = [Vector2i(19, 8), Vector2i(27, 8)]
-	for y in [9, 11]:
+	var cells: Array[Vector2i] = [Vector2i(19, 7), Vector2i(27, 7)]
+	for y in [8, 10]:
 		for x in range(20, 27):
 			cells.append(Vector2i(x, y))
 	cells.append(Vector2i(19, 11))
