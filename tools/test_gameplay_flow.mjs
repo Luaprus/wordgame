@@ -181,3 +181,37 @@ test("importer preserves source statement and writes isolated confirmed export",
   assert.equal(exported.confirmed_flow.states.length, 2);
   assert.equal(exported.review_manifest.states.length, 3);
 });
+
+test("builder generates a Chinese total page and three isolated level pages", async () => {
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "wordgame-flow-pages-"));
+  const outputDir = path.join(tempDir, "review-app");
+  const result = spawnSync(process.execPath, ["tools/build_gameplay_review_app.mjs", "--out-dir", outputDir], {
+    cwd: root,
+    encoding: "utf8",
+  });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const [indexHtml, swordHtml, gloveHtml, helmetHtml] = await Promise.all([
+    fs.readFile(path.join(outputDir, "index.html"), "utf8"),
+    fs.readFile(path.join(outputDir, "sword.html"), "utf8"),
+    fs.readFile(path.join(outputDir, "glove.html"), "utf8"),
+    fs.readFile(path.join(outputDir, "helmet.html"), "utf8"),
+  ]);
+
+  assert.match(indexHtml, /剑关[\s\S]*手套关[\s\S]*头盔关/);
+  assert.match(swordHtml, /新增情境/);
+  assert.match(swordHtml, /新增操作/);
+  assert.match(swordHtml, /新增结果/);
+  assert.match(swordHtml, /人工备注/);
+  assert.match(swordHtml, /wordgame-flow-review-v1:sword/);
+  assert.match(swordHtml, /function addState/);
+  assert.match(swordHtml, /function addAction/);
+  assert.match(swordHtml, /function addResult/);
+  assert.match(swordHtml, /function addNote/);
+  assert.match(swordHtml, /function runChecks/);
+  assert.match(swordHtml, /function exportReviewResult/);
+  assert.match(swordHtml, /function downloadConfirmedPreview/);
+  assert.doesNotMatch(swordHtml, /手套关的审核数据/);
+  assert.match(gloveHtml, /wordgame-flow-review-v1:glove/);
+  assert.match(helmetHtml, /wordgame-flow-review-v1:helmet/);
+});
