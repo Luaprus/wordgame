@@ -737,13 +737,16 @@
       "title": "剑关卡地图与流程基准导入",
       "description": "导入剑关卡教学、史莱姆、蛇妖、村中显现的地图、截图、行为、动画和音频基准。",
       "priority": "must",
-      "status": "todo",
-      "owner": null,
+      "status": "done",
+      "owner": "ai-worker-1",
       "depends_on": ["F002", "F003", "F004", "F005"],
       "allowed_files": [
         "harness/baselines/levels/sword/*",
         "harness/level_requirements.json",
-        "harness/reports/baseline/sword/*"
+        "harness/reports/baseline/blocked_items.json",
+        "harness/reports/baseline/manual_requests.md",
+        "harness/reports/baseline/sword/*",
+        "tools/validate_baselines.ps1"
       ],
       "forbidden_files": [
         "新建游戏项目/scripts/*"
@@ -943,7 +946,10 @@
       "allowed_files": [
         "harness/baselines/levels/glove/*",
         "harness/level_requirements.json",
-        "harness/reports/baseline/glove/*"
+        "harness/reports/baseline/blocked_items.json",
+        "harness/reports/baseline/manual_requests.md",
+        "harness/reports/baseline/glove/*",
+        "tools/validate_baselines.ps1"
       ],
       "forbidden_files": [
         "新建游戏项目/scripts/*"
@@ -1101,7 +1107,10 @@
       "allowed_files": [
         "harness/baselines/levels/helmet/*",
         "harness/level_requirements.json",
-        "harness/reports/baseline/helmet/*"
+        "harness/reports/baseline/blocked_items.json",
+        "harness/reports/baseline/manual_requests.md",
+        "harness/reports/baseline/helmet/*",
+        "tools/validate_baselines.ps1"
       ],
       "forbidden_files": [
         "新建游戏项目/scripts/*"

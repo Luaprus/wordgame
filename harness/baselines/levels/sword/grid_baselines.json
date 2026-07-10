@@ -1,0 +1,242 @@
+{
+  "records": [
+    {
+      "id": "SWORD-GRID-001",
+      "feature_id": "F018",
+      "level_id": "sword",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/贝克思贝斯之剑流程.docx",
+      "source_timecode": "0:26",
+      "source_frame": null,
+      "source_scene": "剑关-教学段",
+      "status": "blocked",
+      "notes": "对应 SWORD-SHOT-001。已有截图来源、玩家格子和可见对象摘要，但地图尺寸、完整对象清单、朝向和源码场景映射未完全确认，保持 blocked。",
+      "state_id": "tutorial_initial",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": 4, "y": 11 },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "SWORD-SHOT-001", "summary": "玩家字、墙体字、教学提示文字、可交互文字/道路。" }
+      ]
+    },
+    {
+      "id": "SWORD-GRID-002",
+      "feature_id": "F018",
+      "level_id": "sword",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/贝克思贝斯之剑流程.docx",
+      "source_timecode": "3:10",
+      "source_frame": null,
+      "source_scene": "剑关-教学段",
+      "status": "blocked",
+      "notes": "对应 SWORD-SHOT-020。教学段收束状态已有截图来源，但缺少完整格子对象名录和源码 scene 对位。",
+      "state_id": "tutorial_success",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": null, "y": null },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "SWORD-SHOT-020", "summary": "洞穴机关、剑提示文字、玩家字。" }
+      ]
+    },
+    {
+      "id": "SWORD-GRID-003",
+      "feature_id": "F018",
+      "level_id": "sword",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/贝克思贝斯之剑流程.docx",
+      "source_timecode": "3:10",
+      "source_frame": null,
+      "source_scene": "07_史萊姆洞窟.tscn",
+      "status": "blocked",
+      "notes": "对应 SWORD-SHOT-021。截图和视频都能定位到史莱姆段起点，但完整地图格子和碰撞对象尚未抽出。",
+      "state_id": "slime_initial",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": null, "y": null },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "SWORD-SHOT-021", "summary": "外部遗迹、敌人区域、玩家字。" }
+      ]
+    },
+    {
+      "id": "SWORD-GRID-004",
+      "feature_id": "F018",
+      "level_id": "sword",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/贝克思贝斯之剑流程.docx",
+      "source_timecode": "5:44",
+      "source_frame": null,
+      "source_scene": "07_史萊姆洞窟.tscn",
+      "status": "blocked",
+      "notes": "对应 SWORD-SHOT-023。史莱姆战胜利截图已确认，但格子对象和可推/可删属性未补齐。",
+      "state_id": "slime_success",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": null, "y": null },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "SWORD-SHOT-023", "summary": "敌人区域残局、玩家字、战后通路/提示。" }
+      ]
+    },
+    {
+      "id": "SWORD-GRID-005",
+      "feature_id": "F018",
+      "level_id": "sword",
+      "source_type": "video",
+      "source_path": "参考资料/视频参考/剑关卡.mp4",
+      "source_timecode": "3:10-5:44",
+      "source_frame": null,
+      "source_scene": "07_史萊姆洞窟.tscn",
+      "status": "blocked",
+      "notes": "史莱姆失败态在需求中必须覆盖，但当前只掌握段落时间窗，缺少明确失败截图锚点，阻塞实现。",
+      "state_id": "slime_failure",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": null, "y": null },
+      "player_initial_direction": null,
+      "objects": []
+    },
+    {
+      "id": "SWORD-GRID-006",
+      "feature_id": "F018",
+      "level_id": "sword",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/贝克思贝斯之剑流程.docx",
+      "source_timecode": "5:45",
+      "source_frame": null,
+      "source_scene": "04_初戰蛇妖.tscn",
+      "status": "blocked",
+      "notes": "对应 SWORD-SHOT-025。蛇妖段起点已有截图和源码候选 map，但对象、层级、碰撞未抽出。",
+      "state_id": "snake_initial",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": null, "y": null },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "SWORD-SHOT-025", "summary": "外部遗迹、蛇妖战场、玩家字。" }
+      ]
+    },
+    {
+      "id": "SWORD-GRID-007",
+      "feature_id": "F018",
+      "level_id": "sword",
+      "source_type": "video",
+      "source_path": "参考资料/视频参考/剑关卡.mp4",
+      "source_timecode": "5:45-11:20",
+      "source_frame": null,
+      "source_scene": "11_蛇妖_四階.tscn",
+      "status": "blocked",
+      "notes": "蛇妖攻击态需要结合视频和动画资源逐帧拆解，当前仅建立状态位点。",
+      "state_id": "snake_attack",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": null, "y": null },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "SWORD-SHOT-028", "summary": "蛇妖攻击演出、玩家字、战场文字。" }
+      ]
+    },
+    {
+      "id": "SWORD-GRID-008",
+      "feature_id": "F018",
+      "level_id": "sword",
+      "source_type": "video",
+      "source_path": "参考资料/视频参考/剑关卡.mp4",
+      "source_timecode": "5:45-11:20",
+      "source_frame": null,
+      "source_scene": "11_再戰蛇妖.tscn",
+      "status": "blocked",
+      "notes": "蛇妖受伤态需要和 snake_hurt.tscn、S-07/S-13/S-14 动画基线联动确认，当前先以 blocked 建锚。",
+      "state_id": "snake_damage",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": null, "y": null },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "SWORD-SHOT-029", "summary": "蛇妖受伤/剥皮阶段、玩家字。" }
+      ]
+    },
+    {
+      "id": "SWORD-GRID-009",
+      "feature_id": "F018",
+      "level_id": "sword",
+      "source_type": "video",
+      "source_path": "参考资料/视频参考/剑关卡.mp4",
+      "source_timecode": "5:45-11:20",
+      "source_frame": null,
+      "source_scene": "12_擊敗蛇妖.tscn",
+      "status": "blocked",
+      "notes": "蛇妖失败/玩家失败态需要补精确触发帧和地图落点，暂 blocked。",
+      "state_id": "snake_failure",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": null, "y": null },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "SWORD-SHOT-031", "summary": "蛇妖段尾声或失败收束状态。" }
+      ]
+    },
+    {
+      "id": "SWORD-GRID-010",
+      "feature_id": "F018",
+      "level_id": "sword",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/贝克思贝斯之剑流程.docx",
+      "source_timecode": "11:20",
+      "source_frame": null,
+      "source_scene": "10_修復村莊.tscn",
+      "status": "blocked",
+      "notes": "对应 SWORD-SHOT-032。村中显现起点截图已确认，但村庄对象名录和显现前后层级未抽出。",
+      "state_id": "village_dissolve_start",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": null, "y": null },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "SWORD-SHOT-032", "summary": "村中显现前收束对白/场景。" }
+      ]
+    },
+    {
+      "id": "SWORD-GRID-011",
+      "feature_id": "F018",
+      "level_id": "sword",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/贝克思贝斯之剑流程.docx",
+      "source_timecode": "11:20",
+      "source_frame": null,
+      "source_scene": "10_修復村莊.tscn",
+      "status": "blocked",
+      "notes": "对应 SWORD-SHOT-036。村中显现完成后的对象集和碰撞状态尚未确认。",
+      "state_id": "village_dissolve_end",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": null, "y": null },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "SWORD-SHOT-036", "summary": "结尾对白/收束状态。" }
+      ]
+    },
+    {
+      "id": "SWORD-GRID-012",
+      "feature_id": "F018",
+      "level_id": "sword",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/贝克思贝斯之剑流程.docx",
+      "source_timecode": null,
+      "source_frame": null,
+      "source_scene": null,
+      "status": "blocked",
+      "notes": "对应 SWORD-SHOT-037。黑屏竖排对白/转场可作为 transition_out 锚点，但无精确源码 scene。",
+      "state_id": "transition_out",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": null, "y": null },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "SWORD-SHOT-037", "summary": "黑屏竖排对白/转场。" }
+      ]
+    }
+  ]
+}

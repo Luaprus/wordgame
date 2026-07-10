@@ -92,18 +92,21 @@ git status --short
 - Feature：`F018` 至 `F022`
 - 交付：剑关卡基准、教学/史莱姆、蛇妖、村中显现、15 个 P0 动画。
 - 阶段门禁：任一 P0 动画缺失时，剑关卡不得完成。
+- 基准落盘位置：`harness/baselines/levels/sword/`，至少包含 `grid_baselines.json`、`behavior_baselines.json`、`animation_baselines.json`、`audio_baselines.json`。
 
 ### 阶段 4：手套关卡包
 
 - Feature：`F023` 至 `F026`
 - 交付：手套基准、正确/错误路线、手势变化、碰撞/通路、错误反馈。
 - 阶段门禁：任一有效手势未确认或未测试时，手套关卡不得完成。
+- 基准落盘位置：`harness/baselines/levels/glove/`，至少包含 `grid_baselines.json`、`behavior_baselines.json`、`animation_baselines.json`、`audio_baselines.json`。
 
 ### 阶段 5：四目头盔过河六关
 
 - Feature：`F027` 至 `F031`
 - 交付：六关基准、第一二关、第三四关、第五六关与收尾、动画复用判定。
 - 阶段门禁：第五、第六关不得以“待确认”进入验收。
+- 基准落盘位置：`harness/baselines/levels/helmet/`，至少包含 `grid_baselines.json`、`behavior_baselines.json`、`animation_baselines.json`、`audio_baselines.json`。
 
 ### 阶段 6：总体验收
 

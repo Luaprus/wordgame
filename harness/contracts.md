@@ -74,6 +74,14 @@
 
 缺少来源的基准项必须标记为 `blocked`。实现 feature 不得依赖 blocked 基准项进入完成。
 
+### 关卡基准目录契约
+
+- 三个关卡包的导入基准统一放在 `harness/baselines/levels/<level_id>/`。
+- 每个关卡目录至少拆分四类文件：`grid_baselines.json`、`behavior_baselines.json`、`animation_baselines.json`、`audio_baselines.json`。
+- 每个文件都必须包含顶层 `records` 数组，并分别遵守 `grid.schema.json`、`behavior.schema.json`、`animation.schema.json`、`audio.schema.json`。
+- `tools/validate_baselines.ps1` 必须把这些关卡基准纳入校验与缺口报告；否则 F018/F023/F027 不能被视为真正可验收。
+- 关卡基准导入 feature 可以修改 `tools/validate_baselines.ps1`，但不得借此绕过 blocked / manual_required / required field 校验。
+
 ### 基准回写规则
 
 - 视频人工复核结果只能通过 `harness/baselines/video/video_event_overrides.json` 回写到 `harness/baselines/video/video_baselines.json` 和 `harness/manual_tables/video_events_to_fill.csv`。

@@ -70,9 +70,9 @@
     "manual_required_items":  [
 
                               ],
-    "blocked_count":  0,
+    "blocked_count":  42,
     "ai_analysis_required_count":  740,
-    "generated_at":  "2026-07-09T20:59:45.7449315+08:00",
+    "generated_at":  "2026-07-10T10:02:11.6190974+08:00",
     "ai_analysis_required_items":  [
                                        {
                                            "id":  "SRC-00001",
@@ -33506,7 +33506,1214 @@
                                        }
                                    ],
     "blocked_items":  [
+                          {
+                              "id":  "SWORD-ANIM-001",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/Backspace.tscn",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  "剑关-教学段",
+                              "status":  "blocked",
+                              "notes":  "S-01 删除字动画。source_index 已确认 Backspace.tscn 存在且含 New Anim(1.15s)，但关键帧、触发条件和截图锚点未补齐。",
+                              "animation_id":  "S-01",
+                              "animation_name":  "删除字动画",
+                              "animation_player":  "AnimationPlayer",
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  1.15,
+                              "keyframes":  [
 
+                                            ],
+                              "interruptible":  null,
+                              "input_locked":  null,
+                              "triggered_audio":  [
+
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/sword/animations/S-01-backspace.tscn"
+                          },
+                          {
+                              "id":  "SWORD-ANIM-002",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/剑关卡.mp4",
+                              "source_timecode":  "0:26-11:20",
+                              "source_frame":  null,
+                              "source_scene":  "剑关-教学段",
+                              "status":  "blocked",
+                              "notes":  "S-02 解密成功后句子高亮动画。需求明确列为 P0，但尚未从源码定位到唯一 scene/AnimationPlayer。",
+                              "animation_id":  "S-02",
+                              "animation_name":  "解密成功后句子高亮动画",
+                              "animation_player":  null,
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  null,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  null,
+                              "input_locked":  null,
+                              "triggered_audio":  [
+
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/sword/animations/S-02-sentence-highlight.tscn"
+                          },
+                          {
+                              "id":  "SWORD-ANIM-003",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/Typewriter.gdc",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  "剑关-教学段",
+                              "status":  "blocked",
+                              "notes":  "S-03 打字机效果。源码资源已索引，但 .gdc 未反编译，不能宣称已确认 commands/帧级行为。",
+                              "animation_id":  "S-03",
+                              "animation_name":  "打字机效果",
+                              "animation_player":  null,
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  null,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  null,
+                              "input_locked":  true,
+                              "triggered_audio":  [
+
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/sword/animations/S-03-typewriter.tscn"
+                          },
+                          {
+                              "id":  "SWORD-ANIM-004",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/剑关卡.mp4",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  "剑关-教学段",
+                              "status":  "blocked",
+                              "notes":  "S-04 “我”字呼吸动画。需求列为 P0，但尚未定位到唯一可读原版动画资源。",
+                              "animation_id":  "S-04",
+                              "animation_name":  "“我”字呼吸动画",
+                              "animation_player":  null,
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  null,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  true,
+                              "input_locked":  false,
+                              "triggered_audio":  [
+
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/sword/animations/S-04-player-breathe.tscn"
+                          },
+                          {
+                              "id":  "SWORD-ANIM-005",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/剑关卡.mp4",
+                              "source_timecode":  "34:13",
+                              "source_frame":  null,
+                              "source_scene":  "剑关-蛇妖段",
+                              "status":  "blocked",
+                              "notes":  "S-05 “爱”字替代动画。时间点来自需求文档，但尚未定位到唯一原版 scene。",
+                              "animation_id":  "S-05",
+                              "animation_name":  "“爱”字替代动画",
+                              "animation_player":  null,
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  null,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  null,
+                              "input_locked":  null,
+                              "triggered_audio":  [
+
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/sword/animations/S-05-ai-replace.tscn"
+                          },
+                          {
+                              "id":  "SWORD-ANIM-006",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch5_snake_circle.tscn",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  "11_蛇妖_四階.tscn",
+                              "status":  "blocked",
+                              "notes":  "S-06 蛇妖摆动动画。source_index 已确认可读动画包含 Breathe/CircleB/CircleIn 等，但尚未对应到具体截图和输入触发。",
+                              "animation_id":  "S-06",
+                              "animation_name":  "蛇妖摆动动画",
+                              "animation_player":  "AnimationPlayer",
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  5.0,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  null,
+                              "input_locked":  null,
+                              "triggered_audio":  [
+
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/sword/animations/S-06-snake-sway.tscn"
+                          },
+                          {
+                              "id":  "SWORD-ANIM-007",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/snake_hurt.tscn",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  "剑关-蛇妖段",
+                              "status":  "blocked",
+                              "notes":  "S-07 受伤害闪烁动画。source_index 已确认 hurt/really_hurt 动画资源存在，但未拆出帧级基准。",
+                              "animation_id":  "S-07",
+                              "animation_name":  "受伤害闪烁动画",
+                              "animation_player":  "AnimationPlayer",
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  0.5,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  null,
+                              "input_locked":  null,
+                              "triggered_audio":  [
+                                                      "SWORD-AUD-006"
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/sword/animations/S-07-snake-hurt.tscn"
+                          },
+                          {
+                              "id":  "SWORD-ANIM-008",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/剑关卡.mp4",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  "10_修復村莊.tscn",
+                              "status":  "blocked",
+                              "notes":  "S-08 房子被撞碎动画。需求列为 P0，但尚未定位到唯一原版动画资源。",
+                              "animation_id":  "S-08",
+                              "animation_name":  "房子被撞碎动画",
+                              "animation_player":  null,
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  null,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  null,
+                              "input_locked":  null,
+                              "triggered_audio":  [
+                                                      "SWORD-AUD-007"
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/sword/animations/S-08-house-crash.tscn"
+                          },
+                          {
+                              "id":  "SWORD-ANIM-009",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch5_snake_trans.tscn",
+                              "source_timecode":  "30:30",
+                              "source_frame":  null,
+                              "source_scene":  "剑关-蛇妖段",
+                              "status":  "blocked",
+                              "notes":  "S-09 “仓”调到蛇上的动画。需求给出时间点，资源候选为 ch5_snake_trans.tscn，但缺关键帧对应。",
+                              "animation_id":  "S-09",
+                              "animation_name":  "“仓”调到蛇上的动画",
+                              "animation_player":  "AnimationPlayer",
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  null,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  null,
+                              "input_locked":  null,
+                              "triggered_audio":  [
+
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/sword/animations/S-09-warehouse-to-snake.tscn"
+                          },
+                          {
+                              "id":  "SWORD-ANIM-010",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch5_snake_circle.tscn",
+                              "source_timecode":  "35:19",
+                              "source_frame":  null,
+                              "source_scene":  "11_蛇妖_四階.tscn",
+                              "status":  "blocked",
+                              "notes":  "S-10 蛇跳动动画。时间点来自需求，资源候选已确认，但未切出对应动画片段。",
+                              "animation_id":  "S-10",
+                              "animation_name":  "蛇跳动动画",
+                              "animation_player":  "AnimationPlayer",
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  3.0,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  null,
+                              "input_locked":  null,
+                              "triggered_audio":  [
+
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/sword/animations/S-10-snake-jump.tscn"
+                          },
+                          {
+                              "id":  "SWORD-ANIM-011",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/剑关卡.mp4",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  "剑关-蛇妖段",
+                              "status":  "blocked",
+                              "notes":  "S-11 画面闪白动画。需求确认存在，但未定位到唯一原版动画文件。",
+                              "animation_id":  "S-11",
+                              "animation_name":  "画面闪白动画",
+                              "animation_player":  null,
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  null,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  false,
+                              "input_locked":  true,
+                              "triggered_audio":  [
+
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/sword/animations/S-11-flash-white.tscn"
+                          },
+                          {
+                              "id":  "SWORD-ANIM-012",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/snake_ray.tscn",
+                              "source_timecode":  "35:21",
+                              "source_frame":  null,
+                              "source_scene":  "剑关-蛇妖段",
+                              "status":  "blocked",
+                              "notes":  "S-12 发射媚眼。source_index 已确认 snake_ray.tscn 含 default/hit 动画，但未补事件帧。",
+                              "animation_id":  "S-12",
+                              "animation_name":  "发射媚眼",
+                              "animation_player":  "AnimationPlayer",
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  0.5,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  null,
+                              "input_locked":  null,
+                              "triggered_audio":  [
+
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/sword/animations/S-12-snake-ray.tscn"
+                          },
+                          {
+                              "id":  "SWORD-ANIM-013",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch5_snake_trans_new.tscn",
+                              "source_timecode":  "36:53",
+                              "source_frame":  null,
+                              "source_scene":  "09_蛇妖_三階.tscn",
+                              "status":  "blocked",
+                              "notes":  "S-13 蛇被剥一层皮动画。需求给出时间点，资源候选已索引，但尚未确认对应关键帧和终态。",
+                              "animation_id":  "S-13",
+                              "animation_name":  "蛇被剥一层皮动画",
+                              "animation_player":  "AnimationPlayer",
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  null,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  null,
+                              "input_locked":  null,
+                              "triggered_audio":  [
+                                                      "SWORD-AUD-006"
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/sword/animations/S-13-snake-peel.tscn"
+                          },
+                          {
+                              "id":  "SWORD-ANIM-014",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/snake_hurt.tscn",
+                              "source_timecode":  "37:40",
+                              "source_frame":  null,
+                              "source_scene":  "剑关-蛇妖段",
+                              "status":  "blocked",
+                              "notes":  "S-14 蛇抖动动画。可能与 snake_hurt.tscn 或 ch5_snake_circle.tscn 片段相关，尚未完成复用判定。",
+                              "animation_id":  "S-14",
+                              "animation_name":  "蛇抖动动画",
+                              "animation_player":  "AnimationPlayer",
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  null,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  null,
+                              "input_locked":  null,
+                              "triggered_audio":  [
+                                                      "SWORD-AUD-006"
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/sword/animations/S-14-snake-shake.tscn"
+                          },
+                          {
+                              "id":  "SWORD-ANIM-015",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/剑关卡.mp4",
+                              "source_timecode":  "38:17",
+                              "source_frame":  null,
+                              "source_scene":  "10_修復村莊.tscn",
+                              "status":  "blocked",
+                              "notes":  "S-15 村中溶解显现效果。时间点来自需求，但显现动画和场景层级尚未拆完。",
+                              "animation_id":  "S-15",
+                              "animation_name":  "村中溶解显现效果",
+                              "animation_player":  null,
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  null,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  false,
+                              "input_locked":  true,
+                              "triggered_audio":  [
+                                                      "SWORD-AUD-007"
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/sword/animations/S-15-village-dissolve.tscn"
+                          },
+                          {
+                              "id":  "SWORD-AUD-001",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/剑关卡.mp4",
+                              "source_timecode":  "0:26-3:10",
+                              "source_frame":  null,
+                              "source_scene":  "剑关-教学段",
+                              "status":  "blocked",
+                              "notes":  "教学段删除/提示音尚未定位到唯一音频文件，只能先以视频段和 Backspace 动画资源建锚。",
+                              "audio_id":  "SWORD-AUD-TUTORIAL",
+                              "audio_file":  null,
+                              "trigger_level":  "sword",
+                              "trigger_behavior":  "SWORD-TUTORIAL-FLOW",
+                              "trigger_time":  "教学段内删除/提示触发时",
+                              "delay_seconds":  null,
+                              "volume_db":  null,
+                              "pan":  null,
+                              "loop":  false,
+                              "fade":  null,
+                              "stop_condition":  "教学段结束或提示关闭"
+                          },
+                          {
+                              "id":  "SWORD-AUD-002",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_5_slime_move_A.wav",
+                              "source_timecode":  "3:10-5:44",
+                              "source_frame":  null,
+                              "source_scene":  "剑关-史莱姆段",
+                              "status":  "blocked",
+                              "notes":  "史莱姆移动音来源已索引，但具体 A/B/C/D 变体切换规则未确认。",
+                              "audio_id":  "SWORD-AUD-SLIME-MOVE",
+                              "audio_file":  "SE_2_5_slime_move_A.wav",
+                              "trigger_level":  "sword",
+                              "trigger_behavior":  "SWORD-SLIME-SUCCESS",
+                              "trigger_time":  "史莱姆移动时",
+                              "delay_seconds":  null,
+                              "volume_db":  null,
+                              "pan":  null,
+                              "loop":  false,
+                              "fade":  null,
+                              "stop_condition":  "史莱姆移动结束"
+                          },
+                          {
+                              "id":  "SWORD-AUD-003",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_6_slime_dead_A.wav",
+                              "source_timecode":  "3:10-5:44",
+                              "source_frame":  null,
+                              "source_scene":  "剑关-史莱姆段",
+                              "status":  "blocked",
+                              "notes":  "史莱姆死亡音来源已索引，但精确触发帧和变体规则未确认。",
+                              "audio_id":  "SWORD-AUD-SLIME-DEAD",
+                              "audio_file":  "SE_2_6_slime_dead_A.wav",
+                              "trigger_level":  "sword",
+                              "trigger_behavior":  "SWORD-SLIME-SUCCESS",
+                              "trigger_time":  "史莱姆死亡时",
+                              "delay_seconds":  null,
+                              "volume_db":  null,
+                              "pan":  null,
+                              "loop":  false,
+                              "fade":  null,
+                              "stop_condition":  "死亡演出结束"
+                          },
+                          {
+                              "id":  "SWORD-AUD-004",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_16_snake_fight_A.ogg",
+                              "source_timecode":  "5:45-11:20",
+                              "source_frame":  null,
+                              "source_scene":  "剑关-蛇妖段",
+                              "status":  "blocked",
+                              "notes":  "蛇妖战第一阶段 BGM 已索引，但切换到 AB/AtonalLoop/B/C/D 的规则未确认。",
+                              "audio_id":  "SWORD-AUD-SNAKE-FIGHT-A",
+                              "audio_file":  "BGM_2_16_snake_fight_A.ogg",
+                              "trigger_level":  "sword",
+                              "trigger_behavior":  "SWORD-SNAKE-PHASE-OPEN",
+                              "trigger_time":  "蛇妖战开场",
+                              "delay_seconds":  null,
+                              "volume_db":  null,
+                              "pan":  null,
+                              "loop":  true,
+                              "fade":  null,
+                              "stop_condition":  "进入二阶段或蛇妖战结束"
+                          },
+                          {
+                              "id":  "SWORD-AUD-005",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_40.1_snake_fight_second_A.ogg",
+                              "source_timecode":  "5:45-11:20",
+                              "source_frame":  null,
+                              "source_scene":  "剑关-蛇妖段",
+                              "status":  "blocked",
+                              "notes":  "蛇妖战二阶段 BGM 候选已知，但阶段切换帧未确认。",
+                              "audio_id":  "SWORD-AUD-SNAKE-FIGHT-B",
+                              "audio_file":  "BGM_2_40.1_snake_fight_second_A.ogg",
+                              "trigger_level":  "sword",
+                              "trigger_behavior":  "SWORD-SNAKE-PHASE-OPEN",
+                              "trigger_time":  "蛇妖战二阶段开始",
+                              "delay_seconds":  null,
+                              "volume_db":  null,
+                              "pan":  null,
+                              "loop":  true,
+                              "fade":  null,
+                              "stop_condition":  "蛇妖战结束"
+                          },
+                          {
+                              "id":  "SWORD-AUD-006",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_42_snake_hurt.wav",
+                              "source_timecode":  "5:45-11:20",
+                              "source_frame":  null,
+                              "source_scene":  "剑关-蛇妖段",
+                              "status":  "blocked",
+                              "notes":  "蛇妖受伤音来源已知，但对应 S-07/S-13/S-14 的具体触发边界未确认。",
+                              "audio_id":  "SWORD-AUD-SNAKE-HURT",
+                              "audio_file":  "SE_2_42_snake_hurt.wav",
+                              "trigger_level":  "sword",
+                              "trigger_behavior":  "SWORD-SNAKE-DAMAGE",
+                              "trigger_time":  "蛇妖受伤/剥皮/抖动时",
+                              "delay_seconds":  null,
+                              "volume_db":  null,
+                              "pan":  null,
+                              "loop":  false,
+                              "fade":  null,
+                              "stop_condition":  "受伤演出结束"
+                          },
+                          {
+                              "id":  "SWORD-AUD-007",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第五章 音效/SE_5_85_sword_stab.wav",
+                              "source_timecode":  "11:20",
+                              "source_frame":  null,
+                              "source_scene":  "10_修復村莊.tscn",
+                              "status":  "blocked",
+                              "notes":  "村中显现/房屋撞碎相关音效候选先用已索引的 sword_stab 建锚，具体音效归属仍待确认。",
+                              "audio_id":  "SWORD-AUD-VILLAGE",
+                              "audio_file":  "SE_5_85_sword_stab.wav",
+                              "trigger_level":  "sword",
+                              "trigger_behavior":  "SWORD-VILLAGE-DISSOLVE",
+                              "trigger_time":  "村中显现或房屋撞碎演出时",
+                              "delay_seconds":  null,
+                              "volume_db":  null,
+                              "pan":  null,
+                              "loop":  false,
+                              "fade":  null,
+                              "stop_condition":  "村中显现演出结束"
+                          },
+                          {
+                              "id":  "SWORD-BEH-001",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/剑关卡.mp4",
+                              "source_timecode":  "0:26-3:10",
+                              "source_frame":  null,
+                              "source_scene":  "剑关-教学段",
+                              "status":  "blocked",
+                              "notes":  "教学段整体成功路线已由视频片段确认，但逐步输入、句子规则与门禁结果还未拆成可重放行为。",
+                              "behavior_id":  "SWORD-TUTORIAL-FLOW",
+                              "input":  "方向键/WASD + 交互/删除",
+                              "pre_state":  "tutorial_initial",
+                              "player_grid":  {
+                                                  "x":  4,
+                                                  "y":  11
+                                              },
+                              "player_direction":  null,
+                              "target_object":  "教学提示字/道路字",
+                              "success_condition":  "完成教学段并进入 tutorial_success。",
+                              "failure_condition":  "任一步骤输入顺序或交互对象不符。",
+                              "original_result":  "玩家按教学提示推进并解锁剑相关提示。",
+                              "replay_result":  "待拆成逐步可回放行为后补入。",
+                              "input_locked":  null,
+                              "cooldown_seconds":  null,
+                              "triggered_animation":  [
+                                                          "S-01",
+                                                          "S-02",
+                                                          "S-03",
+                                                          "S-04"
+                                                      ],
+                              "triggered_audio":  [
+
+                                                  ],
+                              "post_state":  "tutorial_success"
+                          },
+                          {
+                              "id":  "SWORD-BEH-002",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/剑关卡.mp4",
+                              "source_timecode":  "3:10-5:44",
+                              "source_frame":  null,
+                              "source_scene":  "07_史萊姆洞窟.tscn",
+                              "status":  "blocked",
+                              "notes":  "史莱姆成功路线存在视频段和截图锚点，但缺少逐输入/逐格行为表。",
+                              "behavior_id":  "SWORD-SLIME-SUCCESS",
+                              "input":  "移动 + 面向交互 + 推字/删字候选",
+                              "pre_state":  "slime_initial",
+                              "player_grid":  {
+                                                  "x":  null,
+                                                  "y":  null
+                                              },
+                              "player_direction":  null,
+                              "target_object":  "史莱姆/战场字实体",
+                              "success_condition":  "达成史莱姆段通关并进入 slime_success。",
+                              "failure_condition":  "错误路线或错误攻击顺序。",
+                              "original_result":  "史莱姆战胜利，战场文字和通路发生变化。",
+                              "replay_result":  "待补完整行为回放结果。",
+                              "input_locked":  null,
+                              "cooldown_seconds":  null,
+                              "triggered_animation":  [
+                                                          "S-03"
+                                                      ],
+                              "triggered_audio":  [
+                                                      "SWORD-AUD-002",
+                                                      "SWORD-AUD-003"
+                                                  ],
+                              "post_state":  "slime_success"
+                          },
+                          {
+                              "id":  "SWORD-BEH-003",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/剑关卡.mp4",
+                              "source_timecode":  "3:10-5:44",
+                              "source_frame":  null,
+                              "source_scene":  "07_史萊姆洞窟.tscn",
+                              "status":  "blocked",
+                              "notes":  "需求明确要求史莱姆失败路线，但当前资料只够定位片段区间，尚未拆出失败前置状态和反馈帧。",
+                              "behavior_id":  "SWORD-SLIME-FAILURE",
+                              "input":  "错误攻击/错误路线输入",
+                              "pre_state":  "slime_initial",
+                              "player_grid":  {
+                                                  "x":  null,
+                                                  "y":  null
+                                              },
+                              "player_direction":  null,
+                              "target_object":  "史莱姆/阻挡字",
+                              "success_condition":  "不适用。",
+                              "failure_condition":  "触发史莱姆失败反馈。",
+                              "original_result":  "玩家遭遇失败或卡死反馈。",
+                              "replay_result":  "待补失败回放结果。",
+                              "input_locked":  null,
+                              "cooldown_seconds":  null,
+                              "triggered_animation":  [
+
+                                                      ],
+                              "triggered_audio":  [
+                                                      "SWORD-AUD-002"
+                                                  ],
+                              "post_state":  "slime_failure"
+                          },
+                          {
+                              "id":  "SWORD-BEH-004",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/剑关卡.mp4",
+                              "source_timecode":  "5:45-11:20",
+                              "source_frame":  null,
+                              "source_scene":  "04_初戰蛇妖.tscn",
+                              "status":  "blocked",
+                              "notes":  "蛇妖段开场和战斗推进都已定位到视频与源码候选，但尚未拆成输入级流程。",
+                              "behavior_id":  "SWORD-SNAKE-PHASE-OPEN",
+                              "input":  "移动 + 交互 + 攻击相关操作",
+                              "pre_state":  "snake_initial",
+                              "player_grid":  {
+                                                  "x":  null,
+                                                  "y":  null
+                                              },
+                              "player_direction":  null,
+                              "target_object":  "蛇妖/战场字",
+                              "success_condition":  "进入蛇妖攻击循环并触发战斗动画。",
+                              "failure_condition":  "错误站位或错误交互。",
+                              "original_result":  "蛇妖段从开场过渡到正式战斗。",
+                              "replay_result":  "待拆分到逐动作行为表。",
+                              "input_locked":  null,
+                              "cooldown_seconds":  null,
+                              "triggered_animation":  [
+                                                          "S-06",
+                                                          "S-10",
+                                                          "S-12"
+                                                      ],
+                              "triggered_audio":  [
+                                                      "SWORD-AUD-004",
+                                                      "SWORD-AUD-005"
+                                                  ],
+                              "post_state":  "snake_attack"
+                          },
+                          {
+                              "id":  "SWORD-BEH-005",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/剑关卡.mp4",
+                              "source_timecode":  "5:45-11:20",
+                              "source_frame":  null,
+                              "source_scene":  "11_再戰蛇妖.tscn",
+                              "status":  "blocked",
+                              "notes":  "蛇妖受伤/剥皮/抖动是核心阶段，但具体输入和连锁条件未拆完。",
+                              "behavior_id":  "SWORD-SNAKE-DAMAGE",
+                              "input":  "攻击命中后的连锁输入",
+                              "pre_state":  "snake_attack",
+                              "player_grid":  {
+                                                  "x":  null,
+                                                  "y":  null
+                                              },
+                              "player_direction":  null,
+                              "target_object":  "蛇妖主体",
+                              "success_condition":  "触发受伤、剥皮、抖动等 P0 动画链。",
+                              "failure_condition":  "未命中或节奏错误。",
+                              "original_result":  "蛇妖进入受伤/剥皮阶段。",
+                              "replay_result":  "待补行为和帧级结果。",
+                              "input_locked":  null,
+                              "cooldown_seconds":  null,
+                              "triggered_animation":  [
+                                                          "S-07",
+                                                          "S-13",
+                                                          "S-14"
+                                                      ],
+                              "triggered_audio":  [
+                                                      "SWORD-AUD-006"
+                                                  ],
+                              "post_state":  "snake_damage"
+                          },
+                          {
+                              "id":  "SWORD-BEH-006",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/剑关卡.mp4",
+                              "source_timecode":  "5:45-11:20",
+                              "source_frame":  null,
+                              "source_scene":  "12_擊敗蛇妖.tscn",
+                              "status":  "blocked",
+                              "notes":  "蛇妖失败或玩家失败反馈必须纳入，但当前缺精确触发前置态。",
+                              "behavior_id":  "SWORD-SNAKE-FAILURE",
+                              "input":  "错误攻击/错误站位/错误交互",
+                              "pre_state":  "snake_attack",
+                              "player_grid":  {
+                                                  "x":  null,
+                                                  "y":  null
+                                              },
+                              "player_direction":  null,
+                              "target_object":  "蛇妖/战场机关",
+                              "success_condition":  "不适用。",
+                              "failure_condition":  "触发蛇妖段失败反馈。",
+                              "original_result":  "玩家死亡、受击或被卡住反馈。",
+                              "replay_result":  "待补失败结果。",
+                              "input_locked":  null,
+                              "cooldown_seconds":  null,
+                              "triggered_animation":  [
+                                                          "S-11"
+                                                      ],
+                              "triggered_audio":  [
+                                                      "SWORD-AUD-006"
+                                                  ],
+                              "post_state":  "snake_failure"
+                          },
+                          {
+                              "id":  "SWORD-BEH-007",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/剑关卡.mp4",
+                              "source_timecode":  "11:20",
+                              "source_frame":  null,
+                              "source_scene":  "10_修復村莊.tscn",
+                              "status":  "blocked",
+                              "notes":  "村中显现段已在截图里可见，但显现触发输入和句子条件未拆出。",
+                              "behavior_id":  "SWORD-VILLAGE-DISSOLVE",
+                              "input":  "句子触发/战后推进",
+                              "pre_state":  "village_dissolve_start",
+                              "player_grid":  {
+                                                  "x":  null,
+                                                  "y":  null
+                                              },
+                              "player_direction":  null,
+                              "target_object":  "村中显现相关字/房屋对象",
+                              "success_condition":  "村中显现演出完整播放并进入 village_dissolve_end。",
+                              "failure_condition":  "触发条件不成立或演出链不完整。",
+                              "original_result":  "村中显现/修复演出完成。",
+                              "replay_result":  "待补。",
+                              "input_locked":  null,
+                              "cooldown_seconds":  null,
+                              "triggered_animation":  [
+                                                          "S-08",
+                                                          "S-15"
+                                                      ],
+                              "triggered_audio":  [
+                                                      "SWORD-AUD-007"
+                                                  ],
+                              "post_state":  "village_dissolve_end"
+                          },
+                          {
+                              "id":  "SWORD-BEH-008",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/贝克思贝斯之剑流程.docx",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  null,
+                              "status":  "blocked",
+                              "notes":  "收尾转场由 SWORD-SHOT-037 锚定，但没有源码 scene 和行为链明细。",
+                              "behavior_id":  "SWORD-TRANSITION-OUT",
+                              "input":  "剧情推进",
+                              "pre_state":  "village_dissolve_end",
+                              "player_grid":  {
+                                                  "x":  null,
+                                                  "y":  null
+                                              },
+                              "player_direction":  null,
+                              "target_object":  "黑屏竖排对白/转场",
+                              "success_condition":  "进入 transition_out。",
+                              "failure_condition":  "不适用。",
+                              "original_result":  "黑屏竖排对白/转场收束。",
+                              "replay_result":  "待补。",
+                              "input_locked":  true,
+                              "cooldown_seconds":  null,
+                              "triggered_animation":  [
+
+                                                      ],
+                              "triggered_audio":  [
+
+                                                  ],
+                              "post_state":  "transition_out"
+                          },
+                          {
+                              "id":  "SWORD-GRID-001",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/贝克思贝斯之剑流程.docx",
+                              "source_timecode":  "0:26",
+                              "source_frame":  null,
+                              "source_scene":  "剑关-教学段",
+                              "status":  "blocked",
+                              "notes":  "对应 SWORD-SHOT-001。已有截图来源、玩家格子和可见对象摘要，但地图尺寸、完整对象清单、朝向和源码场景映射未完全确认，保持 blocked。",
+                              "state_id":  "tutorial_initial",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  4,
+                                                          "y":  11
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "SWORD-SHOT-001",
+                                                  "summary":  "玩家字、墙体字、教学提示文字、可交互文字/道路。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "SWORD-GRID-002",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/贝克思贝斯之剑流程.docx",
+                              "source_timecode":  "3:10",
+                              "source_frame":  null,
+                              "source_scene":  "剑关-教学段",
+                              "status":  "blocked",
+                              "notes":  "对应 SWORD-SHOT-020。教学段收束状态已有截图来源，但缺少完整格子对象名录和源码 scene 对位。",
+                              "state_id":  "tutorial_success",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  null,
+                                                          "y":  null
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "SWORD-SHOT-020",
+                                                  "summary":  "洞穴机关、剑提示文字、玩家字。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "SWORD-GRID-003",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/贝克思贝斯之剑流程.docx",
+                              "source_timecode":  "3:10",
+                              "source_frame":  null,
+                              "source_scene":  "07_史萊姆洞窟.tscn",
+                              "status":  "blocked",
+                              "notes":  "对应 SWORD-SHOT-021。截图和视频都能定位到史莱姆段起点，但完整地图格子和碰撞对象尚未抽出。",
+                              "state_id":  "slime_initial",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  null,
+                                                          "y":  null
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "SWORD-SHOT-021",
+                                                  "summary":  "外部遗迹、敌人区域、玩家字。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "SWORD-GRID-004",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/贝克思贝斯之剑流程.docx",
+                              "source_timecode":  "5:44",
+                              "source_frame":  null,
+                              "source_scene":  "07_史萊姆洞窟.tscn",
+                              "status":  "blocked",
+                              "notes":  "对应 SWORD-SHOT-023。史莱姆战胜利截图已确认，但格子对象和可推/可删属性未补齐。",
+                              "state_id":  "slime_success",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  null,
+                                                          "y":  null
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "SWORD-SHOT-023",
+                                                  "summary":  "敌人区域残局、玩家字、战后通路/提示。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "SWORD-GRID-005",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/剑关卡.mp4",
+                              "source_timecode":  "3:10-5:44",
+                              "source_frame":  null,
+                              "source_scene":  "07_史萊姆洞窟.tscn",
+                              "status":  "blocked",
+                              "notes":  "史莱姆失败态在需求中必须覆盖，但当前只掌握段落时间窗，缺少明确失败截图锚点，阻塞实现。",
+                              "state_id":  "slime_failure",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  null,
+                                                          "y":  null
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+
+                                          ]
+                          },
+                          {
+                              "id":  "SWORD-GRID-006",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/贝克思贝斯之剑流程.docx",
+                              "source_timecode":  "5:45",
+                              "source_frame":  null,
+                              "source_scene":  "04_初戰蛇妖.tscn",
+                              "status":  "blocked",
+                              "notes":  "对应 SWORD-SHOT-025。蛇妖段起点已有截图和源码候选 map，但对象、层级、碰撞未抽出。",
+                              "state_id":  "snake_initial",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  null,
+                                                          "y":  null
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "SWORD-SHOT-025",
+                                                  "summary":  "外部遗迹、蛇妖战场、玩家字。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "SWORD-GRID-007",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/剑关卡.mp4",
+                              "source_timecode":  "5:45-11:20",
+                              "source_frame":  null,
+                              "source_scene":  "11_蛇妖_四階.tscn",
+                              "status":  "blocked",
+                              "notes":  "蛇妖攻击态需要结合视频和动画资源逐帧拆解，当前仅建立状态位点。",
+                              "state_id":  "snake_attack",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  null,
+                                                          "y":  null
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "SWORD-SHOT-028",
+                                                  "summary":  "蛇妖攻击演出、玩家字、战场文字。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "SWORD-GRID-008",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/剑关卡.mp4",
+                              "source_timecode":  "5:45-11:20",
+                              "source_frame":  null,
+                              "source_scene":  "11_再戰蛇妖.tscn",
+                              "status":  "blocked",
+                              "notes":  "蛇妖受伤态需要和 snake_hurt.tscn、S-07/S-13/S-14 动画基线联动确认，当前先以 blocked 建锚。",
+                              "state_id":  "snake_damage",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  null,
+                                                          "y":  null
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "SWORD-SHOT-029",
+                                                  "summary":  "蛇妖受伤/剥皮阶段、玩家字。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "SWORD-GRID-009",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/剑关卡.mp4",
+                              "source_timecode":  "5:45-11:20",
+                              "source_frame":  null,
+                              "source_scene":  "12_擊敗蛇妖.tscn",
+                              "status":  "blocked",
+                              "notes":  "蛇妖失败/玩家失败态需要补精确触发帧和地图落点，暂 blocked。",
+                              "state_id":  "snake_failure",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  null,
+                                                          "y":  null
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "SWORD-SHOT-031",
+                                                  "summary":  "蛇妖段尾声或失败收束状态。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "SWORD-GRID-010",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/贝克思贝斯之剑流程.docx",
+                              "source_timecode":  "11:20",
+                              "source_frame":  null,
+                              "source_scene":  "10_修復村莊.tscn",
+                              "status":  "blocked",
+                              "notes":  "对应 SWORD-SHOT-032。村中显现起点截图已确认，但村庄对象名录和显现前后层级未抽出。",
+                              "state_id":  "village_dissolve_start",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  null,
+                                                          "y":  null
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "SWORD-SHOT-032",
+                                                  "summary":  "村中显现前收束对白/场景。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "SWORD-GRID-011",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/贝克思贝斯之剑流程.docx",
+                              "source_timecode":  "11:20",
+                              "source_frame":  null,
+                              "source_scene":  "10_修復村莊.tscn",
+                              "status":  "blocked",
+                              "notes":  "对应 SWORD-SHOT-036。村中显现完成后的对象集和碰撞状态尚未确认。",
+                              "state_id":  "village_dissolve_end",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  null,
+                                                          "y":  null
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "SWORD-SHOT-036",
+                                                  "summary":  "结尾对白/收束状态。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "SWORD-GRID-012",
+                              "feature_id":  "F018",
+                              "level_id":  "sword",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/贝克思贝斯之剑流程.docx",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  null,
+                              "status":  "blocked",
+                              "notes":  "对应 SWORD-SHOT-037。黑屏竖排对白/转场可作为 transition_out 锚点，但无精确源码 scene。",
+                              "state_id":  "transition_out",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  null,
+                                                          "y":  null
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "SWORD-SHOT-037",
+                                                  "summary":  "黑屏竖排对白/转场。"
+                                              }
+                                          ]
+                          }
                       ],
     "excluded_count":  1
 }

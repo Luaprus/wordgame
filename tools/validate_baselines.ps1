@@ -4,6 +4,30 @@ $WorkspaceRoot = Split-Path -Parent $PSScriptRoot
 $ReportDir = Join-Path $WorkspaceRoot "harness/reports/baseline"
 New-Item -ItemType Directory -Force -Path $ReportDir | Out-Null
 
+function Get-RelativePathCompat {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$BasePath,
+        [Parameter(Mandatory = $true)]
+        [string]$TargetPath
+    )
+
+    $baseResolved = (Resolve-Path -LiteralPath $BasePath).ProviderPath
+    $targetResolved = (Resolve-Path -LiteralPath $TargetPath).ProviderPath
+
+    if ($baseResolved[-1] -ne [System.IO.Path]::DirectorySeparatorChar) {
+        $baseResolved = $baseResolved + [System.IO.Path]::DirectorySeparatorChar
+    }
+
+    $baseUri = New-Object System.Uri($baseResolved)
+    $targetUri = New-Object System.Uri($targetResolved)
+    $relativeUri = $baseUri.MakeRelativeUri($targetUri).ToString()
+    return [System.Uri]::UnescapeDataString($relativeUri).Replace('/', [System.IO.Path]::DirectorySeparatorChar)
+}
+
+$FeaturesPath = Join-Path $WorkspaceRoot "harness/features.json"
+$FeaturesDoc = Get-Content -LiteralPath $FeaturesPath -Raw -Encoding UTF8 | ConvertFrom-Json
+
 $RequiredPaths = @(
     "harness/baselines/schema/video.schema.json",
     "harness/baselines/schema/screenshot.schema.json",
@@ -44,10 +68,57 @@ $baselineFiles = @(
     @{ kind = "source_index"; path = "harness/baselines/source_index/source_index.json" }
 )
 
+$LevelFeatureMap = @{
+    F018 = "sword"
+    F023 = "glove"
+    F027 = "helmet"
+}
+$LevelBaselineKinds = @{
+    "grid_baselines.json" = "grid"
+    "behavior_baselines.json" = "behavior"
+    "animation_baselines.json" = "animation"
+    "audio_baselines.json" = "audio"
+}
+$LevelsRoot = Join-Path $WorkspaceRoot "harness/baselines/levels"
+foreach ($featureId in $LevelFeatureMap.Keys) {
+    $feature = @($FeaturesDoc.features | Where-Object { $_.id -eq $featureId }) | Select-Object -First 1
+    if ($null -eq $feature -or $feature.status -ne "done") {
+        continue
+    }
+    $levelId = $LevelFeatureMap[$featureId]
+    $levelDir = Join-Path $LevelsRoot $levelId
+    if (-not (Test-Path -LiteralPath $levelDir)) {
+        throw "Done feature $featureId requires level baseline directory: harness/baselines/levels/$levelId"
+    }
+    foreach ($fileName in $LevelBaselineKinds.Keys) {
+        $filePath = Join-Path $levelDir $fileName
+        if (-not (Test-Path -LiteralPath $filePath)) {
+            throw "Done feature $featureId requires level baseline file: harness/baselines/levels/$levelId/$fileName"
+        }
+    }
+}
+if (Test-Path -LiteralPath $LevelsRoot) {
+    foreach ($levelDir in Get-ChildItem -LiteralPath $LevelsRoot -Directory) {
+        foreach ($fileName in $LevelBaselineKinds.Keys) {
+            $filePath = Join-Path $levelDir.FullName $fileName
+            if (-not (Test-Path -LiteralPath $filePath)) {
+                throw "Level baseline directory is incomplete: $($levelDir.FullName) missing $fileName"
+            }
+            $baselineFiles += @{
+                kind = $LevelBaselineKinds[$fileName]
+                path = Get-RelativePathCompat -BasePath $WorkspaceRoot -TargetPath $filePath
+                level_scope = $true
+                level_id = $levelDir.Name
+            }
+        }
+    }
+}
+
 $blockedItems = New-Object System.Collections.Generic.List[object]
 $manualItems = New-Object System.Collections.Generic.List[object]
 $aiAnalysisItems = New-Object System.Collections.Generic.List[object]
 $excludedItems = New-Object System.Collections.Generic.List[object]
+$validatedRecords = New-Object System.Collections.Generic.List[object]
 foreach ($baselineFile in $baselineFiles) {
     $absolutePath = Join-Path $WorkspaceRoot $baselineFile.path
     $doc = Get-Content -LiteralPath $absolutePath -Raw -Encoding UTF8 | ConvertFrom-Json
@@ -76,6 +147,13 @@ foreach ($baselineFile in $baselineFiles) {
         if ($record.status -eq "excluded") {
             $excludedItems.Add($record)
         }
+        $validatedRecords.Add([pscustomobject]@{
+            id = $record.id
+            level_id = $record.level_id
+            status = $record.status
+            kind = $baselineFile.kind
+            path = $baselineFile.path
+        })
 
         if ($baselineFile.kind -eq "video" -and ($record.PSObject.Properties.Name -contains "events")) {
             $childStatuses = @($record.events | ForEach-Object { $_.status })
@@ -166,5 +244,31 @@ foreach ($item in @($manualItems | Select-Object -First 80)) {
     $manualLines.Add(("- `{0}` [{1}] {2}" -f $item.id, $item.level_id, $item.notes))
 }
 $manualLines -join "`n" | Set-Content -LiteralPath (Join-Path $ReportDir "manual_requests.md") -Encoding UTF8
+
+$levelScopedRecords = @($validatedRecords | Where-Object { $_.level_id -in @("sword", "glove", "helmet") -and $_.kind -in @("grid", "behavior", "animation", "audio") })
+foreach ($group in ($levelScopedRecords | Group-Object level_id)) {
+    $levelReportDir = Join-Path $ReportDir $group.Name
+    New-Item -ItemType Directory -Force -Path $levelReportDir | Out-Null
+    $kindSummary = @{}
+    foreach ($kindGroup in ($group.Group | Group-Object kind)) {
+        $kindSummary[$kindGroup.Name] = @{
+            total = $kindGroup.Count
+            confirmed = @($kindGroup.Group | Where-Object { $_.status -eq "confirmed" }).Count
+            blocked = @($kindGroup.Group | Where-Object { $_.status -eq "blocked" }).Count
+            manual_required = @($kindGroup.Group | Where-Object { $_.status -eq "manual_required" }).Count
+        }
+    }
+    $summary = @{
+        level_id = $group.Name
+        generated_at = (Get-Date).ToString("o")
+        total_records = $group.Count
+        confirmed = @($group.Group | Where-Object { $_.status -eq "confirmed" }).Count
+        blocked = @($group.Group | Where-Object { $_.status -eq "blocked" }).Count
+        manual_required = @($group.Group | Where-Object { $_.status -eq "manual_required" }).Count
+        by_kind = $kindSummary
+        record_ids = @($group.Group | Select-Object -ExpandProperty id)
+    }
+    $summary | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $levelReportDir "summary.json") -Encoding UTF8
+}
 
 Write-Host "Baseline validation passed. Blocked: $($blockedItems.Count); manual_required: $($manualItems.Count); ai_analysis_required: $($aiAnalysisItems.Count); excluded: $($excludedItems.Count)"

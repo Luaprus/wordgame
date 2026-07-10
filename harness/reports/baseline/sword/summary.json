@@ -1,0 +1,78 @@
+﻿{
+    "blocked":  42,
+    "by_kind":  {
+                    "behavior":  {
+                                     "blocked":  8,
+                                     "manual_required":  0,
+                                     "total":  8,
+                                     "confirmed":  0
+                                 },
+                    "audio":  {
+                                  "blocked":  7,
+                                  "manual_required":  0,
+                                  "total":  7,
+                                  "confirmed":  0
+                              },
+                    "grid":  {
+                                 "blocked":  12,
+                                 "manual_required":  0,
+                                 "total":  12,
+                                 "confirmed":  0
+                             },
+                    "animation":  {
+                                      "blocked":  15,
+                                      "manual_required":  0,
+                                      "total":  15,
+                                      "confirmed":  0
+                                  }
+                },
+    "confirmed":  0,
+    "manual_required":  0,
+    "generated_at":  "2026-07-10T10:02:11.9760253+08:00",
+    "total_records":  42,
+    "record_ids":  [
+                       "SWORD-ANIM-001",
+                       "SWORD-ANIM-002",
+                       "SWORD-ANIM-003",
+                       "SWORD-ANIM-004",
+                       "SWORD-ANIM-005",
+                       "SWORD-ANIM-006",
+                       "SWORD-ANIM-007",
+                       "SWORD-ANIM-008",
+                       "SWORD-ANIM-009",
+                       "SWORD-ANIM-010",
+                       "SWORD-ANIM-011",
+                       "SWORD-ANIM-012",
+                       "SWORD-ANIM-013",
+                       "SWORD-ANIM-014",
+                       "SWORD-ANIM-015",
+                       "SWORD-AUD-001",
+                       "SWORD-AUD-002",
+                       "SWORD-AUD-003",
+                       "SWORD-AUD-004",
+                       "SWORD-AUD-005",
+                       "SWORD-AUD-006",
+                       "SWORD-AUD-007",
+                       "SWORD-BEH-001",
+                       "SWORD-BEH-002",
+                       "SWORD-BEH-003",
+                       "SWORD-BEH-004",
+                       "SWORD-BEH-005",
+                       "SWORD-BEH-006",
+                       "SWORD-BEH-007",
+                       "SWORD-BEH-008",
+                       "SWORD-GRID-001",
+                       "SWORD-GRID-002",
+                       "SWORD-GRID-003",
+                       "SWORD-GRID-004",
+                       "SWORD-GRID-005",
+                       "SWORD-GRID-006",
+                       "SWORD-GRID-007",
+                       "SWORD-GRID-008",
+                       "SWORD-GRID-009",
+                       "SWORD-GRID-010",
+                       "SWORD-GRID-011",
+                       "SWORD-GRID-012"
+                   ],
+    "level_id":  "sword"
+}
