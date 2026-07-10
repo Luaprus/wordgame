@@ -3,6 +3,12 @@ extends Node2D
 const GridWorld = preload("res://scripts/grid_world.gd")
 const LevelLoader = preload("res://scripts/level_loader.gd")
 const HelmetR1 = preload("res://levels/helmet/helmet_r1.gd")
+const HelmetR2 = preload("res://levels/helmet/helmet_r2.gd")
+const HelmetR3 = preload("res://levels/helmet/helmet_r3.gd")
+const HelmetR4 = preload("res://levels/helmet/helmet_r4.gd")
+const HelmetR5 = preload("res://levels/helmet/helmet_r5.gd")
+const HelmetR6 = preload("res://levels/helmet/helmet_r6.gd")
+const HelmetReturn = preload("res://levels/helmet/helmet_return.gd")
 const PageCamera = preload("res://scripts/page_camera.gd")
 const PrecisionMovement = preload("res://scripts/precision_movement.gd")
 const DemoRunner = preload("res://scripts/demo_runner.gd")
@@ -13,16 +19,27 @@ const OriginalFont = preload("res://Fonts/Zpix.tres")
 const MOVE_REPEAT_INTERVAL := 0.28
 const FAST_MOVE_REPEAT_INTERVAL := 0.12
 const WORD_FONT_SIZE := 42
+const LEVEL_SEQUENCE := [
+	HelmetR1,
+	HelmetR2,
+	HelmetR3,
+	HelmetR4,
+	HelmetR5,
+	HelmetR6,
+	HelmetReturn
+]
 
 var world := GridWorld.new()
 var page_camera := PageCamera.new()
 var demo := DemoRunner.new()
 var player_mover := SmoothGridMover.new()
+var current_level_index := 0
 var entity_movers: Dictionary = {}
 var entity_labels: Dictionary = {}
 var player_label: Label
 var map_layer: Node2D
 var demo_timer: Timer
+var world_event_timer: Timer
 var direction_marker: Node2D
 var direction_marker_fill: Polygon2D
 var direction_marker_outline: Line2D
@@ -34,7 +51,7 @@ var move_visual_duration := 0.12
 var _player_visual_ready := false
 
 func _ready() -> void:
-	world.load_level(HelmetR1.build_level())
+	_load_level_index(0)
 	page_camera.sync_to_world(world)
 	_build_scene()
 	_refresh_view()
@@ -102,6 +119,10 @@ func _build_scene() -> void:
 	demo_timer.one_shot = true
 	demo_timer.timeout.connect(_run_demo_step)
 	add_child(demo_timer)
+	world_event_timer = Timer.new()
+	world_event_timer.one_shot = true
+	world_event_timer.timeout.connect(_resolve_world_event)
+	add_child(world_event_timer)
 	direction_marker_timer = Timer.new()
 	direction_marker_timer.wait_time = 0.18
 	direction_marker_timer.one_shot = true
@@ -118,6 +139,8 @@ func _build_ui() -> void:
 func _refresh_view(_message := "") -> void:
 	_sync_entity_labels()
 	_sync_direction_marker()
+	player_label.text = world.player_text
+	player_label.visible = world.player_visible
 	page_camera.sync_to_world(world)
 	map_layer.position = page_camera.offset_pixels()
 	var player_target := _grid_to_pixels(world.player_pos)
@@ -173,7 +196,52 @@ func _sync_entity_label_group(group: Node2D, entity) -> void:
 		label.add_theme_color_override("font_color", Color(1.0, 0.95, 0.32) if entity.highlighted else Color.WHITE)
 
 func _apply_result(result: Dictionary) -> void:
+	if result.has("transition"):
+		_handle_transition(result)
+		return
 	_refresh_view(str(result.get("message", "")))
+	if result.has("pending_delay"):
+		if world_event_timer.is_stopped():
+			world_event_timer.start(float(result.pending_delay))
+	elif world.has_pending_timed_effect() and world_event_timer.is_stopped():
+		world_event_timer.start(world.pending_timed_delay)
+
+func _handle_transition(result: Dictionary) -> void:
+	if result.get("transition", "") != "next_level":
+		_refresh_view(str(result.get("message", "")))
+		return
+	var next_index := current_level_index + 1
+	if next_index >= LEVEL_SEQUENCE.size():
+		_refresh_view()
+		return
+	var overrides := {}
+	if current_level_index == 5:
+		overrides = {
+			"player_pos": Vector2i(0, int(result.get("exit_y", world.player_pos.y))),
+			"player_text": "鹅",
+			"player_facing": Vector2i.RIGHT
+		}
+	_load_level_index(next_index, overrides)
+	_refresh_view()
+
+func _load_level_index(index: int, overrides := {}) -> void:
+	current_level_index = clampi(index, 0, LEVEL_SEQUENCE.size() - 1)
+	world.load_level(LEVEL_SEQUENCE[current_level_index].build_level())
+	if overrides.has("player_pos"):
+		world.player_pos = overrides.player_pos
+	if overrides.has("player_text"):
+		world.player_text = str(overrides.player_text)
+	if overrides.has("player_facing"):
+		world.facing = overrides.player_facing
+	world.update_page()
+	held_move_directions.clear()
+	move_repeat_elapsed = 0.0
+	_player_visual_ready = false
+	if world_event_timer:
+		world_event_timer.stop()
+
+func _resolve_world_event() -> void:
+	_apply_result(world.resolve_pending_timed_effect())
 
 func _run_demo_step() -> void:
 	var result := demo.step(world)

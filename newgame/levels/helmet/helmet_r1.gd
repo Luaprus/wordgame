@@ -6,6 +6,7 @@ static func build_level() -> Dictionary:
 	return {
 		"name": LEVEL_NAME,
 		"screen_size": Vector2i(32, 18),
+		"bounded": true,
 		"player_start": Vector2i(6, 4),
 		"player_facing": Vector2i(1, 0),
 		"cell_entity_configs": {
@@ -38,21 +39,21 @@ static func build_level() -> Dictionary:
 				"interact_text": "无法跨越的湍急野溪，必须想办法造一条路。",
 				"interact_caption_lines": ["无法跨越的湍急野溪，", "必须想办法造一条路。"],
 				"interact_caption_pos": Vector2i(2, 9),
-				"interact_caption_solid": false
+				"interact_caption_solid": true
 			},
 			"树": {
 				"solid": true,
 				"interact_text": "这乔木看起来很结实，肯定能够帮得上忙吧。",
 				"interact_caption_lines": ["这乔木看起来很结实，", "肯定能够帮得上忙吧。"],
 				"interact_caption_pos": Vector2i(2, 6),
-				"interact_caption_solid": false
+				"interact_caption_solid": true
 			},
 			"木": {
 				"solid": true,
 				"interact_text": "这乔木看起来很结实，肯定能够帮得上忙吧。",
 				"interact_caption_lines": ["这乔木看起来很结实，", "肯定能够帮得上忙吧。"],
 				"interact_caption_pos": Vector2i(2, 6),
-				"interact_caption_solid": false
+				"interact_caption_solid": true
 			},
 			"桥": {
 				"solid": true,
@@ -109,7 +110,7 @@ static func _bridge_merge_effect() -> Dictionary:
 				"from": "这乔木看起来很结实，",
 				"to": "这桥看起来很结实，",
 				"pos": Vector2i(2, 6),
-				"config": {"solid": false}
+				"config": {"solid": true}
 			}
 		],
 		"spawn": spawn
@@ -131,7 +132,7 @@ static func _bridge_split_effect() -> Dictionary:
 				"from": "这桥看起来很结实，",
 				"to": "这乔木看起来很结实，",
 				"pos": Vector2i(2, 6),
-				"config": {"solid": false}
+				"config": {"solid": true}
 			}
 		],
 		"spawn": spawn

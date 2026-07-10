@@ -44,6 +44,11 @@ func test_fixed_interaction_captions() -> void:
 	var tree_line_2 := world.find_first_entity_by_text("肯定能够帮得上忙吧。")
 	assert_true(tree_line_1 != null and tree_line_1.grid_pos == Vector2i(2, 6), "tree caption line 1 appears at fixed position")
 	assert_true(tree_line_2 != null and tree_line_2.grid_pos == Vector2i(2, 7), "tree caption line 2 appears at fixed position")
+	assert_true(tree_line_1.solid, "tree caption blocks movement")
+	world.player_pos = Vector2i(1, 6)
+	world.facing = Vector2i.RIGHT
+	var blocked_by_tree_caption := world.try_move_player(Vector2i.RIGHT)
+	assert_true(not blocked_by_tree_caption.success, "player cannot walk through tree caption text")
 
 	world.player_pos = Vector2i(20, 5)
 	world.facing = Vector2i(1, 0)
@@ -53,17 +58,18 @@ func test_fixed_interaction_captions() -> void:
 	var creek_line_2 := world.find_first_entity_by_text("必须想办法造一条路。")
 	assert_true(creek_line_1 != null and creek_line_1.grid_pos == Vector2i(2, 9), "creek caption line 1 appears at fixed position")
 	assert_true(creek_line_2 != null and creek_line_2.grid_pos == Vector2i(2, 10), "creek caption line 2 appears at fixed position")
+	assert_true(creek_line_1.solid, "creek caption blocks movement")
 
 func test_bridge_merge_and_split_effects() -> void:
 	var world := GridWorld.new()
 	world.load_level(HelmetR1.build_level())
 	world.spawn_map_caption("这乔木看起来很结实，", Vector2i(2, 6), {
 		"caption_pos": Vector2i(2, 6),
-		"caption_solid": false
+		"caption_solid": true
 	})
 	world.spawn_map_caption("肯定能够帮得上忙吧。", Vector2i(2, 7), {
 		"caption_pos": Vector2i(2, 7),
-		"caption_solid": false
+		"caption_solid": true
 	})
 
 	var merged := world.try_merge_entities(Vector2i(15, 3), Vector2i(14, 3))
