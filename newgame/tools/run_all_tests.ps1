@@ -17,6 +17,7 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 $tests = @(
     "res://tests/test_gameplay_core.gd",
+    "res://tests/test_smooth_grid_mover.gd",
     "res://tests/test_visual_resources.gd",
     "res://tests/test_precision_movement.gd",
     "res://tests/test_visual_smoke_entry.gd"

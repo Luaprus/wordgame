@@ -12,9 +12,9 @@ func _init() -> void:
 	test_pixel_move_stays_on_grid_center()
 	test_repeated_pixel_moves_do_not_accumulate_drift()
 	test_direction_keys_and_wasd_share_mapping()
-	test_direction_echo_is_allowed_for_continuous_move()
 	test_direction_marker_points_face_the_input()
 	test_direction_demo_scene_loads()
+	test_direction_echo_is_rejected_for_uniform_hold_loop()
 
 	if failures.is_empty():
 		print("precision_movement tests passed")
@@ -68,14 +68,14 @@ func test_direction_keys_and_wasd_share_mapping() -> void:
 	assert_equal(PrecisionMovement.direction_from_keycode(KEY_UP), Vector2i.UP, "up arrow maps to up")
 	assert_equal(PrecisionMovement.direction_from_keycode(KEY_W), Vector2i.UP, "W maps to up")
 
-func test_direction_echo_is_allowed_for_continuous_move() -> void:
+func test_direction_echo_is_rejected_for_uniform_hold_loop() -> void:
 	assert_true(
 		PrecisionMovement.should_process_key_event(true, false, Vector2i.RIGHT),
 		"fresh direction press should be processed"
 	)
-	assert_true(
+	assert_false(
 		PrecisionMovement.should_process_key_event(true, true, Vector2i.RIGHT),
-		"echo direction press should be processed for continuous movement"
+		"echo direction press should be ignored so held movement stays uniform"
 	)
 	assert_false(
 		PrecisionMovement.should_process_key_event(true, true, Vector2i.ZERO),

@@ -52,6 +52,4 @@ static func direction_from_keycode(keycode: Key) -> Vector2i:
 static func should_process_key_event(pressed: bool, echo: bool, direction: Vector2i) -> bool:
 	if not pressed:
 		return false
-	if direction != Vector2i.ZERO:
-		return true
 	return not echo

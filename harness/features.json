@@ -1353,5 +1353,49 @@
         "progress.jsonl 已记录完成证据"
       ]
     }
+    ,
+    {
+      "id": "F034",
+      "title": "Grid Visual Smoothing",
+      "description": "Add smooth screen-space interpolation for grid movement so the player and moved words travel continuously while still landing exactly on grid cells.",
+      "priority": "must",
+      "status": "done",
+      "owner": "codex",
+      "depends_on": ["F007"],
+      "allowed_files": [
+        "新建游戏项目/scripts/main.gd",
+        "新建游戏项目/scripts/smooth_grid_mover.gd",
+        "新建游戏项目/tests/test_smooth_grid_mover.gd",
+        "新建游戏项目/tools/run_all_tests.ps1",
+        "harness/features.json",
+        "harness/contracts.md",
+        "harness/plan.md",
+        "harness/progress.jsonl"
+      ],
+      "forbidden_files": [
+        "新建游戏项目/scripts/grid_world.gd",
+        "新建游戏项目/scripts/level_loader.gd",
+        "harness/baselines/*"
+      ],
+      "acceptance_criteria": [
+        "Movement on screen is smooth instead of jumping one full cell instantly",
+        "Final resting positions still align exactly to the grid",
+        "Grid truth and gameplay rules remain unchanged",
+        "Automated tests cover the interpolation contract and one-click tests pass"
+      ],
+      "tests": [
+        {
+          "type": "unit",
+          "command": "powershell -ExecutionPolicy Bypass -File 新建游戏项目/tools/run_all_tests.ps1",
+          "required": true
+        }
+      ],
+      "definition_of_done": [
+        "A failing interpolation test was written first",
+        "Smooth movement is implemented in the runtime",
+        "One-click tests pass",
+        "progress.jsonl records the proof chain"
+      ]
+    }
   ]
 }
