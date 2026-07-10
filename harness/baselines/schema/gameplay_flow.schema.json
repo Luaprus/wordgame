@@ -1,0 +1,9 @@
+{
+  "schema_id": "wordgame.gameplay-flow.v1",
+  "level_ids": ["sword", "glove", "helmet"],
+  "review_status_values": ["pending", "needs_review", "confirmed", "excluded"],
+  "result_type_values": ["transition", "failure", "reset", "terminal", "stay"],
+  "required_document_fields": ["schema_id", "level_id", "level_title_cn", "states", "document_notes", "updated_at"],
+  "required_state_fields": ["id", "title_cn", "raw_statement_cn", "situation_summary_cn", "evidence", "reviewer", "review_status", "actions", "notes"],
+  "required_confirmed_action_fields": ["id", "action_name_cn", "condition_cn", "result", "evidence", "reviewer", "review_status", "notes"]
+}
