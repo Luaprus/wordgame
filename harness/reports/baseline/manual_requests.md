@@ -1,6 +1,6 @@
 ﻿# Manual Requests
 
-Generated at: 2026-07-10T10:02:11.9324186+08:00
+Generated at: 2026-07-10T10:32:24.0422142+08:00
 
 ## Current State
 
@@ -15,7 +15,7 @@ Generated at: 2026-07-10T10:02:11.9324186+08:00
 
 ## Counts
 
-- blocked: 42
+- blocked: 80
 - manual_required: 0
 - ai_analysis_required: 740
 - excluded: 1

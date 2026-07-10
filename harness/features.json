@@ -940,8 +940,8 @@
       "title": "手套关卡基准导入",
       "description": "导入手套关卡全流程、正确/错误路线、填字手势、碰撞和通路变化基准。",
       "priority": "must",
-      "status": "todo",
-      "owner": null,
+      "status": "done",
+      "owner": "ai-worker-1",
       "depends_on": ["F002", "F003", "F004", "F005"],
       "allowed_files": [
         "harness/baselines/levels/glove/*",

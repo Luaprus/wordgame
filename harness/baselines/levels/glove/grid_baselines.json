@@ -1,0 +1,282 @@
+{
+  "records": [
+    {
+      "id": "GLOVE-GRID-001",
+      "feature_id": "F023",
+      "level_id": "glove",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/手套流程.docx",
+      "source_timecode": "0:03",
+      "source_frame": null,
+      "source_scene": "04_手套教學.tscn",
+      "status": "blocked",
+      "notes": "对应 GLOVE-SHOT-001。作为手套巨掌迷宫的初始锚点，能确认玩家位置、巨掌墙体和“零”的手势说明，但完整地图尺寸、碰撞层和手势切换机关仍未从原版 scene 精确抽出。",
+      "state_id": "initial",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": 20, "y": 15 },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "GLOVE-SHOT-001", "summary": "玩家字、勇者字、剑/手势字、巨掌墙体、手势说明“零”。" }
+      ]
+    },
+    {
+      "id": "GLOVE-GRID-002",
+      "feature_id": "F023",
+      "level_id": "glove",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/手套流程.docx",
+      "source_timecode": "0:03-2:14",
+      "source_frame": null,
+      "source_scene": "04_手套教學.tscn",
+      "status": "blocked",
+      "notes": "对应 GLOVE-SHOT-003。作为正确路线推进中的中间锚点，用来承接 correct_route_step；玩家位置已知，但路径判定与交互顺序仍未被拆出。",
+      "state_id": "correct_route_step",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": 26, "y": 15 },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "GLOVE-SHOT-003", "summary": "正确路线中的玩家站位、巨掌边界、手势说明“赞”。" }
+      ]
+    },
+    {
+      "id": "GLOVE-GRID-003",
+      "feature_id": "F023",
+      "level_id": "glove",
+      "source_type": "video",
+      "source_path": "参考资料/视频参考/手套关卡全录屏.mkv",
+      "source_timecode": "0:08，0:11，0:42，1:31，1:59",
+      "source_frame": null,
+      "source_scene": "11_添譜來堂_開場.tscn",
+      "status": "blocked",
+      "notes": "手势变化聚合锚点。视频已给出多次变化时间，但尚未精确映射到每一张截图与每一次碰撞修改。",
+      "state_id": "gesture_changed",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": 26, "y": 15 },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "GLOVE-SEG-GESTURES", "summary": "多次手势变化时间点，关联截图与源码候选。" }
+      ]
+    },
+    {
+      "id": "GLOVE-GRID-004",
+      "feature_id": "F023",
+      "level_id": "glove",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/手套流程.docx",
+      "source_timecode": "0:08",
+      "source_frame": null,
+      "source_scene": "11_添譜來堂_開場.tscn",
+      "status": "blocked",
+      "notes": "对应 GLOVE-SHOT-002。截图说明已能确认“赞”的手势状态，但手势字与通路开闭的逐格碰撞仍缺源码级抽取。",
+      "state_id": "gesture_like",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": 26, "y": 15 },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "GLOVE-SHOT-002", "summary": "巨掌边界、玩家字、勇者字、手势说明“赞”。" }
+      ]
+    },
+    {
+      "id": "GLOVE-GRID-005",
+      "feature_id": "F023",
+      "level_id": "glove",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/手套流程.docx",
+      "source_timecode": "0:11",
+      "source_frame": null,
+      "source_scene": "11_添譜來堂_開場.tscn",
+      "status": "blocked",
+      "notes": "对应 GLOVE-SHOT-004。截图可定位“二”的手势状态，但手势变化后哪些格子真正可通过仍待确认。",
+      "state_id": "gesture_two",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": 26, "y": 15 },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "GLOVE-SHOT-004", "summary": "巨掌边界、玩家字、手势说明“二”、相关按钮文字。" }
+      ]
+    },
+    {
+      "id": "GLOVE-GRID-006",
+      "feature_id": "F023",
+      "level_id": "glove",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/手套流程.docx",
+      "source_timecode": "0:42",
+      "source_frame": null,
+      "source_scene": "15_添譜來堂_拳頭.tscn",
+      "status": "blocked",
+      "notes": "对应 GLOVE-SHOT-005。截图能确认“赢”的手势文案，但手势实体、地图阻挡和战场物件的完整列表仍未抽出。",
+      "state_id": "gesture_win",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": 26, "y": 15 },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "GLOVE-SHOT-005", "summary": "玩家字、勇者字、巨掌墙体、手势说明“赢”。" }
+      ]
+    },
+    {
+      "id": "GLOVE-GRID-007",
+      "feature_id": "F023",
+      "level_id": "glove",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/手套流程.docx",
+      "source_timecode": "1:31",
+      "source_frame": null,
+      "source_scene": "15_添譜來堂_拳頭.tscn",
+      "status": "blocked",
+      "notes": "对应 GLOVE-SHOT-007。截图可确认“好”的手势状态，是后续删除“不”后放开状态的重要候选，但删除动作前置条件和通路变化尚未精确建立。",
+      "state_id": "gesture_good",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": 6, "y": 4 },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "GLOVE-SHOT-007", "summary": "玩家字、勇者字、巨掌墙体、手势说明“好”、左侧剧情说明。" }
+      ]
+    },
+    {
+      "id": "GLOVE-GRID-008",
+      "feature_id": "F023",
+      "level_id": "glove",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/手套流程.docx",
+      "source_timecode": "0:03-2:14",
+      "source_frame": null,
+      "source_scene": "04_手套教學.tscn",
+      "status": "blocked",
+      "notes": "对应 GLOVE-SHOT-012。该截图可作为正确路线中段与通路打开后的地图锚点，但具体由哪一次手势变化导致开路仍需结合原版地图事件确认。",
+      "state_id": "path_opened",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": 14, "y": 14 },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "GLOVE-SHOT-012", "summary": "中后段巨掌迷宫、玩家字、剧情说明、已打开的行进路径候选。" }
+      ]
+    },
+    {
+      "id": "GLOVE-GRID-009",
+      "feature_id": "F023",
+      "level_id": "glove",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/手套流程.docx",
+      "source_timecode": "1:59",
+      "source_frame": null,
+      "source_scene": "15_添譜來堂_拳頭.tscn",
+      "status": "blocked",
+      "notes": "对应 GLOVE-SHOT-016。按需求推断这是删除“不”后的放开/释放状态候选，但当前只有截图文案“好”的手势，没有动作前后帧与碰撞对比证据。",
+      "state_id": "released_after_delete_no",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": 26, "y": 15 },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "GLOVE-SHOT-016", "summary": "玩家字、巨掌墙体、手势说明“好”、释放后可通行状态候选。" }
+      ]
+    },
+    {
+      "id": "GLOVE-GRID-010",
+      "feature_id": "F023",
+      "level_id": "glove",
+      "source_type": "video",
+      "source_path": "参考资料/视频参考/手套关卡全录屏.mkv",
+      "source_timecode": "不适用：原视频无错误路线演示",
+      "source_frame": null,
+      "source_scene": null,
+      "status": "blocked",
+      "notes": "错误路线锚点。现有录屏只有正确路线，没有错误路线或失败反馈的视频直接证据，因此只能建立 blocked 入口，等待截图或额外录像补证。",
+      "state_id": "wrong_route_step",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": null, "y": null },
+      "player_initial_direction": null,
+      "objects": []
+    },
+    {
+      "id": "GLOVE-GRID-011",
+      "feature_id": "F023",
+      "level_id": "glove",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/手套流程.docx",
+      "source_timecode": null,
+      "source_frame": null,
+      "source_scene": null,
+      "status": "blocked",
+      "notes": "对应 GLOVE-SHOT-010。截图显示大量“勇”字包围和结局/失败提示，但它究竟是失败、结局还是特殊剧情分支仍未由原视频或地图事件确认。",
+      "state_id": "failure_feedback",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": 15, "y": 10 },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "GLOVE-SHOT-010", "summary": "大量勇者字、玩家字、对白文字、结局/失败提示。" }
+      ]
+    },
+    {
+      "id": "GLOVE-GRID-012",
+      "feature_id": "F023",
+      "level_id": "glove",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/手套流程.docx",
+      "source_timecode": null,
+      "source_frame": null,
+      "source_scene": null,
+      "status": "blocked",
+      "notes": "对应 GLOVE-SHOT-009。黑屏对白可作为转场或剧情收束锚点，但没有原版时间轴对应关系，暂不判定它在手套关中的确切前后位置。",
+      "state_id": "transition_out",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": 24, "y": 5 },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "GLOVE-SHOT-009", "summary": "黑屏对白、竖排角色字。" }
+      ]
+    },
+    {
+      "id": "GLOVE-GRID-013",
+      "feature_id": "F023",
+      "level_id": "glove",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/手套流程.docx",
+      "source_timecode": "1:31-1:59",
+      "source_frame": null,
+      "source_scene": "15_添譜來堂_拳頭.tscn",
+      "status": "blocked",
+      "notes": "对应 GLOVE-SHOT-014。该截图明确出现“一”的手势说明，用于满足“每个有效手势字均有来源锚点”的要求，但其玩法作用仍待后续实现阶段确认。",
+      "state_id": "gesture_one",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": 26, "y": 15 },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "GLOVE-SHOT-014", "summary": "玩家字、勇者字、巨掌墙体、手势说明“一”。" }
+      ]
+    },
+    {
+      "id": "GLOVE-GRID-014",
+      "feature_id": "F023",
+      "level_id": "glove",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/手套流程.docx",
+      "source_timecode": "0:08，0:11，0:42，1:31，1:59",
+      "source_frame": null,
+      "source_scene": "11_添譜來堂_開場.tscn",
+      "status": "blocked",
+      "notes": "对应 GLOVE-SHOT-018。作为手势变化汇总锚点，用来承接碰撞变化状态；能确认“赞”的说明仍在场，但无法确认哪些格子从阻挡变为通行。",
+      "state_id": "collision_changed",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": 26, "y": 15 },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "GLOVE-SHOT-018", "summary": "玩家字、勇者字、手势说明“赞”、巨掌墙体、碰撞变化候选区域。" }
+      ]
+    }
+  ]
+}

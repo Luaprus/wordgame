@@ -70,9 +70,9 @@
     "manual_required_items":  [
 
                               ],
-    "blocked_count":  42,
+    "blocked_count":  80,
     "ai_analysis_required_count":  740,
-    "generated_at":  "2026-07-10T10:02:11.6190974+08:00",
+    "generated_at":  "2026-07-10T10:32:23.6647242+08:00",
     "ai_analysis_required_items":  [
                                        {
                                            "id":  "SRC-00001",
@@ -33506,6 +33506,1105 @@
                                        }
                                    ],
     "blocked_items":  [
+                          {
+                              "id":  "GLOVE-ANIM-001",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch3_opening.tscn",
+                              "source_timecode":  "0:03",
+                              "source_frame":  null,
+                              "source_scene":  "04_手套教學.tscn",
+                              "status":  "blocked",
+                              "notes":  "开场动画候选。source_analysis 已记录 ch3_opening.tscn 含 ani 5.0s，但尚未拆出关键帧和触发边界。",
+                              "animation_id":  "G-01",
+                              "animation_name":  "手套关开场动画",
+                              "animation_player":  "AnimationPlayer",
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  5.0,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  false,
+                              "input_locked":  true,
+                              "triggered_audio":  [
+                                                      "GLOVE-AUD-001"
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/glove/animations/G-01-opening.tscn"
+                          },
+                          {
+                              "id":  "GLOVE-ANIM-002",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch3_church_loop_chain.tscn",
+                              "source_timecode":  "0:03-2:14",
+                              "source_frame":  null,
+                              "source_scene":  "04_手套教學.tscn",
+                              "status":  "blocked",
+                              "notes":  "锁链循环动画候选，source_analysis 已确认 ChainLoop 4.0s，但它在手套正确路线中的具体落点和层级未抽出。",
+                              "animation_id":  "G-02",
+                              "animation_name":  "锁链循环动画",
+                              "animation_player":  "AnimationPlayer",
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  4.0,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  true,
+                              "input_locked":  false,
+                              "triggered_audio":  [
+
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/glove/animations/G-02-chain-loop.tscn"
+                          },
+                          {
+                              "id":  "GLOVE-ANIM-003",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Animations/ch3_church_loop_skull.tscn",
+                              "source_timecode":  "0:03-2:14",
+                              "source_frame":  null,
+                              "source_scene":  "04_手套教學.tscn",
+                              "status":  "blocked",
+                              "notes":  "骷髅摆动循环动画候选，source_analysis 已确认 SwingLoop 10.0s，但尚未匹配具体截图位置和遮挡关系。",
+                              "animation_id":  "G-03",
+                              "animation_name":  "骷髅摆动循环",
+                              "animation_player":  "AnimationPlayer",
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  10.0,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  true,
+                              "input_locked":  false,
+                              "triggered_audio":  [
+
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/glove/animations/G-03-skull-loop.tscn"
+                          },
+                          {
+                              "id":  "GLOVE-ANIM-004",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/14_添譜來堂_拳頭轉場.tscn",
+                              "source_timecode":  "0:08，0:11，0:42，1:31，1:59",
+                              "source_frame":  null,
+                              "source_scene":  "14_添譜來堂_拳頭轉場.tscn",
+                              "status":  "blocked",
+                              "notes":  "手势切换转场动画候选。地图引用链已确认该场景与手套关手势变化相关，但具体 AnimationPlayer 和关键帧未知。",
+                              "animation_id":  "G-04",
+                              "animation_name":  "手势切换转场",
+                              "animation_player":  null,
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  null,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  false,
+                              "input_locked":  true,
+                              "triggered_audio":  [
+                                                      "GLOVE-AUD-003",
+                                                      "GLOVE-AUD-004"
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/glove/animations/G-04-gesture-transition.tscn"
+                          },
+                          {
+                              "id":  "GLOVE-ANIM-005",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn",
+                              "source_timecode":  "0:08，0:11，0:42，1:31，1:59",
+                              "source_frame":  null,
+                              "source_scene":  "15_添譜來堂_拳頭.tscn",
+                              "status":  "blocked",
+                              "notes":  "手套穿戴/手势变形动画候选。已知与手势变化相关，但缺少逐个手势状态的独立时间窗。",
+                              "animation_id":  "G-05",
+                              "animation_name":  "手套穿戴或变形动画",
+                              "animation_player":  null,
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  null,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  false,
+                              "input_locked":  true,
+                              "triggered_audio":  [
+                                                      "GLOVE-AUD-003",
+                                                      "GLOVE-AUD-004"
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/glove/animations/G-05-glove-morph.tscn"
+                          },
+                          {
+                              "id":  "GLOVE-ANIM-006",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/手套关卡全录屏.mkv",
+                              "source_timecode":  "0:08，0:11，0:42，1:31，1:59",
+                              "source_frame":  null,
+                              "source_scene":  "手套关-手势变化",
+                              "status":  "blocked",
+                              "notes":  "巨拳砸击/碰撞变化效果是手势变化的重要视觉反馈，但还没有精确资源路径与帧级对应。",
+                              "animation_id":  "G-06",
+                              "animation_name":  "巨拳砸击或碰撞变化动画",
+                              "animation_player":  null,
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  null,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  false,
+                              "input_locked":  true,
+                              "triggered_audio":  [
+                                                      "GLOVE-AUD-005",
+                                                      "GLOVE-AUD-006"
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/glove/animations/G-06-fist-smash.tscn"
+                          },
+                          {
+                              "id":  "GLOVE-ANIM-007",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  "1:59",
+                              "source_frame":  null,
+                              "source_scene":  "15_添譜來堂_拳頭.tscn",
+                              "status":  "blocked",
+                              "notes":  "删除“不”后的放开状态候选动画。当前只有截图与需求语义，缺少动作开始和动作结束的真实边界。",
+                              "animation_id":  "G-07",
+                              "animation_name":  "删除“不”后放开动画",
+                              "animation_player":  null,
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  null,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  false,
+                              "input_locked":  true,
+                              "triggered_audio":  [
+                                                      "GLOVE-AUD-006"
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/glove/animations/G-07-release-after-delete.tscn"
+                          },
+                          {
+                              "id":  "GLOVE-ANIM-008",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  null,
+                              "status":  "blocked",
+                              "notes":  "黑屏对白或勇者包围态的收束动画锚点。当前无法确认是淡出、切幕还是剧情插图替换。",
+                              "animation_id":  "G-08",
+                              "animation_name":  "剧情收束动画",
+                              "animation_player":  null,
+                              "start_frame":  null,
+                              "end_frame":  null,
+                              "frame_count":  null,
+                              "duration_seconds":  null,
+                              "keyframes":  [
+
+                                            ],
+                              "interruptible":  false,
+                              "input_locked":  true,
+                              "triggered_audio":  [
+                                                      "GLOVE-AUD-007",
+                                                      "GLOVE-AUD-008"
+                                                  ],
+                              "implementation_path":  "新建游戏项目/levels/glove/animations/G-08-transition-out.tscn"
+                          },
+                          {
+                              "id":  "GLOVE-AUDIO-001",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_42_template_intro.ogg",
+                              "source_timecode":  "0:03",
+                              "source_frame":  null,
+                              "source_scene":  "手套关-手势变化",
+                              "status":  "blocked",
+                              "notes":  "手套关 intro BGM 候选，已由 source_analysis 挂到 GLOVE-SEG-GESTURES，但切入点和淡入规则未确认。",
+                              "audio_id":  "GLOVE-AUD-001",
+                              "audio_file":  "BGM_3_42_template_intro.ogg",
+                              "trigger_level":  "glove",
+                              "trigger_behavior":  "GLOVE-CORRECT-ROUTE",
+                              "trigger_time":  "正确路线开场或手势变化前奏开始时",
+                              "delay_seconds":  null,
+                              "volume_db":  null,
+                              "pan":  null,
+                              "loop":  false,
+                              "fade":  null,
+                              "stop_condition":  "进入主循环 BGM 或开场收束"
+                          },
+                          {
+                              "id":  "GLOVE-AUDIO-002",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch3/BGM_3_43_template_A.ogg",
+                              "source_timecode":  "0:03-2:14",
+                              "source_frame":  null,
+                              "source_scene":  "手套关-手势变化",
+                              "status":  "blocked",
+                              "notes":  "手套关主循环 BGM 候选。source_analysis 已归属到 GLOVE-SEG-GESTURES，但循环边界与切换条件未确认。",
+                              "audio_id":  "GLOVE-AUD-002",
+                              "audio_file":  "BGM_3_43_template_A.ogg",
+                              "trigger_level":  "glove",
+                              "trigger_behavior":  "GLOVE-CORRECT-ROUTE",
+                              "trigger_time":  "手势变化主循环期间",
+                              "delay_seconds":  null,
+                              "volume_db":  null,
+                              "pan":  null,
+                              "loop":  true,
+                              "fade":  null,
+                              "stop_condition":  "进入失败反馈、剧情收束或关卡结束"
+                          },
+                          {
+                              "id":  "GLOVE-AUDIO-003",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_19_glove_put_on.wav",
+                              "source_timecode":  "0:08，0:11，0:42，1:31，1:59",
+                              "source_frame":  null,
+                              "source_scene":  "手套关-手势变化",
+                              "status":  "blocked",
+                              "notes":  "穿戴/切换手套音效候选，源码归属明确，但具体是哪一次手势变化触发仍未确认。",
+                              "audio_id":  "GLOVE-AUD-003",
+                              "audio_file":  "SE_3_19_glove_put_on.wav",
+                              "trigger_level":  "glove",
+                              "trigger_behavior":  "GLOVE-GESTURE-CHANGE",
+                              "trigger_time":  "手势切换生效时",
+                              "delay_seconds":  null,
+                              "volume_db":  null,
+                              "pan":  null,
+                              "loop":  false,
+                              "fade":  null,
+                              "stop_condition":  "单次播放结束"
+                          },
+                          {
+                              "id":  "GLOVE-AUDIO-004",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/MEL/MEL_3_19.1_gloves.wav",
+                              "source_timecode":  "0:08，0:11，0:42，1:31，1:59",
+                              "source_frame":  null,
+                              "source_scene":  "手套关-手势变化",
+                              "status":  "blocked",
+                              "notes":  "另一条手套音效候选，可能与 SE_3_19_glove_put_on.wav 互补或替代，当前未区分。",
+                              "audio_id":  "GLOVE-AUD-004",
+                              "audio_file":  "MEL_3_19.1_gloves.wav",
+                              "trigger_level":  "glove",
+                              "trigger_behavior":  "GLOVE-GESTURE-CHANGE",
+                              "trigger_time":  "手势切换或手套出现时",
+                              "delay_seconds":  null,
+                              "volume_db":  null,
+                              "pan":  null,
+                              "loop":  false,
+                              "fade":  null,
+                              "stop_condition":  "单次播放结束"
+                          },
+                          {
+                              "id":  "GLOVE-AUDIO-005",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_59_giant_fist_smash_單下.wav",
+                              "source_timecode":  "0:08，0:11，0:42，1:31，1:59",
+                              "source_frame":  null,
+                              "source_scene":  "手套关-手势变化",
+                              "status":  "blocked",
+                              "notes":  "巨拳砸击音效候选，对应碰撞变化或路障变化，但未确定对应哪个手势状态。",
+                              "audio_id":  "GLOVE-AUD-005",
+                              "audio_file":  "SE_3_59_giant_fist_smash_單下.wav",
+                              "trigger_level":  "glove",
+                              "trigger_behavior":  "GLOVE-COLLISION-CHANGE",
+                              "trigger_time":  "巨拳状态切换或砸击发生时",
+                              "delay_seconds":  null,
+                              "volume_db":  null,
+                              "pan":  null,
+                              "loop":  false,
+                              "fade":  null,
+                              "stop_condition":  "砸击反馈结束"
+                          },
+                          {
+                              "id":  "GLOVE-AUDIO-006",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_41_fist_hit_A.wav",
+                              "source_timecode":  "1:59",
+                              "source_frame":  null,
+                              "source_scene":  "手套关-手势变化",
+                              "status":  "blocked",
+                              "notes":  "拳击命中音效候选。可用于删除“不”后的放开状态或巨拳交互反馈，但具体边界未确认。",
+                              "audio_id":  "GLOVE-AUD-006",
+                              "audio_file":  "SE_2_41_fist_hit_A.wav",
+                              "trigger_level":  "glove",
+                              "trigger_behavior":  "GLOVE-RELEASE-AFTER-DELETE-NO",
+                              "trigger_time":  "删除“不”或释放状态动作发生时",
+                              "delay_seconds":  null,
+                              "volume_db":  null,
+                              "pan":  null,
+                              "loop":  false,
+                              "fade":  null,
+                              "stop_condition":  "动作反馈结束"
+                          },
+                          {
+                              "id":  "GLOVE-AUDIO-007",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/ENV_3_40_fly.wav",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  "11_添譜來堂_開場.tscn",
+                              "status":  "blocked",
+                              "notes":  "环境飞行声候选。源码地图引用明确，但它是常驻 ambience 还是局部触发仍未确认。",
+                              "audio_id":  "GLOVE-AUD-007",
+                              "audio_file":  "ENV_3_40_fly.wav",
+                              "trigger_level":  "glove",
+                              "trigger_behavior":  "GLOVE-TRANSITION-OUT",
+                              "trigger_time":  "手套场景 ambience 或黑屏对白前后",
+                              "delay_seconds":  null,
+                              "volume_db":  null,
+                              "pan":  null,
+                              "loop":  true,
+                              "fade":  null,
+                              "stop_condition":  "离开该场景或切入其他环境声"
+                          },
+                          {
+                              "id":  "GLOVE-AUDIO-008",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "source_tree",
+                              "source_path":  "参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_57_crowd_yell.wav",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  "手套关-正确路线",
+                              "status":  "blocked",
+                              "notes":  "人群叫喊音效候选。用作 GLOVE-SHOT-010 的失败/结局状态音效锚点，但截图与原视频尚未给出直接对应关系。",
+                              "audio_id":  "GLOVE-AUD-008",
+                              "audio_file":  "SE_3_57_crowd_yell.wav",
+                              "trigger_level":  "glove",
+                              "trigger_behavior":  "GLOVE-FAILURE-FEEDBACK",
+                              "trigger_time":  "被勇者包围或失败提示出现时",
+                              "delay_seconds":  null,
+                              "volume_db":  null,
+                              "pan":  null,
+                              "loop":  false,
+                              "fade":  null,
+                              "stop_condition":  "失败提示或剧情收束结束"
+                          },
+                          {
+                              "id":  "GLOVE-BEH-001",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/手套关卡全录屏.mkv",
+                              "source_timecode":  "0:03-2:14",
+                              "source_frame":  null,
+                              "source_scene":  "04_手套教學.tscn",
+                              "status":  "blocked",
+                              "notes":  "正确路线整段已有录屏时间范围，但未拆成逐步输入、逐次手势切换与逐格路径推进，因此先建立成功行为壳。",
+                              "behavior_id":  "GLOVE-CORRECT-ROUTE",
+                              "input":  "移动 + 面向交互 + 推字/删字/手势切换相关输入",
+                              "pre_state":  "initial",
+                              "player_grid":  {
+                                                  "x":  20,
+                                                  "y":  15
+                                              },
+                              "player_direction":  null,
+                              "target_object":  "巨掌迷宫中的手势字、机关字、通路字",
+                              "success_condition":  "按照正确路线推进并进入 correct_route_step 以及后续手势变化状态",
+                              "failure_condition":  "路线错误、手势错误或未满足机关条件",
+                              "original_result":  "原视频展示整段正确路线通关过程",
+                              "replay_result":  "待拆成可回放的逐步行为后补入",
+                              "input_locked":  null,
+                              "cooldown_seconds":  null,
+                              "triggered_animation":  [
+                                                          "G-01",
+                                                          "G-02",
+                                                          "G-03",
+                                                          "G-04"
+                                                      ],
+                              "triggered_audio":  [
+                                                      "GLOVE-AUD-001",
+                                                      "GLOVE-AUD-002"
+                                                  ],
+                              "post_state":  "correct_route_step"
+                          },
+                          {
+                              "id":  "GLOVE-BEH-002",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/手套关卡全录屏.mkv",
+                              "source_timecode":  "不适用：原视频无错误路线演示",
+                              "source_frame":  null,
+                              "source_scene":  null,
+                              "status":  "blocked",
+                              "notes":  "错误路线是需求中的必备项，但原视频没有对应演示，只能保留失败行为入口，不得补造时间点。",
+                              "behavior_id":  "GLOVE-WRONG-ROUTE",
+                              "input":  "错误路线输入、错误手势、错误删除或错误推进",
+                              "pre_state":  "correct_route_step",
+                              "player_grid":  {
+                                                  "x":  null,
+                                                  "y":  null
+                                              },
+                              "player_direction":  null,
+                              "target_object":  "巨掌迷宫中的错误路线机关",
+                              "success_condition":  "不适用",
+                              "failure_condition":  "触发错误路线或失败反馈",
+                              "original_result":  "缺少原视频直接证据，仅由需求与截图推断存在",
+                              "replay_result":  "待补错误路线录像或更强截图证据",
+                              "input_locked":  null,
+                              "cooldown_seconds":  null,
+                              "triggered_animation":  [
+
+                                                      ],
+                              "triggered_audio":  [
+
+                                                  ],
+                              "post_state":  "failure_feedback"
+                          },
+                          {
+                              "id":  "GLOVE-BEH-003",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/手套关卡全录屏.mkv",
+                              "source_timecode":  "0:08，0:11，0:42，1:31，1:59",
+                              "source_frame":  null,
+                              "source_scene":  "11_添譜來堂_開場.tscn",
+                              "status":  "blocked",
+                              "notes":  "现有视频标注已给出多次手势变化时间点，但尚未建立每次变化前后的字形、碰撞和通路差异。",
+                              "behavior_id":  "GLOVE-GESTURE-CHANGE",
+                              "input":  "切换或触发手势相关的机关输入",
+                              "pre_state":  "initial",
+                              "player_grid":  {
+                                                  "x":  26,
+                                                  "y":  15
+                                              },
+                              "player_direction":  null,
+                              "target_object":  "手势字 / 巨掌机关",
+                              "success_condition":  "手势字变为目标形态并触发对应碰撞或通路变化",
+                              "failure_condition":  "触发了错误手势或没有任何状态变化",
+                              "original_result":  "原视频多次出现手势变化",
+                              "replay_result":  "待拆成每次变化的独立回放项",
+                              "input_locked":  null,
+                              "cooldown_seconds":  null,
+                              "triggered_animation":  [
+                                                          "G-04",
+                                                          "G-05",
+                                                          "G-06"
+                                                      ],
+                              "triggered_audio":  [
+                                                      "GLOVE-AUD-003",
+                                                      "GLOVE-AUD-004",
+                                                      "GLOVE-AUD-005"
+                                                  ],
+                              "post_state":  "gesture_changed"
+                          },
+                          {
+                              "id":  "GLOVE-BEH-004",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  "15_添譜來堂_拳頭.tscn",
+                              "status":  "blocked",
+                              "notes":  "按需求要求，删除“不”后必须进入放开状态。当前只建立与“好”手势截图的关系，删除前后输入与实体变化仍缺直接证据。",
+                              "behavior_id":  "GLOVE-RELEASE-AFTER-DELETE-NO",
+                              "input":  "删除“不”并触发放开状态",
+                              "pre_state":  "gesture_good",
+                              "player_grid":  {
+                                                  "x":  26,
+                                                  "y":  15
+                                              },
+                              "player_direction":  null,
+                              "target_object":  "“不”字与巨掌手势机关",
+                              "success_condition":  "删除“不”后进入 released_after_delete_no",
+                              "failure_condition":  "删除失败或删除后没有进入放开状态",
+                              "original_result":  "需求文档明确存在该状态，截图可疑似对应“好”的手势",
+                              "replay_result":  "待补删除前后逐帧证据",
+                              "input_locked":  null,
+                              "cooldown_seconds":  null,
+                              "triggered_animation":  [
+                                                          "G-07"
+                                                      ],
+                              "triggered_audio":  [
+                                                      "GLOVE-AUD-006"
+                                                  ],
+                              "post_state":  "released_after_delete_no"
+                          },
+                          {
+                              "id":  "GLOVE-BEH-005",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  "11_添譜來堂_開場.tscn",
+                              "status":  "blocked",
+                              "notes":  "碰撞变化是手套关最关键的可玩性约束之一。截图与源码候选足以说明它存在，但还没有哪一格开、哪一格关的精确列表。",
+                              "behavior_id":  "GLOVE-COLLISION-CHANGE",
+                              "input":  "手势变化后的再次移动或交互",
+                              "pre_state":  "gesture_changed",
+                              "player_grid":  {
+                                                  "x":  26,
+                                                  "y":  15
+                                              },
+                              "player_direction":  null,
+                              "target_object":  "巨掌墙体与原本阻挡的路径格",
+                              "success_condition":  "部分碰撞解除或新增，路径集发生变化",
+                              "failure_condition":  "碰撞未发生变化或变化与原版不一致",
+                              "original_result":  "截图反映出多种手势下地图可走区域不同",
+                              "replay_result":  "待补逐格碰撞对照表",
+                              "input_locked":  null,
+                              "cooldown_seconds":  null,
+                              "triggered_animation":  [
+                                                          "G-04",
+                                                          "G-06"
+                                                      ],
+                              "triggered_audio":  [
+                                                      "GLOVE-AUD-003",
+                                                      "GLOVE-AUD-005"
+                                                  ],
+                              "post_state":  "collision_changed"
+                          },
+                          {
+                              "id":  "GLOVE-BEH-006",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  "04_手套教學.tscn",
+                              "status":  "blocked",
+                              "notes":  "路径打开状态可以从中后段截图看出，但通路是由哪次手势变化或哪句规则触发仍未完全确认。",
+                              "behavior_id":  "GLOVE-PATH-OPENED",
+                              "input":  "完成前置手势/机关后继续移动",
+                              "pre_state":  "collision_changed",
+                              "player_grid":  {
+                                                  "x":  14,
+                                                  "y":  14
+                                              },
+                              "player_direction":  null,
+                              "target_object":  "打开后的通路格与终点路径",
+                              "success_condition":  "进入原本不可达的区域并继续正确路线",
+                              "failure_condition":  "通路未打开或走入错误区域",
+                              "original_result":  "截图和正确路线视频都说明路径存在打开后的状态",
+                              "replay_result":  "待补通路开启前后地图差分",
+                              "input_locked":  null,
+                              "cooldown_seconds":  null,
+                              "triggered_animation":  [
+                                                          "G-02",
+                                                          "G-03"
+                                                      ],
+                              "triggered_audio":  [
+                                                      "GLOVE-AUD-001",
+                                                      "GLOVE-AUD-002"
+                                                  ],
+                              "post_state":  "path_opened"
+                          },
+                          {
+                              "id":  "GLOVE-BEH-007",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  null,
+                              "status":  "blocked",
+                              "notes":  "黑屏对白是手套关可见的剧情收束状态之一，但它是开场、结尾还是分支过场仍不清楚，因此只保留转场行为外壳。",
+                              "behavior_id":  "GLOVE-TRANSITION-OUT",
+                              "input":  "剧情推进",
+                              "pre_state":  "path_opened",
+                              "player_grid":  {
+                                                  "x":  24,
+                                                  "y":  5
+                                              },
+                              "player_direction":  null,
+                              "target_object":  "黑屏对白 / 角色字",
+                              "success_condition":  "进入 transition_out",
+                              "failure_condition":  "不适用",
+                              "original_result":  "截图显示黑屏对白与角色字收束状态",
+                              "replay_result":  "待补它在完整流程中的前后位置",
+                              "input_locked":  true,
+                              "cooldown_seconds":  null,
+                              "triggered_animation":  [
+                                                          "G-08"
+                                                      ],
+                              "triggered_audio":  [
+                                                      "GLOVE-AUD-007"
+                                                  ],
+                              "post_state":  "transition_out"
+                          },
+                          {
+                              "id":  "GLOVE-BEH-008",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  null,
+                              "status":  "blocked",
+                              "notes":  "GLOVE-SHOT-010 可能代表失败或特殊结局。当前保留为失败反馈行为锚点，直到后续有更明确的视频或地图事件证明。",
+                              "behavior_id":  "GLOVE-FAILURE-FEEDBACK",
+                              "input":  "错误路线、失败推进或触发包围剧情",
+                              "pre_state":  "wrong_route_step",
+                              "player_grid":  {
+                                                  "x":  15,
+                                                  "y":  10
+                                              },
+                              "player_direction":  null,
+                              "target_object":  "勇者包围态与失败/结局对白",
+                              "success_condition":  "不适用",
+                              "failure_condition":  "进入被勇者包围的失败或剧情状态",
+                              "original_result":  "截图显示大量“勇”字与失败/结局提示",
+                              "replay_result":  "待区分失败与结局分支后补入",
+                              "input_locked":  true,
+                              "cooldown_seconds":  null,
+                              "triggered_animation":  [
+                                                          "G-08"
+                                                      ],
+                              "triggered_audio":  [
+                                                      "GLOVE-AUD-008"
+                                                  ],
+                              "post_state":  "failure_feedback"
+                          },
+                          {
+                              "id":  "GLOVE-GRID-001",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  "0:03",
+                              "source_frame":  null,
+                              "source_scene":  "04_手套教學.tscn",
+                              "status":  "blocked",
+                              "notes":  "对应 GLOVE-SHOT-001。作为手套巨掌迷宫的初始锚点，能确认玩家位置、巨掌墙体和“零”的手势说明，但完整地图尺寸、碰撞层和手势切换机关仍未从原版 scene 精确抽出。",
+                              "state_id":  "initial",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  20,
+                                                          "y":  15
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "GLOVE-SHOT-001",
+                                                  "summary":  "玩家字、勇者字、剑/手势字、巨掌墙体、手势说明“零”。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "GLOVE-GRID-002",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  "0:03-2:14",
+                              "source_frame":  null,
+                              "source_scene":  "04_手套教學.tscn",
+                              "status":  "blocked",
+                              "notes":  "对应 GLOVE-SHOT-003。作为正确路线推进中的中间锚点，用来承接 correct_route_step；玩家位置已知，但路径判定与交互顺序仍未被拆出。",
+                              "state_id":  "correct_route_step",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  26,
+                                                          "y":  15
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "GLOVE-SHOT-003",
+                                                  "summary":  "正确路线中的玩家站位、巨掌边界、手势说明“赞”。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "GLOVE-GRID-003",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/手套关卡全录屏.mkv",
+                              "source_timecode":  "0:08，0:11，0:42，1:31，1:59",
+                              "source_frame":  null,
+                              "source_scene":  "11_添譜來堂_開場.tscn",
+                              "status":  "blocked",
+                              "notes":  "手势变化聚合锚点。视频已给出多次变化时间，但尚未精确映射到每一张截图与每一次碰撞修改。",
+                              "state_id":  "gesture_changed",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  26,
+                                                          "y":  15
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "GLOVE-SEG-GESTURES",
+                                                  "summary":  "多次手势变化时间点，关联截图与源码候选。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "GLOVE-GRID-004",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  "0:08",
+                              "source_frame":  null,
+                              "source_scene":  "11_添譜來堂_開場.tscn",
+                              "status":  "blocked",
+                              "notes":  "对应 GLOVE-SHOT-002。截图说明已能确认“赞”的手势状态，但手势字与通路开闭的逐格碰撞仍缺源码级抽取。",
+                              "state_id":  "gesture_like",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  26,
+                                                          "y":  15
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "GLOVE-SHOT-002",
+                                                  "summary":  "巨掌边界、玩家字、勇者字、手势说明“赞”。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "GLOVE-GRID-005",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  "0:11",
+                              "source_frame":  null,
+                              "source_scene":  "11_添譜來堂_開場.tscn",
+                              "status":  "blocked",
+                              "notes":  "对应 GLOVE-SHOT-004。截图可定位“二”的手势状态，但手势变化后哪些格子真正可通过仍待确认。",
+                              "state_id":  "gesture_two",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  26,
+                                                          "y":  15
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "GLOVE-SHOT-004",
+                                                  "summary":  "巨掌边界、玩家字、手势说明“二”、相关按钮文字。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "GLOVE-GRID-006",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  "0:42",
+                              "source_frame":  null,
+                              "source_scene":  "15_添譜來堂_拳頭.tscn",
+                              "status":  "blocked",
+                              "notes":  "对应 GLOVE-SHOT-005。截图能确认“赢”的手势文案，但手势实体、地图阻挡和战场物件的完整列表仍未抽出。",
+                              "state_id":  "gesture_win",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  26,
+                                                          "y":  15
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "GLOVE-SHOT-005",
+                                                  "summary":  "玩家字、勇者字、巨掌墙体、手势说明“赢”。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "GLOVE-GRID-007",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  "1:31",
+                              "source_frame":  null,
+                              "source_scene":  "15_添譜來堂_拳頭.tscn",
+                              "status":  "blocked",
+                              "notes":  "对应 GLOVE-SHOT-007。截图可确认“好”的手势状态，是后续删除“不”后放开状态的重要候选，但删除动作前置条件和通路变化尚未精确建立。",
+                              "state_id":  "gesture_good",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  6,
+                                                          "y":  4
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "GLOVE-SHOT-007",
+                                                  "summary":  "玩家字、勇者字、巨掌墙体、手势说明“好”、左侧剧情说明。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "GLOVE-GRID-008",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  "0:03-2:14",
+                              "source_frame":  null,
+                              "source_scene":  "04_手套教學.tscn",
+                              "status":  "blocked",
+                              "notes":  "对应 GLOVE-SHOT-012。该截图可作为正确路线中段与通路打开后的地图锚点，但具体由哪一次手势变化导致开路仍需结合原版地图事件确认。",
+                              "state_id":  "path_opened",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  14,
+                                                          "y":  14
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "GLOVE-SHOT-012",
+                                                  "summary":  "中后段巨掌迷宫、玩家字、剧情说明、已打开的行进路径候选。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "GLOVE-GRID-009",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  "1:59",
+                              "source_frame":  null,
+                              "source_scene":  "15_添譜來堂_拳頭.tscn",
+                              "status":  "blocked",
+                              "notes":  "对应 GLOVE-SHOT-016。按需求推断这是删除“不”后的放开/释放状态候选，但当前只有截图文案“好”的手势，没有动作前后帧与碰撞对比证据。",
+                              "state_id":  "released_after_delete_no",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  26,
+                                                          "y":  15
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "GLOVE-SHOT-016",
+                                                  "summary":  "玩家字、巨掌墙体、手势说明“好”、释放后可通行状态候选。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "GLOVE-GRID-010",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "video",
+                              "source_path":  "参考资料/视频参考/手套关卡全录屏.mkv",
+                              "source_timecode":  "不适用：原视频无错误路线演示",
+                              "source_frame":  null,
+                              "source_scene":  null,
+                              "status":  "blocked",
+                              "notes":  "错误路线锚点。现有录屏只有正确路线，没有错误路线或失败反馈的视频直接证据，因此只能建立 blocked 入口，等待截图或额外录像补证。",
+                              "state_id":  "wrong_route_step",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  null,
+                                                          "y":  null
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+
+                                          ]
+                          },
+                          {
+                              "id":  "GLOVE-GRID-011",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  null,
+                              "status":  "blocked",
+                              "notes":  "对应 GLOVE-SHOT-010。截图显示大量“勇”字包围和结局/失败提示，但它究竟是失败、结局还是特殊剧情分支仍未由原视频或地图事件确认。",
+                              "state_id":  "failure_feedback",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  15,
+                                                          "y":  10
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "GLOVE-SHOT-010",
+                                                  "summary":  "大量勇者字、玩家字、对白文字、结局/失败提示。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "GLOVE-GRID-012",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  null,
+                              "source_frame":  null,
+                              "source_scene":  null,
+                              "status":  "blocked",
+                              "notes":  "对应 GLOVE-SHOT-009。黑屏对白可作为转场或剧情收束锚点，但没有原版时间轴对应关系，暂不判定它在手套关中的确切前后位置。",
+                              "state_id":  "transition_out",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  24,
+                                                          "y":  5
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "GLOVE-SHOT-009",
+                                                  "summary":  "黑屏对白、竖排角色字。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "GLOVE-GRID-013",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  "1:31-1:59",
+                              "source_frame":  null,
+                              "source_scene":  "15_添譜來堂_拳頭.tscn",
+                              "status":  "blocked",
+                              "notes":  "对应 GLOVE-SHOT-014。该截图明确出现“一”的手势说明，用于满足“每个有效手势字均有来源锚点”的要求，但其玩法作用仍待后续实现阶段确认。",
+                              "state_id":  "gesture_one",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  26,
+                                                          "y":  15
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "GLOVE-SHOT-014",
+                                                  "summary":  "玩家字、勇者字、巨掌墙体、手势说明“一”。"
+                                              }
+                                          ]
+                          },
+                          {
+                              "id":  "GLOVE-GRID-014",
+                              "feature_id":  "F023",
+                              "level_id":  "glove",
+                              "source_type":  "docx",
+                              "source_path":  "参考资料/图片参考/手套流程.docx",
+                              "source_timecode":  "0:08，0:11，0:42，1:31，1:59",
+                              "source_frame":  null,
+                              "source_scene":  "11_添譜來堂_開場.tscn",
+                              "status":  "blocked",
+                              "notes":  "对应 GLOVE-SHOT-018。作为手势变化汇总锚点，用来承接碰撞变化状态；能确认“赞”的说明仍在场，但无法确认哪些格子从阻挡变为通行。",
+                              "state_id":  "collision_changed",
+                              "map_size":  {
+                                               "width":  null,
+                                               "height":  null
+                                           },
+                              "cell_size":  60,
+                              "player_initial_grid":  {
+                                                          "x":  26,
+                                                          "y":  15
+                                                      },
+                              "player_initial_direction":  null,
+                              "objects":  [
+                                              {
+                                                  "ref":  "GLOVE-SHOT-018",
+                                                  "summary":  "玩家字、勇者字、手势说明“赞”、巨掌墙体、碰撞变化候选区域。"
+                                              }
+                                          ]
+                          },
                           {
                               "id":  "SWORD-ANIM-001",
                               "feature_id":  "F018",
