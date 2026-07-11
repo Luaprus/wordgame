@@ -1,17 +1,24 @@
 extends Control
 
-const TITLE_TEXTURES := [
-	"res://Sprites/title/title_word_1.png",
-	"res://Sprites/title/title_word_2.png",
-	"res://Sprites/title/title_word_3.png",
-	"res://Sprites/title/title_word_4.png",
-]
+const TITLE_SCENE := preload("res://Scenes/Animations/game_title.tscn")
 const TITLE_FONT := preload("res://Fonts/Zpix.ttf")
+
 const DEFAULT_START_SCENE := "res://Scenes/Maps/第一章/00_第一章字卡.tscn"
 const BGM_PATH := "res://Sounds/bgm/ch1/BGM_title.ogg"
 const CLICK_SE_PATH := "res://Sounds/se/menu_click.wav"
 const SETTINGS_PATH := "user://main_menu.cfg"
 
+const TITLE_TEXT := "這是一段關於　的故事"
+const START_TEXT := "我開始冒險"
+const SETTINGS_TEXT := "調整設定"
+
+const TITLE_POSITION := Vector2(0, -60)
+const CAPTION_RECT := Rect2(0, 780, 1920, 84)
+const MESSAGE_RECT := Rect2(0, 1050, 1920, 44)
+const OPTIONS_POSITION := Vector2(0, 900)
+const OPTIONS_SIZE := Vector2(1920, 96)
+
+var _title_logo: Node2D
 var _start_button: Button
 var _settings_button: Button
 var _settings_panel: Control
@@ -26,19 +33,25 @@ var _fullscreen_toggle: CheckButton
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
-	focus_mode = Control.FOCUS_NONE
+	focus_mode = Control.FOCUS_ALL
+	mouse_filter = Control.MOUSE_FILTER_STOP
 	Input.set_custom_mouse_cursor(null)
+
 	_build_audio()
 	_build_screen()
 	_load_settings()
 	_play_bgm()
 	_fade_in()
+	_play_title_animation()
 	_start_button.grab_focus()
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel") and _settings_panel.visible:
-		_hide_settings()
+	if event.is_action_pressed("ui_cancel"):
+		if _settings_panel.visible:
+			_hide_settings()
+		else:
+			get_tree().quit()
 
 
 func _build_audio() -> void:
@@ -60,10 +73,27 @@ func _build_screen() -> void:
 	background.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(background)
 
-	_build_title()
-	_build_caption()
+	_title_logo = TITLE_SCENE.instantiate()
+	_title_logo.name = "Logo"
+	_title_logo.position = TITLE_POSITION
+	add_child(_title_logo)
+
+	var caption := _make_label(TITLE_TEXT, 54, Color(0.78, 0.78, 0.78, 1.0))
+	caption.name = "Caption"
+	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	caption.position = CAPTION_RECT.position
+	caption.size = CAPTION_RECT.size
+	add_child(caption)
+
 	_build_menu()
 	_build_settings_panel()
+
+	_message_label = _make_label("", 24, Color(0.55, 0.55, 0.55, 1.0))
+	_message_label.name = "Message"
+	_message_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_message_label.position = MESSAGE_RECT.position
+	_message_label.size = MESSAGE_RECT.size
+	add_child(_message_label)
 
 	_fade_panel = ColorRect.new()
 	_fade_panel.name = "Fade"
@@ -73,94 +103,32 @@ func _build_screen() -> void:
 	add_child(_fade_panel)
 
 
-func _build_title() -> void:
-	var title := Control.new()
-	title.name = "PixelTitle"
-	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	title.position = Vector2(0, -120)
-	title.size = Vector2(1920, 1080)
-	add_child(title)
-
-	var glow_offsets := [
-		Vector2(-18, 0),
-		Vector2(18, 0),
-		Vector2(0, -18),
-		Vector2(0, 18),
-		Vector2(-12, -12),
-		Vector2(12, 12),
-	]
-	for offset in glow_offsets:
-		_add_title_textures(title, offset, Color(1, 1, 1, 0.10))
-	_add_title_textures(title, Vector2.ZERO, Color(0.78, 0.78, 0.78, 1.0))
-	_add_pixel_slash(title)
-
-
-func _add_title_textures(parent: Control, offset: Vector2, tint: Color) -> void:
-	for texture_path in TITLE_TEXTURES:
-		if not ResourceLoader.exists(texture_path):
-			continue
-		var texture_rect := TextureRect.new()
-		texture_rect.texture = load(texture_path)
-		texture_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		texture_rect.position = offset
-		texture_rect.size = Vector2(1920, 1080)
-		texture_rect.stretch_mode = TextureRect.STRETCH_SCALE
-		texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		texture_rect.modulate = tint
-		texture_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		parent.add_child(texture_rect)
-
-
-func _add_pixel_slash(parent: Control) -> void:
-	for i in range(-2, 36):
-		var x := float(i * 60)
-		var y := roundf((720.0 - x * 0.33) / 60.0) * 60.0
-		_add_slash_block(parent, Vector2(x, y), Vector2(180, 60))
-		if i % 2 == 0:
-			_add_slash_block(parent, Vector2(x + 60, y - 60), Vector2(120, 60))
-
-
-func _add_slash_block(parent: Control, pos: Vector2, block_size: Vector2) -> void:
-	var block := ColorRect.new()
-	block.color = Color.BLACK
-	block.position = pos
-	block.size = block_size
-	block.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	parent.add_child(block)
-
-
-func _build_caption() -> void:
-	var caption := _make_label("這是一段關於　　的故事", 54, Color(0.78, 0.78, 0.78, 1.0))
-	caption.name = "Caption"
-	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	caption.position = Vector2(0, 792)
-	caption.size = Vector2(1920, 80)
-	add_child(caption)
-
-	_message_label = _make_label("", 24, Color(0.55, 0.55, 0.55, 1.0))
-	_message_label.name = "Message"
-	_message_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_message_label.position = Vector2(0, 1048)
-	_message_label.size = Vector2(1920, 48)
-	add_child(_message_label)
-
-
 func _build_menu() -> void:
 	var options := HBoxContainer.new()
 	options.name = "Options"
 	options.alignment = BoxContainer.ALIGNMENT_CENTER
 	options.add_theme_constant_override("separation", 170)
-	options.position = Vector2(0, 914)
-	options.size = Vector2(1920, 96)
+	options.position = OPTIONS_POSITION
+	options.size = OPTIONS_SIZE
 	add_child(options)
 
-	_start_button = _make_menu_button("我開始冒險")
+	_start_button = _make_menu_button(START_TEXT)
 	_start_button.pressed.connect(_on_start_pressed)
 	options.add_child(_start_button)
 
-	_settings_button = _make_menu_button("調整設定")
+	_settings_button = _make_menu_button(SETTINGS_TEXT)
 	_settings_button.pressed.connect(_show_settings)
 	options.add_child(_settings_button)
+
+
+func _play_title_animation() -> void:
+	var player := _title_logo.get_node_or_null("AnimationPlayer") as AnimationPlayer
+	if not player:
+		return
+
+	player.play("Start")
+	await player.animation_finished
+	player.play("Loop")
 
 
 func _build_settings_panel() -> void:
@@ -175,7 +143,7 @@ func _build_settings_panel() -> void:
 	background.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_settings_panel.add_child(background)
 
-	var title := _make_label("調整設定", 64, Color(0.82, 0.82, 0.82, 1.0))
+	var title := _make_label(SETTINGS_TEXT, 64, Color(0.82, 0.82, 0.82, 1.0))
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.position = Vector2(0, 180)
 	title.size = Vector2(1920, 90)
@@ -187,8 +155,8 @@ func _build_settings_panel() -> void:
 	panel.add_theme_constant_override("separation", 38)
 	_settings_panel.add_child(panel)
 
-	_bgm_slider = _make_slider_row(panel, "設定背景音樂")
-	_se_slider = _make_slider_row(panel, "設定系統音效")
+	_bgm_slider = _make_slider_row(panel, "背景音樂")
+	_se_slider = _make_slider_row(panel, "系統音效")
 
 	_fullscreen_toggle = CheckButton.new()
 	_fullscreen_toggle.text = "全螢幕"

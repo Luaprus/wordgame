@@ -1,0 +1,154 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Sprites/ch3_italic_walk/kerr.png" type="Texture2D" id=1]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+uniform float vtilt : hint_range(-60., 60.) = 0.;
+uniform float htilt : hint_range(-60., 60.) = 0.;
+
+void vertex() {
+	vec2 uv = UV;
+	VERTEX.x += htilt * (uv.y-.5);
+	VERTEX.y += vtilt * (uv.x-.5);
+}"
+custom_defines = ""
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+shader_parameter/vtilt = 0.0
+shader_parameter/htilt = 0.0
+
+[sub_resource type="Animation" id=3]
+resource_name = "tilt_2"
+step = 0.25
+tracks/0/type = "bezier"
+tracks/0/path = NodePath(".:material:shader_parameter/vtilt")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PackedFloat32Array( 0, 0, 0, 0, 0, -15, -0.125, 0, 0.25, 0, 15, -0.25, 0, 0.125, 0, 0, 0, 0, 0, 0 ),
+"times": PackedFloat32Array( 0, 0.25, 0.75, 1 )
+}
+tracks/1/type = "bezier"
+tracks/1/path = NodePath(".:material:shader_parameter/htilt")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"points": PackedFloat32Array( 0, -0.25, 0, 0.25, 0 ),
+"times": PackedFloat32Array( 0 )
+}
+
+[sub_resource type="Animation" id=4]
+resource_name = "tilt_4"
+step = 0.25
+tracks/0/type = "bezier"
+tracks/0/path = NodePath(".:material:shader_parameter/vtilt")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PackedFloat32Array( 0, 0, 0, 0, 0 ),
+"times": PackedFloat32Array( 0 )
+}
+tracks/1/type = "bezier"
+tracks/1/path = NodePath(".:material:shader_parameter/htilt")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"points": PackedFloat32Array( 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
+"times": PackedFloat32Array( 0, 0.5, 1 )
+}
+
+[sub_resource type="Animation" id=5]
+resource_name = "tilt_6"
+step = 0.25
+tracks/0/type = "bezier"
+tracks/0/path = NodePath(".:material:shader_parameter/vtilt")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PackedFloat32Array( 0, 0, 0, 0, 0 ),
+"times": PackedFloat32Array( 0 )
+}
+tracks/1/type = "bezier"
+tracks/1/path = NodePath(".:material:shader_parameter/htilt")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"points": PackedFloat32Array( 0, 0, 0, 0, 0, -30, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
+"times": PackedFloat32Array( 0, 0.5, 1 )
+}
+
+[sub_resource type="Animation" id=6]
+resource_name = "tilt_8"
+step = 0.25
+tracks/0/type = "bezier"
+tracks/0/path = NodePath(".:material:shader_parameter/vtilt")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PackedFloat32Array( 0, 0, 0, 0, 0, 15, -0.125, 0, 0.25, 0, -15, -0.25, 0, 0.125, 0, 0, 0, 0, 0, 0 ),
+"times": PackedFloat32Array( 0, 0.25, 0.75, 1 )
+}
+tracks/1/type = "bezier"
+tracks/1/path = NodePath(".:material:shader_parameter/htilt")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"points": PackedFloat32Array( 0, -0.25, 0, 0.25, 0 ),
+"times": PackedFloat32Array( 0 )
+}
+
+[sub_resource type="Animation" id=7]
+resource_name = "tilt_standby"
+length = 0.05
+step = 0.25
+tracks/0/type = "bezier"
+tracks/0/path = NodePath(".:material:shader_parameter/vtilt")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PackedFloat32Array( 0, -0.25, 0, 0.25, 0 ),
+"times": PackedFloat32Array( 0 )
+}
+tracks/1/type = "bezier"
+tracks/1/path = NodePath(".:material:shader_parameter/htilt")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"points": PackedFloat32Array( 0, -0.25, 0, 0.25, 0 ),
+"times": PackedFloat32Array( 0 )
+}
+
+[node name="kerr" type="Sprite2D"]
+material = SubResource( 2 )
+texture = ExtResource( 1 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+playback_speed = 4.0
+anims/tilt_2 = SubResource( 3 )
+anims/tilt_4 = SubResource( 4 )
+anims/tilt_6 = SubResource( 5 )
+anims/tilt_8 = SubResource( 6 )
+anims/tilt_standby = SubResource( 7 )

@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://pgl38qy66gbo"
+path="res://.godot/imported/SE_1_3_door_open.wav-3a691f81a9907c4b7226feeb0618f557.sample"
+
+[deps]
+
+source_file="res://Sounds/se/第一章 音效/SE_1_3_door_open.wav"
+dest_files=["res://.godot/imported/SE_1_3_door_open.wav-3a691f81a9907c4b7226feeb0618f557.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

@@ -10,10 +10,23 @@ config_version=5
 
 [application]
 
-config/name="文字游戏-test"
+config/name="文字游戏"
 run/main_scene="res://Scenes/UI/MainMenu.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+GameConfig="*res://Scripts/Globals/GameConfig.gd"
+Global="*res://Scripts/Globals/Global.gd"
+Load="*res://Scripts/Globals/Load.gd"
+InputSystem="*res://Scripts/Globals/InputSystem.gd"
+Util="*res://Scripts/Globals/Util.gd"
+Typewriter="*res://Scripts/Typewriter.gd"
+UI="*res://Scenes/UI/UI.tscn"
+Sound="*res://Scripts/Globals/Sound.gd"
+EscMenu="*res://Scenes/UI/EscMenu.tscn"
+GA="*res://Scripts/Globals/GA.gd"
 
 [display]
 

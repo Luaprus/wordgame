@@ -1,0 +1,221 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://Scripts/Globals/DebugConsole.gd" type="Script" id=1]
+[ext_resource path="res://Fonts/Zpix.tres" type="FontFile" id=3]
+[ext_resource path="res://Fonts/Zpix.ttf" type="FontFile" id=4]
+
+[sub_resource type="FontFile" id=3]
+size = 30
+use_mipmaps = true
+extra_spacing_char = 1
+font_data = ExtResource( 4 )
+
+[sub_resource type="Theme" id=4]
+default_font = SubResource( 3 )
+
+[sub_resource type="FontFile" id=1]
+size = 30
+use_mipmaps = true
+extra_spacing_char = 1
+font_data = ExtResource( 4 )
+
+[sub_resource type="Theme" id=2]
+default_font = SubResource( 1 )
+
+[sub_resource type="FontFile" id=5]
+size = 30
+use_mipmaps = true
+extra_spacing_char = 1
+font_data = ExtResource( 4 )
+
+[sub_resource type="GDScript" id=6]
+script/source = "extends TextEdit
+
+func refresh():
+	var code = var_to_str(Global.game_switches)
+	text = code
+	
+func save():
+	var dict = str_to_var(text)
+	if dict is Dictionary:
+		Global.game_switches = dict
+		Global.refresh_map()
+	
+func open():
+	visible = true
+	refresh()
+	
+func close():
+	visible = false
+	release_focus()
+	save()
+	
+"
+
+[sub_resource type="GDScript" id=7]
+script/source = "extends TextEdit
+
+func refresh():
+	var code = var_to_str(Global.game_variables)
+	text = code
+	
+func save():
+	var dict = str_to_var(text)
+	if dict is Dictionary:
+		Global.game_variables = dict
+		Global.refresh_map()
+	
+func open():
+	visible = true
+	refresh()
+	
+func close():
+	visible = false
+	release_focus()
+	save()
+	
+"
+
+[node name="DebugConsole" type="Control"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FPS" type="Label" parent="."]
+offset_right = 131.0
+offset_bottom = 55.0
+theme_override_fonts/font = ExtResource( 3 )
+text = "fps:"
+
+[node name="MEM" type="Label" parent="."]
+offset_left = 300.0
+offset_right = 432.0
+offset_bottom = 55.0
+theme_override_fonts/font = ExtResource( 3 )
+text = "mem:"
+
+[node name="OBJ" type="Label" parent="."]
+offset_left = 780.0
+offset_right = 912.0
+offset_bottom = 55.0
+theme_override_fonts/font = ExtResource( 3 )
+text = "obj:"
+
+[node name="NODE" type="Label" parent="."]
+offset_left = 1200.0
+offset_right = 1365.0
+offset_bottom = 55.0
+theme_override_fonts/font = ExtResource( 3 )
+text = "node:"
+
+[node name="OptionButton" type="OptionButton" parent="."]
+offset_top = 1140.0
+offset_right = 420.0
+offset_bottom = 1200.0
+focus_mode = 0
+theme = SubResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="checkbox_dont_clear_save" type="CheckBox" parent="."]
+offset_left = 560.0
+offset_top = 1140.0
+offset_right = 751.0
+offset_bottom = 1200.0
+theme = SubResource( 2 )
+text = "保留進度"
+align = 1
+
+[node name="btn_change_map" type="Button" parent="."]
+offset_left = 420.0
+offset_top = 1140.0
+offset_right = 545.0
+offset_bottom = 1198.0
+focus_mode = 0
+theme = SubResource( 2 )
+text = "換地圖"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="btn_load" type="Button" parent="."]
+offset_left = 840.0
+offset_top = 1140.0
+offset_right = 965.0
+offset_bottom = 1198.0
+focus_mode = 0
+theme = SubResource( 2 )
+text = "讀檔"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="btn_clear_ach" type="Button" parent="."]
+offset_left = 1020.0
+offset_top = 1140.0
+offset_right = 1179.0
+offset_bottom = 1198.0
+theme = SubResource( 2 )
+text = "清除成就"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="btn_open_user_dir" type="Button" parent="."]
+offset_left = 1260.0
+offset_top = 1140.0
+offset_right = 1521.0
+offset_bottom = 1198.0
+theme = SubResource( 2 )
+text = "開啟存檔資料夾"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="btn_edit_var" type="Button" parent="."]
+offset_left = 1560.0
+offset_top = 1140.0
+offset_right = 1680.0
+offset_bottom = 1198.0
+theme = SubResource( 2 )
+text = "編輯開關變數"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="switch_editor" type="TextEdit" parent="."]
+visible = false
+offset_left = 60.0
+offset_top = 120.0
+offset_right = 840.0
+offset_bottom = 1080.0
+theme_override_fonts/font = SubResource( 5 )
+syntax_highlighter = true
+show_line_numbers = true
+draw_tabs = true
+draw_spaces = true
+script = SubResource( 6 )
+
+[node name="variable_editor" type="TextEdit" parent="."]
+visible = false
+offset_left = 900.0
+offset_top = 120.0
+offset_right = 1680.0
+offset_bottom = 1080.0
+theme_override_fonts/font = SubResource( 5 )
+syntax_highlighter = true
+show_line_numbers = true
+draw_tabs = true
+draw_spaces = true
+script = SubResource( 7 )
+
+[connection signal="pressed" from="btn_change_map" to="." method="_on_btn_change_map_pressed"]
+[connection signal="pressed" from="btn_load" to="." method="_on_btn_load_pressed"]
+[connection signal="pressed" from="btn_clear_ach" to="." method="_on_btn_clear_ach_pressed"]
+[connection signal="pressed" from="btn_open_user_dir" to="." method="_on_btn_open_user_dir_pressed"]
+[connection signal="pressed" from="btn_edit_var" to="." method="_on_btn_edit_var_pressed"]

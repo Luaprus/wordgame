@@ -1,8 +1,8 @@
-[gd_scene format=3 uid="uid://gmmgufcob5fy"]
+[gd_scene format=3 uid="uid://bmd0hhmjwsmni"]
 
 [ext_resource type="Script" uid="uid://c34iy58vjk2vw" path="res://Scripts/UI/MainMenu.gd" id="1_main_menu"]
 
-[node name="MainMenu" type="Control" unique_id=538378598]
+[node name="MainMenu" type="Control" unique_id=1464294072]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -10,8 +10,3 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_main_menu")
-
-[node name="Node2D" type="Node2D" parent="." unique_id=1898059387]
-
-[node name="Node2D2" type="Node2D" parent="." unique_id=2126937733]
-position = Vector2(75, 67)

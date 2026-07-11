@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Animations/Ch4RiverFlow.gd" id="1_flow"]
+[ext_resource type="Texture2D" path="res://Sprites/ch4_streams/streams.png" id="2_streams"]
+[ext_resource type="Shader" path="res://Shader/river_flow_and_show_ver2.gdshader" id="3_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_streams"]
+shader = ExtResource("3_shader")
+shader_parameter/time = 1.0
+shader_parameter/stagger_amount = 1.0
+shader_parameter/direction = 285.6
+shader_parameter/reverse = true
+shader_parameter/reverse_vanish_direction = true
+shader_parameter/speed = 1.0
+
+[node name="Ch4RiverFlow" type="Node2D"]
+script = ExtResource("1_flow")
+
+[node name="StreamOverlay" type="Sprite2D" parent="."]
+modulate = Color(0.72, 0.88, 1, 0.62)
+light_mask = 2
+material = SubResource("ShaderMaterial_streams")
+position = Vector2(540, 540)
+scale = Vector2(0.6, 3.6)
+texture = ExtResource("2_streams")

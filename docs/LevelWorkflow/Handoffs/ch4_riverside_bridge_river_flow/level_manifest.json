@@ -1,0 +1,102 @@
+{
+  "level_id": "ch4_riverside_bridge_river_flow",
+  "display_name": "第四章 河岸幻覺 過橋溪水流動",
+  "owner": "Codex",
+  "status": "in_progress",
+  "source": {
+	"external_root": "D:/文字游戏",
+	"source_map": "D:/文字游戏/Scenes/Maps/第四章/15_1_新河岸幻覺_第一關.tscn",
+	"local_reference_map": ""
+  },
+  "target": {
+	"godot_version": "4.7",
+	"target_scene": "res://Scenes/Test/Ch4RiverFlowDemo.tscn",
+	"animation_scene": "res://Scenes/Animations/Ch4RiverFlow/Ch4RiverFlow.tscn"
+  },
+  "map": {
+	"cell_size": 60,
+	"bound": [0, 0, 32, 18],
+	"river_event_grid_pos": [17, 0],
+	"river_event_position": [1020, 0],
+	"preview_river_position": [1100, 0],
+	"tree_event_grid_pos": [18, 8],
+	"tree_event_position": [1080, 480],
+	"preview_tree_position": [840, 480],
+	"dialog_grid_pos": [2, 3],
+	"source_big_text": "D:/文字游戏/Scenes/Maps/第四章/15_1_新河岸幻覺_第一關.tscn: MainMap/溪.big_text",
+	"preview_river_shape_note": "Adjusted to match the provided screenshot: 5 columns x 14 vertical rows, then 8/9/9/9 bend rows and 5/5 lower rows.",
+	"has_env": true,
+	"env_path": "res://Sounds/se/第四章 音效/ENV_4_37_stream.wav"
+  },
+  "placement_rule": {
+	"grid_cell_size": 60,
+	"event_anchor": "cell_top_left",
+	"event_position_formula": "Vector2(grid_x * 60, grid_y * 60)",
+	"word_anchor": "cell_center",
+	"word_sprite_offset": [30, 30]
+  },
+  "layout_reference": [
+	{
+	  "source": "D:/文字游戏/Scenes/Maps/第四章/15_1_新河岸幻覺_第一關.tscn",
+	  "node": "MainMap/溪",
+	  "grid_pos": [17, 0],
+	  "position": [1020, 0],
+	  "preview_position": [1100, 0]
+	},
+	{
+	  "source": "D:/文字游戏/Scenes/Maps/第四章/15_1_新河岸幻覺_第一關.tscn",
+	  "node": "MainMap/樹",
+	  "grid_pos": [18, 8],
+	  "position": [1080, 480],
+	  "preview_position": [840, 480],
+	  "big_text": "＿樹\n樹樹樹\n＿木"
+	},
+	{
+	  "source": "D:/文字游戏/Scenes/Maps/第四章/15_1_新河岸幻覺_第一關.tscn",
+	  "command": "開始事件 / type",
+	  "grid_pos": [2, 3],
+	  "text": "一條溪水阻擋前路。旁邊的[喬][木] 很結實，Ｍ感覺應該幫得上忙。"
+	}
+  ],
+  "required_resources": {
+	"animations": [
+	  {
+		"source": "D:/文字游戏/Shader/river_flow_and_show_ver2.gdshader",
+		"target": "res://Shader/river_flow_and_show_ver2.gdshader",
+		"trigger": "Ch4RiverFlow StreamOverlay material",
+		"position_anchor": "river_big_event_rect"
+	  }
+	],
+	"sprites": [
+	  {
+		"source": "D:/文字游戏/Sprites/ch4_streams/streams.png",
+		"target": "res://Sprites/ch4_streams/streams.png",
+		"used_by": "Ch4RiverFlow/StreamOverlay"
+	  },
+	  {
+		"source": "D:/文字游戏/Sprites/ch4_river/river_mask.png",
+		"target": "res://Sprites/ch4_river/river_mask.png",
+		"used_by": "source river light mask reference"
+	  }
+	],
+	"audio": [
+	  {
+		"source": "D:/文字游戏/Sounds/se/第四章 音效/ENV_4_37_stream.wav",
+		"target": "res://Sounds/se/第四章 音效/ENV_4_37_stream.wav",
+		"used_by": "Ch4RiverFlowDemo/StreamAmbience",
+		"trigger": "autoplay preview ambience / source MainMap.env_path"
+	  }
+	]
+  },
+  "missing_resources": [],
+  "acceptance": [
+	"scene_opens_without_missing_resources",
+	"text_inside_60x60_grid",
+	"event_position_matches_grid",
+	"river_shape_matches_source_big_text",
+	"preview_layout_matches_source_level_visible_elements",
+	"stream_shader_resource_from_source",
+    "manifest_and_handoff_updated"
+  ],
+  "notes": "The preview uses the source creek shape, stream shader/texture, and river ambience. The per-glyph vertical float is implemented as a reusable Godot 4 adaptation for the requested visual behavior."
+}

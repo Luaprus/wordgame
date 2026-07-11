@@ -5,16 +5,20 @@ const GRID_COLUMNS := 32
 const GRID_ROWS := 18
 const MOVE_TIME := 0.12
 const WALK_FRAME_TIME := 0.055
+const BLOCKED_RETRY_TIME := 0.12
 
 const ME_DEFAULT_TEXTURE := preload("res://Sprites/me/me_default.png")
 const ME_WALK_TEXTURE := preload("res://Sprites/me/me_walk.png")
 
 @onready var _me: Sprite2D = $Me
+@onready var _direction_arrow: Node2D = $DirectionArrow
 
 var _cell := Vector2i(16, 9)
 var _is_moving := false
 var _arrival_tween: Tween
 var _walk_frame_timer := 0.0
+var _blocked_retry_timer := 0.0
+var _last_direction := Vector2i.ZERO
 
 
 func _ready() -> void:
@@ -24,7 +28,13 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if _blocked_retry_timer > 0.0:
+		_blocked_retry_timer = maxf(_blocked_retry_timer - delta, 0.0)
+
 	if not _is_moving:
+		var held_direction := _get_held_direction()
+		if held_direction != Vector2i.ZERO and _blocked_retry_timer <= 0.0:
+			_try_move(held_direction)
 		return
 
 	_walk_frame_timer += delta
@@ -34,7 +44,7 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if _is_moving or not (event is InputEventKey):
+	if not (event is InputEventKey):
 		return
 
 	var key_event := event as InputEventKey
@@ -43,13 +53,51 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	match key_event.physical_keycode:
 		KEY_W:
-			_try_move(Vector2i.UP)
+			_last_direction = Vector2i.UP
+			if not _is_moving:
+				_try_move(_last_direction)
 		KEY_A:
-			_try_move(Vector2i.LEFT)
+			_last_direction = Vector2i.LEFT
+			if not _is_moving:
+				_try_move(_last_direction)
 		KEY_S:
-			_try_move(Vector2i.DOWN)
+			_last_direction = Vector2i.DOWN
+			if not _is_moving:
+				_try_move(_last_direction)
 		KEY_D:
-			_try_move(Vector2i.RIGHT)
+			_last_direction = Vector2i.RIGHT
+			if not _is_moving:
+				_try_move(_last_direction)
+
+
+func _get_held_direction() -> Vector2i:
+	if _is_direction_held(_last_direction):
+		return _last_direction
+
+	if Input.is_physical_key_pressed(KEY_W):
+		return Vector2i.UP
+	if Input.is_physical_key_pressed(KEY_A):
+		return Vector2i.LEFT
+	if Input.is_physical_key_pressed(KEY_S):
+		return Vector2i.DOWN
+	if Input.is_physical_key_pressed(KEY_D):
+		return Vector2i.RIGHT
+
+	return Vector2i.ZERO
+
+
+func _is_direction_held(direction: Vector2i) -> bool:
+	match direction:
+		Vector2i.UP:
+			return Input.is_physical_key_pressed(KEY_W)
+		Vector2i.LEFT:
+			return Input.is_physical_key_pressed(KEY_A)
+		Vector2i.DOWN:
+			return Input.is_physical_key_pressed(KEY_S)
+		Vector2i.RIGHT:
+			return Input.is_physical_key_pressed(KEY_D)
+		_:
+			return false
 
 
 func _draw() -> void:
@@ -68,12 +116,14 @@ func _draw() -> void:
 func _try_move(direction: Vector2i) -> void:
 	var next_cell := _cell + direction
 	if next_cell.x < 0 or next_cell.y < 0 or next_cell.x >= GRID_COLUMNS or next_cell.y >= GRID_ROWS:
+		_blocked_retry_timer = BLOCKED_RETRY_TIME
 		_play_blocked_animation()
 		return
 
 	_cell = next_cell
 	_is_moving = true
 	_set_walk_sprite()
+	_direction_arrow.show_for_direction_code(_vector_to_direction_code(direction))
 
 	var move_tween := create_tween()
 	move_tween.tween_property(_me, "position", _cell_to_screen(_cell), MOVE_TIME).set_trans(Tween.TRANS_LINEAR)
@@ -120,3 +170,17 @@ func _play_blocked_animation() -> void:
 
 func _cell_to_screen(cell: Vector2i) -> Vector2:
 	return Vector2(cell) * CELL_SIZE + CELL_SIZE / 2.0
+
+
+func _vector_to_direction_code(direction: Vector2i) -> int:
+	match direction:
+		Vector2i.DOWN:
+			return 2
+		Vector2i.LEFT:
+			return 4
+		Vector2i.RIGHT:
+			return 6
+		Vector2i.UP:
+			return 8
+		_:
+			return 0
