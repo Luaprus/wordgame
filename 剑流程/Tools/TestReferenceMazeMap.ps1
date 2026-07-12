@@ -5,7 +5,8 @@ $dataPaths = @(
 	([System.IO.Path]::Combine($projectRoot, "Data", "reference_maze_map.json")),
 	([System.IO.Path]::Combine($projectRoot, "Data", "reference_treasure_room_empty_map.json")),
 	([System.IO.Path]::Combine($projectRoot, "Data", "reference_slime_cave_left_map.json")),
-	([System.IO.Path]::Combine($projectRoot, "Data", "reference_slime_cave_right_map.json"))
+	([System.IO.Path]::Combine($projectRoot, "Data", "reference_slime_cave_right_map.json")),
+	([System.IO.Path]::Combine($projectRoot, "Data", "reference_snake_boss_map.json"))
 )
 $flowScriptPath = [System.IO.Path]::Combine($projectRoot, "Scripts", "ReferenceSwordFlow.gd")
 $projectConfigPath = [System.IO.Path]::Combine($projectRoot, "project.godot")
@@ -13,6 +14,8 @@ $audioRoot = [System.IO.Path]::Combine($projectRoot, "Assets", "audio")
 $projectText = [System.IO.File]::ReadAllText($projectConfigPath, [System.Text.Encoding]::UTF8)
 $fullWidthBlank = [char]0xFF3F
 $sleepDeathText = [string]([char]0x6211) + [string]([char]0x7761) + [string]([char]0x6B7B) + [string]([char]0x4E86) + [string]([char]0x3002)
+$chapterEndText = [string]([char]0x7B2C) + [string]([char]0x4E8C) + [string]([char]0x7AE0) + [string]([char]0x7ED3) + [string]([char]0x675F) + [string]([char]0x3002) + [string]([char]0x83B7) + [string]([char]0x5F97) + [string]([char]0x6210) + [string]([char]0x5C31) + [string]([char]0xFF1A) + "2-5" + [string]([char]0x3002)
+$nonDeletableToastText = [string]([char]0x8FD9) + [string]([char]0x4E2A) + [string]([char]0x5B57) + [string]([char]0x4E0D) + [string]([char]0x8BE5) + [string]([char]0x88AB) + [string]([char]0x5220) + [string]([char]0x9664)
 
 if ($projectText -notmatch 'run/main_scene="res://([^"]+)"') {
 	throw "project.godot: run/main_scene is missing."
@@ -104,6 +107,14 @@ if (Test-Path -LiteralPath $audioRoot) {
 $sceneText = [System.IO.File]::ReadAllText($scenePath, [System.Text.Encoding]::UTF8)
 $scriptText = [System.IO.File]::ReadAllText($flowScriptPath, [System.Text.Encoding]::UTF8)
 
+$snakeLoopMatch = [regex]::Match($scriptText, '(?s)const SNAKE_LOOP_SOURCE_ROWS := \[(.*?)\]')
+Assert-True ($snakeLoopMatch.Success) "ReferenceSwordFlow.gd: snake boss loop-map rows must be declared."
+$snakeLoopRows = $snakeLoopMatch.Groups[1].Value -split "`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ -match '^"' } | ForEach-Object { $_.Trim('"', ',') }
+Assert-True ($snakeLoopRows.Count -eq 32) "ReferenceSwordFlow.gd: snake boss loop-map must contain exactly 32 rows."
+for ($snakeLoopY = 0; $snakeLoopY -lt $snakeLoopRows.Count; $snakeLoopY++) {
+	Assert-True ($snakeLoopRows[$snakeLoopY].Length -eq 32) "ReferenceSwordFlow.gd: snake boss loop-map row $snakeLoopY length is $($snakeLoopRows[$snakeLoopY].Length), expected 32."
+}
+
 Assert-True ($mainSceneResource.EndsWith(".tscn")) "project.godot: main scene must point to a scene file."
 Assert-True (Test-Path -LiteralPath $scenePath) "project.godot: main scene file must exist."
 Assert-True ($sceneText.Contains('res://Scripts/ReferenceSwordFlow.gd')) "Main scene: scene must use ReferenceSwordFlow.gd."
@@ -112,6 +123,8 @@ Assert-True ($scriptText.Contains('const TREASURE_ROOM_SPAWN := Vector2i(3, 5)')
 Assert-True ($scriptText.Contains('tween_property(world_layer, "position:x", -MAP_TREASURE * VIEWPORT_SIZE.x')) "ReferenceSwordFlow.gd: transition must scroll left by exactly one 1920px map width."
 Assert-True ($scriptText.Contains('"res://Data/reference_slime_cave_left_map.json"')) "ReferenceSwordFlow.gd: slime cave left map must be appended to MAP_PATHS."
 Assert-True ($scriptText.Contains('"res://Data/reference_slime_cave_right_map.json"')) "ReferenceSwordFlow.gd: slime cave right map must be appended to MAP_PATHS."
+Assert-True ($scriptText.Contains('"res://Data/reference_snake_boss_map.json"')) "ReferenceSwordFlow.gd: snake boss map must be appended to MAP_PATHS."
+Assert-True ($scriptText.Contains('const MAP_SNAKE := 4')) "ReferenceSwordFlow.gd: snake boss map index must be locked after the slime cave maps."
 Assert-True ($scriptText.Contains("or text == `"$fullWidthBlank`"")) "ReferenceSwordFlow.gd: source blank placeholders must not render as visible map text."
 Assert-True ($scriptText.Contains('const SWORD_SPAWN_WAIT := 3.0')) "ReferenceSwordFlow.gd: sword spawn wait must match the source 180-frame delay."
 Assert-True ($scriptText.Contains('const SWORD_VISIBLE_TIME := 5.0')) "ReferenceSwordFlow.gd: sword visible time must match the source 5-second vanish timer."
@@ -158,9 +171,42 @@ Assert-True ($scriptText.Contains('func _show_slime_stage4_sentence() -> void:')
 Assert-True ($scriptText.Contains('Vector2i(22, 7)')) "ReferenceSwordFlow.gd: stage 4 must delete come from run-coming to make slimes run away."
 Assert-True ($scriptText.Contains('Vector2i(14, 8)')) "ReferenceSwordFlow.gd: stage 4 wrong comfort delete must remain a failure branch."
 Assert-True ($scriptText.Contains('func _finish_slime_trial() -> void:')) "ReferenceSwordFlow.gd: finished slime trial must transition toward the next cave segment."
-Assert-True (-not $scriptText.Contains('这个字不该被删除')) "ReferenceSwordFlow.gd: non-deletable sentence glyphs must not show a toast."
+Assert-True ($scriptText.Contains('const SLIME_RIGHT_EXIT_Y := [8]')) "ReferenceSwordFlow.gd: right slime cave exit must use the visible opening in the static map."
+Assert-True ($scriptText.Contains('SLIME_RIGHT_EXIT_Y.has(next.y)')) "ReferenceSwordFlow.gd: right slime cave exit must use its own trigger rows."
+Assert-True ($scriptText.Contains('Callable(self, "_enter_snake_boss")')) "ReferenceSwordFlow.gd: finished slime trial must enter the snake boss scene."
+Assert-True ($scriptText.Contains('func _enter_snake_boss() -> void:')) "ReferenceSwordFlow.gd: snake boss scene must be implemented."
+Assert-True ($scriptText.Contains('func _get_snake_object_data(keyword: String) -> Dictionary:')) "ReferenceSwordFlow.gd: snake boss environment rewrite rules must be implemented."
+Assert-True ($scriptText.Contains('func _show_snake_reverse_sentence() -> void:')) "ReferenceSwordFlow.gd: snake boss second-phase self-reversal rules must be implemented."
+Assert-True ($scriptText.Contains('const SNAKE_SCROLL_SPEED := 60.0')) "ReferenceSwordFlow.gd: snake boss camera scroll speed must match the source 120 * 0.5."
+Assert-True ($scriptText.Contains('const SNAKE_TWIST_SPEED := 2.0')) "ReferenceSwordFlow.gd: snake boss twist speed must match the source."
+Assert-True ($scriptText.Contains('const SNAKE_TWIST_INTERVAL := 0.3')) "ReferenceSwordFlow.gd: snake boss twist interval must match the source."
+Assert-True ($scriptText.Contains('const SNAKE_TWIST_DISTANCE := 7.0')) "ReferenceSwordFlow.gd: snake boss twist distance must match the source."
+Assert-True ($scriptText.Contains('func _update_snake_battle_motion(delta: float) -> void:')) "ReferenceSwordFlow.gd: snake boss must update scrolling and body motion every frame."
+Assert-True ($scriptText.Contains('snake_scroll_offset += SNAKE_SCROLL_SPEED * delta')) "ReferenceSwordFlow.gd: snake boss map must scroll upward during the active fight."
+Assert-True ($scriptText.Contains('func _snake_scroll_wrap_threshold() -> float:')) "ReferenceSwordFlow.gd: snake boss map must use a source-style looping scroll threshold."
+Assert-True ($scriptText.Contains('snake_scroll_offset -= float(CELL * SNAKE_SCROLL_LOOP_ROWS)')) "ReferenceSwordFlow.gd: snake boss map must wrap by exactly one loop segment."
+Assert-True ($scriptText.Contains('func _snake_visible_cell_text(cell: Vector2i) -> String:')) "ReferenceSwordFlow.gd: snake boss collision and interactions must use the current scrolled map cells."
+Assert-True ($scriptText.Contains('func _snake_map_cell_text_at_absolute(x: int, y: int) -> String:')) "ReferenceSwordFlow.gd: snake boss scrolled collision must read from absolute loop-map rows."
+Assert-True ($scriptText.Contains('func _snake_visual_y(grid_y: int) -> float:')) "ReferenceSwordFlow.gd: snake boss player and body must share the camera-scroll visual y."
+Assert-True ($scriptText.Contains('func _snake_sentence_start_for_cell(trigger_cell: Vector2i, line_length: int) -> Vector2i:')) "ReferenceSwordFlow.gd: snake boss rewrite text must appear near the touched object."
+Assert-True ($scriptText.Contains('snake_scroll_active = current_map == MAP_SNAKE and not snake_stone_mode')) "ReferenceSwordFlow.gd: snake boss must resume scrolling after first-phase text resolves."
+Assert-True ($scriptText.Contains('var twist_multiplier: float = 0.0')) "ReferenceSwordFlow.gd: snake boss body sway must use the source lower-body twist pattern."
+Assert-True ($scriptText.Contains('var local_y: float = _snake_visual_y(base_cell.y)')) "ReferenceSwordFlow.gd: snake boss body must move upward with the source camera scroll."
+Assert-True ($scriptText.Contains('player_label.position = Vector2(current_map * VIEWPORT_SIZE.x + player_cell.x * CELL, y)')) "ReferenceSwordFlow.gd: snake boss player must move upward with the source camera scroll."
+Assert-True ($scriptText.Contains('func _snake_failure(line: String, death_sentence: String) -> void:')) "ReferenceSwordFlow.gd: snake boss wrong deletion must enter the local death checkpoint flow."
+Assert-True ($scriptText.Contains('snake_success_count = int(death_checkpoint.get("snake_success_count", 0))')) "ReferenceSwordFlow.gd: snake boss death restore must keep first-phase progress."
+Assert-True ($scriptText.Contains('snake_reverse_count = int(death_checkpoint.get("snake_reverse_count", 0))')) "ReferenceSwordFlow.gd: snake boss death restore must keep second-phase progress."
+Assert-True ($scriptText.Contains('"snake_scroll_offset": snake_scroll_offset')) "ReferenceSwordFlow.gd: snake boss death checkpoint must capture scroll offset."
+Assert-True ($scriptText.Contains('snake_scroll_offset = float(death_checkpoint.get("snake_scroll_offset", 0.0))')) "ReferenceSwordFlow.gd: snake boss death restore must restore scroll offset."
+Assert-True ($scriptText.Contains('"snake_current_object_cell": _pack_vector2i(snake_current_object_cell)')) "ReferenceSwordFlow.gd: snake boss death checkpoint must capture the current object cell."
+Assert-True ($scriptText.Contains($chapterEndText)) "ReferenceSwordFlow.gd: chapter ending must award the second-chapter completion marker."
+Assert-True (-not $scriptText.Contains($nonDeletableToastText)) "ReferenceSwordFlow.gd: non-deletable sentence glyphs must not show a toast."
 Assert-True ($scriptText.Contains('func _show_death_screen(death_sentence: String) -> void:')) "ReferenceSwordFlow.gd: failure branches must enter a death screen."
-Assert-True ($scriptText.Contains('get_tree().reload_current_scene()')) "ReferenceSwordFlow.gd: death screen must reload instead of leaving the demo stuck."
+Assert-True ($scriptText.Contains('var death_checkpoint: Dictionary = {}')) "ReferenceSwordFlow.gd: death branches must keep a local restore checkpoint."
+Assert-True ($scriptText.Contains('func _capture_death_checkpoint() -> void:')) "ReferenceSwordFlow.gd: death branches must capture the failed-operation position."
+Assert-True ($scriptText.Contains('func _restore_death_checkpoint() -> void:')) "ReferenceSwordFlow.gd: death screen must restore the checkpoint instead of restarting."
+Assert-True ($scriptText.Contains('_restore_death_checkpoint()')) "ReferenceSwordFlow.gd: death screen must return to the checkpoint after the death display."
+Assert-True (-not $scriptText.Contains('get_tree().reload_current_scene()')) "ReferenceSwordFlow.gd: death screen must not restart from the beginning."
 Assert-True ($scriptText.Contains("`"$sleepDeathText`"")) "ReferenceSwordFlow.gd: comfort-delete failure must use the source sleep-death result."
 
 Write-Host "Reference flow tests passed: $($dataPaths.Count) maps, 32x18 grid, 60px cells, anchors and room transition locked."
