@@ -37,9 +37,7 @@ static func build_level() -> Dictionary:
 			"溪": {
 				"solid": true,
 				"interact_text": "无法跨越的湍急野溪，必须更努力造出路来。",
-				"interact_caption_lines": ["无法跨越的湍急野溪，", "必须更努力造出路来。"],
-				"interact_caption_pos": Vector2i(2, 12),
-				"interact_caption_solid": true
+				"interact_effect": _creek_interact_effect()
 			},
 			"树": {
 				"solid": true,
@@ -149,6 +147,10 @@ static func _text_block_cells() -> Array[Vector2i]:
 		cells.append_array(_occupied_text_cells(text_config))
 	for text_config in _phase_two_text():
 		cells.append_array(_occupied_text_cells(text_config))
+	for text_config in _phase_one_text_without_distance_parts():
+		cells.append_array(_occupied_text_cells(text_config))
+	for text_config in _creek_hint_text():
+		cells.append_array(_occupied_text_cells(text_config))
 	return cells
 
 static func _occupied_text_cells(text_config: Dictionary) -> Array[Vector2i]:
@@ -179,9 +181,7 @@ static func _phase_one_text() -> Array[Dictionary]:
 			"config": {"solid": true},
 			"cell_configs": {6: {"solid": true, "pushable": true}}
 		},
-		{"text": "搞定距离即解决问题。", "pos": Vector2i(2, 10), "as_chars": true, "config": {"solid": true}},
-		{"text": "无法跨越的湍急野溪，", "pos": Vector2i(2, 12), "as_chars": true, "config": {"solid": true}},
-		{"text": "必须更努力造出路来。", "pos": Vector2i(2, 13), "as_chars": true, "config": {"solid": true}}
+		{"text": "搞定距离即解决问题。", "pos": Vector2i(2, 10), "as_chars": true, "config": {"solid": true}}
 	]
 
 static func _phase_two_text() -> Array[Dictionary]:
@@ -202,9 +202,7 @@ static func _phase_two_text() -> Array[Dictionary]:
 			}
 		},
 		{"text": "离对岸就剩约 十尺。", "pos": Vector2i(2, 8), "as_chars": true, "config": {"solid": true}},
-		{"text": "搞定距离即解决问题。", "pos": Vector2i(2, 10), "as_chars": true, "config": {"solid": true}},
-		{"text": "无法跨越的湍急野溪，", "pos": Vector2i(2, 12), "as_chars": true, "config": {"solid": true}},
-		{"text": "必须更努力造出路来。", "pos": Vector2i(2, 13), "as_chars": true, "config": {"solid": true}}
+		{"text": "搞定距离即解决问题。", "pos": Vector2i(2, 10), "as_chars": true, "config": {"solid": true}}
 	]
 
 static func _phase_one_text_without_distance_parts() -> Array[Dictionary]:
@@ -212,10 +210,20 @@ static func _phase_one_text_without_distance_parts() -> Array[Dictionary]:
 		{"text": "这桥 肯定帮得上忙。", "pos": Vector2i(2, 6), "as_chars": true, "config": {"solid": true}},
 		{"text": "再往溪流靠近 大步，", "pos": Vector2i(2, 7), "as_chars": true, "config": {"solid": true}},
 		{"text": "离对岸就剩约 十尺。", "pos": Vector2i(2, 8), "as_chars": true, "config": {"solid": true}},
-		{"text": "搞定距离即解决问题。", "pos": Vector2i(2, 10), "as_chars": true, "config": {"solid": true}},
+		{"text": "搞定距离即解决问题。", "pos": Vector2i(2, 10), "as_chars": true, "config": {"solid": true}}
+	]
+
+static func _creek_hint_text() -> Array[Dictionary]:
+	return [
 		{"text": "无法跨越的湍急野溪，", "pos": Vector2i(2, 12), "as_chars": true, "config": {"solid": true}},
 		{"text": "必须更努力造出路来。", "pos": Vector2i(2, 13), "as_chars": true, "config": {"solid": true}}
 	]
+
+static func _creek_hint_cells() -> Array[Vector2i]:
+	var cells: Array[Vector2i] = []
+	for text_config in _creek_hint_text():
+		cells.append_array(_occupied_text_cells(text_config))
+	return cells
 
 static func _bridge_spawn(offset := 0, extra_config := {}) -> Array[Dictionary]:
 	var spawn: Array[Dictionary] = []
@@ -253,6 +261,12 @@ static func _phase_one_bridge_interact_effect() -> Dictionary:
 	return {
 		"remove_at": _text_block_cells(),
 		"spawn_text": _phase_one_text()
+	}
+
+static func _creek_interact_effect() -> Dictionary:
+	return {
+		"remove_at": _creek_hint_cells(),
+		"spawn_text": _creek_hint_text()
 	}
 
 static func _hint_bridge_merge_replace() -> Dictionary:

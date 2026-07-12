@@ -2,6 +2,7 @@ extends Node2D
 
 const GridWorld = preload("res://scripts/grid_world.gd")
 const LevelLoader = preload("res://scripts/level_loader.gd")
+const HelmetTutorial = preload("res://levels/helmet/helmet_tutorial.gd")
 const HelmetR1 = preload("res://levels/helmet/helmet_r1.gd")
 const HelmetR2 = preload("res://levels/helmet/helmet_r2.gd")
 const HelmetR3 = preload("res://levels/helmet/helmet_r3.gd")
@@ -20,6 +21,7 @@ const MOVE_REPEAT_INTERVAL := 0.28
 const FAST_MOVE_REPEAT_INTERVAL := 0.12
 const WORD_FONT_SIZE := 42
 const LEVEL_SEQUENCE := [
+	HelmetTutorial,
 	HelmetR1,
 	HelmetR2,
 	HelmetR3,
@@ -44,11 +46,13 @@ var direction_marker: Node2D
 var direction_marker_fill: Polygon2D
 var direction_marker_outline: Line2D
 var direction_marker_timer: Timer
+var fullscreen_video_player: VideoStreamPlayer
 var direction_marker_direction := Vector2i.ZERO
 var held_move_directions: Array[Vector2i] = []
 var move_repeat_elapsed := 0.0
 var move_visual_duration := 0.12
 var _player_visual_ready := false
+var _last_player_visible := true
 
 func _ready() -> void:
 	_load_level_index(0)
@@ -134,7 +138,14 @@ func _build_ui() -> void:
 	var canvas := CanvasLayer.new()
 	canvas.name = "CanvasLayer"
 	add_child(canvas)
-	canvas.visible = false
+	canvas.visible = true
+	fullscreen_video_player = VideoStreamPlayer.new()
+	fullscreen_video_player.name = "FullscreenVideoPlayer"
+	fullscreen_video_player.visible = false
+	fullscreen_video_player.expand = true
+	fullscreen_video_player.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fullscreen_video_player.finished.connect(_on_fullscreen_video_finished)
+	canvas.add_child(fullscreen_video_player)
 
 func _refresh_view(_message := "") -> void:
 	_sync_entity_labels()
@@ -144,13 +155,22 @@ func _refresh_view(_message := "") -> void:
 	page_camera.sync_to_world(world)
 	map_layer.position = page_camera.offset_pixels()
 	var player_target := _grid_to_pixels(world.player_pos)
-	if not _player_visual_ready:
+	var should_snap_player := not _player_visual_ready or (world.player_visible and not _last_player_visible)
+	if should_snap_player:
 		player_mover.snap_to(player_target)
 		_player_visual_ready = true
 	else:
 		player_mover.move_to(player_target, move_visual_duration)
+	_last_player_visible = world.player_visible
 	_apply_visual_positions()
 	player_label.move_to_front()
+	_start_pending_world_event()
+
+func _start_pending_world_event() -> void:
+	if world_event_timer == null:
+		return
+	if world.has_pending_timed_effect() and world_event_timer.is_stopped():
+		world_event_timer.start(world.pending_timed_delay)
 
 func _sync_entity_labels() -> void:
 	var alive := {}
@@ -166,12 +186,20 @@ func _sync_entity_labels() -> void:
 			entity_movers[entity.id] = mover
 		var entity_mover = entity_movers.get(entity.id)
 		entity_mover.move_to(_grid_to_pixels(entity.grid_pos), move_visual_duration)
+		group.rotation_degrees = entity.visual_rotation_degrees
 		_sync_entity_label_group(group, entity)
 	for id in entity_labels.keys():
 		if not alive.has(id):
 			entity_labels[id].queue_free()
 			entity_labels.erase(id)
 			entity_movers.erase(id)
+
+func _clear_entity_visuals() -> void:
+	for group in entity_labels.values():
+		if is_instance_valid(group):
+			group.queue_free()
+	entity_labels.clear()
+	entity_movers.clear()
 
 func _apply_visual_positions() -> void:
 	player_label.position = player_mover.current_position
@@ -193,13 +221,14 @@ func _sync_entity_label_group(group: Node2D, entity) -> void:
 		label.text = text.substr(i, 1)
 		label.position = Vector2(i * world.cell_size, -2)
 		label.size = Vector2(world.cell_size, world.cell_size + 4)
-		label.add_theme_color_override("font_color", Color(1.0, 0.95, 0.32) if entity.highlighted else Color.WHITE)
+		label.add_theme_color_override("font_color", Color(1.0, 0.95, 0.32) if entity.highlighted else entity.visual_color)
 
 func _apply_result(result: Dictionary) -> void:
 	if result.has("transition"):
 		_handle_transition(result)
 		return
 	_refresh_view(str(result.get("message", "")))
+	_consume_fullscreen_video_request()
 	if result.has("pending_delay"):
 		if world_event_timer.is_stopped():
 			world_event_timer.start(float(result.pending_delay))
@@ -215,7 +244,7 @@ func _handle_transition(result: Dictionary) -> void:
 		_refresh_view()
 		return
 	var overrides := {}
-	if current_level_index == 5:
+	if LEVEL_SEQUENCE[current_level_index] == HelmetR6:
 		overrides = {
 			"player_pos": Vector2i(0, int(result.get("exit_y", world.player_pos.y))),
 			"player_text": "鹅",
@@ -223,6 +252,31 @@ func _handle_transition(result: Dictionary) -> void:
 		}
 	_load_level_index(next_index, overrides)
 	_refresh_view()
+
+func _consume_fullscreen_video_request() -> void:
+	if world.fullscreen_video_request.is_empty():
+		return
+	var request := world.fullscreen_video_request.duplicate(true)
+	world.fullscreen_video_request.clear()
+	_play_fullscreen_video(str(request.get("path", "")))
+
+func _play_fullscreen_video(path: String) -> void:
+	if fullscreen_video_player == null or path.is_empty():
+		return
+	var stream := load(path)
+	if stream == null:
+		push_warning("Fullscreen video not found: %s" % path)
+		return
+	fullscreen_video_player.stream = stream
+	fullscreen_video_player.visible = true
+	fullscreen_video_player.play()
+
+func _on_fullscreen_video_finished() -> void:
+	if fullscreen_video_player:
+		fullscreen_video_player.stop()
+		fullscreen_video_player.visible = false
+	if world.has_fullscreen_video_finished_effect():
+		_apply_result(world.resolve_fullscreen_video_finished_effect())
 
 func _load_level_index(index: int, overrides := {}) -> void:
 	current_level_index = clampi(index, 0, LEVEL_SEQUENCE.size() - 1)
@@ -234,9 +288,11 @@ func _load_level_index(index: int, overrides := {}) -> void:
 	if overrides.has("player_facing"):
 		world.facing = overrides.player_facing
 	world.update_page()
+	_clear_entity_visuals()
 	held_move_directions.clear()
 	move_repeat_elapsed = 0.0
 	_player_visual_ready = false
+	_last_player_visible = world.player_visible
 	if world_event_timer:
 		world_event_timer.stop()
 
