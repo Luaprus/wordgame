@@ -27,3 +27,11 @@
 ## Remaining Risk
 
 - Godot headless can be unstable in this project, so visual playback still needs an editor/manual preview if headless crashes.
+
+## 2026-07-13 Right Drift Addendum
+
+- Target scene updated: `res://Scenes/Test/WASDMoveMe.tscn`
+- Added animation scene: `res://Scenes/Animations/TreeSpriteRight.tscn`
+- Source texture: `D:\文字游戏\Sprites\tree\tree.png`
+- Source animation reference: `D:\文字游戏\Scenes\Animations\TreeSprite.tscn`
+- Implementation note: `TreeSpriteRight.tscn` reuses the same source 20-frame sheet and plays frames `19` to `0` over `2.0s`, then holds until `3.0s`, looping. This fills the rightward drift preview without mirroring the Chinese glyph or adding new art.

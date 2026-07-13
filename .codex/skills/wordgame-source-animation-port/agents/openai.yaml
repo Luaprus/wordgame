@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wordgame Source Animation Port"
+  short_description: "Port traced source animations from D:\\文字游戏 into Godot scenes."
+  default_prompt: "Use this skill to recreate or complete a Godot wordgame animation from D:\\文字游戏, update manifest and handoff, and run static checks."

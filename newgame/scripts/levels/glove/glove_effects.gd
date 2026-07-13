@@ -60,30 +60,18 @@ static func final_hero_cell_config() -> Dictionary:
 static func opening_interact_effect() -> Dictionary:
 	return {
 		"remove_texts": [DIALOGUE_INITIAL],
-		"remove_at": GloveLayouts.LIFELINE_INSPECT_CELLS,
-		"set_input_locked": true,
-		"spawn": [
-			{"text": DIALOGUE_OPENING, "pos": DIALOGUE_POS, "config": {"solid": false}}
+		"remove_at": GloveLayouts.LIFELINE_INSPECT_CELLS + [
+			Vector2i(12, 13), Vector2i(13, 13), Vector2i(14, 13), Vector2i(15, 13),
+			Vector2i(16, 13), Vector2i(17, 13), Vector2i(18, 13), Vector2i(19, 13)
 		],
-		"start_typewriter": {
-			"entries": _opening_lifeline_typewriter_entries(),
-			"char_delay": 0.1,
-			"after_effect": {"set_input_locked": false}
-		},
+		"spawn": [
+			{"text": DIALOGUE_OPENING, "pos": DIALOGUE_POS, "config": {"solid": false}},
+			{"text": "逼退", "pos": Vector2i(12, 13), "config": {"solid": true}},
+			{"text": "手的生命线", "pos": Vector2i(15, 13), "config": {"solid": true}},
+			{"text": "好", "pos": GloveLayouts.GOOD_WORD_POS, "config": {"solid": true, "pushable": true}}
+		],
 		"last_message": "勇：别被一条线给困住了！"
 	}
-
-static func _opening_lifeline_typewriter_entries() -> Array[Dictionary]:
-	var entries: Array[Dictionary] = []
-	var text := "逼退好手的生命线"
-	for index in range(text.length()):
-		var char := text.substr(index, 1)
-		var config := {"solid": true}
-		if char == "好":
-			config["pushable"] = true
-		var pos := Vector2i(12 + index, 13)
-		entries.append({"text": char, "pos": pos, "replace_at": [pos], "config": config})
-	return entries
 
 static func good_word_move_effects() -> Array[Dictionary]:
 	var restore_wall: Array[Dictionary] = []
@@ -121,20 +109,14 @@ static func gesture_slot_move_effects() -> Array[Dictionary]:
 	return effects
 
 static func delete_word_effects() -> Array[Dictionary]:
-	var effect := _switch_hand_effect("release", "巨大手掌已经放开。")
-	effect["start_delete_visual"] = {
-		"type": "delete_cut",
-		"text": "不",
-		"pos": DELETE_NO_POS
-	}
 	return [{
 		"text": "不",
 		"pos": DELETE_NO_POS,
-		"effect": effect
+		"effect": _switch_hand_effect("release", "巨大手掌已经放开。")
 	}]
 
 static func release_preview_effect() -> Dictionary:
-	var effect := _switch_hand_effect("release", "人工验收：五指张开", false)
+	var effect := _switch_hand_effect("release", "人工验收：五指张开")
 	effect["remove_at"] = effect.get("remove_at", []) + [
 		Vector2i(12, 13), Vector2i(13, 13), Vector2i(14, 13), Vector2i(15, 13),
 		Vector2i(16, 13), Vector2i(17, 13), Vector2i(18, 13), Vector2i(19, 13)
@@ -293,24 +275,11 @@ static func _lifeline_open_condition(index: int) -> Dictionary:
 		}
 	}
 
-static func _switch_hand_effect(state_name: String, message: String, animate := true) -> Dictionary:
-	var hand_effect := _hand_layout_effect(state_name, message)
-	if not animate:
-		return hand_effect
-	hand_effect["set_input_locked"] = false
-	return {
-		"start_gesture_transition": {
-			"switch_delay": 0.5,
-			"duration": 1.0,
-			"effect": hand_effect
-		}
-	}
-
-static func _hand_layout_effect(state_name: String, message: String) -> Dictionary:
+static func _switch_hand_effect(state_name: String, message: String) -> Dictionary:
 	var effect := {
-		"remove_at": GloveLayouts.all_hand_cells() + _lifeline_sentence_cells(),
+		"remove_at": GloveLayouts.all_hand_cells(),
 		"remove_texts": [DIALOGUE_INITIAL, DIALOGUE_OPENING, DIALOGUE_LIKE, "：改变手势，扭转守势！", "怜爱之深，", "责任之切，", "勇者之情。", "逼退", "手的生命线", "线", "线线"],
-		"preserve_texts": ["赢", "不", "二", "赞", "一", "零", "好", "爱", "剑", "勇"],
+		"preserve_texts": ["赢", "不", "二", "赞", "一", "零", "好", "爱", "剑"],
 		"spawn_text": GloveLayouts.hand_spawn_text(state_name),
 		"last_message": message
 	}
@@ -318,6 +287,8 @@ static func _hand_layout_effect(state_name: String, message: String) -> Dictiona
 	if state_name == "like" or state_name == "release":
 		if state_name == "like":
 			effect["spawn"].append({"text": DIALOGUE_LIKE, "pos": DIALOGUE_POS, "config": {"solid": false}})
+		else:
+			effect["spawn"].append({"text": "：改变手势，扭转守势！", "pos": Vector2i(2, 16), "config": {"solid": false}})
 		effect["spawn"].append({"text": "逼退", "pos": Vector2i(8, 13), "config": {"solid": true}})
 		effect["spawn"].append({"text": "手的生命线", "pos": Vector2i(11, 13), "config": {"solid": true}})
 	else:
@@ -327,6 +298,7 @@ static func _hand_layout_effect(state_name: String, message: String) -> Dictiona
 			effect["spawn"].append({"text": "怜爱之深，", "pos": Vector2i(1, 12), "config": {"solid": false}})
 			effect["spawn"].append({"text": "责任之切，", "pos": Vector2i(1, 13), "config": {"solid": false}})
 			effect["spawn"].append({"text": "勇者之情。", "pos": Vector2i(1, 14), "config": {"solid": false}})
+			effect["spawn"].append({"text": "：改变手势，扭转守势！", "pos": Vector2i(2, 16), "config": {"solid": false}})
 		else:
 			effect["spawn"].append({"text": DIALOGUE_OPENING, "pos": DIALOGUE_POS, "config": {"solid": false}})
 	if not GloveLayouts.hand_cells(state_name).has(GloveLayouts.SWORD_SENTENCE_POS):
@@ -342,12 +314,6 @@ static func _hand_layout_effect(state_name: String, message: String) -> Dictiona
 
 static func _gesture_closes_lifeline(state_name: String) -> bool:
 	return state_name in ["zero", "one", "two", "win"]
-
-static func _lifeline_sentence_cells() -> Array[Vector2i]:
-	var cells: Array[Vector2i] = []
-	for x in range(8, 20):
-		cells.append(Vector2i(x, 13))
-	return cells
 
 static func _open_lifeline_effect(message: String) -> Dictionary:
 	return _append_runtime_trace({

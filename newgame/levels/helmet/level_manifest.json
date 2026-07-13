@@ -1,0 +1,66 @@
+{
+  "level_id": "helmet_river_goose",
+  "display_name": "四目头盔 鹅入溪动画",
+  "owner": "codex",
+  "status": "in_progress",
+  "source": {
+    "external_root": "D:/文字游戏",
+    "source_maps": [
+      {
+        "source_map": "D:/文字游戏/Scenes/Maps/第四章/15_6_新河岸幻覺_第六關.tscn",
+        "event": "goose_river_in_out",
+        "notes": "源码中鹅进入溪时调用 river_in，离开溪时调用 river_out；原始 goose:position 为入水 0.5s、出水 0.3s。"
+      },
+      {
+        "source_map": "D:/文字游戏/Scenes/Maps/第四章/15_7_新河岸幻覺_尾聲.tscn",
+        "event": "goose_return_context",
+        "notes": "过河后的鹅状态与后续回收上下文。"
+      }
+    ],
+    "layout_reference": [
+      {
+        "path": "L:/wordgame-map/wordgame/Scenes/Test/Ch4RiverFlowDemo.tscn",
+        "notes": "用户指定的河流预览布局参考。"
+      },
+      {
+        "path": "res://Scenes/Test/Ch4RiverFlowDemo.tscn",
+        "notes": "当前仓库同名预览场景，River 节点位于 Vector2(1020, 0)，即 60px 网格的 x=17, y=0。"
+      }
+    ]
+  },
+  "target": {
+    "runtime_entry": "res://Main.tscn",
+    "level_script": "res://levels/helmet/helmet_r6.gd",
+    "world_script": "res://scripts/grid_world.gd",
+    "render_script": "res://scripts/main.gd"
+  },
+  "map": {
+    "screen_size": [32, 18],
+    "cell_size": 60,
+    "river_origin_grid": [17, 0],
+    "notes": "事件/格子坐标仍按左上角；文字视觉中心由 Label 在 60x60 格内居中。运行关卡按 Ch4RiverFlowDemo 的前 18 个可见行布置溪流，第 19-20 行在 32x18 画面外未放入。"
+  },
+  "animation": {
+    "trigger": "玩家文字为 鹅 且进入/离开实体文字 溪",
+    "enter": "先向上跳 30px，再下沉到 +30px 半格高度，持续 0.5s。",
+    "inside": "在溪中保持 +30px 半格下沉显示。",
+    "exit": "先从 +30px 浮回正常高度，再跳起 30px 并落回格心，持续 0.3s。",
+    "source_deviation": "原版 goose:position 入水只从 y=30 到 y=40；本次按用户截图和口述的半个字高度强化为 30px。"
+  },
+  "required_resources": {
+    "new_external_art": [],
+    "new_external_audio": [],
+    "notes": "本次没有新增贴图或音效；动画为复刻源场景 river_in/river_out 行为的代码偏移。"
+  },
+  "acceptance": [
+    "鹅可以继续按原操作方式穿过溪。",
+    "进入溪时先跳入水中，然后下沉半格。",
+    "在溪中移动时保持半格下沉。",
+    "离开溪时先浮上来，再跳出河流。",
+    "河流位置沿用 Ch4RiverFlowDemo 的 x=17 起始溪流布局，并对齐前 18 个可见行。"
+  ],
+  "known_risks": [
+    "尚未用 Godot 运行时逐帧预览验证；本次完成了静态检查。",
+    "半格下沉是按用户截图/口述强化，不是原版 tscn 的 10px 原始数值。"
+  ]
+}
