@@ -3,6 +3,7 @@ extends Node2D
 const GridWorld = preload("res://scripts/grid_world.gd")
 const GloveLevel = preload("res://levels/glove/glove_level.gd")
 const GloveEffects = preload("res://scripts/levels/glove/glove_effects.gd")
+const GloveLoopingPrompt = preload("res://scripts/levels/glove/glove_looping_prompt.gd")
 const GloveRouteRunner = preload("res://scripts/levels/glove/glove_route_runner.gd")
 const PageCamera = preload("res://scripts/page_camera.gd")
 const PrecisionMovement = preload("res://scripts/precision_movement.gd")
@@ -25,6 +26,13 @@ const STARTUP_CAPTURE_ARG_PREFIX := "--glove-capture="
 const STARTUP_DEBUG_ARG_PREFIX := "--glove-debug="
 const MAIN_SCENE_PATH := "res://Main.tscn"
 const RETURN_TO_MAIN_SHORTCUT_KEY := KEY_ESCAPE
+const GESTURE_TRANSITION_SWITCH_SECONDS := 0.5
+const GESTURE_FLASH_PEAK_ALPHA := 0.3
+const GLOVE_ACQUIRE_VIDEO_PATH := "res://assets/video/glove_acquire.ogv"
+const GLOVE_PUT_ON_SOUND_PATH := "res://assets/audio/glove_put_on.wav"
+const GLOVE_MELODY_SOUND_PATH := "res://assets/audio/glove_melody.wav"
+const DELETE_CUT_SOUND_PATH := "res://assets/audio/delete_cut.wav"
+const DELETE_CUT_DURATION := 1.15
 
 var world := GridWorld.new()
 var page_camera := PageCamera.new()
@@ -57,6 +65,27 @@ var demo_elapsed := 0.0
 var demo_running := false
 var demo_paused := false
 var demo_delay := 0.32
+var brave_loop_prompt := GloveLoopingPrompt.new()
+var brave_loop_labels: Array[Label] = []
+var gesture_loop_prompt := GloveLoopingPrompt.new("改变手势，扭转守势！")
+var gesture_loop_prefix: Label
+var gesture_loop_labels: Array[Label] = []
+var gesture_flash_layer: CanvasLayer
+var gesture_flash_overlay: ColorRect
+var gesture_transition_active := false
+var gesture_transition_elapsed := 0.0
+var gesture_transition_duration := 1.0
+var acquisition_layer: CanvasLayer
+var acquisition_video: VideoStreamPlayer
+var acquisition_put_on_sound: AudioStreamPlayer
+var acquisition_melody_sound: AudioStreamPlayer
+var glove_acquisition_active := false
+var delete_cut_sound: AudioStreamPlayer
+var delete_cut_root: Node2D
+var delete_cut_left: Label
+var delete_cut_right: Label
+var delete_cut_slash: Line2D
+var delete_cut_elapsed := 0.0
 
 func _ready() -> void:
 	_build_scene()
@@ -84,9 +113,16 @@ func initialize_preview_world() -> void:
 	if _scene_ready:
 		page_camera.sync_to_world(world)
 		_refresh_view()
+		_consume_visual_effect_request()
 
 func _process(delta: float) -> void:
 	world.advance_highlight_animation(delta)
+	_advance_gesture_transition(delta)
+	_advance_delete_cut(delta)
+	if brave_loop_prompt.advance(delta):
+		_sync_brave_loop_prompt()
+	if gesture_loop_prompt.advance(delta):
+		_sync_gesture_loop_prompt()
 	if demo_running and not demo_paused:
 		demo_elapsed += delta
 		if demo_elapsed >= demo_delay:
@@ -272,6 +308,8 @@ func _build_scene() -> void:
 	map_layer = Node2D.new()
 	map_layer.name = "MapLayer"
 	add_child(map_layer)
+	_build_brave_loop_prompt()
+	_build_gesture_loop_prompt()
 	transition_reference_overlay = Sprite2D.new()
 	transition_reference_overlay.name = "TransitionReferenceOverlay"
 	transition_reference_overlay.centered = false
@@ -279,6 +317,21 @@ func _build_scene() -> void:
 	transition_reference_overlay.visible = false
 	transition_reference_overlay.texture = _load_transition_reference_texture()
 	add_child(transition_reference_overlay)
+	gesture_flash_layer = CanvasLayer.new()
+	gesture_flash_layer.name = "GestureFlashLayer"
+	gesture_flash_layer.layer = 100
+	add_child(gesture_flash_layer)
+	gesture_flash_overlay = ColorRect.new()
+	gesture_flash_overlay.name = "GestureFlashOverlay"
+	gesture_flash_overlay.color = Color(1.0, 1.0, 1.0, 1.0)
+	gesture_flash_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	gesture_flash_overlay.size = Vector2(1920, 1080)
+	gesture_flash_overlay.visible = false
+	gesture_flash_layer.add_child(gesture_flash_overlay)
+	_build_acquisition_overlay()
+	delete_cut_sound = AudioStreamPlayer.new()
+	delete_cut_sound.stream = load(DELETE_CUT_SOUND_PATH)
+	add_child(delete_cut_sound)
 	player_label = _make_word_label("我", Color(0.92, 0.92, 0.92), Color(0.05, 0.05, 0.05))
 	player_label.name = "Player"
 	map_layer.add_child(player_label)
@@ -322,6 +375,8 @@ func _refresh_view(_message := "") -> void:
 	if not _scene_ready:
 		return
 	_sync_entity_labels()
+	_sync_brave_loop_prompt()
+	_sync_gesture_loop_prompt()
 	_sync_direction_marker()
 	player_label.text = world.player_text
 	player_label.visible = world.player_visible
@@ -365,6 +420,51 @@ func _apply_visual_positions() -> void:
 		if mover:
 			entity_labels[id].position = mover.current_position
 
+func _build_brave_loop_prompt() -> void:
+	for index in range(GloveLoopingPrompt.TEXT.length()):
+		var label := _make_word_label("")
+		label.name = "BraveLoopPrompt_%d" % index
+		label.position = _grid_to_pixels(Vector2i(24, 5 + index))
+		map_layer.add_child(label)
+		brave_loop_labels.append(label)
+
+func _sync_brave_loop_prompt() -> void:
+	if brave_loop_labels.is_empty():
+		return
+	var visible := _has_fixed_brave()
+	var text := brave_loop_prompt.visible_text()
+	for index in range(brave_loop_labels.size()):
+		var label := brave_loop_labels[index]
+		label.visible = visible and index < text.length()
+		label.text = text.substr(index, 1) if index < text.length() else ""
+
+func _build_gesture_loop_prompt() -> void:
+	gesture_loop_prefix = _make_word_label("勇：")
+	gesture_loop_prefix.name = "GestureLoopPromptPrefix"
+	gesture_loop_prefix.position = _grid_to_pixels(Vector2i(1, 16))
+	map_layer.add_child(gesture_loop_prefix)
+	for index in range(gesture_loop_prompt.text.length()):
+		var label := _make_word_label("")
+		label.name = "GestureLoopPrompt_%d" % index
+		label.position = _grid_to_pixels(Vector2i(3 + index, 16))
+		map_layer.add_child(label)
+		gesture_loop_labels.append(label)
+
+func _sync_gesture_loop_prompt() -> void:
+	if gesture_loop_prefix == null:
+		return
+	var visible := _has_fixed_brave()
+	gesture_loop_prefix.visible = visible
+	var text := gesture_loop_prompt.visible_text()
+	for index in range(gesture_loop_labels.size()):
+		var label := gesture_loop_labels[index]
+		label.visible = visible and index < text.length()
+		label.text = text.substr(index, 1) if index < text.length() else ""
+
+func _has_fixed_brave() -> bool:
+	var brave = world.get_any_entity_at(Vector2i(24, 4))
+	return brave != null and brave.text == "勇"
+
 func _sync_entity_label_group(group: Node2D, entity) -> void:
 	var text := str(entity.text)
 	while group.get_child_count() > text.length():
@@ -388,12 +488,146 @@ func _sync_entity_label_group(group: Node2D, entity) -> void:
 		label.scale = Vector2.ONE * (1.0 + highlight_strength * 0.14)
 
 func _apply_result(result: Dictionary) -> void:
+	_consume_gesture_transition_request()
 	_refresh_view(str(result.get("message", "")))
+	_consume_visual_effect_request()
 	if result.has("pending_delay"):
 		if world_event_timer.is_stopped():
 			world_event_timer.start(float(result.pending_delay))
 	elif world.has_pending_timed_effect() and world_event_timer.is_stopped():
 		world_event_timer.start(world.pending_timed_delay)
+
+func _consume_gesture_transition_request() -> void:
+	var request: Dictionary = world.consume_gesture_transition_request()
+	if request.is_empty():
+		return
+	gesture_transition_active = true
+	gesture_transition_elapsed = 0.0
+	gesture_transition_duration = float(request.get("duration", 1.0))
+	gesture_flash_overlay.color.a = 0.0
+	gesture_flash_overlay.visible = true
+
+func _advance_gesture_transition(delta: float) -> void:
+	if not gesture_transition_active:
+		return
+	gesture_transition_elapsed += delta
+	if gesture_transition_elapsed <= GESTURE_TRANSITION_SWITCH_SECONDS:
+		gesture_flash_overlay.color.a = GESTURE_FLASH_PEAK_ALPHA * gesture_transition_elapsed / GESTURE_TRANSITION_SWITCH_SECONDS
+	else:
+		var restore_elapsed := gesture_transition_elapsed - GESTURE_TRANSITION_SWITCH_SECONDS
+		gesture_flash_overlay.color.a = GESTURE_FLASH_PEAK_ALPHA * (1.0 - restore_elapsed / GESTURE_TRANSITION_SWITCH_SECONDS)
+	var shake_strength := 8.0
+	var shake := Vector2(sin(gesture_transition_elapsed * 100.0), cos(gesture_transition_elapsed * 83.0)) * shake_strength
+	map_layer.position = page_camera.offset_pixels() + shake
+	if gesture_transition_elapsed < gesture_transition_duration:
+		return
+	gesture_transition_active = false
+	gesture_flash_overlay.visible = false
+	map_layer.position = page_camera.offset_pixels()
+
+func _build_acquisition_overlay() -> void:
+	acquisition_layer = CanvasLayer.new()
+	acquisition_layer.name = "GloveAcquisitionLayer"
+	acquisition_layer.layer = 120
+	acquisition_layer.visible = false
+	add_child(acquisition_layer)
+	var backdrop := ColorRect.new()
+	backdrop.color = Color(0.0, 0.0, 0.0, 1.0)
+	backdrop.size = Vector2(1920, 1080)
+	acquisition_layer.add_child(backdrop)
+	acquisition_video = VideoStreamPlayer.new()
+	acquisition_video.name = "GloveAcquisitionVideo"
+	acquisition_video.expand = true
+	acquisition_video.size = Vector2(1920, 1080)
+	acquisition_video.visible = false
+	acquisition_video.finished.connect(_finish_glove_acquisition)
+	acquisition_layer.add_child(acquisition_video)
+	acquisition_put_on_sound = AudioStreamPlayer.new()
+	acquisition_put_on_sound.stream = load(GLOVE_PUT_ON_SOUND_PATH)
+	acquisition_layer.add_child(acquisition_put_on_sound)
+	acquisition_melody_sound = AudioStreamPlayer.new()
+	acquisition_melody_sound.stream = load(GLOVE_MELODY_SOUND_PATH)
+	acquisition_layer.add_child(acquisition_melody_sound)
+
+func _consume_visual_effect_request() -> void:
+	for raw_request in world.consume_visual_effects():
+		var request: Dictionary = raw_request
+		match str(request.get("type", "")):
+			"glove_acquire":
+				_start_glove_acquisition()
+			"delete_cut":
+				_start_delete_cut(request)
+
+func _start_glove_acquisition() -> void:
+	if glove_acquisition_active:
+		return
+	glove_acquisition_active = true
+	acquisition_layer.visible = true
+	acquisition_video.visible = false
+	acquisition_put_on_sound.play()
+	call_deferred("_play_glove_acquisition_video")
+
+func _play_glove_acquisition_video() -> void:
+	await get_tree().create_timer(0.5).timeout
+	if not glove_acquisition_active:
+		return
+	acquisition_melody_sound.play()
+	acquisition_video.stream = load(GLOVE_ACQUIRE_VIDEO_PATH)
+	if acquisition_video.stream == null:
+		_finish_glove_acquisition()
+		return
+	acquisition_video.visible = true
+	acquisition_video.play()
+
+func _finish_glove_acquisition() -> void:
+	if not glove_acquisition_active:
+		return
+	glove_acquisition_active = false
+	acquisition_video.stop()
+	acquisition_layer.visible = false
+	world.player_input_locked = false
+	_refresh_view()
+
+func _start_delete_cut(request: Dictionary) -> void:
+	if delete_cut_root != null and is_instance_valid(delete_cut_root):
+		delete_cut_root.queue_free()
+	delete_cut_root = Node2D.new()
+	delete_cut_root.name = "DeleteCutEffect"
+	delete_cut_root.position = _grid_to_pixels(request.get("pos", Vector2i.ZERO))
+	map_layer.add_child(delete_cut_root)
+	delete_cut_left = _make_word_label(str(request.get("text", "")))
+	delete_cut_left.size = Vector2(world.cell_size * 0.5, world.cell_size)
+	delete_cut_left.clip_contents = true
+	delete_cut_root.add_child(delete_cut_left)
+	delete_cut_right = _make_word_label(str(request.get("text", "")))
+	delete_cut_right.size = Vector2(world.cell_size * 0.5, world.cell_size)
+	delete_cut_right.position.x = world.cell_size * 0.5
+	delete_cut_right.clip_contents = true
+	delete_cut_root.add_child(delete_cut_right)
+	delete_cut_slash = Line2D.new()
+	delete_cut_slash.width = 3.0
+	delete_cut_slash.default_color = Color(1.0, 1.0, 1.0, 0.95)
+	delete_cut_slash.points = PackedVector2Array([Vector2(-8, 8), Vector2(world.cell_size + 8, world.cell_size - 8)])
+	delete_cut_root.add_child(delete_cut_slash)
+	delete_cut_elapsed = 0.0
+	delete_cut_sound.play()
+
+func _advance_delete_cut(delta: float) -> void:
+	if delete_cut_root == null or not is_instance_valid(delete_cut_root):
+		return
+	delete_cut_elapsed += delta
+	var progress := clampf(delete_cut_elapsed / DELETE_CUT_DURATION, 0.0, 1.0)
+	delete_cut_left.position = Vector2(-26.0 * progress, 18.0 * progress)
+	delete_cut_left.rotation = -0.38 * progress
+	delete_cut_right.position = Vector2(world.cell_size * 0.5 + 26.0 * progress, -18.0 * progress)
+	delete_cut_right.rotation = 0.38 * progress
+	delete_cut_left.modulate.a = 1.0 - progress
+	delete_cut_right.modulate.a = 1.0 - progress
+	delete_cut_slash.modulate.a = maxf(0.0, 1.0 - progress * 1.8)
+	if progress < 1.0:
+		return
+	delete_cut_root.queue_free()
+	delete_cut_root = null
 
 func _resolve_world_event() -> void:
 	_apply_result(world.resolve_pending_timed_effect())
