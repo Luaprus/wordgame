@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c0nokodax2be0"]
 
-[ext_resource type="Script" path="res://Scripts/ReferenceSwordFlow.gd" id="1_reference_sword_flow"]
+[ext_resource type="Script" uid="uid://bwejki56mfw1d" path="res://Scripts/ReferenceSwordFlow.gd" id="1_reference_sword_flow"]
 
 [node name="05_聖劍寶庫_復刻" type="Control" unique_id=958924564]
 layout_mode = 3
