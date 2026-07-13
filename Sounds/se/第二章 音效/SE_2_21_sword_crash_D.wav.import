@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cqblmow7m6us2"
+path="res://.godot/imported/SE_2_21_sword_crash_D.wav-f14fabddc9f1e080319aa9b3f21f2742.sample"
+
+[deps]
+
+source_file="res://Sounds/se/第二章 音效/SE_2_21_sword_crash_D.wav"
+dest_files=["res://.godot/imported/SE_2_21_sword_crash_D.wav-f14fabddc9f1e080319aa9b3f21f2742.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

@@ -6,10 +6,9 @@ const GRID_COLOR := Color(1, 1, 1, 0.035)
 const FONT_SIZE := 54
 const FONT_SCALE := 1.12
 
-const INTRO_TEXT := "一條溪水阻擋前路。旁邊的喬木\n很熟悉，　感覺應該幫得上忙。"
+const INTRO_TEXT := "一条溪水阻挡前路。旁边的乔木\n很熟悉，我感觉应该帮得上忙。"
 const TREE_TEXT := "＿樹\n樹樹樹\n＿木"
 const DIALOG_POS := Vector2(2, 3) * CELL_SIZE
-const PLAYER_POS := Vector2(7, 2) * CELL_SIZE
 const TREE_POS := Vector2(14, 8) * CELL_SIZE
 
 var font := preload("res://Fonts/Zpix.tres")
@@ -32,7 +31,6 @@ func _draw() -> void:
 		draw_line(Vector2(0, py), Vector2(width, py), GRID_COLOR, 1.0)
 
 	_draw_word_block(INTRO_TEXT, DIALOG_POS, Color.WHITE, false)
-	_draw_word_block("我", PLAYER_POS, Color.WHITE, true)
 	_draw_word_block(TREE_TEXT, TREE_POS, Color.WHITE, true)
 
 

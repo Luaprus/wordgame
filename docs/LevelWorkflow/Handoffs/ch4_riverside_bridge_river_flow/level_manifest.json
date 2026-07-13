@@ -24,7 +24,7 @@
 	"preview_tree_position": [840, 480],
 	"dialog_grid_pos": [2, 3],
 	"source_big_text": "D:/文字游戏/Scenes/Maps/第四章/15_1_新河岸幻覺_第一關.tscn: MainMap/溪.big_text",
-	"preview_river_shape_note": "Adjusted to match the provided screenshot: 5 columns x 14 vertical rows, then 8/9/9/9 bend rows and 5/5 lower rows.",
+	"preview_river_shape_note": "Adjusted from user-provided column ranges: bottom two rows columns 18-22, third from bottom 18-25, fourth from bottom 18-26, fifth from bottom 19-26, all remaining rows 22-26.",
 	"has_env": true,
 	"env_path": "res://Sounds/se/第四章 音效/ENV_4_37_stream.wav"
   },

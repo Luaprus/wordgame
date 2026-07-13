@@ -1,0 +1,56 @@
+{
+  "level_id": "ch3_durl_gloves_crowd_preview",
+  "display_name": "第三章 杜爾手套結尾勇者圍場預覽",
+  "owner": "Codex",
+  "status": "in_progress",
+  "source": {
+	"external_root": "D:/文字游戏",
+	"source_map": "D:/文字游戏/Scenes/Maps/第三章/16_添譜來堂_尾聲.tscn",
+	"local_reference_map": "D:/文字游戏/Scenes/Maps/第三章/04_手套教學.tscn"
+  },
+  "target": {
+	"godot_version": "4.7",
+	"target_scene": "res://Scenes/Maps/第二章/06_DurlGlovesAnimation.tscn",
+	"target_script": "res://Scripts/Scenes/DurlGlovesScene.gd"
+  },
+  "map": {
+	"cell_size": 60,
+	"bound": [0, 0, 32, 18],
+	"hero_columns_per_side": 5,
+	"hero_rows": 9,
+	"left_columns": [1, 2, 3, 4, 5],
+	"right_columns": [28, 29, 30, 31, 32],
+	"top_rows": [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  },
+  "placement_rule": {
+	"grid_cell_size": 60,
+	"event_anchor": "cell_top_left",
+	"word_anchor": "cell_center",
+	"word_sprite_offset": [30, 30]
+  },
+  "layout_reference": [
+	{
+	  "source": "D:/文字游戏/Scenes/Maps/第三章/16_添譜來堂_尾聲.tscn",
+	  "node": "MainMap/勇者們.big_text",
+	  "note": "Source ending scene uses 5-column hero banks on both sides after the first 3 rows."
+	},
+	{
+	  "source": "C:/Users/SHANMAOZHUA/AppData/Local/Temp/codex-clipboard-c4b420bf-5444-4563-b2af-a6fec2e6c86d.png",
+	  "note": "Final preview color layout follows the user-provided screenshot."
+	}
+  ],
+  "required_resources": {
+	"animations": [],
+	"sprites": [],
+	"audio": []
+  },
+  "missing_resources": [],
+  "acceptance": [
+	"scene_uses_32x18_60px_grid",
+	"heroes_are_arranged_in_five_columns_per_side",
+	"hero_colors_follow_user_screenshot",
+	"scene_loads_without_missing_resource_error",
+    "manifest_and_handoff_updated"
+  ],
+  "notes": "This preview replaces the old glove video-only scene with a static crowd composition. It keeps the source ending scene semantics but narrows the final hero banks to the user-specified five columns per side."
+}

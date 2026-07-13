@@ -2,35 +2,32 @@
 extends Node2D
 
 const CELL_SIZE := 60.0
-const FONT_SIZE := 54
-const FONT_SCALE := 1.12
-const DEFAULT_RIVER_SHAPE := "＿＿＿＿溪溪溪溪溪\n＿＿＿＿溪溪溪溪溪\n＿＿＿＿溪溪溪溪溪\n＿＿＿＿溪溪溪溪溪\n＿＿＿＿溪溪溪溪溪\n＿＿＿＿溪溪溪溪溪\n＿＿＿＿溪溪溪溪溪\n＿＿＿＿溪溪溪溪溪\n＿＿＿＿溪溪溪溪溪\n＿＿＿＿溪溪溪溪溪\n＿＿＿＿溪溪溪溪溪\n＿＿＿＿溪溪溪溪溪\n＿＿＿＿溪溪溪溪溪\n＿＿＿＿溪溪溪溪溪\n＿溪溪溪溪溪溪溪溪\n溪溪溪溪溪溪溪溪溪\n溪溪溪溪溪溪溪溪溪\n溪溪溪溪溪溪溪溪溪\n溪溪溪溪溪\n溪溪溪溪溪"
+const FRAME_COLUMNS := 30
+const FRAME_ROWS := 5
+const DEFAULT_RIVER_SHAPE := "＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪\n＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿溪溪溪溪溪"
 
 @export_multiline var river_shape := DEFAULT_RIVER_SHAPE:
 	set(value):
 		river_shape = value
 		queue_redraw()
 
-@export var text_color := Color(0.86, 0.95, 1.0, 0.95):
+@export var text_color := Color(1, 1, 1, 1):
 	set(value):
 		text_color = value
 		queue_redraw()
 
-@export var background_color := Color(0.0, 0.0, 0.0, 0.82):
+@export var background_color := Color(0.0, 0.0, 0.0, 1.0):
 	set(value):
 		background_color = value
 		queue_redraw()
 
-@export var float_amplitude := 4.0
-@export var float_speed := 1.65
-@export var point_flow_amplitude := 6.0
-@export var point_flow_speed := 2.2
-@export var show_upper_flow_point := true:
+@export var animation_fps := 30.0
+@export var show_background := true:
 	set(value):
-		show_upper_flow_point = value
+		show_background = value
 		queue_redraw()
 
-var font := preload("res://Fonts/Zpix.tres")
+var stream_texture := preload("res://Sprites/ch4_streams/streams.png")
 var _time := 0.0
 
 
@@ -40,55 +37,50 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
-	var glyph_size := FONT_SIZE * FONT_SCALE
 	var lines := river_shape.replace("\r\n", "\n").split("\n")
+	var frame_width := float(stream_texture.get_width()) / FRAME_COLUMNS
+	var frame_height := float(stream_texture.get_height()) / FRAME_ROWS
+	var base_frame := int(floor(_time * animation_fps)) % FRAME_COLUMNS
+	var cells := _get_occupied_cells(lines)
+	if cells.is_empty():
+		return
+	var min_x := cells[0].x
+	var min_y := cells[0].y
+	for cell in cells:
+		min_x = min(min_x, cell.x)
+		min_y = min(min_y, cell.y)
 
+	for cell in cells:
+		var local_x := int(cell.x - min_x)
+		var local_y := int(cell.y - min_y)
+		var draw_pos := Vector2(CELL_SIZE * local_x, CELL_SIZE * local_y)
+		if show_background:
+			draw_rect(Rect2(draw_pos, Vector2(CELL_SIZE, CELL_SIZE)), background_color)
+
+		var frame := posmod(base_frame - local_x, FRAME_COLUMNS)
+		var variant_row := local_y % FRAME_ROWS
+		var region := Rect2(
+			Vector2(frame * frame_width, variant_row * frame_height),
+			Vector2(frame_width, frame_height)
+		)
+		draw_texture_rect_region(
+			stream_texture,
+			Rect2(draw_pos, Vector2(CELL_SIZE, CELL_SIZE)),
+			region,
+			text_color
+		)
+
+
+func _get_occupied_cells(lines: Array) -> Array[Vector2i]:
+	var cells: Array[Vector2i] = []
 	for y in lines.size():
 		var line := String(lines[y])
 		for x in line.length():
-			var character := line[x]
+			var character := line.substr(x, 1)
 			if _is_blank_placeholder(character):
 				continue
-
-			var phase := _time * float_speed + float(x) * 0.37 + float(y) * 0.61
-			var bob := sin(phase) * float_amplitude
-			var glyph_origin := Vector2(CELL_SIZE * x + CELL_SIZE / 2.0, CELL_SIZE * y + CELL_SIZE / 2.0 + bob)
-
-			draw_rect(
-				Rect2(
-					glyph_origin - Vector2(glyph_size, glyph_size) / 2.0,
-					Vector2(glyph_size, glyph_size)
-				),
-				background_color
-			)
-
-			draw_string(
-				font,
-				glyph_origin + Vector2(
-					FONT_SIZE * (FONT_SCALE - 1.1) / 2.0 - FONT_SIZE * FONT_SCALE / 2.0,
-					FONT_SIZE * (FONT_SCALE / 2.0 + 0.26) - FONT_SIZE * FONT_SCALE / 2.0
-				),
-				character,
-				HORIZONTAL_ALIGNMENT_LEFT,
-				-1,
-				FONT_SIZE,
-				text_color
-			)
-
-			if show_upper_flow_point:
-				_draw_upper_flow_point(x, y, glyph_origin)
-
-
-func _draw_upper_flow_point(x: int, y: int, glyph_origin: Vector2) -> void:
-	var flow_phase := _time * point_flow_speed + float(x) * 0.71 + float(y) * 0.43
-	var point_offset := Vector2(
-		sin(flow_phase) * point_flow_amplitude,
-		cos(flow_phase * 0.8) * float_amplitude
-	)
-	var point_pos := glyph_origin + Vector2(10.0, -21.0) + point_offset
-	var point_color := Color(text_color.r, text_color.g, text_color.b, 0.68)
-	draw_circle(point_pos, 3.2, point_color)
-	draw_circle(point_pos + Vector2(5.0, -1.0), 1.7, Color(point_color.r, point_color.g, point_color.b, 0.36))
+			cells.append(Vector2i(x, y))
+	return cells
 
 
 func _is_blank_placeholder(character: String) -> bool:

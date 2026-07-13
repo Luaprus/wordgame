@@ -1,85 +1,131 @@
 extends Control
 
-const VIDEO_PATH := "res://Sprites/ch3_glove/u_glove.ogv"
-const PUT_ON_SE_PATH := "res://Sounds/se/第三章 音效/SE_3_19_glove_put_on.wav"
-const MELODY_PATH := "res://Sounds/se/MEL/MEL_3_19.1_gloves.wav"
-const ORIGINAL_VIDEO_SIZE := Vector2(1920, 1080)
+const CELL_SIZE := 60.0
+const GRID_SIZE := Vector2i(32, 18)
+const GRID_COLOR := Color(1, 1, 1, 0.035)
+const BACKGROUND_COLOR := Color("#080808")
+const FONT_SIZE := 54
+const FONT_SCALE := 1.12
+const HERO_TEXT := "勇"
+const HERO_COLUMNS_PER_SIDE := 5
+const HERO_ROWS := 9
+const LEFT_START_COL := 0
+const RIGHT_START_COL := GRID_SIZE.x - HERO_COLUMNS_PER_SIDE
+const TOP_START_ROW := 0
 
-var _video: VideoStreamPlayer
-var _put_on: AudioStreamPlayer
-var _melody: AudioStreamPlayer
-var _running := false
+const HERO_COLOR_GRID := [
+	[
+		Color8(92, 90, 14),
+		Color8(78, 77, 19),
+		Color8(123, 120, 88),
+		Color8(118, 117, 92),
+		Color8(108, 107, 83),
+	],
+	[
+		Color8(203, 206, 85),
+		Color8(203, 205, 145),
+		Color8(208, 205, 162),
+		Color8(204, 202, 142),
+		Color8(203, 203, 95),
+	],
+	[
+		Color8(72, 72, 58),
+		Color8(58, 59, 50),
+		Color8(98, 97, 84),
+		Color8(103, 102, 59),
+		Color8(92, 87, 40),
+	],
+	[
+		Color8(205, 205, 158),
+		Color8(208, 206, 149),
+		Color8(204, 205, 95),
+		Color8(202, 204, 41),
+		Color8(201, 206, 26),
+	],
+	[
+		Color8(169, 167, 116),
+		Color8(181, 181, 87),
+		Color8(112, 110, 0),
+		Color8(127, 126, 2),
+		Color8(148, 149, 21),
+	],
+	[
+		Color8(203, 203, 99),
+		Color8(204, 203, 44),
+		Color8(200, 203, 26),
+		Color8(202, 205, 36),
+		Color8(207, 207, 82),
+	],
+	[
+		Color8(93, 93, 30),
+		Color8(95, 95, 22),
+		Color8(91, 93, 19),
+		Color8(89, 92, 39),
+		Color8(94, 94, 62),
+	],
+	[
+		Color8(73, 76, 1),
+		Color8(80, 83, 21),
+		Color8(87, 91, 19),
+		Color8(61, 63, 21),
+		Color8(67, 66, 37),
+	],
+	[
+		Color8(203, 204, 44),
+		Color8(201, 204, 52),
+		Color8(207, 208, 92),
+		Color8(203, 207, 143),
+		Color8(203, 203, 158),
+	],
+]
+
+var font := preload("res://Fonts/Zpix.tres")
 
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_build_screen()
-	_build_audio()
-	call_deferred("_play")
+	queue_redraw()
 
 
-func _build_screen() -> void:
-	var background := ColorRect.new()
-	background.name = "Background"
-	background.color = Color.BLACK
-	background.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(background)
+func _draw() -> void:
+	var width := GRID_SIZE.x * CELL_SIZE
+	var height := GRID_SIZE.y * CELL_SIZE
+	draw_rect(Rect2(Vector2.ZERO, Vector2(width, height)), BACKGROUND_COLOR)
 
-	_video = VideoStreamPlayer.new()
-	_video.name = "VideoStreamPlayer"
-	_video.stream = load(VIDEO_PATH)
-	_video.position = Vector2.ZERO
-	_video.size = ORIGINAL_VIDEO_SIZE
-	_video.set("expand", false)
-	_video.visible = false
-	add_child(_video)
+	for x in range(GRID_SIZE.x + 1):
+		var px := x * CELL_SIZE
+		draw_line(Vector2(px, 0), Vector2(px, height), GRID_COLOR, 1.0)
 
+	for y in range(GRID_SIZE.y + 1):
+		var py := y * CELL_SIZE
+		draw_line(Vector2(0, py), Vector2(width, py), GRID_COLOR, 1.0)
 
-func _build_audio() -> void:
-	_put_on = _make_audio_player("GlovePutOn", PUT_ON_SE_PATH, 0.0)
-	_melody = _make_audio_player("DurlGlovesMelody", MELODY_PATH, 5.0)
+	_draw_hero_bank(LEFT_START_COL, false)
+	_draw_hero_bank(RIGHT_START_COL, true)
 
 
-func _make_audio_player(node_name: String, path: String, volume_db: float) -> AudioStreamPlayer:
-	var player := AudioStreamPlayer.new()
-	player.name = node_name
-	player.stream = load(path)
-	player.volume_db = volume_db
-	player.bus = _bus_or_master("SE")
-	add_child(player)
-	return player
+func _draw_hero_bank(start_col: int, mirror_colors: bool) -> void:
+	for row in range(HERO_ROWS):
+		for col in range(HERO_COLUMNS_PER_SIDE):
+			var color_index := HERO_COLUMNS_PER_SIDE - 1 - col if mirror_colors else col
+			_draw_hero(Vector2i(start_col + col, TOP_START_ROW + row), HERO_COLOR_GRID[row][color_index])
 
 
-func _bus_or_master(bus_name: String) -> String:
-	return bus_name if AudioServer.get_bus_index(bus_name) >= 0 else "Master"
-
-
-func _play() -> void:
-	if _running:
-		return
-
-	_running = true
-	_video.stop()
-	_video.visible = true
-	_play_audio(_put_on)
-	await _wait_frames(30)
-	_play_audio(_melody)
-	_video.play()
-
-	if _video.stream:
-		await _video.finished
-
-	_video.visible = false
-	_running = false
-
-
-func _play_audio(player: AudioStreamPlayer) -> void:
-	player.stop()
-	if player.stream:
-		player.play()
-
-
-func _wait_frames(frame_count: int) -> void:
-	for _i in range(frame_count):
-		await get_tree().process_frame
+func _draw_hero(grid_pos: Vector2i, color: Color) -> void:
+	var glyph_origin := Vector2(
+		grid_pos.x * CELL_SIZE + CELL_SIZE / 2.0,
+		grid_pos.y * CELL_SIZE + CELL_SIZE / 2.0
+	)
+	draw_string(
+		font,
+		glyph_origin + Vector2(
+			FONT_SIZE * (FONT_SCALE - 1.1) / 2.0 - FONT_SIZE * FONT_SCALE / 2.0,
+			FONT_SIZE * (FONT_SCALE / 2.0 + 0.26) - FONT_SIZE * FONT_SCALE / 2.0
+		),
+		HERO_TEXT,
+		HORIZONTAL_ALIGNMENT_LEFT,
+		-1,
+		FONT_SIZE,
+		color
+	)
