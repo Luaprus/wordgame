@@ -52,7 +52,7 @@ var pending_interact_effect: Dictionary = {}
 var fullscreen_video_finished_effect: Dictionary = {}
 var fullscreen_video_request: Dictionary = {}
 var gesture_transition_request: Dictionary = {}
-var visual_effect_request: Dictionary = {}
+var visual_effect_requests: Array = []
 var current_level: Dictionary = {}
 var rule_engine := RuleEngine.new()
 var highlight_animation_strengths: Dictionary = {}
@@ -95,9 +95,11 @@ func load_level(level: Dictionary) -> void:
 	pending_interact_effect = level.get("initial_interact_effect", {}).duplicate(true)
 	pending_timed_effect = level.get("initial_timed_effect", {})
 	pending_timed_delay = float(level.get("initial_timed_delay", 0.0))
-	visual_effect_request = level.get("initial_visual_effect", {}).duplicate(true)
-	if bool(visual_effect_request.get("lock_input", false)):
-		player_input_locked = true
+	var initial_visual_effect: Dictionary = level.get("initial_visual_effect", {}).duplicate(true)
+	if not initial_visual_effect.is_empty():
+		visual_effect_requests.append(initial_visual_effect)
+		if bool(initial_visual_effect.get("lock_input", false)):
+			player_input_locked = true
 	_parse_rows(rows)
 	for spawn_config in level.get("initial_spawn", []):
 		var entry: Dictionary = spawn_config
@@ -140,7 +142,7 @@ func clear() -> void:
 	fullscreen_video_finished_effect.clear()
 	fullscreen_video_request.clear()
 	gesture_transition_request.clear()
-	visual_effect_request.clear()
+	visual_effect_requests.clear()
 	current_page_origin = Vector2i.ZERO
 	_next_id = 1
 	_map_caption_ids.clear()
@@ -675,7 +677,7 @@ func _merge_split_positions(merged_text: String, first: WordEntity, second: Word
 
 func _apply_map_effect(config: Dictionary) -> void:
 	if config.has("start_delete_visual"):
-		visual_effect_request = config.start_delete_visual.duplicate(true)
+		visual_effect_requests.append(config.start_delete_visual.duplicate(true))
 	if config.has("start_gesture_transition"):
 		_start_gesture_transition(config.start_gesture_transition)
 		return
@@ -715,6 +717,8 @@ func _apply_map_effect(config: Dictionary) -> void:
 		player_input_locked = bool(config.set_input_locked)
 	if config.has("set_event_locked"):
 		player_event_locked = bool(config.set_event_locked)
+	if config.has("visual_effect"):
+		visual_effect_requests.append(config.visual_effect.duplicate(true))
 	if config.has("set_pending_interact_effect"):
 		pending_interact_effect = config.set_pending_interact_effect
 	if config.has("set_pending_timed_effect"):
@@ -786,6 +790,11 @@ func _apply_map_effect(config: Dictionary) -> void:
 		restored.id = preserved_id
 		entities.erase(temp_id)
 		entities[preserved_id] = restored
+
+func consume_visual_effects() -> Array:
+	var requests := visual_effect_requests.duplicate(true)
+	visual_effect_requests.clear()
+	return requests
 
 func _apply_move_player_toward(move_config: Dictionary) -> void:
 	var target: Vector2i = move_config.get("target", player_pos)
@@ -884,9 +893,9 @@ func consume_gesture_transition_request() -> Dictionary:
 	return request
 
 func consume_visual_effect_request() -> Dictionary:
-	var request := visual_effect_request.duplicate(true)
-	visual_effect_request.clear()
-	return request
+	if visual_effect_requests.is_empty():
+		return {}
+	return visual_effect_requests.pop_front()
 
 func _start_gesture_transition(definition: Dictionary) -> void:
 	player_input_locked = true

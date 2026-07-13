@@ -480,10 +480,10 @@ func _sync_entity_label_group(group: Node2D, entity) -> void:
 		label.size = Vector2(world.cell_size, world.cell_size + 4)
 		label.pivot_offset = label.size * 0.5
 		var highlight_strength := world.get_highlight_animation_strength(entity.cells[i]) if i < entity.cells.size() else 0.0
-		var base_color := Color.WHITE
+		var base_color: Color = Color.WHITE
 		if entity.highlighted:
 			base_color = Color(1.0, 0.95, 0.32)
-		var animated_color := base_color.lerp(Color(1.0, 0.78, 0.18), highlight_strength)
+		var animated_color: Color = base_color.lerp(Color(1.0, 0.78, 0.18), highlight_strength)
 		label.add_theme_color_override("font_color", animated_color)
 		label.scale = Vector2.ONE * (1.0 + highlight_strength * 0.14)
 
@@ -550,14 +550,13 @@ func _build_acquisition_overlay() -> void:
 	acquisition_layer.add_child(acquisition_melody_sound)
 
 func _consume_visual_effect_request() -> void:
-	var request: Dictionary = world.consume_visual_effect_request()
-	if request.is_empty():
-		return
-	match str(request.get("type", "")):
-		"glove_acquire":
-			_start_glove_acquisition()
-		"delete_cut":
-			_start_delete_cut(request)
+	for raw_request in world.consume_visual_effects():
+		var request: Dictionary = raw_request
+		match str(request.get("type", "")):
+			"glove_acquire":
+				_start_glove_acquisition()
+			"delete_cut":
+				_start_delete_cut(request)
 
 func _start_glove_acquisition() -> void:
 	if glove_acquisition_active:
