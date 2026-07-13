@@ -591,7 +591,7 @@ static func _initial_tutorial_text() -> Array:
 
 static func _split_he_effect() -> Dictionary:
 	return {
-		"remove_at": _initial_text_cells() + _stale_watch_tail_cells(),
+		"remove_at": _post_helmet_scene_cells() + _initial_text_cells(),
 		"set_pending_timed_effect": {
 			"spawn_text": _split_flash_text(),
 			"set_pending_interact_effect": _show_rebuild_prompt_effect()
@@ -699,19 +699,19 @@ static func _restored_text() -> Array:
 			"text": "「很好，勇者。」",
 			"pos": Vector2i(5, 14),
 			"as_chars": true,
-			"config": {"solid": true}
+			"config": {"solid": true, "pushable": false, "splittable": false}
 		},
 		{
 			"text": "恢复了诗人的样貌，",
 			"pos": Vector2i(14, 14),
 			"as_chars": true,
-			"config": {"solid": true}
+			"config": {"solid": true, "pushable": false, "splittable": false}
 		},
 		{
 			"text": "继续往前走吧。▼",
 			"pos": Vector2i(5, 15),
 			"as_chars": true,
-			"config": {"solid": true}
+			"config": {"solid": true, "pushable": false, "splittable": false}
 		}
 	]
 
@@ -728,9 +728,6 @@ static func _initial_text_cells() -> Array[Vector2i]:
 	cells.append_array(_text_cells(SPLIT_CONCEPT_TEXT_POS, "「跟删去文字相去不远。」他说。"))
 	cells.append_array(_text_cells(SPLIT_CONCEPT_TEXT_POS + Vector2i.DOWN, "「专心看，运用『TAB』的力量……」"))
 	return cells
-
-static func _stale_watch_tail_cells() -> Array[Vector2i]:
-	return _text_cells(WATCH_TEXT_POS + Vector2i(23, 1), "呢？」")
 
 static func _split_scene_cells() -> Array[Vector2i]:
 	var cells: Array[Vector2i] = []
