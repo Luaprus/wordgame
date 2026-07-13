@@ -18,15 +18,17 @@ const PlayerDirectionMarker = preload("res://scripts/player_moving/player_direct
 const SmoothGridMover = preload("res://scripts/smooth_grid_mover.gd")
 const GemBurstEffect = preload("res://scripts/gem_burst_effect.gd")
 const LightGlowEffect = preload("res://scripts/light_glow_effect.gd")
-const OriginalFont = preload("res://Fonts/Zpix.tres")
+const OriginalFont = preload("res://Fonts/Zpix-v3.1.6.ttf")
 
-const MOVE_REPEAT_INTERVAL := 0.28
-const FAST_MOVE_REPEAT_INTERVAL := 0.12
-const WORD_FONT_SIZE := 42
+const WORD_FONT_SIZE := 56
 const GEM_COLOR := Color(0.0, 0.58, 0.62, 1.0)
 const GEM_ORIGIN_GRID := Vector2(15.5, 15.5)
 const GEM_REVEAL_SPEED := 8.0
 const INTRO_PROMPT_HOLD := 0.65
+const PLAYER_WALK_VISUAL_TIME := 0.12
+const PLAYER_WALK_FRAME_TIME := 0.055
+const PLAYER_MOVE_REPEAT_TIME := 0.12
+const PLAYER_BLOCKED_RETRY_TIME := 0.12
 const CREEK_WAVE_SPEED := TAU * 0.55
 const CREEK_WAVE_AMPLITUDE := 4.0
 const CREEK_MIN_X := 16
@@ -53,6 +55,7 @@ var current_level_index := 0
 var entity_movers: Dictionary = {}
 var entity_labels: Dictionary = {}
 var player_label: Label
+var player_sprite: Sprite2D
 var map_layer: Node2D
 var demo_timer: Timer
 var world_event_timer: Timer
@@ -65,8 +68,11 @@ var gem_burst_effect
 var light_glow_effect
 var direction_marker_direction := Vector2i.ZERO
 var held_move_directions: Array[Vector2i] = []
-var move_repeat_elapsed := 0.0
 var move_visual_duration := 0.12
+var player_walk_visual_timer := 0.0
+var player_walk_frame_timer := 0.0
+var player_move_repeat_timer := 0.0
+var player_blocked_retry_timer := 0.0
 var _player_visual_ready := false
 var _last_player_visible := true
 var highlight_visual_config: Dictionary = {}
@@ -89,15 +95,14 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	world.advance_highlight_animation(delta)
+	_update_player_visual_animation(delta)
+	if player_move_repeat_timer > 0.0:
+		player_move_repeat_timer = maxf(player_move_repeat_timer - delta, 0.0)
+	if player_blocked_retry_timer > 0.0:
+		player_blocked_retry_timer = maxf(player_blocked_retry_timer - delta, 0.0)
 	var direction := _current_held_direction()
-	if direction == Vector2i.ZERO:
-		move_repeat_elapsed = 0.0
-	else:
-		move_repeat_elapsed += delta
-		var interval := FAST_MOVE_REPEAT_INTERVAL if Input.is_key_pressed(KEY_SHIFT) else MOVE_REPEAT_INTERVAL
-		while move_repeat_elapsed >= interval:
-			move_repeat_elapsed -= interval
-			_apply_direction_step(direction)
+	if direction != Vector2i.ZERO and player_move_repeat_timer <= 0.0 and player_blocked_retry_timer <= 0.0:
+		_apply_direction_step(direction)
 
 	var changed := false
 	if _player_visual_ready:
@@ -129,8 +134,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if key_event.echo:
 			return
 		_set_direction_held(direction, key_event.pressed)
-		if key_event.pressed:
-			move_repeat_elapsed = 0.0
+		if key_event.pressed and player_move_repeat_timer <= 0.0 and player_blocked_retry_timer <= 0.0:
 			_apply_direction_step(direction)
 		return
 	if not PrecisionMovement.should_process_key_event(key_event.pressed, key_event.echo, direction):
@@ -151,9 +155,11 @@ func _build_scene() -> void:
 	map_layer = Node2D.new()
 	map_layer.name = "MapLayer"
 	add_child(map_layer)
-	player_label = _make_word_label("我", Color(0.92, 0.92, 0.92), Color(0.05, 0.05, 0.05))
+	player_label = _make_word_label("", Color(0.92, 0.92, 0.92), Color.TRANSPARENT)
 	player_label.name = "Player"
+	player_label.pivot_offset = player_label.size * 0.5
 	map_layer.add_child(player_label)
+	_setup_player_sprite()
 	_build_direction_marker()
 	light_glow_effect = LightGlowEffect.new()
 	light_glow_effect.name = "LightGlowEffect"
@@ -194,7 +200,7 @@ func _build_ui() -> void:
 func _refresh_view(_message := "") -> void:
 	_sync_entity_labels()
 	_sync_direction_marker()
-	player_label.text = world.player_text
+	player_label.text = "" if _uses_player_sprite() else world.player_text
 	player_label.visible = world.player_visible
 	_apply_intro_visibility()
 	page_camera.sync_to_world(world)
@@ -210,6 +216,14 @@ func _refresh_view(_message := "") -> void:
 	_apply_visual_positions()
 	player_label.move_to_front()
 	_start_pending_world_event()
+
+func _setup_player_sprite() -> void:
+	player_sprite = Sprite2D.new()
+	player_sprite.name = "PlayerVisual"
+	player_sprite.position = Vector2(world.cell_size, world.cell_size) * 0.5
+	player_sprite.z_index = 1
+	player_label.add_child(player_sprite)
+	_set_player_idle_visual()
 
 func _start_pending_world_event() -> void:
 	if world_event_timer == null:
@@ -312,6 +326,8 @@ func _apply_intro_visibility() -> void:
 			label.visible = visible and (intro_phase != "gems" or is_light or is_prompt)
 	if player_label:
 		player_label.visible = world.player_visible and intro_phase == "active"
+		if player_sprite:
+			player_sprite.visible = world.player_visible and intro_phase == "active" and _uses_player_sprite()
 
 func _update_gem_labels() -> void:
 	if gem_burst_effect == null:
@@ -535,11 +551,16 @@ func _load_level_index(index: int, overrides := {}) -> void:
 	else:
 		intro_phase = "active"
 	held_move_directions.clear()
-	move_repeat_elapsed = 0.0
+	player_move_repeat_timer = 0.0
+	player_blocked_retry_timer = 0.0
+	player_walk_visual_timer = 0.0
+	player_walk_frame_timer = 0.0
 	_player_visual_ready = false
 	_last_player_visible = world.player_visible
 	if world_event_timer:
 		world_event_timer.stop()
+	if player_sprite:
+		_set_player_idle_visual()
 
 func _resolve_world_event() -> void:
 	_apply_result(world.resolve_pending_timed_effect())
@@ -604,8 +625,12 @@ func _apply_direction_step(direction: Vector2i) -> void:
 		result = world.pull_front(direction)
 	else:
 		result = world.try_move_player(direction)
+	player_move_repeat_timer = PLAYER_MOVE_REPEAT_TIME
+	if not result.get("success", false):
+		player_blocked_retry_timer = PLAYER_BLOCKED_RETRY_TIME
 	_apply_result(result)
 	if result.get("success", false):
+		_play_player_walk_visual()
 		_show_direction_marker(direction)
 
 func _direction_from_key(keycode: Key) -> Vector2i:
@@ -616,6 +641,48 @@ func _grid_to_pixels(pos: Vector2i) -> Vector2:
 
 func _grid_to_pixels_float(pos: Vector2) -> Vector2:
 	return pos * float(world.cell_size)
+
+func _uses_player_sprite() -> bool:
+	return world.player_text == "我"
+
+func _update_player_visual_animation(delta: float) -> void:
+	if player_sprite == null or player_walk_visual_timer <= 0.0:
+		return
+	player_walk_visual_timer = maxf(player_walk_visual_timer - delta, 0.0)
+	player_walk_frame_timer += delta
+	if player_walk_frame_timer >= PLAYER_WALK_FRAME_TIME:
+		player_walk_frame_timer = 0.0
+		player_sprite.frame = 1 - player_sprite.frame
+	if player_walk_visual_timer <= 0.0:
+		_set_player_idle_visual()
+
+func _play_player_walk_visual() -> void:
+	if player_sprite == null or not _uses_player_sprite():
+		return
+	player_sprite.texture = preload("res://assets/player/me_walk.png")
+	player_sprite.hframes = 2
+	player_sprite.vframes = 1
+	player_sprite.frame = 0
+	player_sprite.centered = true
+	player_sprite.scale = Vector2.ONE
+	player_sprite.modulate = Color.WHITE
+	player_sprite.rotation = 0.0
+	player_walk_visual_timer = PLAYER_WALK_VISUAL_TIME
+	player_walk_frame_timer = 0.0
+
+func _set_player_idle_visual() -> void:
+	if player_sprite == null:
+		return
+	player_sprite.texture = preload("res://assets/player/me_default.png")
+	player_sprite.hframes = 1
+	player_sprite.vframes = 1
+	player_sprite.frame = 0
+	player_sprite.centered = true
+	player_sprite.scale = Vector2.ONE
+	player_sprite.modulate = Color.WHITE
+	player_sprite.rotation = 0.0
+	player_walk_visual_timer = 0.0
+	player_walk_frame_timer = 0.0
 
 func _make_word_label(text: String, font_color := Color.WHITE, bg_color := Color.TRANSPARENT) -> Label:
 	var label := Label.new()
