@@ -394,10 +394,6 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-
-
-	_update_player_visual_animation(delta)
-	_update_continuous_player_movement(delta)
 	_update_slime_visual_animation(delta)
 	if phase == Phase.FIND_SWORD:
 		_update_sword(delta)
