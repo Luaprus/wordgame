@@ -344,6 +344,9 @@ func pull_front(move_direction: Vector2i) -> Dictionary:
 		return {"success": false, "message": "pull direction locked"}
 	var old_player_pos := player_pos
 	var new_player_pos := player_pos + move_direction
+	var bounds_result := _check_entity_bounds(new_player_pos)
+	if not bounds_result.success:
+		return bounds_result
 	if get_entity_at(new_player_pos):
 		return {"success": false, "message": "player target blocked"}
 	player_moving = true
@@ -367,6 +370,9 @@ func move_entity_by(entity_id: String, direction: Vector2i) -> Dictionary:
 		own_cells[cell] = true
 	for cell in entity.cells:
 		var target := cell + direction
+		var bounds_result := _check_entity_bounds(target)
+		if not bounds_result.success:
+			return bounds_result
 		var blocker := get_entity_at(target)
 		if blocker and blocker.id != entity.id:
 			var merged := try_merge_entities(entity.grid_pos, blocker.grid_pos)
@@ -377,6 +383,13 @@ func move_entity_by(entity_id: String, direction: Vector2i) -> Dictionary:
 			return {"success": false, "message": "blocked by player"}
 	entity.move_by(direction)
 	_trigger_entity_move_effect(entity, old_pos, entity.grid_pos, direction)
+	return {"success": true}
+
+func _check_entity_bounds(target: Vector2i) -> Dictionary:
+	if not bounded:
+		return {"success": true}
+	if target.x < 0 or target.y < 0 or target.x >= screen_size.x or target.y >= screen_size.y:
+		return {"success": false, "message": "boundary"}
 	return {"success": true}
 
 func move_entity_to(entity_id: String, pos: Vector2i) -> Dictionary:
