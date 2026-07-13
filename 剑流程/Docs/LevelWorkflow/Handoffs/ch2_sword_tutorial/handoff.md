@@ -6,7 +6,7 @@
 
 目标工程：
 
-- `E:/Godot/wordgame/剑流程`
+- `L:/wordgame-map/wordgame/剑流程`
 - 主场景：`res://Scenes/Maps/第二章/05_聖劍寶庫_復刻.tscn`
 - 当前主脚本：`res://Scripts/ReferenceSwordFlow.gd`
 - 原动态流程脚本保留：`res://Scripts/SwordTutorial.gd`
@@ -35,7 +35,6 @@
 - 未直接搬运源项目 `Event` / `Interpreter` 命令系统；表现由 `ReferenceSwordFlow.gd` 内的状态机、Tween 和文字 Label 重建。
 - 源码里蛇妖射线与物件攻击有更多独立动画节点；本复刻已按规则和可见反馈还原核心表现，但不是节点级逐一搬运。
 - 运行前如 Godot 未生成新音频 `.import`，请在编辑器中打开工程一次让资源自动导入。
-
 
 ## 2026-07-13 我字动画接入
 

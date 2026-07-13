@@ -6,14 +6,15 @@
   "source": {
     "external_root": "D:/文字游戏",
     "source_animation_scene": "D:/文字游戏/Scenes/Animations/TreeSprite.tscn",
+    "source_event_scene": "D:/文字游戏/Scenes/Events/TreeEvent.tscn",
     "source_texture": "D:/文字游戏/Sprites/tree/tree.png",
-    "source_map_reference": "D:/文字游戏/Scenes/Maps/第四章/15_2_新河岸幻覺_第二關.tscn",
-    "source_video_baseline": "harness/baselines/video/video_baselines.json: HELMET-R2-ONE-TWO-THREE, note confirms tree moves right three cells"
+    "right_drift_method": "Reuse the same source 20-frame sheet in reverse frame order, 19 to 0, without mirroring the Chinese glyph."
   },
   "target": {
     "godot_version": "4.7",
     "target_scene": "res://Scenes/Test/WASDMoveMe.tscn",
-    "animation_scene": "res://Scenes/Animations/TreeSprite.tscn",
+    "left_animation_scene": "res://Scenes/Animations/TreeSprite.tscn",
+    "right_animation_scene": "res://Scenes/Animations/TreeSpriteRight.tscn",
     "texture": "res://Sprites/tree/tree.png"
   },
   "placement_rule": {
@@ -28,13 +29,19 @@
         "source": "D:/文字游戏/Scenes/Animations/TreeSprite.tscn",
         "target": "res://Scenes/Animations/TreeSprite.tscn",
         "used_by": "res://Scenes/Test/WASDMoveMe.tscn/TreeSprite"
+      },
+      {
+        "source": "D:/文字游戏/Scenes/Animations/TreeSprite.tscn",
+        "target": "res://Scenes/Animations/TreeSpriteRight.tscn",
+        "used_by": "res://Scenes/Test/WASDMoveMe.tscn/TreeSpriteRight",
+        "note": "Right drift is produced by reversing the source frame order: 19 to 0."
       }
     ],
     "sprites": [
       {
         "source": "D:/文字游戏/Sprites/tree/tree.png",
         "target": "res://Sprites/tree/tree.png",
-        "used_by": "TreeSprite frame animation"
+        "used_by": "TreeSprite and TreeSpriteRight frame animations"
       }
     ],
     "audio": []
@@ -43,10 +50,11 @@
   "acceptance": [
     "wasd_demo_keeps_32x18_60px_grid",
     "tree_uses_source_tree_texture",
+    "tree_left_and_right_drift_are_both_visible",
     "tree_animation_is_registered_through_godot4_animation_library",
     "tree_visual_center_uses_source_offset_30_30",
     "scene_loads_without_missing_resource_error",
     "manifest_and_handoff_updated"
   ],
-  "notes": "The source animation is preserved: TreeSprite frames 0 to 19 over 2 seconds, held until 3 seconds, looping. The change converts the legacy Godot 3 AnimationPlayer anims/tree binding into a Godot 4 AnimationLibrary so the WASD test scene plays the right-drifting tree frames."
+  "notes": "The original TreeSprite keeps frames 0 to 19 over 2 seconds, held until 3 seconds, looping. TreeSpriteRight reuses the same source frames in reverse order so the WASD test scene previews both drift directions."
 }

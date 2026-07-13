@@ -24,7 +24,6 @@ static func build_level() -> Dictionary:
 		"entities": GloveEffects.entity_configs(),
 		"cell_entity_configs": cell_configs,
 		"initial_interact_effect": GloveEffects.opening_interact_effect(),
-		"initial_visual_effect": {"type": "glove_acquire", "lock_input": true},
 		"entity_move_effects": GloveEffects.good_word_move_effects() + GloveEffects.gesture_slot_move_effects(),
 		"entity_delete_effects": GloveEffects.delete_word_effects(),
 		"step_effects": [

@@ -33,7 +33,6 @@ func _init() -> void:
 	var wall_world := GridWorld.new()
 	wall_world.load_level(GloveLevel.build_level())
 	wall_world.interact_front()
-	_finish_pending_effects(wall_world)
 	var wall_good = wall_world.find_first_entity_by_text("好")
 	var wall_failures: Array[String] = []
 	if wall_good == null:
@@ -56,18 +55,6 @@ func _init() -> void:
 	var moved_failures: Array[String] = []
 	if not moved_opening.get("success", false):
 		moved_failures.append("opening interact must work after the player moves")
-	if not moved_opening_world.player_input_locked:
-		moved_failures.append("opening locks player input while the lifeline transforms")
-	_assert_char(moved_opening_world, Vector2i(12, 13), "逼", "opening transformation starts from the leftmost character", moved_failures)
-	_assert_char(moved_opening_world, Vector2i(13, 13), "掌", "opening transformation keeps each unconverted cell as a palm", moved_failures)
-	if moved_opening_world.try_move_player(Vector2i.LEFT).get("success", false):
-		moved_failures.append("opening transformation prevents the player from moving")
-	moved_opening_world.resolve_pending_timed_effect()
-	_assert_char(moved_opening_world, Vector2i(13, 13), "退", "opening transformation advances exactly one character per timed step", moved_failures)
-	_assert_char(moved_opening_world, Vector2i(14, 13), "掌", "opening transformation leaves later cells unchanged until their turn", moved_failures)
-	_finish_pending_effects(moved_opening_world)
-	if moved_opening_world.player_input_locked:
-		moved_failures.append("opening transformation unlocks player input after the final character")
 	_assert_char(moved_opening_world, Vector2i(12, 13), "逼", "moved opening replaces the palm row with the lifeline sentence", moved_failures)
 	_assert_char(moved_opening_world, Vector2i(14, 13), "好", "moved opening exposes 好 without overlap", moved_failures)
 	if not moved_failures.is_empty():
@@ -82,7 +69,6 @@ func _init() -> void:
 		printerr("cannot enter DOCX figure 2")
 		quit(1)
 		return
-	_finish_pending_effects(world)
 	var zero_word = world.find_first_entity_by_text("零")
 	var good_word = world.find_first_entity_by_text("好")
 	if zero_word == null or good_word == null:
@@ -91,7 +77,6 @@ func _init() -> void:
 		return
 	world.move_entity_to(zero_word.id, Vector2i(25, 16))
 	world.move_entity_to(good_word.id, Vector2i(26, 17))
-	_finish_pending_effects(world)
 	var failures: Array[String] = []
 	_assert_char(world, Vector2i(8, 13), "逼", "figure 4 open sentence starts at x=8", failures)
 	_assert_char(world, Vector2i(9, 13), "退", "figure 4 open sentence keeps 逼退", failures)
@@ -112,7 +97,6 @@ func _init() -> void:
 	var zero_word_case = zero_world.find_first_entity_by_text("零")
 	if zero_word_case != null:
 		zero_world.move_entity_to(zero_word_case.id, Vector2i(26, 17))
-		_finish_pending_effects(zero_world)
 		zero_world.move_entity_to(zero_word_case.id, Vector2i(25, 16))
 		var zero_anchor = zero_world.get_any_entity_at(GloveLayouts.hand_cells("zero")[0])
 		if zero_anchor == null or zero_anchor.text != "掌":
@@ -120,45 +104,36 @@ func _init() -> void:
 	var one_world := GridWorld.new()
 	one_world.load_level(GloveLevel.build_level())
 	one_world.interact_front()
-	_finish_pending_effects(one_world)
 	var one_zero = one_world.find_first_entity_by_text("零")
 	var one_word = one_world.find_first_entity_by_text("一")
 	if one_zero != null and one_word != null:
 		one_world.move_entity_to(one_zero.id, Vector2i(25, 16))
 		one_world.move_entity_to(one_word.id, Vector2i(26, 17))
-		_finish_pending_effects(one_world)
 		_assert_char(one_world, Vector2i(12, 13), "逼", "one gesture restores the closed lifeline sentence", failures)
 		_assert_char(one_world, Vector2i(14, 13), "好", "one gesture keeps 好 in the closed lifeline sentence", failures)
 		_assert_char(one_world, Vector2i(19, 13), "线", "one gesture restores the closed lifeline sentence ending", failures)
 		if one_world.find_first_entity_by_text("怜爱之深，") == null or one_world.find_first_entity_by_text("责任之切，") == null or one_world.find_first_entity_by_text("勇者之情。") == null:
 			failures.append("one gesture shows the source hand clue")
-		if one_world.find_first_entity_by_text("：改变手势，扭转守势！") != null:
-			failures.append("the gesture prompt must not be a static map entity because it loops independently")
-		var fixed_brave = one_world.get_any_entity_at(Vector2i(24, 4))
-		if fixed_brave == null or fixed_brave.text != "勇":
-			failures.append("changing the hand gesture keeps the fixed brave word for its looping prompt")
+		if one_world.find_first_entity_by_text("：改变手势，扭转守势！") == null:
+			failures.append("one gesture shows the source change-gesture dialogue")
 	var release_world := GridWorld.new()
 	release_world.load_level(GloveLevel.build_level())
 	release_world.interact_front()
-	_finish_pending_effects(release_world)
 	var release_zero = release_world.find_first_entity_by_text("零")
 	var release_good = release_world.find_first_entity_by_text("好")
 	if release_zero != null and release_good != null:
 		release_world.move_entity_to(release_zero.id, Vector2i(25, 16))
 		release_world.move_entity_to(release_good.id, Vector2i(26, 17))
-		_finish_pending_effects(release_world)
 		release_world.player_pos = Vector2i(5, 3)
 		release_world.facing = Vector2i.RIGHT
 		var delete_result: Dictionary = release_world.delete_front()
 		if not delete_result.get("success", false):
 			failures.append("deleting 不 succeeds before the release-state check")
-		_finish_pending_effects(release_world)
 		_assert_char(release_world, Vector2i(14, 0), "掌", "deleting 不 immediately selects the release-hand layout", failures)
 		_assert_char(release_world, Vector2i(8, 13), "逼", "release state keeps the open lifeline sentence", failures)
 	var ending_world := GridWorld.new()
 	ending_world.load_level(GloveLevel.build_level())
 	ending_world.interact_front()
-	_finish_pending_effects(ending_world)
 	ending_world.player_pos = Vector2i(24, 5)
 	ending_world.facing = Vector2i.UP
 	var ending_result: Dictionary = ending_world.interact_front()
@@ -198,9 +173,3 @@ func _character_at(world: RefCounted, pos: Vector2i) -> String:
 
 func _shown(value: String) -> String:
 	return "<space>" if value == " " else value
-
-func _finish_pending_effects(world: RefCounted) -> void:
-	var remaining_steps := 32
-	while world.has_pending_timed_effect() and remaining_steps > 0:
-		world.resolve_pending_timed_effect()
-		remaining_steps -= 1
