@@ -6,6 +6,7 @@
 [ext_resource path="res://Sprites/me/me_idleB.png" type="Texture2D" id=4]
 [ext_resource path="res://Sprites/me/me_default.png" type="Texture2D" id=5]
 [ext_resource path="res://Sprites/player_direction_icon/direction_icon.png" type="Texture2D" id=6]
+[ext_resource path="res://Scenes/Player/DirectionTriangleMarker.tscn" type="PackedScene" id=7]
 
 [sub_resource type="GDScript" id=1]
 script/source = "@tool
@@ -14,7 +15,10 @@ extends \"res://Scripts/Event.gd\"
 func move_straight(d):
 	if get_node(\"Sprite2D/AnimationPlayer\").current_animation != \"walk\":
 		get_node(\"Sprite2D/AnimationPlayer\").play(\"walk\")
-	super.move_straight(d)
+	var moved = super.move_straight(d)
+	if moved:
+		show_direction_marker(d)
+	return moved
 	
 
 func _on_AnimationPlayer_animation_finished(anim_name):
@@ -25,19 +29,15 @@ func _on_AnimationPlayer_animation_finished(anim_name):
 
 # override
 func set_direction(d):
-	play_dir_animation(d)
 	direction = d
 	
 var need_dir_animation = false
 func play_dir_animation(d):
-	var dirs = [\"down\",\"left\",\"right\",\"up\"]
-	if need_dir_animation:
-		$DirectionArrow/AnimationPlayer.stop(true)
-		$DirectionArrow/AnimationPlayer.play(dirs[d/2-1])
-		need_dir_animation = false
-	elif direction != d:
-		$DirectionArrow/AnimationPlayer.stop(true)
-		$DirectionArrow/AnimationPlayer.play(dirs[d/2-1])
+	show_direction_marker(d)
+
+func show_direction_marker(d):
+	if has_node(\"DirectionArrow\") and $DirectionArrow.has_method(\"show_for_direction_code\"):
+		$DirectionArrow.show_for_direction_code(d)
 
 
 func play_walking_se():
@@ -612,18 +612,6 @@ enabled = true
 collide_with_areas = true
 collide_with_bodies = false
 
-[node name="DirectionArrow" type="Sprite2D" parent="."]
-modulate = Color( 1, 1, 1, 0 )
-position = Vector2( 60, 0 )
-z_index = 21
-z_as_relative = false
-texture = ExtResource( 6 )
-centered = false
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="DirectionArrow"]
-anims/down = SubResource( 8 )
-anims/left = SubResource( 9 )
-anims/right = SubResource( 10 )
-anims/up = SubResource( 11 )
+[node name="DirectionArrow" parent="." instance=ExtResource( 7 )]
 
 [connection signal="animation_finished" from="Sprite2D/AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
