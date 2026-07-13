@@ -2,7 +2,7 @@
 
 importer="wav"
 type="AudioStreamWAV"
-uid="uid://bukw0vfq772ij"
+uid="uid://bk6txjy5yxkt6"
 path="res://.godot/imported/SE_2_23_sword_big_swing_B.wav-c7c3c17589ed150e499845a83a75bdad.sample"
 
 [deps]
@@ -21,4 +21,4 @@ edit/normalize=false
 edit/loop_mode=0
 edit/loop_begin=0
 edit/loop_end=-1
-compress/mode=2
+compress/mode=0

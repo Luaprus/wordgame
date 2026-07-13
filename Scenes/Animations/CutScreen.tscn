@@ -1,0 +1,163 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Sprites/ch2_fake_cave/fake_cave.png" type="Texture2D" id=1]
+[ext_resource path="res://Sprites/ch2_sword/sword_light.png" type="Texture2D" id=2]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+uniform float pixels : hint_range(1, 60) = 30.0;
+uniform float degree : hint_range(0, 90);
+
+uniform float time : hint_range(0, 1);
+
+void vertex() {
+    VERTEX.x *= 1.0 + 0.5*time*2.0;
+}
+
+void fragment()
+{
+	vec2 uv = UV;
+//	uv -= mod(uv, vec2(1.0/pixels, 1.0/pixels));
+	
+	vec2 v = vec2(cos(radians(degree+90.0)), sin(radians(degree+90.0)));
+	
+	v += vec2(0.5);
+	
+	float d = (uv.x - 0.5) * (v.y - 0.5) - (uv.y - 0.5) * (v.x - 0.5);
+
+	
+	if(d > 0.0) {
+		vec2 uv_t = vec2(uv.x, uv.y);
+		uv_t.x = 1.0 - (1.0 - uv_t.x)*(1.0 + 0.5*time*2.0);
+		
+		float d2 = (uv_t.x - 0.5) * (v.y - 0.5) - (uv_t.y - 0.5) * (v.x - 0.5);
+		if (d2 > 0.0 && uv_t.x > 0.0 && uv_t.x < 1.0) {
+			COLOR = texture(TEXTURE, uv_t);
+			COLOR.a = smoothstep(1.0, 0.8, time);
+		} else {
+			COLOR.a = 0.0;
+		}
+	} else {
+		vec2 uv_t = vec2(uv.x, uv.y);
+		uv_t.x *= 1.0 + 0.5*time*2.0;
+		
+		float d2 = (uv_t.x - 0.5) * (v.y - 0.5) - (uv_t.y - 0.5) * (v.x - 0.5);
+		if (d2 < 0.0 && uv_t.x > 0.0 && uv_t.x < 1.0) {
+			COLOR = texture(TEXTURE, uv_t);
+//			COLOR.rgb *= 1.0 - time;
+			COLOR.a = smoothstep(1.0, 0.8, time);
+		} else {
+//			COLOR = vec4(1.0,1.0,0.0,1.0);
+			COLOR.a = 0.0;
+		}
+	}
+	
+//	if (time > 0.65 && time < 0.74) {
+//		COLOR.a = 0.0;
+//	}
+//	if (time > 0.78 && time < 0.83) {
+//		COLOR.a = 0.0;
+//	}
+//	if (time > 0.91 && time < 0.96) {
+//		COLOR.a = 0.0;
+//	}
+//	if (time > 0.99) {
+//		COLOR.a = 0.0;
+//	}
+	
+}
+"
+custom_defines = ""
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+shader_parameter/pixels = 30.0
+shader_parameter/degree = 10.0
+shader_parameter/time = 0.0
+
+[sub_resource type="Animation" id=3]
+resource_name = "cut"
+length = 1.7
+tracks/0/type = "value"
+tracks/0/path = NodePath("splash:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.5 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 0, 26 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:material:shader_parameter/time")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.7, 1.7 ),
+"transitions": PackedFloat32Array( 1, 0.378929, 0.5 ),
+"update": 0,
+"values": [ 0.0, 0.0, 1.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("splash:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=4]
+resource_name = "recover"
+length = 0.7
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:material:shader_parameter/time")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.7 ),
+"transitions": PackedFloat32Array( 2.14355, 2.14355 ),
+"update": 0,
+"values": [ 1.0, 0.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("splash:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( -0.1 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 1,
+"values": [ false ]
+}
+
+[node name="CutScreen" type="Sprite2D"]
+material = SubResource( 2 )
+position = Vector2( 960, 600 )
+texture = ExtResource( 1 )
+region_rect = Rect2( 0, 0, 32, 64 )
+
+[node name="splash" type="Sprite2D" parent="."]
+visible = false
+position = Vector2( -0.00037384, -6.10352e-05 )
+rotation = 0.174533
+texture = ExtResource( 2 )
+hframes = 27
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+playback_speed = 0.8
+anims/cut = SubResource( 3 )
+anims/recover = SubResource( 4 )

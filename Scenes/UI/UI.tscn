@@ -1,0 +1,831 @@
+[gd_scene load_steps=48 format=2]
+
+[ext_resource path="res://Scripts/Globals/UI.gd" type="Script" id=1]
+[ext_resource path="res://Scenes/Events/WordSprite.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Sprites/esc_menu/拉字-03.png" type="Texture2D" id=3]
+[ext_resource path="res://Sprites/esc_menu/移動.png" type="Texture2D" id=4]
+[ext_resource path="res://Sprites/esc_menu/方向鍵-03.png" type="Texture2D" id=5]
+[ext_resource path="res://Sprites/esc_menu/WASD-03.png" type="Texture2D" id=6]
+[ext_resource path="res://Sprites/esc_menu/互動-04.png" type="Texture2D" id=7]
+[ext_resource path="res://Sprites/esc_menu/space-04.png" type="Texture2D" id=8]
+[ext_resource path="res://Sprites/esc_menu/enter-08.png" type="Texture2D" id=9]
+[ext_resource path="res://Sprites/esc_menu/重置_全-06.png" type="Texture2D" id=10]
+[ext_resource path="res://Sprites/esc_menu/重置_mac-04.png" type="Texture2D" id=11]
+[ext_resource path="res://Sprites/esc_menu/Ｘ字鍵-04.png" type="Texture2D" id=12]
+[ext_resource path="res://Sprites/esc_menu/刪字-04.png" type="Texture2D" id=13]
+[ext_resource path="res://Sprites/esc_menu/delete-04.png" type="Texture2D" id=14]
+[ext_resource path="res://Sprites/esc_menu/backspace-02.png" type="Texture2D" id=15]
+[ext_resource path="res://Sprites/esc_menu/推字-08.png" type="Texture2D" id=16]
+[ext_resource path="res://Sprites/esc_menu/推字組字-03.png" type="Texture2D" id=17]
+[ext_resource path="res://Sprites/esc_menu/跑步-04.png" type="Texture2D" id=18]
+[ext_resource path="res://Sprites/esc_menu/Option-02.png" type="Texture2D" id=19]
+[ext_resource path="res://Sprites/esc_menu/拆字_全-06.png" type="Texture2D" id=20]
+[ext_resource path="res://Shader/whirl.gdshader" type="Shader" id=21]
+[ext_resource path="res://Shader/white.png" type="Texture2D" id=22]
+[ext_resource path="res://Sprites/ch2_fake_entry/fake_entry.png" type="Texture2D" id=23]
+[ext_resource path="res://Shader/whirl2.gdshader" type="Shader" id=24]
+[ext_resource path="res://Shader/shake.gdshader" type="Shader" id=25]
+[ext_resource path="res://Scenes/UI/DebugConsole.tscn" type="PackedScene" id=26]
+
+[sub_resource type="Animation" id=1]
+length = 0.4
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("FadePanel:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.4 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 1 ), Color( 0, 0, 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "FadeInWhite"
+length = 0.4
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("FadePanel:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.4 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 0, 0, 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=3]
+length = 0.4
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("FadePanel:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.4 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 0 ), Color( 0, 0, 0, 1 ) ]
+}
+
+[sub_resource type="Animation" id=4]
+resource_name = "FadeOutWhite"
+length = 0.4
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("FadePanel:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.4 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=5]
+tracks/0/type = "value"
+tracks/0/path = NodePath("ScreenEffect:material:shader_parameter/rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 0.0, 30.0 ]
+}
+
+[sub_resource type="Animation" id=6]
+tracks/0/type = "value"
+tracks/0/path = NodePath("ScreenEffect:material:shader_parameter/rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 30.0, 0.0 ]
+}
+
+[sub_resource type="Animation" id=7]
+tracks/0/type = "value"
+tracks/0/path = NodePath("ColorRect:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0 ),
+"transitions": PackedFloat32Array( 1 ),
+"update": 0,
+"values": [ Vector2( 660, 60 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("ColorRect:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=8]
+length = 1.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("ColorRect:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ Vector2( 660, 60 ), Vector2( 600, 60 ), Vector2( 540, 60 ), Vector2( 480, 60 ), Vector2( 420, 60 ), Vector2( 360, 60 ), Vector2( 300, 60 ), Vector2( 240, 60 ), Vector2( 180, 60 ), Vector2( 120, 60 ), Vector2( 60, 60 ), Vector2( 0, 60 ) ]
+}
+
+[sub_resource type="Animation" id=9]
+length = 1.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("ColorRect:size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.2, 0.4, 0.6, 0.8, 1.5 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ Vector2( 240, 60 ), Vector2( 180, 60 ), Vector2( 120, 60 ), Vector2( 60, 60 ), Vector2( 0, 60 ), Vector2( 240, 60 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 0.05, 1.4, 1.5 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[sub_resource type="Animation" id=10]
+length = 3.2
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/path = NodePath("方向鍵/方向鍵-03:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1, 1.3, 2.9, 3.2 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("方向鍵/WASD-03:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 1.3, 1.6, 2.6, 2.9 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[sub_resource type="Animation" id=11]
+length = 3.2
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/path = NodePath("互動/space-04:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1, 1.3, 2.9, 3.2 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("互動/enter-08:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 1.3, 1.6, 2.6, 2.9 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[sub_resource type="Animation" id=12]
+length = 3.2
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/path = NodePath("重置＆繁簡/重置:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1, 1.3, 2.9, 3.2 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("重置＆繁簡/繁簡:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 1.3, 1.6, 2.6, 2.9 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[sub_resource type="Animation" id=13]
+length = 3.2
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/path = NodePath("刪字/backspace-02:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1, 1.3, 2.9, 3.2 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("刪字/delete-04:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 1.3, 1.6, 2.6, 2.9 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[sub_resource type="Animation" id=14]
+length = 3.2
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/path = NodePath("方向鍵/方向鍵-03:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1, 1.3, 2.9, 3.2 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("方向鍵/WASD-03:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 1.3, 1.6, 2.6, 2.9 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[sub_resource type="Animation" id=15]
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[sub_resource type="Animation" id=16]
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="ShaderMaterial" id=17]
+shader = ExtResource( 21 )
+shader_parameter/rotation = 0.0
+
+[sub_resource type="Animation" id=18]
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:material:shader_parameter/rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1 ),
+"transitions": PackedFloat32Array( 1, 0.999999 ),
+"update": 0,
+"values": [ 0.0, 50.0 ]
+}
+
+[sub_resource type="ShaderMaterial" id=19]
+shader = ExtResource( 24 )
+shader_parameter/pixels = 1920.0
+shader_parameter/frequency = 60.0
+shader_parameter/depth = 0.0
+shader_parameter/rotation = 0.0
+shader_parameter/center = Vector2( 0.5, 0.5 )
+shader_parameter/time = 0.0
+
+[sub_resource type="Animation" id=20]
+length = 1.5
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:material:shader_parameter/depth")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 1.5 ),
+"transitions": PackedFloat32Array( 1.7411, 1 ),
+"update": 0,
+"values": [ 0.0, 0.02 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:material:shader_parameter/rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PackedFloat32Array( 0, 1.5 ),
+"transitions": PackedFloat32Array( 3.73213, 1 ),
+"update": 0,
+"values": [ 0.0, 6.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:material:shader_parameter/time")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PackedFloat32Array( 1, 1.5 ),
+"transitions": PackedFloat32Array( 1, 1 ),
+"update": 0,
+"values": [ 0.0, 1.0 ]
+}
+
+[sub_resource type="ShaderMaterial" id=21]
+shader = ExtResource( 25 )
+shader_parameter/frequency = 20.0
+shader_parameter/depth = 0.5
+
+[node name="UI" type="CanvasLayer"]
+process_mode = 3
+layer = 20
+script = ExtResource( 1 )
+
+[node name="FadePanel" type="ColorRect" parent="."]
+modulate = Color( 0, 0, 0, 0 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+playback_speed = 0.4
+anims/FadeIn = SubResource( 1 )
+anims/FadeInWhite = SubResource( 2 )
+anims/FadeOut = SubResource( 3 )
+anims/FadeOutWhite = SubResource( 4 )
+anims/whirlIn = SubResource( 5 )
+anims/whirlOut = SubResource( 6 )
+
+[node name="FadePanelForAction" type="ColorRect" parent="."]
+modulate = Color( 0, 0, 0, 0 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="上下橫條" type="Node2D" parent="."]
+
+[node name="UI上邊界" type="ColorRect" parent="上下橫條"]
+offset_right = 1920.0
+offset_bottom = 60.0
+color = Color( 0.117647, 0.117647, 0.117647, 1 )
+
+[node name="UI下邊界" type="ColorRect" parent="上下橫條"]
+offset_top = 1140.0
+offset_right = 1920.0
+offset_bottom = 1200.0
+color = Color( 0.117647, 0.117647, 0.117647, 1 )
+
+[node name="提示區" type="Node2D" parent="上下橫條"]
+
+[node name="esc提示" type="Node2D" parent="上下橫條/提示區"]
+position = Vector2( 0, 1140 )
+
+[node name="WordSprite" parent="上下橫條/提示區/esc提示" instance=ExtResource( 2 )]
+position = Vector2( 30, 30 )
+texture = null
+text = "按下ＥＳＣ沉思一下吧。"
+text_color = Color( 0.529412, 0.529412, 0.529412, 1 )
+has_background = false
+
+[node name="ColorRect" type="ColorRect" parent="上下橫條/提示區/esc提示"]
+offset_left = 660.0
+offset_top = 60.0
+offset_right = 1320.0
+offset_bottom = 120.0
+rotation = 3.141593
+color = Color( 0.117647, 0.117647, 0.117647, 1 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="上下橫條/提示區/esc提示"]
+anims/hide_hint = SubResource( 7 )
+anims/show_hint = SubResource( 8 )
+
+[node name="存檔提示" type="Node2D" parent="上下橫條/提示區"]
+modulate = Color( 1, 1, 1, 0 )
+position = Vector2( 1680, 0 )
+
+[node name="WordSprite" parent="上下橫條/提示區/存檔提示" instance=ExtResource( 2 )]
+position = Vector2( 30, 30 )
+texture = null
+text = "√已存檔"
+text_color = Color( 0.529412, 0.529412, 0.529412, 1 )
+has_background = false
+
+[node name="ColorRect" type="ColorRect" parent="上下橫條/提示區/存檔提示"]
+offset_left = 240.0
+offset_top = 60.0
+offset_right = 480.0
+offset_bottom = 120.0
+rotation = 3.141593
+color = Color( 0.117647, 0.117647, 0.117647, 1 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="上下橫條/提示區/存檔提示"]
+anims/show_hint = SubResource( 9 )
+
+[node name="Esc介面提示區" type="Node2D" parent="上下橫條"]
+modulate = Color( 1, 1, 1, 0 )
+
+[node name="UI上邊界3" type="ColorRect" parent="上下橫條/Esc介面提示區"]
+offset_right = 1920.0
+offset_bottom = 60.0
+color = Color( 0.117647, 0.117647, 0.117647, 1 )
+
+[node name="UI下邊界3" type="ColorRect" parent="上下橫條/Esc介面提示區"]
+offset_top = 1140.0
+offset_right = 1920.0
+offset_bottom = 1200.0
+color = Color( 0.117647, 0.117647, 0.117647, 1 )
+
+[node name="跑步" type="Node2D" parent="上下橫條/Esc介面提示區"]
+position = Vector2( 900, 1140 )
+
+[node name="WordSprite" parent="上下橫條/Esc介面提示區/跑步" instance=ExtResource( 2 )]
+position = Vector2( 30, 30 )
+texture = null
+text = "跑步："
+text_color = Color( 0.756863, 0.756863, 0.756863, 1 )
+has_background = false
+
+[node name="跑步-03" type="Sprite2D" parent="上下橫條/Esc介面提示區/跑步"]
+texture = ExtResource( 3 )
+centered = false
+
+[node name="移動" type="Node2D" parent="上下橫條/Esc介面提示區"]
+position = Vector2( 0, 1140 )
+
+[node name="WordSprite2" parent="上下橫條/Esc介面提示區/移動" instance=ExtResource( 2 )]
+position = Vector2( 30, 30 )
+texture = null
+text = "移動："
+text_color = Color( 0.756863, 0.756863, 0.756863, 1 )
+has_background = false
+
+[node name="移動-01" type="Sprite2D" parent="上下橫條/Esc介面提示區/移動"]
+visible = false
+texture = ExtResource( 4 )
+centered = false
+
+[node name="方向鍵" type="Node2D" parent="上下橫條/Esc介面提示區/移動"]
+position = Vector2( 180, 0 )
+
+[node name="方向鍵-03" type="Sprite2D" parent="上下橫條/Esc介面提示區/移動/方向鍵"]
+texture = ExtResource( 5 )
+centered = false
+
+[node name="WASD-03" type="Sprite2D" parent="上下橫條/Esc介面提示區/移動/方向鍵"]
+modulate = Color( 1, 1, 1, 0 )
+texture = ExtResource( 6 )
+centered = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="上下橫條/Esc介面提示區/移動/方向鍵" groups=["hint_ani"]]
+root_node = NodePath("../..")
+autoplay = "New Anim"
+"anims/New Anim" = SubResource( 10 )
+
+[node name="互動" type="Node2D" parent="上下橫條/Esc介面提示區"]
+position = Vector2( 480, 1140 )
+
+[node name="WordSprite3" parent="上下橫條/Esc介面提示區/互動" instance=ExtResource( 2 )]
+position = Vector2( 30, 30 )
+texture = null
+text = "互動："
+text_color = Color( 0.756863, 0.756863, 0.756863, 1 )
+has_background = false
+
+[node name="互動-04" type="Sprite2D" parent="上下橫條/Esc介面提示區/互動"]
+visible = false
+texture = ExtResource( 7 )
+centered = false
+
+[node name="space-04" type="Sprite2D" parent="上下橫條/Esc介面提示區/互動"]
+position = Vector2( 180, 0 )
+texture = ExtResource( 8 )
+centered = false
+
+[node name="enter-08" type="Sprite2D" parent="上下橫條/Esc介面提示區/互動"]
+modulate = Color( 1, 1, 1, 0 )
+position = Vector2( 180, 0 )
+texture = ExtResource( 9 )
+centered = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="上下橫條/Esc介面提示區/互動" groups=["hint_ani"]]
+root_node = NodePath("../..")
+autoplay = "New Anim"
+"anims/New Anim" = SubResource( 11 )
+
+[node name="重置＆繁簡" type="Node2D" parent="上下橫條/Esc介面提示區"]
+position = Vector2( 1440, 1140 )
+
+[node name="重置" type="Node2D" parent="上下橫條/Esc介面提示區/重置＆繁簡"]
+position = Vector2( 60, 0 )
+
+[node name="WordSprite4" parent="上下橫條/Esc介面提示區/重置＆繁簡/重置" instance=ExtResource( 2 )]
+position = Vector2( 30, 30 )
+texture = null
+text = "重置："
+text_color = Color( 0.756863, 0.756863, 0.756863, 1 )
+has_background = false
+
+[node name="重置_win" type="Sprite2D" parent="上下橫條/Esc介面提示區/重置＆繁簡/重置"]
+texture = ExtResource( 10 )
+centered = false
+
+[node name="重置_mac" type="Sprite2D" parent="上下橫條/Esc介面提示區/重置＆繁簡/重置"]
+visible = false
+texture = ExtResource( 11 )
+centered = false
+
+[node name="繁簡" type="Node2D" parent="上下橫條/Esc介面提示區/重置＆繁簡"]
+modulate = Color( 1, 1, 1, 0 )
+
+[node name="WordSprite" parent="上下橫條/Esc介面提示區/重置＆繁簡/繁簡" instance=ExtResource( 2 )]
+position = Vector2( 30, 30 )
+texture = null
+text = "繁／簡體轉換："
+text_color = Color( 0.756863, 0.756863, 0.756863, 1 )
+has_background = false
+
+[node name="Ｘ字鍵-04" type="Sprite2D" parent="上下橫條/Esc介面提示區/重置＆繁簡/繁簡"]
+position = Vector2( 420, 0 )
+texture = ExtResource( 12 )
+centered = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="上下橫條/Esc介面提示區/重置＆繁簡" groups=["hint_ani"]]
+root_node = NodePath("../..")
+autoplay = "New Anim"
+"anims/New Anim" = SubResource( 12 )
+
+[node name="繁簡" type="Node2D" parent="上下橫條/Esc介面提示區"]
+visible = false
+position = Vector2( 1440, 1140 )
+
+[node name="WordSprite" parent="上下橫條/Esc介面提示區/繁簡" instance=ExtResource( 2 )]
+position = Vector2( 30, 30 )
+texture = null
+text = "繁／簡體轉換："
+text_color = Color( 0.756863, 0.756863, 0.756863, 1 )
+has_background = false
+
+[node name="Ｘ字鍵-04" type="Sprite2D" parent="上下橫條/Esc介面提示區/繁簡"]
+position = Vector2( 420, 0 )
+texture = ExtResource( 12 )
+centered = false
+
+[node name="刪字" type="Node2D" parent="上下橫條/Esc介面提示區"]
+
+[node name="WordSprite5" parent="上下橫條/Esc介面提示區/刪字" instance=ExtResource( 2 )]
+position = Vector2( 30, 30 )
+texture = null
+text = "刪字："
+text_color = Color( 0.756863, 0.756863, 0.756863, 1 )
+has_background = false
+
+[node name="刪字-04" type="Sprite2D" parent="上下橫條/Esc介面提示區/刪字"]
+visible = false
+texture = ExtResource( 13 )
+centered = false
+
+[node name="delete-04" type="Sprite2D" parent="上下橫條/Esc介面提示區/刪字"]
+modulate = Color( 1, 1, 1, 0 )
+position = Vector2( 180, 0 )
+texture = ExtResource( 14 )
+centered = false
+
+[node name="backspace-02" type="Sprite2D" parent="上下橫條/Esc介面提示區/刪字"]
+position = Vector2( 180, 0 )
+texture = ExtResource( 15 )
+centered = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="上下橫條/Esc介面提示區/刪字" groups=["hint_ani"]]
+root_node = NodePath("../..")
+autoplay = "New Anim"
+"anims/New Anim" = SubResource( 13 )
+
+[node name="推字" type="Node2D" parent="上下橫條/Esc介面提示區"]
+position = Vector2( 540, 0 )
+
+[node name="推字-08" parent="上下橫條/Esc介面提示區/推字" instance=ExtResource( 2 )]
+position = Vector2( 30, 30 )
+texture = null
+text = "推字："
+text_color = Color( 0.756863, 0.756863, 0.756863, 1 )
+has_background = false
+
+[node name="推字組字-03" parent="上下橫條/Esc介面提示區/推字" instance=ExtResource( 2 )]
+visible = false
+position = Vector2( 30, 30 )
+texture = null
+text = "推字／組字："
+text_color = Color( 0.756863, 0.756863, 0.756863, 1 )
+has_background = false
+
+[node name="推字-0" type="Sprite2D" parent="上下橫條/Esc介面提示區/推字"]
+visible = false
+texture = ExtResource( 16 )
+centered = false
+
+[node name="推字組字-0" type="Sprite2D" parent="上下橫條/Esc介面提示區/推字"]
+visible = false
+texture = ExtResource( 17 )
+centered = false
+
+[node name="方向鍵" type="Node2D" parent="上下橫條/Esc介面提示區/推字"]
+position = Vector2( 180, 0 )
+
+[node name="方向鍵-03" type="Sprite2D" parent="上下橫條/Esc介面提示區/推字/方向鍵"]
+texture = ExtResource( 5 )
+centered = false
+
+[node name="WASD-03" type="Sprite2D" parent="上下橫條/Esc介面提示區/推字/方向鍵"]
+modulate = Color( 1, 1, 1, 0 )
+texture = ExtResource( 6 )
+centered = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="上下橫條/Esc介面提示區/推字/方向鍵" groups=["hint_ani"]]
+root_node = NodePath("../..")
+autoplay = "New Anim"
+"anims/New Anim" = SubResource( 14 )
+
+[node name="拉字" type="Node2D" parent="上下橫條/Esc介面提示區"]
+position = Vector2( 1020, 0 )
+
+[node name="WordSprite7" parent="上下橫條/Esc介面提示區/拉字" instance=ExtResource( 2 )]
+position = Vector2( 30, 30 )
+texture = null
+text = "拉字："
+text_color = Color( 0.756863, 0.756863, 0.756863, 1 )
+has_background = false
+
+[node name="拉字_win" type="Sprite2D" parent="上下橫條/Esc介面提示區/拉字"]
+visible = false
+texture = ExtResource( 18 )
+centered = false
+
+[node name="拉字_mac" type="Sprite2D" parent="上下橫條/Esc介面提示區/拉字"]
+position = Vector2( 180, 0 )
+texture = ExtResource( 19 )
+centered = false
+
+[node name="拆字" type="Node2D" parent="上下橫條/Esc介面提示區"]
+position = Vector2( 1620, 0 )
+
+[node name="WordSprite8" parent="上下橫條/Esc介面提示區/拆字" instance=ExtResource( 2 )]
+position = Vector2( 30, 30 )
+texture = null
+text = "拆字："
+text_color = Color( 0.756863, 0.756863, 0.756863, 1 )
+has_background = false
+
+[node name="拆字_全-06" type="Sprite2D" parent="上下橫條/Esc介面提示區/拆字"]
+texture = ExtResource( 20 )
+centered = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="上下橫條/Esc介面提示區"]
+anims/hide_hint = SubResource( 15 )
+anims/show_hint = SubResource( 16 )
+
+[node name="事件執行中暗15%" type="ColorRect" parent="."]
+visible = false
+offset_right = 1920.0
+offset_bottom = 1200.0
+color = Color( 0, 0, 0, 0 )
+
+[node name="螢幕整體暗度調整" type="ColorRect" parent="."]
+offset_top = 60.0
+offset_right = 1920.0
+offset_bottom = 1140.0
+color = Color( 0, 0, 0, 0.196078 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ScreenEffect" type="Sprite2D" parent="."]
+visible = false
+material = SubResource( 17 )
+position = Vector2( 960, 600 )
+scale = Vector2( 30, 18.75 )
+z_index = 1000
+texture = ExtResource( 22 )
+
+[node name="EffectPlayer" type="AnimationPlayer" parent="ScreenEffect"]
+anims/whirl = SubResource( 18 )
+
+[node name="test" type="Sprite2D" parent="."]
+visible = false
+position = Vector2( 960, 540 )
+texture = ExtResource( 23 )
+
+[node name="ScreenEffect2" type="Sprite2D" parent="."]
+material = SubResource( 19 )
+position = Vector2( 960, 600 )
+scale = Vector2( 30, 18.75 )
+z_index = 1000
+texture = ExtResource( 22 )
+
+[node name="EffectPlayer" type="AnimationPlayer" parent="ScreenEffect2"]
+anims/whirl = SubResource( 20 )
+
+[node name="ShakeEffect" type="Sprite2D" parent="."]
+visible = false
+material = SubResource( 21 )
+position = Vector2( 960, 600 )
+scale = Vector2( 30, 18.75 )
+z_index = 1000
+texture = ExtResource( 22 )
+
+[node name="DebugConsole" parent="." instance=ExtResource( 26 )]

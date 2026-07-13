@@ -1,0 +1,64 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Scenes/SlimeMoveDemo.gd" id="1_demo"]
+[ext_resource type="PackedScene" path="res://Scenes/Events/WordSprite.tscn" id="2_word"]
+[ext_resource type="Animation" path="res://Scenes/Animations/slime_move.tres" id="3_slime_move"]
+
+[sub_resource type="Animation" id="Animation_RESET"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("WordSprite:offset")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("WordSprite:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("WordSprite:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(30, 30)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_slime"]
+_data = {
+"RESET": SubResource("Animation_RESET"),
+"slime_move": ExtResource("3_slime_move")
+}
+
+[node name="SlimeMoveDemo" type="Node2D"]
+script = ExtResource("1_demo")
+
+[node name="Slime" type="Node2D" parent="."]
+
+[node name="WordSprite" parent="Slime" instance=ExtResource("2_word")]
+position = Vector2(30, 30)
+text = "史"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Slime"]
+libraries = {
+"": SubResource("AnimationLibrary_slime")
+}

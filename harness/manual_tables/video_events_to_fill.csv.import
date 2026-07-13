@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://blh4e7evt46gn"
+
+[deps]
+
+files=["res://harness/manual_tables/video_events_to_fill.level.translation", "res://harness/manual_tables/video_events_to_fill.video.translation", "res://harness/manual_tables/video_events_to_fill.event.translation", "res://harness/manual_tables/video_events_to_fill.source.translation", "res://harness/manual_tables/video_events_to_fill.known.translation", "res://harness/manual_tables/video_events_to_fill.fill.translation", "res://harness/manual_tables/video_events_to_fill.fill.translation", "res://harness/manual_tables/video_events_to_fill.fill.translation", "res://harness/manual_tables/video_events_to_fill.fill.translation", "res://harness/manual_tables/video_events_to_fill.fill.translation", "res://harness/manual_tables/video_events_to_fill.fill.translation", "res://harness/manual_tables/video_events_to_fill.fill.translation", "res://harness/manual_tables/video_events_to_fill.status.translation"]
+
+source_file="res://harness/manual_tables/video_events_to_fill.csv"
+dest_files=["res://harness/manual_tables/video_events_to_fill.level.translation", "res://harness/manual_tables/video_events_to_fill.video.translation", "res://harness/manual_tables/video_events_to_fill.event.translation", "res://harness/manual_tables/video_events_to_fill.source.translation", "res://harness/manual_tables/video_events_to_fill.known.translation", "res://harness/manual_tables/video_events_to_fill.fill.translation", "res://harness/manual_tables/video_events_to_fill.fill.translation", "res://harness/manual_tables/video_events_to_fill.fill.translation", "res://harness/manual_tables/video_events_to_fill.fill.translation", "res://harness/manual_tables/video_events_to_fill.fill.translation", "res://harness/manual_tables/video_events_to_fill.fill.translation", "res://harness/manual_tables/video_events_to_fill.fill.translation", "res://harness/manual_tables/video_events_to_fill.status.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

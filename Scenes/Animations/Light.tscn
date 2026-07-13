@@ -1,0 +1,43 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Shader/radius_gradient.gdshader" type="Shader" id=1]
+
+[sub_resource type="Gradient" id=1]
+offsets = PackedFloat32Array( 0, 0.729665, 1 )
+colors = PackedColorArray( 1, 1, 1, 0, 1, 1, 1, 0.372549, 1, 1, 1, 0.486275 )
+
+[sub_resource type="GradientTexture2D" id=2]
+gradient = SubResource( 1 )
+width = 60
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = ExtResource( 1 )
+shader_parameter/pixels = 60.0
+shader_parameter/gradient = SubResource( 2 )
+
+[sub_resource type="Animation" id=4]
+resource_name = "light_up"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PackedFloat32Array( 0, 0.2, 0.5, 1.1, 2 ),
+"transitions": PackedFloat32Array( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[node name="light" type="Sprite2D"]
+modulate = Color( 1, 1, 1, 0 )
+material = SubResource( 3 )
+position = Vector2( 30, 30 )
+scale = Vector2( 2, 120 )
+z_index = 21
+texture = SubResource( 2 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/light_up = SubResource( 4 )

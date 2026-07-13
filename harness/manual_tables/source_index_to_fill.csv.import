@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://gu25bpxjofg4"
+
+[deps]
+
+files=["res://harness/manual_tables/source_index_to_fill.level.translation", "res://harness/manual_tables/source_index_to_fill.resource.translation", "res://harness/manual_tables/source_index_to_fill.resource.translation", "res://harness/manual_tables/source_index_to_fill.resource.translation", "res://harness/manual_tables/source_index_to_fill.matched.translation", "res://harness/manual_tables/source_index_to_fill.file.translation", "res://harness/manual_tables/source_index_to_fill.fill.translation", "res://harness/manual_tables/source_index_to_fill.fill.translation", "res://harness/manual_tables/source_index_to_fill.fill.translation", "res://harness/manual_tables/source_index_to_fill.fill.translation", "res://harness/manual_tables/source_index_to_fill.fill.translation", "res://harness/manual_tables/source_index_to_fill.fill.translation", "res://harness/manual_tables/source_index_to_fill.fill.translation", "res://harness/manual_tables/source_index_to_fill.fill.translation", "res://harness/manual_tables/source_index_to_fill.status.translation"]
+
+source_file="res://harness/manual_tables/source_index_to_fill.csv"
+dest_files=["res://harness/manual_tables/source_index_to_fill.level.translation", "res://harness/manual_tables/source_index_to_fill.resource.translation", "res://harness/manual_tables/source_index_to_fill.resource.translation", "res://harness/manual_tables/source_index_to_fill.resource.translation", "res://harness/manual_tables/source_index_to_fill.matched.translation", "res://harness/manual_tables/source_index_to_fill.file.translation", "res://harness/manual_tables/source_index_to_fill.fill.translation", "res://harness/manual_tables/source_index_to_fill.fill.translation", "res://harness/manual_tables/source_index_to_fill.fill.translation", "res://harness/manual_tables/source_index_to_fill.fill.translation", "res://harness/manual_tables/source_index_to_fill.fill.translation", "res://harness/manual_tables/source_index_to_fill.fill.translation", "res://harness/manual_tables/source_index_to_fill.fill.translation", "res://harness/manual_tables/source_index_to_fill.fill.translation", "res://harness/manual_tables/source_index_to_fill.status.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

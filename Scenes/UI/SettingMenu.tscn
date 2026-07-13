@@ -1,0 +1,380 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Scenes/Events/WordSprite.tscn" type="PackedScene" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+var _compat_tween
+
+@onready var items = [
+	$option_se,
+	$option_bgm,
+	$option_light,
+	$option_fullscreen,
+	$option_skin,
+	$option_simple,
+	$back
+]
+
+func _ready():
+	refresh_option_text()
+
+var is_pausing = false
+
+var now_select_index = 0
+
+func _input(event):
+	if !visible: return
+	if is_pausing: return
+	
+	if(Input.is_action_just_pressed(\"ui_down\")):
+		move_cursor(2)
+	if(Input.is_action_just_pressed(\"ui_left\")):
+		move_cursor(4)
+	if(Input.is_action_just_pressed(\"ui_right\")):
+		move_cursor(6)
+	if(Input.is_action_just_pressed(\"ui_up\")):
+		move_cursor(8)
+	if(Input.is_action_just_pressed(\"ui_cancel\") || Input.is_action_just_pressed(\"ui_joy_cancel\")):
+		play_cancel_se()
+		close()
+	if(Input.is_action_just_pressed(\"ui_accept\")):
+		refresh_option_text()
+		match now_select_index:
+			0:
+				play_adjust_se()
+				add_se_level()
+			1:
+				play_adjust_se()
+				add_bgm_level()
+			2:
+				play_adjust_se()
+				add_light_level()
+			3:
+				play_adjust_se()
+				toggle_fullscreen_mode()
+			4:
+				play_adjust_se()
+				switch_skin()
+			5:
+				play_adjust_se()
+				toggle_ts_mode()
+			6:
+				play_click_se()
+				close()
+
+
+var select_index_before_bottom
+func move_cursor(d):
+	if Global.is_steam_lang_zh:
+		match d:
+			2:
+				if now_select_index in [0,1,3]:
+					now_select_index += 1
+				elif now_select_index in [2,4]:
+					select_index_before_bottom = now_select_index
+					now_select_index = 6
+			4:
+				if now_select_index in [3,4]:
+					now_select_index -= 3
+			6:
+				if now_select_index in [0,1]:
+					now_select_index += 3
+				elif now_select_index == 2:
+					now_select_index = 4
+			8:
+				if now_select_index in [1,2,4]:
+					now_select_index -= 1
+				elif now_select_index == 6:
+					now_select_index = select_index_before_bottom
+	else:
+		match d:
+			2:
+				if now_select_index in [0,1,3,4]:
+					now_select_index += 1
+				elif now_select_index in [2,5]:
+					select_index_before_bottom = now_select_index
+					now_select_index = 6
+			4:
+				if now_select_index in [3,4,5]:
+					now_select_index -= 3
+			6:
+				if now_select_index in [0,1,2]:
+					now_select_index += 3
+			8:
+				if now_select_index in [1,2,4,5]:
+					now_select_index -= 1
+				elif now_select_index == 6:
+					now_select_index = select_index_before_bottom
+	
+	toggle_option_simple_info(now_select_index == 5)
+	
+	update_cursor_pos()
+	play_walking_se()
+
+func update_cursor_pos():
+	var pos = items[now_select_index].position - Vector2(60,0)
+	$cursor.position = pos
+
+func add_se_level():
+	Global.settings.se_level += 1
+	Global.settings.se_level = int(Global.settings.se_level) % 6
+	Global.save_settings()
+	
+	refresh_option_text()
+	pass
+func add_bgm_level():
+	Global.settings.bgm_level += 1
+	Global.settings.bgm_level = int(Global.settings.bgm_level) % 6
+	Global.save_settings()
+	
+	refresh_option_text()
+	pass
+func add_light_level():
+	Global.settings.light_level += 1
+	Global.settings.light_level = int(Global.settings.light_level) % 3
+	Global.save_settings()
+	
+	refresh_option_text()
+	pass
+
+var ttt = false
+
+func switch_skin():
+#	if !ttt:
+#		Global.skins_state = \"\"
+#		Global.settings.skin = 0
+#		refresh_option_text()
+#		ttt = true
+	
+	var skin_state = 0
+	# 0:沒, 1:集資, 2:集資+狗
+	
+	if !OS.has_feature(\"standalone\") && 1==0:
+		skin_state = 2
+	else:
+		if Global.skins_state == \"\":
+			is_pausing = true
+			$option_skin/option_content.text = \"連線中⋯\"
+			Global.check_skins_state()
+			await Global.get_skins_state_finished
+			is_pausing = false
+			
+		if Global.skins_state != \"\":
+			skin_state = int(Global.skins_state[len(Global.skins_state)-1])
+	
+	if skin_state == 0:
+		$option_skin/option_content.text = \"未認證\"
+		Global.settings.skin = 0
+		Global.save_settings()
+		return
+	
+	var has_dog = (skin_state in [2,3])
+	var has_fund = (skin_state in [1,2])
+	
+	var now_skin = int(Global.settings.get(\"skin\", 0))
+	
+	var skins = [0,1,2]
+	if !has_dog:
+		skins.erase(1)
+	if !has_fund:
+		skins.erase(2)
+		
+	var now_skin_index = skins.find(now_skin)
+	
+	Global.settings.skin = skins[(now_skin_index + 1) % len(skins)]
+	Global.save_settings()
+	
+	refresh_option_text()
+	pass
+	
+	
+func toggle_fullscreen_mode():
+	Global.settings.fullscreen = 1 - Global.settings.get(\"fullscreen\", 1)
+	Global.save_settings()
+	
+	refresh_option_text()
+	pass
+
+
+func toggle_ts_mode():
+	Global.settings.has_ts_mode = 1 - Global.settings.get(\"has_ts_mode\", 0)
+	if !Global.settings.has_ts_mode:
+		Global.is_simplified = false
+	Global.save_settings()
+	
+	refresh_option_text()
+	pass
+
+func refresh_option_text():
+	if Global.is_steam_lang_zh:
+		$option_simple.visible = false
+	
+	$option_se/option_content.text = [\"無\",\"微\",\"小\",\"中\",\"大\",\"巨\"][Global.settings.se_level]
+	$option_bgm/option_content.text = [\"無\",\"微\",\"小\",\"中\",\"大\",\"巨\"][Global.settings.bgm_level]
+	$option_light/option_content.text = [\"暗\",\"中\",\"亮\"][Global.settings.light_level]
+	$option_fullscreen/option_content.text = [\"視窗化\",\"全螢幕\"][Global.settings.get(\"fullscreen\",1)]
+	if $option_skin/option_content.text != \"未認證\":
+		$option_skin/option_content.text = [\"一般跑\",\"狗偷跑\",\"集資跑\"][Global.settings.get(\"skin\",0)]
+	$option_simple/option_content.text = [\"關\",\"開\"][Global.settings.get(\"has_ts_mode\",0)]
+
+func toggle_option_simple_info(on):
+	var tween = create_tween()
+	tween.set_parallel(true)
+	var info = $option_simple/option_info
+	
+	var a = [0,1][int(on)]
+	tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(info, \"modulate:a\", a, 0.3).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN_OUT)
+var walking_foot_cycle = false
+func play_walking_se():
+	var r = randi()%6+2
+	var db = -10
+	var pan
+	if walking_foot_cycle:
+		pan = -0.3
+	else:
+		pan = 0.3
+	walking_foot_cycle = !walking_foot_cycle
+	
+	Sound.play_se(\"res://Sounds/se/footstep_\"+str(r)+\".wav\", db, pan)
+
+
+func play_typing_se():
+	Sound.play_typing_se()
+
+func play_click_se():
+	Sound.play_se(\"res://Sounds/se/typerwriter_feedpaper_2.wav\")
+
+func play_adjust_se():
+	Sound.play_se(\"res://Sounds/se/system/SE_S_26_adjust_A.wav\")
+
+func play_cancel_se():
+	Sound.play_se(\"res://Sounds/se/system/SE_S_25_cancel.wav\")
+
+
+func open():
+	now_select_index = 0
+	update_cursor_pos()
+	visible = true
+
+signal closed
+func close():
+	now_select_index = 0
+	visible = false
+	emit_signal(\"closed\")
+"
+
+[node name="SettingMenu" type="Node2D"]
+position = Vector2( 0, 60 )
+script = SubResource( 1 )
+
+[node name="background" type="Node2D" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="background"]
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="title" type="Node2D" parent="."]
+position = Vector2( 840, 180 )
+
+[node name="WordSprite" parent="title" instance=ExtResource( 1 )]
+position = Vector2( 30, 30 )
+text = "調整設定"
+
+[node name="option_se" type="Node2D" parent="."]
+position = Vector2( 420, 420 )
+
+[node name="option_title" parent="option_se" instance=ExtResource( 1 )]
+position = Vector2( 30, 30 )
+text = "設定系統音效："
+
+[node name="option_content" parent="option_se" instance=ExtResource( 1 )]
+position = Vector2( 450, 30 )
+text = "中"
+
+[node name="option_bgm" type="Node2D" parent="."]
+position = Vector2( 420, 540 )
+
+[node name="option_title" parent="option_bgm" instance=ExtResource( 1 )]
+position = Vector2( 30, 30 )
+text = "設定背景音樂："
+
+[node name="option_content" parent="option_bgm" instance=ExtResource( 1 )]
+position = Vector2( 450, 30 )
+text = "中"
+
+[node name="option_light" type="Node2D" parent="."]
+position = Vector2( 420, 660 )
+
+[node name="option_title" parent="option_light" instance=ExtResource( 1 )]
+position = Vector2( 30, 30 )
+text = "設定畫面亮度："
+
+[node name="option_content" parent="option_light" instance=ExtResource( 1 )]
+position = Vector2( 450, 30 )
+text = "中"
+
+[node name="option_fullscreen" type="Node2D" parent="."]
+position = Vector2( 1020, 420 )
+
+[node name="option_title" parent="option_fullscreen" instance=ExtResource( 1 )]
+position = Vector2( 30, 30 )
+text = "調整畫面："
+
+[node name="option_content" parent="option_fullscreen" groups=["cn_text:螢屏"] instance=ExtResource( 1 )]
+position = Vector2( 330, 30 )
+text = "全螢幕"
+
+[node name="option_skin" type="Node2D" parent="."]
+position = Vector2( 1020, 540 )
+
+[node name="option_title" parent="option_skin" instance=ExtResource( 1 )]
+position = Vector2( 30, 30 )
+text = "切換外觀："
+
+[node name="option_content" parent="option_skin" instance=ExtResource( 1 )]
+position = Vector2( 330, 30 )
+text = "一般跑"
+
+[node name="option_simple" type="Node2D" parent="."]
+position = Vector2( 1020, 660 )
+
+[node name="option_title" parent="option_simple" instance=ExtResource( 1 )]
+position = Vector2( 30, 30 )
+text = "簡體輔助功能："
+
+[node name="option_content" parent="option_simple" instance=ExtResource( 1 )]
+position = Vector2( 450, 30 )
+text = "關"
+
+[node name="option_info" parent="option_simple" instance=ExtResource( 1 )]
+modulate = Color( 1, 1, 1, 0 )
+position = Vector2( 150, 150 )
+text = "開啟後可隨時
+按下＿＿切換"
+text_color = Color( 0.466667, 0.466667, 0.466667, 1 )
+
+[node name="highlight" parent="option_simple/option_info" instance=ExtResource( 1 )]
+position = Vector2( 120, 60 )
+text = "Ｘ鍵"
+
+[node name="back" type="Node2D" parent="."]
+position = Vector2( 840, 840 )
+
+[node name="WordSprite" parent="back" instance=ExtResource( 1 )]
+position = Vector2( 30, 30 )
+text = "返回畫面"
+
+[node name="cursor" type="Node2D" parent="."]
+position = Vector2( 360, 420 )
+
+[node name="WordSprite" parent="cursor" instance=ExtResource( 1 )]
+position = Vector2( 30, 30 )
+text = "我"

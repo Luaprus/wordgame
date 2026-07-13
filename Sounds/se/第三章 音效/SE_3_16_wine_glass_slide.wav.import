@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bdspibvgs3f1s"
+path="res://.godot/imported/SE_3_16_wine_glass_slide.wav-b24c08fd8c072ae8a845fbb9447be62b.sample"
+
+[deps]
+
+source_file="res://Sounds/se/第三章 音效/SE_3_16_wine_glass_slide.wav"
+dest_files=["res://.godot/imported/SE_3_16_wine_glass_slide.wav-b24c08fd8c072ae8a845fbb9447be62b.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

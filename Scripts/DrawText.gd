@@ -1,7 +1,7 @@
 @tool
 extends Sprite2D
 
-const CELL_SIZE := 60.0
+const CELL_SIZE := float(GameConfigRules.CELL_SIZE.x)
 const FONT_SIZE := 54
 const FONT_SCALE := 1.12
 
@@ -44,6 +44,8 @@ signal draw_text_to_sprite_complete
 
 
 func _ready() -> void:
+	if not Engine.is_editor_hint() and texture == null and ResourceLoader.exists("res://Sprites/base_transparent.png"):
+		texture = load("res://Sprites/base_transparent.png")
 	queue_redraw()
 
 

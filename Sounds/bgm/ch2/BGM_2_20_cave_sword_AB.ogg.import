@@ -2,7 +2,7 @@
 
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
-uid="uid://bymky0kx3p2ya"
+uid="uid://gfju85k2007e"
 path="res://.godot/imported/BGM_2_20_cave_sword_AB.ogg-43be8eb4126da075089f1202128e45b9.oggvorbisstr"
 
 [deps]
@@ -12,8 +12,8 @@ dest_files=["res://.godot/imported/BGM_2_20_cave_sword_AB.ogg-43be8eb4126da07508
 
 [params]
 
-loop=false
-loop_offset=0
+loop=true
+loop_offset=25.8
 bpm=0
 beat_count=0
 bar_beats=4

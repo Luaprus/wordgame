@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Scenes/Ch4RiverFlowDemo.gd" id="1_demo"]
+[ext_resource type="PackedScene" path="res://Scenes/Animations/Ch4RiverFlow/Ch4RiverFlow.tscn" id="2_river"]
+[ext_resource type="AudioStream" path="res://Sounds/se/第四章 音效/ENV_4_37_stream.wav" id="3_stream_sound"]
+
+[node name="Ch4RiverFlowDemo" type="Node2D"]
+script = ExtResource("1_demo")
+
+[node name="River" parent="." instance=ExtResource("2_river")]
+position = Vector2(1020, 0)
+
+[node name="StreamAmbience" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_stream_sound")
+volume_db = -8.0
+autoplay = true

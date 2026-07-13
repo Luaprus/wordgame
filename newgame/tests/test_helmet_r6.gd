@@ -54,13 +54,26 @@ func test_r6_player_merges_with_bird_into_goose() -> void:
 	assert_equal(world.player_text, "鹅", "player becomes 鹅")
 	assert_equal(world.player_pos, Vector2i(7, 4), "goose stays under player control instead of teleporting")
 	assert_true(world.get_any_entity_at(Vector2i(7, 4)) == null, "鸟 disappears after merge")
-	assert_any_text(world, Vector2i(2, 9), "看", "goose merge keeps the hint text visible")
+	assert_true(world.get_any_entity_at(Vector2i(2, 7)) == null, "direct goose merge does not reveal creek hint")
+	assert_true(world.get_any_entity_at(Vector2i(2, 9)) == null, "direct goose merge keeps bird hint hidden")
 
 	world.player_pos = Vector2i(20, 5)
 	world.facing = Vector2i.RIGHT
 	var swim := world.try_move_player(Vector2i.RIGHT)
 	assert_true(swim.success, "goose can move through creek")
 	assert_equal(world.player_pos, Vector2i(21, 5), "goose steps onto the creek cell")
+
+	world = GridWorld.new()
+	world.load_level(HelmetR6.build_level())
+	world.player_pos = Vector2i(20, 5)
+	world.facing = Vector2i.RIGHT
+	assert_true(world.interact_front().success, "creek hint can be read before becoming goose")
+	assert_any_text(world, Vector2i(2, 9), "看", "creek hint appears before goose merge")
+	world.player_pos = Vector2i(7, 5)
+	world.facing = Vector2i.UP
+	assert_true(world.try_move_player(Vector2i.UP).success, "player can still merge after reading creek hint")
+	assert_equal(world.player_text, "鹅", "player becomes goose after reading hint")
+	assert_any_text(world, Vector2i(2, 9), "看", "existing creek hint remains after goose merge")
 
 func assert_equal(actual, expected, message: String) -> void:
 	if actual != expected:

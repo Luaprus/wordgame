@@ -1,0 +1,177 @@
+{
+  "level_id": "ch2_sword_tutorial",
+  "display_name": "第二章 05_聖劍寶庫_復刻：圣剑流程、史莱姆后衔接再战蛇妖",
+  "target_project": "E:/Godot/wordgame/剑流程",
+  "target_scene": "res://Scenes/Maps/第二章/05_聖劍寶庫_復刻.tscn",
+  "source_maps": [
+    {
+      "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第二章/05_聖劍寶庫.tscn",
+      "used_for": "宝库进入、机会提示、找剑、拿剑、圣剑动画、删字教学、掉落转场"
+    },
+    {
+      "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第二章/06_墜落.tscn",
+      "used_for": "掉落文字表现参考"
+    },
+    {
+      "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第二章/11_再戰蛇妖.tscn",
+      "used_for": "再战蛇妖地图、村庄对象改句、二阶段反制句、滚动追逐"
+    },
+    {
+      "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Events/snake_ver2.tscn",
+      "used_for": "蛇妖身体追逐、扭动、变大、第二阶段攻击节奏"
+    },
+    {
+      "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第二章/12_擊敗蛇妖.tscn",
+      "used_for": "击败蛇妖、小蛇台词、黑气消失、第二章收束"
+    }
+  ],
+  "doc_references": [
+    {
+      "source": "E:/Godot/wordgame/参考资料/图片参考/贝克思贝斯之剑流程.docx",
+      "used_for": "文档图1-6：迷宫、拿剑、圣剑教学、空气、堵路、坠落"
+    },
+    {
+      "source": "D:/xwechat_files/wxid_bv0vp59gp8fk22_5928/temp/RWTemp/2026-07/9e20f478899dc29eb19741386f9343c8/630c42e17feb68781b6cd15247f254d8.jpg",
+      "used_for": "第二张静态验收图：宝库空场景、宽敞房间说明文字"
+    }
+  ],
+  "grid": {
+    "cell_size": 60,
+    "bound": {
+      "x": 0,
+      "y": 0,
+      "w": 32,
+      "h": 18
+    },
+    "player_spawn_pos": {
+      "x": 3,
+      "y": 12
+    }
+  },
+  "flow": [
+    "当前静态验收版本：运行主场景后显示 room3 迷宫截图地图，按 Space 切到 room4 宝库空场景，不进入动态流程。",
+    "进入文字迷宫并触发“踏进一座曲折的迷宫”",
+    "进入宝藏房，播放宝藏闪光，提示贝克思贝斯之剑在宝物堆中",
+    "墙面闪现“机会稍纵即逝”，进入限时找剑",
+    "圣剑定期随机出现，5秒未接触则消失并稍后重刷",
+    "玩家获得圣剑，播放拔剑音效、圣剑影片和震动",
+    "诗人解释“清除文字之中恶的成分”与删除键",
+    "删“灯不亮了”的“不”，灯重新亮起",
+    "删“没有空气”的“没”，洞窟恢复空气",
+    "删“只有忘掉下去”的“忘”，触发脚底崩裂与坠落转场",
+    "打败史莱姆后直接进入再战蛇妖",
+    "一阶段滚动村庄中通过箱、货、仓、栈、店、铺、树、壁、坊九类对象删字助攻，三次成功后蛇妖暴怒变大",
+    "二阶段蛇妖定时放话并发射媚眼射线，玩家依次删“你 / 走 / 过”反制蛇妖",
+    "三次反制后进入击败蛇妖、小蛇告别、黑气消失、村庄恢复和第二章结束"
+  ],
+  "required_resources": {
+    "fonts": [
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Fonts/Zpix-v3.1.6.ttf",
+        "target": "res://Fonts/Zpix-v3.1.6.ttf"
+      }
+    ],
+    "video": [
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sprites/ch2_sword/u_sword.ogv",
+        "target": "res://Assets/video/u_sword.ogv",
+        "trigger": "获得圣剑后 cut_screen_effect 复刻段"
+      }
+    ],
+    "audio": [
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_20_cave_sword_AB.ogg",
+        "target": "res://Assets/audio/bgm/ch2/BGM_2_20_cave_sword_AB.ogg",
+        "trigger": "进入宝藏房"
+      },
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/sword_draw_out_1.wav",
+        "target": "res://Assets/audio/se/sword_draw_out_1.wav",
+        "trigger": "抽出圣剑"
+      },
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_21_sword_crash_A.wav",
+        "target": "res://Assets/audio/se/第二章 音效/SE_2_21_sword_crash_A.wav",
+        "trigger": "圣剑出现"
+      },
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_22_sword_vanish_A.wav",
+        "target": "res://Assets/audio/se/第二章 音效/SE_2_22_sword_vanish_A.wav",
+        "trigger": "圣剑消失"
+      },
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_23_sword_big_swing_B.wav",
+        "target": "res://Assets/audio/se/第二章 音效/SE_2_23_sword_big_swing_B.wav",
+        "trigger": "圣剑影片切屏"
+      },
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/MEL/MEL_2_24_sword.wav",
+        "target": "res://Assets/audio/se/MEL/MEL_2_24_sword.wav",
+        "trigger": "圣剑影片切屏"
+      },
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第三章 音效/SE_3_36_fire_lit_C.wav",
+        "target": "res://Assets/audio/se/第三章 音效/SE_3_36_fire_lit_C.wav",
+        "trigger": "灯重新亮起"
+      },
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_26_wind_fill_C.wav",
+        "target": "res://Assets/audio/se/第二章 音效/SE_2_26_wind_fill_C.wav",
+        "trigger": "空气恢复"
+      },
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_27_rock_break.wav",
+        "target": "res://Assets/audio/se/第二章 音效/SE_2_27_rock_break.wav",
+        "trigger": "脚底崩裂"
+      },
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_16_snake_fight_AB.ogg",
+        "target": "res://Assets/audio/bgm/ch2/BGM_2_16_snake_fight_AB.ogg",
+        "trigger": "再战蛇妖一阶段"
+      },
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_40.1_snake_fight_second_A.ogg",
+        "target": "res://Assets/audio/bgm/ch2/BGM_2_40.1_snake_fight_second_A.ogg",
+        "trigger": "再战蛇妖二阶段"
+      },
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/bgm/ch2/BGM_2_50_qwerty_happy.ogg",
+        "target": "res://Assets/audio/bgm/ch2/BGM_2_50_qwerty_happy.ogg",
+        "trigger": "击败蛇妖后的村庄恢复"
+      },
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_26_wind_fill_C.wav",
+        "target": "res://Assets/audio/se/第二章 音效/SE_2_26_wind_fill_C.wav",
+        "trigger": "蛇妖开场嘶鸣的合法 WAV 替代音效"
+      },
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_27_rock_break.wav",
+        "target": "res://Assets/audio/se/第二章 音效/SE_2_27_rock_break.wav",
+        "trigger": "蛇妖石化村庄的合法 WAV 替代音效"
+      },
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_21_sword_crash_B.wav",
+        "target": "res://Assets/audio/se/第二章 音效/SE_2_21_sword_crash_B.wav",
+        "trigger": "蛇妖受击的合法 WAV 替代音效"
+      },
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_22_sword_vanish_A.wav",
+        "target": "res://Assets/audio/se/第二章 音效/SE_2_22_sword_vanish_A.wav",
+        "trigger": "二阶段反制成功的合法 WAV 替代音效"
+      },
+      {
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_22_sword_vanish_A.wav",
+        "target": "res://Assets/audio/se/第二章 音效/SE_2_22_sword_vanish_A.wav",
+        "trigger": "蛇妖化为黑气的合法 WAV 替代音效"
+      }
+    ]
+  },
+  "missing_or_simplified": [
+    "2026-07-11 静态地图验收版本将主场景临时挂接到 StaticReferenceMap.gd，只显示截图对应 room3 静态地图；SwordTutorial.gd 动态流程保留但当前不作为入口运行。",
+    "未移植源项目 MainMap/Event/Interpreter 全局命令系统，当前用独立 Godot 4 脚本复刻流程。",
+    "宝藏闪光、机会闪烁、句子合法动画、镜头震动等使用 Godot 4 Tween 复刻触发时机，未直接搬运源项目动画场景。",
+    "失败分支在本段中实现为提示和不推进；源教学段本身多数错误字不可删除。",
+    "再战蛇妖未直接搬运源项目 Event/Interpreter 命令系统，而是在 Godot 4 单脚本状态机内重建。",
+    "蛇妖物件攻击、石化与射线以 Label/Tween 复刻核心规则和视觉反馈，未逐一复刻源动画节点轨道。"
+  ]
+}

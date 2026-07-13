@@ -2,7 +2,7 @@
 
 importer="wav"
 type="AudioStreamWAV"
-uid="uid://5tn6d22r7va8"
+uid="uid://d1v48kcolqwxd"
 path="res://.godot/imported/SE_2_25_sword_return.wav-5166841df87be8e1d1ac50cc16e861d8.sample"
 
 [deps]
@@ -21,4 +21,4 @@ edit/normalize=false
 edit/loop_mode=0
 edit/loop_begin=0
 edit/loop_end=-1
-compress/mode=2
+compress/mode=0

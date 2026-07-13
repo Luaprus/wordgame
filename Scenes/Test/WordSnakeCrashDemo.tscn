@@ -1,0 +1,18 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Scenes/WordSnakeCrashDemo.gd" id="1_demo"]
+[ext_resource type="PackedScene" path="res://Scenes/Events/WordSprite.tscn" id="2_word"]
+[ext_resource type="Script" path="res://Scripts/Animations/WordSnakeCrashScatter.gd" id="3_scatter"]
+
+[node name="WordSnakeCrashDemo" type="Node2D"]
+script = ExtResource("1_demo")
+
+[node name="Word" type="Node2D" parent="."]
+
+[node name="WordSprite" parent="Word" instance=ExtResource("2_word")]
+position = Vector2(30, 30)
+text = "字"
+
+[node name="WordSnakeCrashScatter" type="Node" parent="Word"]
+script = ExtResource("3_scatter")
+remove_owner_after_crash = false
