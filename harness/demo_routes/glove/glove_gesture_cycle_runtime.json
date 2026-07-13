@@ -1,0 +1,1207 @@
+{
+  "route_id": "glove-gesture-cycle-runtime",
+  "feature_id": "F024",
+  "target_feature_id": "F024",
+  "baseline_id": "GLOVE-BEH-003",
+  "behavior_id": "GLOVE-GESTURE-CHANGE",
+  "level_id": "glove",
+  "world_source": "glove_level",
+  "route_stage": "runtime",
+  "notes": "真实复用主路线切到一手势，随后移出一字并以连续玩家输入把赢字从 [1,2] 搬到手势槽，再切换为赢手势。赞、二、零状态分别由其他真实路线提供证据。",
+  "steps": [
+    {
+      "type": "route_segment",
+      "route_path": "res://../harness/demo_routes/glove/glove_correct_route_runtime.json",
+      "through_caption": "switch to one gesture",
+      "caption": "复用真实主路线直到切换一手势"
+    },
+    {
+      "type": "checkpoint",
+      "caption": "切换到一手势",
+      "checkpoint": {
+        "id": "gesture_one",
+        "state_id": "gesture_one",
+        "ref": "GLOVE-SHOT-014",
+        "label": "一手势锚点",
+        "source_grid_id": "GLOVE-GRID-013",
+        "verification_status": "candidate",
+        "review_note": "真实主路线在世界格 [29,14] 切到一手势；与截图登记 [1,3] 的坐标冲突仍需人工复核。"
+      },
+      "expect": {
+        "player_pos": [
+          29,
+          14
+        ],
+        "last_message": "巨大手掌，是一的手势。"
+      }
+    },
+    {
+      "type": "move_path",
+      "path": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          -1,
+          0
+        ]
+      ],
+      "caption": "沿一手势通道回到槽位",
+      "expect": {
+        "player_pos": [
+          26,
+          16
+        ]
+      }
+    },
+    {
+      "type": "action",
+      "action": "move",
+      "direction": [
+        0,
+        1
+      ],
+      "caption": "转向槽位中的一字"
+    },
+    {
+      "type": "action",
+      "action": "pull",
+      "direction": [
+        0,
+        -1
+      ],
+      "caption": "把一字拉出槽位"
+    },
+    {
+      "type": "action",
+      "action": "pull",
+      "direction": [
+        0,
+        -1
+      ],
+      "caption": "继续向上拉一字"
+    },
+    {
+      "type": "move_path",
+      "path": [
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "caption": "把一字停放到其他手势字旁",
+      "expect": {
+        "player_pos": [
+          28,
+          15
+        ],
+        "text_at": {
+          "pos": [
+            29,
+            15
+          ],
+          "text": "一"
+        }
+      }
+    },
+    {
+      "type": "action_sequence",
+      "actions": [
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "pull",
+          "direction": [
+            1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            -1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            -1,
+            0
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        },
+        {
+          "type": "action",
+          "action": "move",
+          "direction": [
+            0,
+            1
+          ]
+        }
+      ],
+      "caption": "按状态空间规划搬运赢字到手势槽",
+      "expect": {
+        "player_pos": [
+          26,
+          16
+        ],
+        "facing": [
+          0,
+          1
+        ],
+        "text_at": {
+          "pos": [
+            26,
+            17
+          ],
+          "text": "赢"
+        }
+      }
+    },
+    {
+      "type": "move_path",
+      "path": [
+        [
+          -1,
+          0
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          -1,
+          0
+        ]
+      ],
+      "caption": "从赢字槽位走到巨掌互动位",
+      "expect": {
+        "player_pos": [
+          23,
+          16
+        ]
+      }
+    },
+    {
+      "type": "action",
+      "action": "move",
+      "direction": [
+        0,
+        1
+      ],
+      "caption": "转向下方巨掌"
+    },
+    {
+      "type": "action",
+      "action": "interact",
+      "direction": [
+        0,
+        0
+      ],
+      "caption": "切换到赢手势",
+      "checkpoint": {
+        "id": "gesture_win",
+        "state_id": "gesture_win",
+        "ref": "GLOVE-SHOT-005",
+        "label": "赢手势锚点",
+        "source_grid_id": "GLOVE-GRID-006"
+      },
+      "expect": {
+        "player_pos": [
+          23,
+          16
+        ],
+        "text_at": {
+          "pos": [
+            26,
+            17
+          ],
+          "text": "赢"
+        },
+        "last_message": "巨大手掌，是赢的手势。"
+      }
+    }
+  ]
+}

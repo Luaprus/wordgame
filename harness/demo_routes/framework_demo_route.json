@@ -1,0 +1,28 @@
+{
+  "route_id": "framework-demo",
+  "feature_id": "F016",
+  "baseline_id": "FRAMEWORK-DEMO-001",
+  "level_id": "framework",
+  "steps": [
+    { "type": "set_player", "pos": [3, 1], "facing": [1, 0], "caption": "move to watch" },
+    { "type": "action", "action": "interact", "direction": [0, 0] },
+    { "type": "set_player", "pos": [4, 2], "facing": [1, 0], "caption": "face deletable word" },
+    { "type": "action", "action": "delete", "direction": [0, 0] },
+    { "type": "set_player", "pos": [6, 1], "facing": [1, 0], "caption": "push stone" },
+    { "type": "action", "action": "move", "direction": [1, 0] },
+    { "type": "set_player", "pos": [9, 1], "facing": [-1, 0], "caption": "prepare pull" },
+    { "type": "action", "action": "pull", "direction": [1, 0] },
+    { "type": "set_player", "pos": [7, 2], "facing": [1, 0], "caption": "prepare split" },
+    { "type": "action", "action": "split", "direction": [0, 0] },
+    { "type": "merge", "from": [8, 2], "to": [9, 2], "caption": "merge split parts" },
+    {
+      "type": "sentence",
+      "first_text": "天",
+      "second_text": "气",
+      "target_sentence": "天气",
+      "caption": "trigger sentence rule"
+    },
+    { "type": "set_player", "pos": [31, 1], "facing": [1, 0], "caption": "move to page edge" },
+    { "type": "action", "action": "move", "direction": [1, 0] }
+  ]
+}

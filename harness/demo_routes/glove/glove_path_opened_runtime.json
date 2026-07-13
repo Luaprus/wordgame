@@ -1,0 +1,33 @@
+{
+  "route_id": "glove-path-opened-runtime",
+  "feature_id": "F024",
+  "target_feature_id": "F024",
+  "baseline_id": "GLOVE-BEH-006",
+  "behavior_id": "GLOVE-PATH-OPENED",
+  "level_id": "glove",
+  "world_source": "glove_level",
+  "route_stage": "runtime",
+  "notes": "从出生状态复用已验证主路线，真实完成好字搬运、好手势切换和生命线开路。",
+  "steps": [
+    {
+      "type": "route_segment",
+      "route_path": "res://../harness/demo_routes/glove/glove_correct_route_runtime.json",
+      "through_caption": "walk from opened lifeline to mid path anchor",
+      "caption": "walk from opened lifeline to mid path anchor",
+      "checkpoint": {
+        "id": "path_opened",
+        "state_id": "path_opened",
+        "ref": "GLOVE-SHOT-012",
+        "label": "开路后中段锚点",
+        "source_grid_id": "GLOVE-GRID-008"
+      },
+      "expect": {
+        "player_pos": [24, 14],
+        "facing": [0, -1],
+        "visible": true,
+        "input_locked": false,
+        "last_message": "好手逼退了生命线。"
+      }
+    }
+  ]
+}

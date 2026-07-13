@@ -1,0 +1,58 @@
+{
+	"baseline_id": "FRAMEWORK-DEMO-FAIL-001",
+	"behavior_id": "",
+	"failed_steps": 1,
+	"feature_id": "F016",
+	"final_state": {
+		"current_page_origin": [
+			0,
+			0
+		],
+		"facing": [
+			0,
+			-1
+		],
+		"player_pos": [
+			1,
+			1
+		],
+		"rule_state": {
+			"switches": {},
+			"variables": {}
+		}
+	},
+	"level_id": "",
+	"route_id": "framework-demo-fail",
+	"snapshots": [],
+	"steps": [
+		{
+			"facing": [
+				0,
+				-1
+			],
+			"index": 0,
+			"message": "face wall",
+			"player_pos": [
+				1,
+				1
+			],
+			"success": true,
+			"type": "set_player"
+		},
+		{
+			"facing": [
+				0,
+				-1
+			],
+			"index": 1,
+			"message": "not deletable",
+			"player_pos": [
+				1,
+				1
+			],
+			"success": false,
+			"type": "action"
+		}
+	],
+	"target_feature_id": ""
+}

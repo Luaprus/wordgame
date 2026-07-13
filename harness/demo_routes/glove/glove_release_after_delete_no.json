@@ -1,0 +1,19 @@
+{
+  "route_id": "glove-release-after-delete-no",
+  "feature_id": "F025",
+  "target_feature_id": "F025",
+  "baseline_id": "GLOVE-BEH-004",
+  "behavior_id": "GLOVE-RELEASE-AFTER-DELETE-NO",
+  "level_id": "glove",
+  "world_source": "glove_level",
+  "route_stage": "canonical",
+  "notes": "Canonical release route reuses the verified one-gesture path, then deletes 不 and returns to the palm with real inputs.",
+  "steps": [
+    {"type": "route_segment", "route_path": "res://../harness/demo_routes/glove/glove_correct_route.json", "through_caption": "switch to one gesture", "caption": "reuse verified canonical route through one gesture", "expect": {"player_pos": [29, 14]}},
+    {"type": "move_path", "path": [[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[0,-1],[-1,0],[-1,0],[-1,0],[-1,0],[0,-1],[0,-1],[0,-1],[0,-1],[1,0],[0,-1],[1,0],[1,0],[0,-1],[0,-1],[0,-1],[0,-1],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0]], "caption": "walk through the one-hand corridor to the no word", "expect": {"player_pos": [6, 4], "text_at": {"pos": [6, 3], "text": "不"}}},
+    {"type": "action", "action": "move", "direction": [0, -1], "caption": "turn up toward the no word"},
+    {"type": "action", "action": "delete", "direction": [0, 0], "caption": "删除不字", "expect": {"absent_text_at": {"pos": [6, 3], "text": "不"}}},
+    {"type": "move_path", "path": [[1,0],[1,0],[1,0],[1,0],[1,0],[1,0],[1,0],[0,1],[0,1],[-1,0],[-1,0],[-1,0],[0,1],[0,1],[0,1],[0,1],[0,1],[0,1],[0,1],[1,0],[1,0],[1,0],[1,0],[1,0],[1,0],[1,0],[1,0],[1,0],[1,0],[0,1],[1,0],[1,0],[1,0],[1,0],[1,0],[1,0],[1,0],[1,0],[1,0]], "caption": "walk back to the palm after deleting no", "expect": {"player_pos": [29, 14], "facing": [1, 0]}},
+    {"type": "action", "action": "interact", "direction": [0, 0], "caption": "切换到放开状态", "checkpoint": {"id": "released_after_delete_no", "state_id": "release_after_delete_no", "ref": "GLOVE-SHOT-016", "label": "删不后放开候选锚点", "source_grid_id": "GLOVE-GRID-009", "verification_status": "candidate", "review_note": "已通过连续真实路线触发放开；仍需人工复核截图时机、动画和音效边界。"}, "expect": {"last_message": "巨大手掌已经放开。", "text_at": {"pos": [7, 12], "text": "掌"}}}
+  ]
+}

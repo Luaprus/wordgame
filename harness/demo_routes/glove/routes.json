@@ -1,0 +1,167 @@
+{
+  "level_id": "glove",
+  "routes": [
+    {
+      "route_id": "glove-correct-route",
+      "target_feature_id": "F024",
+      "baseline_id": "GLOVE-BEH-001",
+      "behavior_id": "GLOVE-CORRECT-ROUTE",
+      "route_path": "res://../harness/demo_routes/glove/glove_correct_route.json",
+      "status": "in_progress",
+      "notes": "Canonical main-flow route backed by the runnable glove level."
+    },
+    {
+      "route_id": "glove-correct-route-runtime",
+      "target_feature_id": "F024",
+      "baseline_id": "GLOVE-BEH-001",
+      "behavior_id": "GLOVE-CORRECT-ROUTE",
+      "route_path": "res://../harness/demo_routes/glove/glove_correct_route_runtime.json",
+      "status": "in_progress",
+      "notes": "Runtime main-flow route with checkpoint-rich replay coverage."
+    },
+    {
+      "route_id": "glove-wrong-route",
+      "target_feature_id": "F026",
+      "baseline_id": "GLOVE-BEH-002",
+      "behavior_id": "GLOVE-WRONG-ROUTE",
+      "route_path": "res://../harness/demo_routes/glove/glove_wrong_route.json",
+      "status": "in_progress",
+      "notes": "Canonical wrong-route entry backed by the runnable glove level."
+    },
+    {
+      "route_id": "glove-wrong-route-runtime",
+      "target_feature_id": "F026",
+      "baseline_id": "GLOVE-BEH-008",
+      "behavior_id": "GLOVE-FAILURE-FEEDBACK",
+      "route_path": "res://../harness/demo_routes/glove/glove_wrong_route_runtime.json",
+      "status": "in_progress",
+      "notes": "Runtime wrong-route replay covering failure feedback and reset."
+    },
+    {
+      "route_id": "glove-gesture-change",
+      "target_feature_id": "F025",
+      "baseline_id": "GLOVE-BEH-003",
+      "behavior_id": "GLOVE-GESTURE-CHANGE",
+      "route_path": "res://../harness/demo_routes/glove/glove_gesture_change.json",
+      "status": "in_progress",
+      "notes": "Canonical helper route for the verified gesture cycle."
+    },
+    {
+      "route_id": "glove-gesture-cycle-runtime",
+      "target_feature_id": "F025",
+      "baseline_id": "GLOVE-BEH-003",
+      "behavior_id": "GLOVE-GESTURE-CHANGE",
+      "route_path": "res://../harness/demo_routes/glove/glove_gesture_cycle_runtime.json",
+      "status": "in_progress",
+      "notes": "Runtime helper route covering like/one/two/win/zero gesture switching."
+    },
+    {
+      "route_id": "glove-like-gesture-runtime",
+      "target_feature_id": "F025",
+      "baseline_id": "GLOVE-BEH-003",
+      "behavior_id": "GLOVE-GESTURE-CHANGE",
+      "route_path": "res://../harness/demo_routes/glove/glove_like_gesture_runtime.json",
+      "status": "in_progress",
+      "notes": "Runtime route that reaches release, extracts the real like word, and moves it into the slot. The visible hand remains release, matching source semantics."
+    },
+    {
+      "route_id": "glove-sword-swap-runtime",
+      "target_feature_id": "F025",
+      "baseline_id": "GLOVE-BEH-003",
+      "behavior_id": "GLOVE-SWORD-SWAP",
+      "route_path": "res://../harness/demo_routes/glove/glove_sword_swap_runtime.json",
+      "status": "in_progress",
+      "notes": "Runtime helper route for the two-gesture sword swap rule."
+    },
+    {
+      "route_id": "glove-good-clue-runtime",
+      "target_feature_id": "F025",
+      "baseline_id": "GLOVE-BEH-003",
+      "behavior_id": "GLOVE-GESTURE-CHANGE",
+      "route_path": "res://../harness/demo_routes/glove/glove_good_clue_runtime.json",
+      "status": "in_progress",
+      "notes": "Runtime helper route for the lower lifeline clue and good-hand follow-up."
+    },
+    {
+      "route_id": "glove-release-after-delete-no",
+      "target_feature_id": "F025",
+      "baseline_id": "GLOVE-BEH-004",
+      "behavior_id": "GLOVE-RELEASE-AFTER-DELETE-NO",
+      "route_path": "res://../harness/demo_routes/glove/glove_release_after_delete_no.json",
+      "status": "in_progress",
+      "notes": "Canonical helper route for the release state after deleting 不. Uses isolated setup to verify the local mechanic."
+    },
+    {
+      "route_id": "glove-release-after-delete-runtime",
+      "target_feature_id": "F025",
+      "baseline_id": "GLOVE-BEH-004",
+      "behavior_id": "GLOVE-RELEASE-AFTER-DELETE-NO",
+      "route_path": "res://../harness/demo_routes/glove/glove_release_after_delete_runtime.json",
+      "status": "in_progress",
+      "notes": "Runtime helper route covering the release transition after deleting 不."
+    },
+    {
+      "route_id": "glove-collision-change",
+      "target_feature_id": "F025",
+      "baseline_id": "GLOVE-BEH-005",
+      "behavior_id": "GLOVE-COLLISION-CHANGE",
+      "route_path": "res://../harness/demo_routes/glove/glove_collision_change.json",
+      "status": "in_progress",
+      "notes": "Canonical helper route for collision-open/collision-close verification. Uses isolated setup to verify the local mechanic."
+    },
+    {
+      "route_id": "glove-collision-change-runtime",
+      "target_feature_id": "F025",
+      "baseline_id": "GLOVE-BEH-005",
+      "behavior_id": "GLOVE-COLLISION-CHANGE",
+      "route_path": "res://../harness/demo_routes/glove/glove_collision_change_runtime.json",
+      "status": "in_progress",
+      "notes": "Runtime helper route for collision changes across zero/like/release states."
+    },
+    {
+      "route_id": "glove-lifeline-reclose-runtime",
+      "target_feature_id": "F025",
+      "baseline_id": "GLOVE-BEH-005",
+      "behavior_id": "GLOVE-COLLISION-CHANGE",
+      "route_path": "res://../harness/demo_routes/glove/glove_lifeline_reclose_runtime.json",
+      "status": "in_progress",
+      "notes": "Runtime helper route proving the lifeline re-closes after switching from the like gesture back to zero."
+    },
+    {
+      "route_id": "glove-path-opened",
+      "target_feature_id": "F024",
+      "baseline_id": "GLOVE-BEH-006",
+      "behavior_id": "GLOVE-PATH-OPENED",
+      "route_path": "res://../harness/demo_routes/glove/glove_path_opened.json",
+      "status": "in_progress",
+      "notes": "Canonical opened-path route backed by the runnable glove level."
+    },
+    {
+      "route_id": "glove-path-opened-runtime",
+      "target_feature_id": "F024",
+      "baseline_id": "GLOVE-BEH-006",
+      "behavior_id": "GLOVE-PATH-OPENED",
+      "route_path": "res://../harness/demo_routes/glove/glove_path_opened_runtime.json",
+      "status": "in_progress",
+      "notes": "Runtime opened-path route anchored at the mid-path checkpoint."
+    },
+    {
+      "route_id": "glove-transition-out",
+      "target_feature_id": "F026",
+      "baseline_id": "GLOVE-BEH-007",
+      "behavior_id": "GLOVE-TRANSITION-OUT",
+      "route_path": "res://../harness/demo_routes/glove/glove_transition_out.json",
+      "status": "in_progress",
+      "notes": "Canonical ending transition route backed by the runnable glove level."
+    },
+    {
+      "route_id": "glove-transition-out-runtime",
+      "target_feature_id": "F026",
+      "baseline_id": "GLOVE-BEH-007",
+      "behavior_id": "GLOVE-TRANSITION-OUT",
+      "route_path": "res://../harness/demo_routes/glove/glove_transition_out_runtime.json",
+      "status": "in_progress",
+      "notes": "Runtime ending transition replay with screenshot-backed black-screen evidence."
+    }
+  ]
+}

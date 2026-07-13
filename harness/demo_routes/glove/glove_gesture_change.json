@@ -1,0 +1,127 @@
+﻿{
+  "route_id": "glove-gesture-change",
+  "feature_id": "F025",
+  "target_feature_id": "F025",
+  "baseline_id": "GLOVE-BEH-003",
+  "behavior_id": "GLOVE-GESTURE-CHANGE",
+  "level_id": "glove",
+  "world_source": "glove_level",
+  "route_stage": "canonical",
+  "notes": "Canonical glove gesture-change route: executable compatibility entry for the verified gesture cycle.",
+  "steps": [
+    {
+      "type": "set_gesture_slot",
+      "text": "赞",
+      "caption": "把赞放入手势槽",
+      "expect": { "text_at": { "pos": [26, 17], "text": "赞" } }
+    },
+    {
+      "type": "place_at_palm",
+      "caption": "站到巨掌边准备切换赞手势",
+      "expect": { "facing": [1, 0] }
+    },
+    {
+      "type": "action",
+      "action": "interact",
+      "direction": [0, 0],
+      "caption": "切换到赞手势",
+      "checkpoint": {
+        "id": "gesture_like",
+        "state_id": "gesture_like",
+        "ref": "GLOVE-SHOT-002",
+        "label": "赞手势锚点",
+        "source_grid_id": "GLOVE-GRID-004"
+      },
+      "expect": { "last_message": "巨大手掌，是赞的手势。" }
+    },
+    {
+      "type": "set_gesture_slot",
+      "text": "一",
+      "caption": "把一放入手势槽",
+      "expect": { "text_at": { "pos": [26, 17], "text": "一" } }
+    },
+    {
+      "type": "place_at_palm",
+      "caption": "站到巨掌边准备切换一手势"
+    },
+    {
+      "type": "action",
+      "action": "interact",
+      "direction": [0, 0],
+      "caption": "切换到一手势",
+      "checkpoint": {
+        "id": "gesture_one",
+        "state_id": "gesture_one",
+        "ref": "GLOVE-SHOT-014",
+        "label": "一手势锚点",
+        "source_grid_id": "GLOVE-GRID-013"
+      },
+      "expect": { "last_message": "巨大手掌，是一的手势。" }
+    },
+    {
+      "type": "set_gesture_slot",
+      "text": "二",
+      "caption": "把二放入手势槽",
+      "expect": { "text_at": { "pos": [26, 17], "text": "二" } }
+    },
+    {
+      "type": "place_at_palm",
+      "caption": "站到巨掌边准备切换二手势"
+    },
+    {
+      "type": "action",
+      "action": "interact",
+      "direction": [0, 0],
+      "caption": "切换到二手势",
+      "checkpoint": {
+        "id": "gesture_two",
+        "state_id": "gesture_two",
+        "ref": "GLOVE-SHOT-004",
+        "label": "二手势锚点",
+        "source_grid_id": "GLOVE-GRID-005"
+      },
+      "expect": { "last_message": "巨大手掌，是二的手势。" }
+    },
+    {
+      "type": "set_gesture_slot",
+      "text": "赢",
+      "caption": "把赢放入手势槽",
+      "expect": { "text_at": { "pos": [26, 17], "text": "赢" } }
+    },
+    {
+      "type": "place_at_palm",
+      "caption": "站到巨掌边准备切换赢手势"
+    },
+    {
+      "type": "action",
+      "action": "interact",
+      "direction": [0, 0],
+      "caption": "切换到赢手势",
+      "checkpoint": {
+        "id": "gesture_win",
+        "state_id": "gesture_win",
+        "ref": "GLOVE-SHOT-005",
+        "label": "赢手势锚点",
+        "source_grid_id": "GLOVE-GRID-006"
+      },
+      "expect": { "last_message": "巨大手掌，是赢的手势。" }
+    },
+    {
+      "type": "set_gesture_slot",
+      "text": "零",
+      "caption": "把零放回手势槽",
+      "expect": { "text_at": { "pos": [26, 17], "text": "零" } }
+    },
+    {
+      "type": "place_at_palm",
+      "caption": "站到巨掌边准备回到零手势"
+    },
+    {
+      "type": "action",
+      "action": "interact",
+      "direction": [0, 0],
+      "caption": "切换回零手势",
+      "expect": { "last_message": "巨大手掌，是零的手势。" }
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+	"baseline_id": "GLOVE-BEH-005",
+	"behavior_id": "GLOVE-COLLISION-CHANGE",
+	"catalog_notes": "Runtime helper route proving the lifeline re-closes after switching from the like gesture back to zero.",
+	"catalog_status": "in_progress",
+	"checkpoints": [],
+	"feature_id": "F025",
+	"final_state": {
+		"facing": [
+			0,
+			-1
+		],
+		"input_locked": false,
+		"last_message": "",
+		"player_pos": [
+			20,
+			13
+		],
+		"visible": true
+	},
+	"level_id": "glove",
+	"route_id": "glove-lifeline-reclose-runtime",
+	"runtime_trace": {
+		"animation_ids": [],
+		"audio_ids": []
+	},
+	"steps": [
+		{
+			"caption": "reuse verified correct route through opened path",
+			"expectation_failures": [
+				"player_pos expected (24, 14) got (20, 13)"
+			],
+			"expectations_checked": 2,
+			"facing": [
+				0,
+				-1
+			],
+			"index": 0,
+			"input_data": {
+				"route_path": "res://../harness/demo_routes/glove/glove_correct_route_runtime.json",
+				"through_caption": "walk from opened lifeline to mid path anchor"
+			},
+			"last_message": "",
+			"message": "player_pos expected (24, 14) got (20, 13)",
+			"player_pos": [
+				20,
+				13
+			],
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"success": false,
+			"type": "route_segment"
+		}
+	],
+	"target_feature_id": "F025"
+}

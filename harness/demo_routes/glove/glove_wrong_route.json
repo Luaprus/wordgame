@@ -1,0 +1,68 @@
+﻿{
+  "route_id": "glove-wrong-route",
+  "feature_id": "F026",
+  "target_feature_id": "F026",
+  "baseline_id": "GLOVE-BEH-008",
+  "behavior_id": "GLOVE-FAILURE-FEEDBACK",
+  "level_id": "glove",
+  "world_source": "glove_level",
+  "route_stage": "canonical",
+  "notes": "Canonical glove wrong route: executable compatibility entry for the failure-feedback and reset flow.",
+  "steps": [
+    {
+      "type": "move_path",
+      "path": [[0, -1], [0, -1], [0, -1]],
+      "caption": "从起点走到生命线前",
+      "expect": {
+        "player_pos": [20, 12],
+        "facing": [0, -1],
+        "text_at": { "pos": [21, 12], "text": "线" }
+      }
+    },
+    {
+      "type": "action",
+      "action": "move",
+      "direction": [1, 0],
+      "caption": "转向生命线",
+      "expect": {
+        "player_pos": [20, 12],
+        "facing": [1, 0],
+        "text_at": { "pos": [21, 12], "text": "线" }
+      }
+    },
+    {
+      "type": "action",
+      "action": "interact",
+      "direction": [0, 0],
+      "caption": "错误手势触发失败",
+      "checkpoint": {
+        "id": "failure_feedback",
+        "state_id": "failure_feedback",
+        "ref": "GLOVE-SHOT-010",
+        "label": "失败反馈锚点",
+        "source_grid_id": "GLOVE-GRID-011",
+        "verification_status": "candidate",
+        "review_note": "失败画面截图已挂载，但语义是否覆盖原版全部失败反馈细节仍待人工确认。"
+      },
+      "expect": {
+        "player_pos": [20, 12],
+        "visible": true,
+        "input_locked": true,
+        "last_message": "你被勇者包围了。",
+        "text_at": { "pos": [15, 10], "text": "勇" }
+      }
+    },
+    {
+      "type": "action",
+      "action": "interact",
+      "direction": [0, 0],
+      "caption": "失败反馈后重置",
+      "expect": {
+        "player_pos": [20, 15],
+        "visible": true,
+        "input_locked": false,
+        "text_at": { "pos": [21, 12], "text": "线" }
+      }
+    }
+  ]
+}

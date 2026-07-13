@@ -1,0 +1,56 @@
+{
+	"baseline_id": "GLOVE-BEH-005",
+	"behavior_id": "GLOVE-COLLISION-CHANGE",
+	"catalog_notes": "Runtime helper route for collision changes across zero/like/release states.",
+	"catalog_status": "in_progress",
+	"checkpoints": [],
+	"feature_id": "F024",
+	"final_state": {
+		"facing": [
+			0,
+			-1
+		],
+		"input_locked": false,
+		"last_message": "",
+		"player_pos": [
+			20,
+			13
+		],
+		"visible": true
+	},
+	"level_id": "glove",
+	"route_id": "glove-collision-change-runtime",
+	"runtime_trace": {
+		"animation_ids": [],
+		"audio_ids": []
+	},
+	"steps": [
+		{
+			"caption": "复用真实路线切到好手势",
+			"expectation_failures": [],
+			"expectations_checked": 0,
+			"facing": [
+				0,
+				-1
+			],
+			"index": 0,
+			"input_data": {
+				"route_path": "res://../harness/demo_routes/glove/glove_good_clue_runtime.json",
+				"through_caption": "switch to the good-hand gesture"
+			},
+			"last_message": "",
+			"message": "verified route segment failed",
+			"player_pos": [
+				20,
+				13
+			],
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"success": false,
+			"type": "route_segment"
+		}
+	],
+	"target_feature_id": "F024"
+}

@@ -1,0 +1,9 @@
+{
+  "approvals": [
+    {
+      "baseline_id": "FRAMEWORK-FIXTURE-FAIL-001",
+      "level_id": "framework",
+      "approved_diff_reason": "fixture approval"
+    }
+  ]
+}

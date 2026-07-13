@@ -1,0 +1,34 @@
+{
+  "route_id": "glove-good-clue-runtime",
+  "feature_id": "F024",
+  "target_feature_id": "F024",
+  "baseline_id": "GLOVE-BEH-003",
+  "behavior_id": "GLOVE-GESTURE-CHANGE",
+  "level_id": "glove",
+  "world_source": "glove_level",
+  "route_stage": "runtime",
+  "notes": "从出生状态复用已验证主路线，真实揭示并搬运好字后切换好手势。",
+  "steps": [
+    {
+      "type": "route_segment",
+      "route_path": "res://../harness/demo_routes/glove/glove_correct_route_runtime.json",
+      "through_caption": "switch to good gesture",
+      "caption": "switch to the good-hand gesture",
+      "checkpoint": {
+        "id": "good_hand_followup",
+        "state_id": "good_hand_followup",
+        "ref": "GLOVE-SHOT-008",
+        "label": "好手势连续路线候选锚点",
+        "source_grid_id": "GLOVE-GRID-015",
+        "verification_status": "candidate",
+        "review_note": "已用真实拉字、推字和移动切到好手势；截图时机仍需人工确认。"
+      },
+      "expect": {
+        "player_pos": [30, 15],
+        "facing": [0, -1],
+        "last_message": "巨大手掌，是好的手势。",
+        "text_at": {"pos": [7, 8], "text": "掌"}
+      }
+    }
+  ]
+}

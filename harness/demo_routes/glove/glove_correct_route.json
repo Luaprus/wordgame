@@ -1,0 +1,745 @@
+{
+  "route_id": "glove-correct-route",
+  "feature_id": "F024",
+  "target_feature_id": "F024",
+  "baseline_id": "GLOVE-BEH-001",
+  "behavior_id": "GLOVE-CORRECT-ROUTE",
+  "level_id": "glove",
+  "world_source": "glove_level",
+  "route_stage": "canonical",
+  "notes": "Canonical glove correct route: executable compatibility entry for the current runnable main flow.",
+  "steps": [
+    {
+      "type": "checkpoint",
+      "caption": "record initial layout anchor",
+      "checkpoint": {
+        "id": "initial_layout",
+        "state_id": "initial",
+        "ref": "GLOVE-SHOT-001",
+        "label": "起始布局锚点",
+        "source_grid_id": "GLOVE-GRID-001",
+        "review_note": "程序已确认起点玩家坐标、掌墙和零手势字存在；完整镜头构图仍以人工视觉复查为准。"
+      },
+      "expect": {
+        "player_pos": [
+          20,
+          15
+        ],
+        "facing": [
+          1,
+          0
+        ],
+        "text_at": {
+          "pos": [
+            26,
+            17
+          ],
+          "text": "零"
+        }
+      }
+    },
+    {
+      "type": "move_path",
+      "path": [
+        [
+          0,
+          -1
+        ],
+        [
+          0,
+          -1
+        ]
+      ],
+      "caption": "walk from start to lower lifeline clue",
+      "expect": {
+        "player_pos": [
+          20,
+          13
+        ],
+        "text_at": {
+          "pos": [
+            21,
+            13
+          ],
+          "text": "线线"
+        }
+      }
+    },
+    {
+      "type": "action",
+      "action": "move",
+      "direction": [
+        1,
+        0
+      ],
+      "caption": "turn right toward the lower clue",
+      "expect": {
+        "player_pos": [
+          20,
+          13
+        ],
+        "facing": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "type": "action",
+      "action": "interact",
+      "direction": [
+        0,
+        0
+      ],
+      "caption": "reveal the good word",
+      "expect": {
+        "last_message": "逼退好手的生命线",
+        "text_at": {
+          "pos": [
+            14,
+            13
+          ],
+          "text": "好"
+        }
+      }
+    },
+    {
+      "type": "move_path",
+      "path": [[0, 1], [0, 1], [0, 1], [1, 0], [1, 0], [1, 0], [1, 0], [1, 0], [1, 0]],
+      "caption": "walk to the zero word pull position",
+      "expect": {"player_pos": [26, 16], "facing": [1, 0]}
+    },
+    {
+      "type": "action",
+      "action": "move",
+      "direction": [0, 1],
+      "caption": "turn toward the zero word",
+      "expect": {"player_pos": [26, 16], "facing": [0, 1]}
+    },
+    {
+      "type": "action",
+      "action": "pull",
+      "direction": [0, -1],
+      "caption": "pull zero out of the gesture slot"
+    },
+    {
+      "type": "action",
+      "action": "pull",
+      "direction": [0, -1],
+      "caption": "pull zero upward again",
+      "expect": {"player_pos": [26, 14], "text_at": {"pos": [26, 15], "text": "零"}}
+    },
+    {
+      "type": "move_path",
+      "path": [[-1, 0], [0, 1], [1, 0], [1, 0], [1, 0], [1, 0], [1, 0]],
+      "caption": "park zero at the right edge",
+      "expect": {"player_pos": [30, 15], "text_at": {"pos": [31, 15], "text": "零"}}
+    },
+    {
+      "type": "move_path",
+      "path": [[-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [0, -1], [0, -1], [0, -1], [-1, 0]],
+      "caption": "walk above the revealed good word",
+      "expect": {"player_pos": [14, 12]}
+    },
+    {"type": "move_path", "path": [[1, 0], [0, 1]], "caption": "move to the right-pull side of good"},
+    {"type": "action", "action": "move", "direction": [-1, 0], "caption": "turn left toward good for the first pull"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull good right 1"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull good right 2"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull good right 3"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull good right 4"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull good right 5"},
+    {"type": "move_path", "path": [[0, 1], [-1, 0]], "caption": "move below good for the downward pull"},
+    {"type": "action", "action": "move", "direction": [0, -1], "caption": "turn up toward good"},
+    {"type": "action", "action": "pull", "direction": [0, 1], "caption": "pull good down into the lower corridor"},
+    {"type": "move_path", "path": [[1, 0], [0, -1]], "caption": "move to the second right-pull side of good"},
+    {"type": "action", "action": "move", "direction": [-1, 0], "caption": "turn left toward good for the second pull"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull good across lower corridor 1"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull good across lower corridor 2"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull good across lower corridor 3"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull good across lower corridor 4"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull good across lower corridor 5"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull good across lower corridor 6"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull good across lower corridor 7"},
+    {
+      "type": "move_path",
+      "path": [[0, -1], [-1, 0], [0, 1], [0, 1], [0, 1]],
+      "caption": "push good into the gesture slot",
+      "expect": {"player_pos": [26, 16], "text_at": {"pos": [26, 17], "text": "好"}}
+    },
+    {
+      "type": "move_path",
+      "path": [[1, 0], [1, 0], [1, 0], [1, 0], [0, -1]],
+      "caption": "walk from clue to the good-hand palm point",
+      "checkpoint": {
+        "id": "correct_route_step",
+        "state_id": "correct_route_step",
+        "ref": "GLOVE-SHOT-003",
+        "label": "正确路线中段锚点",
+        "source_grid_id": "GLOVE-GRID-002"
+      },
+      "expect": {
+        "player_pos": [
+          30,
+          15
+        ],
+        "facing": [0, -1]
+      }
+    },
+    {
+      "type": "action",
+      "action": "interact",
+      "direction": [
+        0,
+        0
+      ],
+      "caption": "switch to good gesture",
+      "checkpoint": {
+        "id": "gesture_good",
+        "state_id": "gesture_good",
+        "ref": "GLOVE-SHOT-007",
+        "label": "好手势锚点",
+        "source_grid_id": "GLOVE-GRID-007"
+      },
+      "expect": {
+        "last_message": "巨大手掌，是好的手势。"
+      }
+    },
+    {
+      "type": "move_path",
+      "path": [[-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [0, -1], [0, -1], [0, -1], [-1, 0], [0, -1], [-1, 0]],
+      "caption": "walk from good-hand palm to upper lifeline anchor",
+      "expect": {
+        "player_pos": [
+          21,
+          11
+        ],
+        "facing": [
+          -1,
+          0
+        ],
+        "text_at": {
+          "pos": [
+            21,
+            12
+          ],
+          "text": "线"
+        }
+      }
+    },
+    {
+      "type": "action",
+      "action": "move",
+      "direction": [
+        0,
+        1
+      ],
+      "caption": "turn down toward lifeline",
+      "expect": {
+        "player_pos": [
+          21,
+          11
+        ],
+        "facing": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "type": "action",
+      "action": "interact",
+      "direction": [
+        0,
+        0
+      ],
+      "caption": "open lifeline",
+      "expect": {
+        "last_message": "好手逼退了生命线。",
+        "absent_text_at": {
+          "pos": [
+            21,
+            12
+          ],
+          "text": "线"
+        }
+      }
+    },
+    {
+      "type": "move_path",
+      "path": [
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          -1
+        ]
+      ],
+      "caption": "walk from opened lifeline to mid path anchor",
+      "checkpoint": {
+        "id": "path_opened",
+        "state_id": "path_opened",
+        "ref": "GLOVE-SHOT-012",
+        "label": "开路后中段锚点",
+        "source_grid_id": "GLOVE-GRID-008"
+      },
+      "expect": {
+        "player_pos": [
+          24,
+          14
+        ],
+        "facing": [
+          0,
+          -1
+        ],
+        "visible": true,
+        "input_locked": false,
+        "last_message": "好手逼退了生命线。"
+      }
+    },
+    {
+      "type": "move_path",
+      "path": [[1, 0], [1, 0], [0, 1], [0, 1]],
+      "caption": "walk below the good word in the gesture slot"
+    },
+    {"type": "action", "action": "pull", "direction": [0, -1], "caption": "pull good out of the gesture slot"},
+    {"type": "action", "action": "pull", "direction": [0, -1], "caption": "pull good upward again"},
+    {"type": "move_path", "path": [[-1, 0], [0, 1], [1, 0], [1, 0], [1, 0], [1, 0]], "caption": "park good beside zero", "expect": {"player_pos": [29, 15], "text_at": {"pos": [30, 15], "text": "好"}}},
+    {"type": "move_path", "path": [[-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [0, 1]], "caption": "walk below the one word"},
+    {"type": "action", "action": "pull", "direction": [0, -1], "caption": "pull one upward from the bottom sentence"},
+    {"type": "move_path", "path": [[-1, 0], [0, 1], [1, 0], [1, 0], [1, 0], [1, 0], [1, 0], [1, 0], [1, 0], [1, 0], [0, -1], [1, 0], [0, 1]], "caption": "push one into the gesture slot", "expect": {"player_pos": [26, 16], "text_at": {"pos": [26, 17], "text": "一"}}},
+    {"type": "move_path", "path": [[1, 0], [1, 0], [1, 0], [0, -1], [0, -1]], "caption": "walk to the palm for the one gesture"},
+    {"type": "action", "action": "move", "direction": [1, 0], "caption": "turn right toward the one-hand palm"},
+    {"type": "action", "action": "interact", "direction": [0, 0], "caption": "switch to one gesture", "expect": {"last_message": "巨大手掌，是一的手势。"}},
+    {"type": "move_path", "path": [[-1, 0], [-1, 0], [-1, 0], [0, 1], [0, 1]], "caption": "return to the slot through the one-hand path", "expect": {"player_pos": [26, 16]}},
+    {"type": "action", "action": "move", "direction": [0, 1], "caption": "turn toward the one word in the slot"},
+    {"type": "action", "action": "pull", "direction": [0, -1], "caption": "pull one out of the gesture slot"},
+    {"type": "action", "action": "pull", "direction": [0, -1], "caption": "pull one upward again"},
+    {"type": "move_path", "path": [[-1, 0], [0, 1], [1, 0], [1, 0], [1, 0]], "caption": "park one beside the other gesture words", "expect": {"player_pos": [28, 16], "text_at": {"pos": [29, 16], "text": "一"}}},
+    {"type": "move_path", "path": [[-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [0, -1], [-1, 0], [0, -1], [0, -1], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [0, -1], [0, -1], [0, -1], [0, -1], [0, -1], [0, -1], [0, -1]], "caption": "walk below the two word through the one-hand corridor", "expect": {"player_pos": [1, 6]}},
+    {"type": "action", "action": "pull", "direction": [0, 1], "caption": "pull two down 1"},
+    {"type": "action", "action": "pull", "direction": [0, 1], "caption": "pull two down 2"},
+    {"type": "action", "action": "pull", "direction": [0, 1], "caption": "pull two down 3"},
+    {"type": "action", "action": "pull", "direction": [0, 1], "caption": "pull two down 4"},
+    {"type": "action", "action": "pull", "direction": [0, 1], "caption": "pull two down 5"},
+    {"type": "action", "action": "pull", "direction": [0, 1], "caption": "pull two down 6"},
+    {"type": "action", "action": "pull", "direction": [0, 1], "caption": "pull two down 7"},
+    {"type": "action", "action": "pull", "direction": [0, 1], "caption": "pull two down 8"},
+    {"type": "action", "action": "pull", "direction": [0, 1], "caption": "pull two down 9"},
+    {"type": "action", "action": "pull", "direction": [0, 1], "caption": "pull two down 10", "expect": {"player_pos": [1, 16], "text_at": {"pos": [1, 15], "text": "二"}}},
+    {"type": "move_path", "path": [[0, -1], [0, -1], [1, 0], [0, -1]], "caption": "move to the first right-pull side of two"},
+    {"type": "action", "action": "move", "direction": [-1, 0], "caption": "turn left toward two for the first pull"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across upper corridor 1"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across upper corridor 2"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across upper corridor 3"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across upper corridor 4"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across upper corridor 5"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across upper corridor 6"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across upper corridor 7"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across upper corridor 8"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across upper corridor 9"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across upper corridor 10"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across upper corridor 11"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across upper corridor 12"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across upper corridor 13"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across upper corridor 14"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across upper corridor 15"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across upper corridor 16"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across upper corridor 17"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across upper corridor 18"},
+    {"type": "move_path", "path": [[0, 1], [-1, 0]], "caption": "move below two for the downward pull"},
+    {"type": "action", "action": "move", "direction": [0, -1], "caption": "turn up toward two"},
+    {"type": "action", "action": "pull", "direction": [0, 1], "caption": "pull two down into the lower corridor"},
+    {"type": "move_path", "path": [[1, 0], [0, -1]], "caption": "move to the second right-pull side of two"},
+    {"type": "action", "action": "move", "direction": [-1, 0], "caption": "turn left toward two for the second pull"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across lower corridor 1"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across lower corridor 2"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across lower corridor 3"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across lower corridor 4"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across lower corridor 5"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across lower corridor 6"},
+    {"type": "action", "action": "pull", "direction": [1, 0], "caption": "pull two across lower corridor 7"},
+    {"type": "move_path", "path": [[0, -1], [-1, 0], [0, 1], [0, 1], [0, 1]], "caption": "push two into the gesture slot", "expect": {"player_pos": [26, 16], "text_at": {"pos": [26, 17], "text": "二"}}},
+    {"type": "move_path", "path": [[1, 0], [1, 0], [0, -1], [1, 0], [0, -1]], "caption": "walk to the palm for the two gesture", "expect": {"player_pos": [29, 14]}},
+    {"type": "action", "action": "move", "direction": [1, 0], "caption": "turn right toward the two-hand palm"},
+    {
+      "type": "action",
+      "action": "interact",
+      "direction": [
+        0,
+        0
+      ],
+      "caption": "switch to two gesture",
+      "expect": {
+        "player_pos": [
+          29,
+          14
+        ],
+        "last_message": "巨大手掌，是二的手势。"
+      }
+    },
+    {
+      "type": "move_path",
+      "path": [[-1, 0], [-1, 0], [-1, 0], [0, 1]],
+      "caption": "walk from two-hand switch point to screenshot anchor",
+      "checkpoint": {
+        "id": "gesture_two",
+        "state_id": "gesture_two",
+        "ref": "GLOVE-SHOT-004",
+        "label": "二手势截图锚点",
+        "source_grid_id": "GLOVE-GRID-005",
+        "verification_status": "candidate",
+        "review_note": "真实路线先在世界格 [29,14] 切到二手势，再连续走到基线登记的截图玩家位置 [26,15]。"
+      },
+      "expect": {
+        "player_pos": [
+          26,
+          15
+        ],
+        "last_message": "巨大手掌，是二的手势。"
+      }
+    },
+    {
+      "type": "move_path",
+      "path": [[1, 0], [1, 0], [1, 0], [0, -1]],
+      "caption": "return from screenshot anchor to two-hand switch point",
+      "expect": {
+        "player_pos": [
+          29,
+          14
+        ]
+      }
+    },
+    {
+      "type": "move_path",
+      "path": [[-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [0, -1], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [0, -1], [0, -1], [0, -1], [0, -1], [0, -1], [0, -1], [0, -1], [1, 0], [1, 0], [1, 0], [0, -1], [0, -1], [0, -1], [0, -1], [0, -1], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [1, 0]],
+      "caption": "walk from the two-hand palm to the sentence sword",
+      "expect": {
+        "player_pos": [
+          4,
+          1
+        ],
+        "facing": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "type": "action",
+      "action": "move",
+      "direction": [
+        0,
+        1
+      ],
+      "caption": "turn down toward sentence sword",
+      "expect": {
+        "player_pos": [
+          4,
+          1
+        ],
+        "facing": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "type": "action",
+      "action": "interact",
+      "direction": [
+        0,
+        0
+      ],
+      "caption": "shift embedded sword right",
+      "expect": {
+        "last_message": "二指伸直，掌中剑换到了右边。",
+        "text_at": {
+          "pos": [
+            28,
+            6
+          ],
+          "text": "剑"
+        },
+        "absent_text_at": {
+          "pos": [
+            20,
+            6
+          ],
+          "text": "剑"
+        }
+      }
+    },
+    {
+      "type": "source_event",
+      "pos": [24, 5],
+      "path": [
+        [
+          -1,
+          0
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          0,
+          -1
+        ]
+      ],
+      "caption": "walk from sentence sword to final corridor tile",
+      "expect": {
+        "player_pos": [
+          24,
+          5
+        ],
+        "visible": false,
+        "input_locked": true
+      }
+    },
+    {
+      "type": "checkpoint",
+      "caption": "enter transition",
+      "checkpoint": {
+        "id": "transition_out",
+        "state_id": "transition_out",
+        "ref": "GLOVE-SHOT-009",
+        "label": "黑屏转场锚点",
+        "source_grid_id": "GLOVE-GRID-012"
+      },
+      "expect": {
+        "player_pos": [
+          24,
+          5
+        ],
+        "visible": false,
+        "input_locked": true
+      }
+    }
+  ]
+}

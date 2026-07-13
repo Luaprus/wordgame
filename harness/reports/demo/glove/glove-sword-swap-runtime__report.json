@@ -1,0 +1,109 @@
+{
+	"baseline_id": "GLOVE-BEH-003",
+	"behavior_id": "GLOVE-SWORD-SWAP",
+	"catalog_notes": "Runtime helper route for the two-gesture sword swap rule.",
+	"catalog_status": "in_progress",
+	"checkpoints": [
+		{
+			"caption": "reuse verified correct route through right sword swap",
+			"facing": [
+				0,
+				-1
+			],
+			"id": "sword_swap_right",
+			"input_locked": false,
+			"label": "掌中剑右移规则锚点",
+			"last_message": "",
+			"player_pos": [
+				20,
+				13
+			],
+			"ref": "",
+			"review_note": "该锚点通过完整真实正确路线证明：二手势会让掌中剑从左源坐标换到右源坐标。当前没有直连截图基线，因此它用于源码/规则交接。",
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"state_id": "sword_swap_right",
+			"step_index": 0,
+			"visible": true
+		}
+	],
+	"feature_id": "F024",
+	"final_state": {
+		"facing": [
+			0,
+			-1
+		],
+		"input_locked": false,
+		"last_message": "",
+		"player_pos": [
+			20,
+			13
+		],
+		"visible": true
+	},
+	"level_id": "glove",
+	"route_id": "glove-sword-swap-runtime",
+	"runtime_trace": {
+		"animation_ids": [],
+		"audio_ids": []
+	},
+	"steps": [
+		{
+			"caption": "reuse verified correct route through right sword swap",
+			"checkpoint": {
+				"caption": "reuse verified correct route through right sword swap",
+				"facing": [
+					0,
+					-1
+				],
+				"id": "sword_swap_right",
+				"input_locked": false,
+				"label": "掌中剑右移规则锚点",
+				"last_message": "",
+				"player_pos": [
+					20,
+					13
+				],
+				"ref": "",
+				"review_note": "该锚点通过完整真实正确路线证明：二手势会让掌中剑从左源坐标换到右源坐标。当前没有直连截图基线，因此它用于源码/规则交接。",
+				"runtime_trace": {
+					"animation_ids": [],
+					"audio_ids": []
+				},
+				"state_id": "sword_swap_right",
+				"step_index": 0,
+				"visible": true
+			},
+			"expectation_failures": [
+				"player_pos expected (4, 1) got (20, 13)",
+				"last_message expected 二指伸直，掌中剑换到了右边。 got ",
+				"text_at (28, 6) expected 剑 got "
+			],
+			"expectations_checked": 4,
+			"facing": [
+				0,
+				-1
+			],
+			"index": 0,
+			"input_data": {
+				"route_path": "res://../harness/demo_routes/glove/glove_correct_route_runtime.json",
+				"through_caption": "shift embedded sword right"
+			},
+			"last_message": "",
+			"message": "player_pos expected (4, 1) got (20, 13); last_message expected 二指伸直，掌中剑换到了右边。 got ; text_at (28, 6) expected 剑 got ",
+			"player_pos": [
+				20,
+				13
+			],
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"success": false,
+			"type": "route_segment"
+		}
+	],
+	"target_feature_id": "F024"
+}

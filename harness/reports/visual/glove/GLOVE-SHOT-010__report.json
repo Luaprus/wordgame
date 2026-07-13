@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-07-12T19:19:03.343844+08:00",
+  "feature_id": "F003",
+  "baseline_id": "GLOVE-SHOT-010",
+  "level_id": "glove",
+  "status": "pass",
+  "diff_pixel_count": 0,
+  "original_image_path": "harness/baselines/screenshots/images/glove/GLOVE_010.png",
+  "replay_image_path": "E:/wordgame copy/harness/reports/visual/glove/GLOVE-SHOT-010__replay.png",
+  "diff_image_path": "E:/wordgame copy/harness/reports/visual/glove/GLOVE-SHOT-010__diff.png",
+  "command": "powershell -ExecutionPolicy Bypass -File newgame/tools/capture_visual_smoke.ps1",
+  "original_size": {
+    "width": 1390,
+    "height": 790
+  },
+  "replay_size": {
+    "width": 1390,
+    "height": 790
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "route_id": "glove-sword-swap-runtime",
+  "feature_id": "F024",
+  "target_feature_id": "F024",
+  "baseline_id": "GLOVE-BEH-003",
+  "behavior_id": "GLOVE-SWORD-SWAP",
+  "level_id": "glove",
+  "world_source": "glove_level",
+  "route_stage": "runtime",
+  "notes": "复用已验证正确路线直到二手势首次把掌中剑换到右侧，再用一次真实互动把剑换回左侧。未切二手势时的阻挡规则由独立单元测试覆盖。",
+  "steps": [
+    {
+      "type": "route_segment",
+      "route_path": "res://../harness/demo_routes/glove/glove_correct_route_runtime.json",
+      "through_caption": "shift embedded sword right",
+      "caption": "reuse verified correct route through right sword swap",
+      "checkpoint": {
+        "id": "sword_swap_right",
+        "state_id": "sword_swap_right",
+        "label": "掌中剑右移规则锚点",
+        "review_note": "该锚点通过完整真实正确路线证明：二手势会让掌中剑从左源坐标换到右源坐标。当前没有直连截图基线，因此它用于源码/规则交接。"
+      },
+      "expect": {
+        "player_pos": [4, 1],
+        "last_message": "二指伸直，掌中剑换到了右边。",
+        "text_at": {"pos": [28, 6], "text": "剑"},
+        "absent_text_at": {"pos": [20, 6], "text": "剑"}
+      }
+    },
+    {
+      "type": "action",
+      "action": "interact",
+      "direction": [0, 0],
+      "caption": "swap sword back to the left",
+      "expect": {
+        "last_message": "二指伸直，掌中剑换到了左边。",
+        "text_at": {"pos": [20, 6], "text": "剑"},
+        "absent_text_at": {"pos": [28, 6], "text": "剑"}
+      }
+    }
+  ]
+}

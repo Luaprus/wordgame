@@ -1,0 +1,113 @@
+{
+	"baseline_id": "GLOVE-BEH-003",
+	"behavior_id": "GLOVE-GESTURE-CHANGE",
+	"catalog_notes": "Runtime helper route for the lower lifeline clue and good-hand follow-up.",
+	"catalog_status": "in_progress",
+	"checkpoints": [
+		{
+			"caption": "switch to the good-hand gesture",
+			"facing": [
+				0,
+				-1
+			],
+			"id": "good_hand_followup",
+			"input_locked": false,
+			"label": "好手势连续路线候选锚点",
+			"last_message": "",
+			"player_pos": [
+				20,
+				13
+			],
+			"ref": "GLOVE-SHOT-008",
+			"review_note": "已用真实拉字、推字和移动切到好手势；截图时机仍需人工确认。",
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"source_grid_id": "GLOVE-GRID-015",
+			"state_id": "good_hand_followup",
+			"step_index": 0,
+			"verification_status": "candidate",
+			"visible": true
+		}
+	],
+	"feature_id": "F024",
+	"final_state": {
+		"facing": [
+			0,
+			-1
+		],
+		"input_locked": false,
+		"last_message": "",
+		"player_pos": [
+			20,
+			13
+		],
+		"visible": true
+	},
+	"level_id": "glove",
+	"route_id": "glove-good-clue-runtime",
+	"runtime_trace": {
+		"animation_ids": [],
+		"audio_ids": []
+	},
+	"steps": [
+		{
+			"caption": "switch to the good-hand gesture",
+			"checkpoint": {
+				"caption": "switch to the good-hand gesture",
+				"facing": [
+					0,
+					-1
+				],
+				"id": "good_hand_followup",
+				"input_locked": false,
+				"label": "好手势连续路线候选锚点",
+				"last_message": "",
+				"player_pos": [
+					20,
+					13
+				],
+				"ref": "GLOVE-SHOT-008",
+				"review_note": "已用真实拉字、推字和移动切到好手势；截图时机仍需人工确认。",
+				"runtime_trace": {
+					"animation_ids": [],
+					"audio_ids": []
+				},
+				"source_grid_id": "GLOVE-GRID-015",
+				"state_id": "good_hand_followup",
+				"step_index": 0,
+				"verification_status": "candidate",
+				"visible": true
+			},
+			"expectation_failures": [
+				"player_pos expected (30, 15) got (20, 13)",
+				"last_message expected 巨大手掌，是好的手势。 got ",
+				"text_at (7, 8) expected 掌 got 勇：别被一条线给困住了！"
+			],
+			"expectations_checked": 4,
+			"facing": [
+				0,
+				-1
+			],
+			"index": 0,
+			"input_data": {
+				"route_path": "res://../harness/demo_routes/glove/glove_correct_route_runtime.json",
+				"through_caption": "switch to good gesture"
+			},
+			"last_message": "",
+			"message": "player_pos expected (30, 15) got (20, 13); last_message expected 巨大手掌，是好的手势。 got ; text_at (7, 8) expected 掌 got 勇：别被一条线给困住了！",
+			"player_pos": [
+				20,
+				13
+			],
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"success": false,
+			"type": "route_segment"
+		}
+	],
+	"target_feature_id": "F024"
+}
