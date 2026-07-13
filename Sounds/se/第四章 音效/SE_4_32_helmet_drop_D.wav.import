@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bjyas08y6uyg5"
+path="res://.godot/imported/SE_4_32_helmet_drop_D.wav-8e326497b8256be6606e9ac2caf4f18b.sample"
+
+[deps]
+
+source_file="res://Sounds/se/第四章 音效/SE_4_32_helmet_drop_D.wav"
+dest_files=["res://.godot/imported/SE_4_32_helmet_drop_D.wav-8e326497b8256be6606e9ac2caf4f18b.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

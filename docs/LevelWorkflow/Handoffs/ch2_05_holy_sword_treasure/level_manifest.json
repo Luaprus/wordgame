@@ -4,14 +4,15 @@
   "owner": "Codex",
   "status": "in_progress",
   "date": "2026-07-13",
-  "scope_note": "本次在 L:/wordgame-map/wordgame 中复核并对齐貝克思貝斯之劍动画资源链，参考源项目 D:/文字游戏；Backspace.tscn、Backspace.gd、Backspace_fail.tscn 与源项目逐行一致。",
+  "scope_note": "本次在 L:/wordgame-map/wordgame 中复核并对齐貝克思貝斯之劍动画资源链，参考源项目 D:/文字游戏；按用户截图将 05_聖劍寶庫 的「忘」字 Backspace 删除固定为右上到左下方向的 45 度斜劈。",
   "source": {
 	"external_root": "D:/文字游戏",
 	"source_map": "D:/文字游戏/Scenes/Maps/第二章/05_聖劍寶庫.tscn",
 	"animation_sources": [
 	  "D:/文字游戏/Scenes/Animations/Backspace.tscn",
 	  "D:/文字游戏/Scenes/Animations/Backspace.gd",
-      "D:/文字游戏/Scenes/Animations/Backspace_fail.tscn"
+	  "D:/文字游戏/Scenes/Animations/Backspace_fail.tscn",
+      "D:/文字游戏/Scripts/DrawText.gd"
 	]
   },
   "target": {
@@ -40,7 +41,7 @@
 	  {
 		"source": "D:/文字游戏/Scenes/Animations/Backspace.gd",
 		"target": "res://Scenes/Animations/Backspace.gd",
-		"trigger": "Backspace slash animation logic"
+		"trigger": "Backspace slash animation logic; target project fixes degree=45 when parent event is named/text 「忘」 to match user screenshots"
 	  },
 	  {
 		"source": "D:/文字游戏/Sprites/backspace_splash/splash.png",
@@ -61,6 +62,16 @@
 		"source": "D:/文字游戏/Shader/cut2.gdshader.uid",
 		"target": "res://Shader/cut2.gdshader.uid",
 		"used_by": "Godot UID metadata for cut2.gdshader"
+	  },
+	  {
+		"source": "D:/文字游戏/Scripts/DrawText.gd",
+		"target": "res://Scripts/DrawText.gd",
+		"used_by": "WordSprite.draw_text_to_sprite() renders the deleted word into an ImageTexture before cut2.gdshader splits and fades it"
+	  },
+	  {
+		"source": "D:/文字游戏/Scenes/Events/TextureText.tscn",
+		"target": "res://Scenes/Events/TextureText.tscn",
+		"used_by": "DrawText.gd temporary SubViewport text render for Backspace slash"
 	  },
 	  {
 		"source": "D:/文字游戏/Sounds/se/sword_swing_1.wav..sword_swing_3.wav",
@@ -153,7 +164,8 @@
   },
   "missing_resources": [],
   "acceptance": [
-	"Backspace.tscn, Backspace.gd, and Backspace_fail.tscn line-match the D:/文字游戏 source files",
+	"Backspace.tscn and Backspace_fail.tscn line-match the D:/文字游戏 source files; Backspace.gd keeps source logic and fixes 「忘」 slash angle to 45 degrees per user screenshots",
+	"WordSprite.draw_text_to_sprite() now produces an ImageTexture so the Backspace cut shader can visibly split 忘",
 	"Backspace slash sprite, cut shader, success audio, and failure audio exist",
 	"聖劍影片 u_sword.ogv exists for the acquisition sequence",
 	"Second chapter sword BGM and sword sequence SFX exist",

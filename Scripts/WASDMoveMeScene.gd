@@ -11,7 +11,6 @@ const ME_DEFAULT_TEXTURE := preload("res://Sprites/me/me_default.png")
 const ME_WALK_TEXTURE := preload("res://Sprites/me/me_walk.png")
 
 @onready var _me: Sprite2D = $Me
-@onready var _direction_arrow: Node2D = $DirectionArrow
 
 var _cell := Vector2i(16, 9)
 var _is_moving := false
@@ -123,7 +122,6 @@ func _try_move(direction: Vector2i) -> void:
 	_cell = next_cell
 	_is_moving = true
 	_set_walk_sprite()
-	_direction_arrow.show_for_direction_code(_vector_to_direction_code(direction))
 
 	var move_tween := create_tween()
 	move_tween.tween_property(_me, "position", _cell_to_screen(_cell), MOVE_TIME).set_trans(Tween.TRANS_LINEAR)
@@ -170,17 +168,3 @@ func _play_blocked_animation() -> void:
 
 func _cell_to_screen(cell: Vector2i) -> Vector2:
 	return Vector2(cell) * CELL_SIZE + CELL_SIZE / 2.0
-
-
-func _vector_to_direction_code(direction: Vector2i) -> int:
-	match direction:
-		Vector2i.DOWN:
-			return 2
-		Vector2i.LEFT:
-			return 4
-		Vector2i.RIGHT:
-			return 6
-		Vector2i.UP:
-			return 8
-		_:
-			return 0

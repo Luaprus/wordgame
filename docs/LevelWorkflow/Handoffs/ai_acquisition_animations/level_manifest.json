@@ -1,0 +1,118 @@
+{
+  "level_id": "ai_acquisition_animations",
+  "display_name": "AI 可检索圣器获取动画目录",
+  "owner": "Codex",
+  "status": "in_progress",
+  "date": "2026-07-13",
+  "scope_note": "将貝克思貝斯之劍、杜爾手套、四目頭盔的获取动画整理到统一目录，并提供关键词索引供 AI 检索。",
+  "source": {
+    "external_root": "D:/文字游戏",
+    "source_maps": [
+      "D:/文字游戏/Scenes/Maps/第二章/05_聖劍寶庫.tscn",
+      "D:/文字游戏/Scenes/Maps/第三章/04_手套教學.tscn",
+      "D:/文字游戏/Scenes/Maps/第四章/12_寶庫_穹頂.tscn"
+    ],
+    "source_animations": [
+      "D:/文字游戏/Scenes/Animations/Backspace.tscn",
+      "D:/文字游戏/Scenes/Animations/Backspace.gd",
+      "D:/文字游戏/Scenes/Animations/Backspace_fail.tscn",
+      "D:/文字游戏/Scenes/Animations/Helmet.tscn",
+      "D:/文字游戏/Scenes/Animations/ch4_helmet.tscn"
+    ]
+  },
+  "target": {
+    "godot_version": "4.7",
+    "folder": "res://Scenes/Test/AI_AcquisitionAnimations",
+    "scenes": [
+      "res://Scenes/Test/AI_AcquisitionAnimations/BackspaceSwordAcquirePreview.tscn",
+      "res://Scenes/Test/AI_AcquisitionAnimations/DurlGlovesAcquirePreview.tscn",
+      "res://Scenes/Test/AI_AcquisitionAnimations/FourEyeHelmetAcquirePreview.tscn"
+    ],
+    "keyword_index": "res://Scenes/Test/AI_AcquisitionAnimations/acquisition_animation_index.json"
+  },
+  "placement_rule": {
+    "grid_cell_size": 60,
+    "preview_grid": "32x18",
+    "background_color": "#080808",
+    "grid_line_alpha": "low_opacity_white"
+  },
+  "required_resources": {
+    "sword_acquire": [
+      {
+        "source": "D:/文字游戏/Sprites/ch2_sword/u_sword.ogv",
+        "target": "res://Sprites/ch2_sword/u_sword.ogv"
+      },
+      {
+        "source": "D:/文字游戏/Sounds/se/第二章 音效/SE_2_23_sword_big_swing_B.wav",
+        "target": "res://Sounds/se/第二章 音效/SE_2_23_sword_big_swing_B.wav"
+      },
+      {
+        "source": "D:/文字游戏/Sounds/se/MEL/MEL_2_24_sword.wav",
+        "target": "res://Sounds/se/MEL/MEL_2_24_sword.wav"
+      }
+    ],
+    "glove_acquire": [
+      {
+        "source": "D:/文字游戏/Sprites/ch3_glove/u_glove.ogv",
+        "target": "res://Sprites/ch3_glove/u_glove.ogv"
+      },
+      {
+        "source": "D:/文字游戏/Sounds/se/第三章 音效/SE_3_19_glove_put_on.wav",
+        "target": "res://Sounds/se/第三章 音效/SE_3_19_glove_put_on.wav"
+      },
+      {
+        "source": "D:/文字游戏/Sounds/se/MEL/MEL_3_19.1_gloves.wav",
+        "target": "res://Sounds/se/MEL/MEL_3_19.1_gloves.wav"
+      }
+    ],
+    "helmet_acquire": [
+      {
+        "source": "D:/文字游戏/Scenes/Animations/Helmet.tscn",
+        "target": "res://Scenes/Animations/Helmet.tscn"
+      },
+      {
+        "source": "D:/文字游戏/Scenes/Animations/ch4_helmet.tscn",
+        "target": "res://Scenes/Animations/ch4_helmet.tscn"
+      },
+      {
+        "source": "D:/文字游戏/Sprites/ch4_helmet/u_helmet.ogv",
+        "target": "res://Sprites/ch4_helmet/u_helmet.ogv"
+      },
+      {
+        "source": "D:/文字游戏/Sprites/ch4_dome/dome_energy.png",
+        "target": "res://Sprites/ch4_dome/dome_energy.png"
+      },
+      {
+        "source": "D:/文字游戏/Sprites/ch4_dome/dome_appear.png",
+        "target": "res://Sprites/ch4_dome/dome_appear.png"
+      },
+      {
+        "source": "D:/文字游戏/Sprites/ch4_dome/dome_slippy.png",
+        "target": "res://Sprites/ch4_dome/dome_slippy.png"
+      },
+      {
+        "source": "D:/文字游戏/Sounds/se/第四章 音效/SE_4_32_helmet_drop_D.wav",
+        "target": "res://Sounds/se/第四章 音效/SE_4_32_helmet_drop_D.wav"
+      },
+      {
+        "source": "D:/文字游戏/Sounds/se/第四章 音效/SE_4_33_helmet_put_on_B.wav",
+        "target": "res://Sounds/se/第四章 音效/SE_4_33_helmet_put_on_B.wav"
+      },
+      {
+        "source": "D:/文字游戏/Sounds/se/MEL/MEL_4_33.1_helmet.wav",
+        "target": "res://Sounds/se/MEL/MEL_4_33.1_helmet.wav"
+      }
+    ]
+  },
+  "missing_resources": [],
+  "acceptance": [
+    "Three acquisition preview scenes exist in a single AI-readable folder",
+    "Keyword index maps acquisition keywords to the three scenes",
+    "All preview scenes use source assets from D:/文字游戏",
+    "Preview scenes draw the standard 32x18 60px grid on #080808 background"
+  ],
+  "known_risks": [
+    "The preview scenes focus on the acquisition animation beats and source media, not the full original gameplay command chain.",
+    "Editor-side visual comparison is still needed to judge whether the timing feels fully 1:1."
+  ]
+}

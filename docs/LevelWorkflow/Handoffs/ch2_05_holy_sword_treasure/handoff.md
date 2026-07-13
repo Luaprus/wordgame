@@ -8,7 +8,8 @@
 
 ## 已完成
 
-- 确认 `res://Scenes/Animations/Backspace.tscn`、`Backspace.gd`、`Backspace_fail.tscn` 已存在，且与 `D:\文字游戏` 对应源文件逐行一致。
+- 确认 `res://Scenes/Animations/Backspace.tscn`、`Backspace_fail.tscn` 已存在，且与 `D:\文字游戏` 对应源文件逐行一致；`Backspace.gd` 保留源动画逻辑，并按用户截图把 `忘` 字删除固定为 45 度斜劈。
+- 按源项目 `D:\文字游戏\Scripts\DrawText.gd` 的做法，恢复 `res://Scripts/DrawText.gd` 中 `draw_text_to_sprite()` 的文字转贴图流程，让 `cut2.gdshader` 能真正切开 `忘` 字。
 - 补齐成功斩字动画资源：
   - `res://Sprites/backspace_splash/splash.png`
   - `res://Shader/cut2.gdshader`
@@ -31,6 +32,8 @@
 |---|---|---|
 | `D:\文字游戏\Scenes\Animations\Backspace.tscn` | `res://Scenes/Animations/Backspace.tscn` | 按 Backspace 成功斩字动画 |
 | `D:\文字游戏\Scenes\Animations\Backspace.gd` | `res://Scenes/Animations/Backspace.gd` | 斩字帧推进、切字 shader、挥剑音效 |
+| `D:\文字游戏\Scripts\DrawText.gd` | `res://Scripts/DrawText.gd` | 将 `忘` 字渲染成贴图供 shader 劈开 |
+| `D:\文字游戏\Scenes\Events\TextureText.tscn` | `res://Scenes/Events/TextureText.tscn` | 文字转贴图用 SubViewport 场景 |
 | `D:\文字游戏\Sprites\backspace_splash\splash.png` | `res://Sprites/backspace_splash/splash.png` | 斩击序列帧 |
 | `D:\文字游戏\Shader\cut2.gdshader` | `res://Shader/cut2.gdshader` | 被斩文字切割效果 |
 | `D:\文字游戏\Shader\cut2.gdshader.uid` | `res://Shader/cut2.gdshader.uid` | 切字 shader UID 元数据 |
@@ -48,15 +51,18 @@
 ## 触发链
 
 - `res://Scripts/Event.gd` 的 `been_backspace()` 会实例化 `res://Scenes/Animations/Backspace.tscn`。
-- `res://Scenes/Animations/Backspace.gd` 对父事件的 `WordSprite` 调用 `draw_text_to_sprite()`，套用 `cut2.gdshader`，再播放 `sword_swing_1..3.wav`。
+- `res://Scenes/Animations/Backspace.gd` 对父事件的 `WordSprite` 调用 `draw_text_to_sprite()`，先把 `忘` 渲染成贴图，再套用 `cut2.gdshader`，并播放 `sword_swing_1..3.wav`。
+- 当父事件名或 `text` 为 `忘` 时，`Backspace.gd` 会固定 `degree = 45`，用于匹配截图里从右上到左下的斜向闪光和切字方向。
 - `res://Scripts/Player.gd` 的 `backspace_fail_animation()` 会实例化 `res://Scenes/Animations/Backspace_fail.tscn`，并播放 `sword_swing_fail_1..3.wav`。
 - `res://Scenes/Maps/第二章/05_聖劍寶庫.tscn` 中拿到剑后会播放 `MainMap/聖劍影片/VideoStreamPlayer`，其 stream 为 `res://Sprites/ch2_sword/u_sword.ogv`，随后设置 `@[set_backspace_power] true`。
+- `res://Scenes/Maps/第二章/05_聖劍寶庫.tscn` 中的 `忘` 事件位于 `now_pos = Vector2(97, 35)`，`can_delete = true`；玩家操控 `我` 面向它按 Backspace 时触发上述动画。
 
 ## 验收与风险
 
 - 已做静态检查：Backspace 成功/失败动画、圣剑影片、相关 BGM/SE 的目标文件均存在。
+- 已做静态检查：`05_聖劍寶庫.tscn` 中 `忘` 事件仍为 `can_delete = true`，并保留源项目句子文本 `只有[忘]掉下去這一條路了⋯⋯`。
 - 已做源一致性检查：关键新增资源的 SHA256 与 `D:\文字游戏` 源文件一致。
-- 已做动画文本一致性检查：`Backspace.tscn`、`Backspace.gd`、`Backspace_fail.tscn` 与源项目逐行一致；哈希差异仅来自本地换行或 UID 元数据长度差异，不是逻辑分叉。
+- 已做动画文本一致性检查：`Backspace.tscn`、`Backspace_fail.tscn` 与源项目逐行一致；`Backspace.gd` 的唯一逻辑差异是 `忘` 字固定 45 度斜劈。
 - 已尝试 Godot headless：`D:\Godot_v4.7-stable_win64.exe\Godot_v4.7-stable_win64_console.exe --headless --path L:\wordgame-map\wordgame --quit-after 1`，启动阶段 signal 11 崩溃，未能作为运行验收依据。
 - 未做 Godot 编辑器实际播放验收；需要人工触发一次“拿到圣剑影片”和一次 Backspace 斩字，确认视觉节奏和声音是否像源项目。
 - 本项目在当前环境下 headless 启动直接崩溃，因此不能把 headless 作为本动画接入的唯一验证手段。

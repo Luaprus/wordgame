@@ -30,7 +30,11 @@ func _on_Backspace_tree_entered():
 	
 	var degree = randi() % 50 + 20
 	
-	var word = get_parent().get_node("WordSprite")
+	var event = get_parent()
+	if event.name == "忘" || str(event.get("text")) == "忘":
+		degree = 45
+	
+	var word = event.get_node("WordSprite")
 	
 	word.draw_text_to_sprite()
 	await word.draw_text_to_sprite_complete

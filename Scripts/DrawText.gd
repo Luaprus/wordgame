@@ -6,6 +6,7 @@ const FONT_SIZE := 54
 const FONT_SCALE := 1.12
 
 var font := preload("res://Fonts/Zpix.tres")
+const TextureTextResourse := preload("res://Scenes/Events/TextureText.tscn")
 
 @export_multiline var text := "":
 	set(value):
@@ -41,6 +42,8 @@ signal text_drawn
 signal dissolve_tween_completed
 signal crash_tween_completed
 signal draw_text_to_sprite_complete
+
+var vport: SubViewport
 
 
 func _ready() -> void:
@@ -102,7 +105,51 @@ func draw_text() -> void:
 
 
 func draw_text_to_sprite() -> void:
-	update_draw()
+	if not get_parent():
+		return
+
+	var lines := text.replace("\r\n", "\n").split("\n")
+	text_wh = Vector2.ZERO
+	text_wh.y = lines.size()
+	for line in lines:
+		text_wh.x = max(text_wh.x, String(line).length())
+
+	centered = false
+	offset = Vector2(-30, -30)
+
+	vport = TextureTextResourse.instantiate()
+	var cvitem := vport.get_child(0)
+	vport.size = Vector2(max(text_wh.x, 1.0) * CELL_SIZE, max(text_wh.y, 1.0) * CELL_SIZE)
+	cvitem.has_background = has_background
+	cvitem.text_color = text_color
+	cvitem.text = text
+
+	add_child(vport)
+	await RenderingServer.frame_post_draw
+
+	if "has_sprite_animation" in get_parent() and get_parent().has_sprite_animation:
+		return
+
+	hframes = 1
+	vframes = 1
+	frame = 0
+
+	await RenderingServer.frame_post_draw
+
+	texture = ImageTexture.create_from_image(vport.get_texture().get_image())
+	centered = true
+	position = position - Vector2(30, 30) + Vector2(text_wh.x * 30, text_wh.y * 30)
+	offset = Vector2.ZERO
+
+	if is_ancestor_of(vport):
+		remove_child(vport)
+		vport.queue_free()
+	elif has_node("SubViewport"):
+		get_node("SubViewport").queue_free()
+
+	render_type = "sprite"
+	queue_redraw()
+
 	draw_text_to_sprite_complete.emit()
 
 
