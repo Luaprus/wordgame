@@ -1,5 +1,7 @@
 extends RefCounted
 
+const BridgeTreeVisuals = preload("res://levels/helmet/bridge_tree_visuals.gd")
+
 const LEVEL_NAME := "四目头盔 过河第四关"
 const SCREEN_SIZE := Vector2i(32, 18)
 
@@ -311,6 +313,7 @@ static func _near_bridge_merge_effect() -> Dictionary:
 	spawn.append_array(_near_bridge_spawn())
 	return {
 		"remove_at": _near_dynamic_cells(),
+		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _near_bridge_cells()),
 		"replace_text": [_hint_bridge_merge_replace()],
 		"spawn": spawn
 	}
@@ -318,6 +321,7 @@ static func _near_bridge_merge_effect() -> Dictionary:
 static func _near_bridge_split_effect() -> Dictionary:
 	return {
 		"remove_at": _near_dynamic_cells(),
+		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _near_bridge_cells()),
 		"replace_text": [_hint_bridge_split_replace()],
 		"spawn": _creek_and_tree_spawn()
 	}
@@ -325,11 +329,13 @@ static func _near_bridge_split_effect() -> Dictionary:
 static func _far_bridge_split_effect() -> Dictionary:
 	return {
 		"remove_at": _far_dynamic_cells(),
+		"visual_effect": BridgeTreeVisuals.split_effect(_far_tree_cells(), _far_bridge_cells()),
 		"spawn": _far_tree_spawn()
 	}
 
 static func _far_bridge_merge_effect() -> Dictionary:
 	return {
 		"remove_at": _far_dynamic_cells(),
+		"visual_effect": BridgeTreeVisuals.merge_effect(_far_tree_cells(), _far_bridge_cells()),
 		"spawn": _far_bridge_spawn()
 	}

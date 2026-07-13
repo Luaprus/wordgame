@@ -18,6 +18,7 @@ const PlayerDirectionMarker = preload("res://scripts/player_moving/player_direct
 const SmoothGridMover = preload("res://scripts/smooth_grid_mover.gd")
 const GemBurstEffect = preload("res://scripts/gem_burst_effect.gd")
 const LightGlowEffect = preload("res://scripts/light_glow_effect.gd")
+const TreeSpriteScene = preload("res://scenes/animations/TreeSprite.tscn")
 const OriginalFont = preload("res://Fonts/Zpix-v3.1.6.ttf")
 
 const WORD_FONT_SIZE := 56
@@ -57,6 +58,7 @@ var entity_labels: Dictionary = {}
 var player_label: Label
 var player_sprite: Sprite2D
 var map_layer: Node2D
+var bridge_tree_effect_layer: Node2D
 var demo_timer: Timer
 var world_event_timer: Timer
 var direction_marker: Node2D
@@ -75,6 +77,7 @@ var player_move_repeat_timer := 0.0
 var player_blocked_retry_timer := 0.0
 var _player_visual_ready := false
 var _last_player_visible := true
+var _visual_effect_generation := 0
 var highlight_visual_config: Dictionary = {}
 var gem_labels: Array = []
 var intro_phase := "lights"
@@ -161,6 +164,10 @@ func _build_scene() -> void:
 	map_layer.add_child(player_label)
 	_setup_player_sprite()
 	_build_direction_marker()
+	bridge_tree_effect_layer = Node2D.new()
+	bridge_tree_effect_layer.name = "BridgeTreeEffectLayer"
+	bridge_tree_effect_layer.z_index = 19
+	map_layer.add_child(bridge_tree_effect_layer)
 	light_glow_effect = LightGlowEffect.new()
 	light_glow_effect.name = "LightGlowEffect"
 	light_glow_effect.z_index = 9
@@ -322,8 +329,7 @@ func _apply_intro_visibility() -> void:
 			visible = _is_blue_gem_entity(entity) or is_light or is_prompt
 		group.visible = visible
 		for child in group.get_children():
-			var label := child as Label
-			label.visible = visible and (intro_phase != "gems" or is_light or is_prompt)
+			child.visible = visible and (intro_phase != "gems" or is_light or is_prompt)
 	if player_label:
 		player_label.visible = world.player_visible and intro_phase == "active"
 		if player_sprite:
@@ -428,7 +434,16 @@ func _creek_wave_offset(entity: WordEntity) -> float:
 	return sin(phase) * CREEK_WAVE_AMPLITUDE
 
 func _sync_entity_label_group(group: Node2D, entity) -> void:
+	if _is_tree_animated_entity(entity):
+		_sync_tree_sprite_group(group)
+		return
+
 	var text := str(entity.text)
+	for child in group.get_children():
+		if child is Label:
+			continue
+		group.remove_child(child)
+		child.queue_free()
 	while group.get_child_count() > text.length():
 		var child := group.get_child(group.get_child_count() - 1)
 		group.remove_child(child)
@@ -451,12 +466,32 @@ func _sync_entity_label_group(group: Node2D, entity) -> void:
 		var pulse_scale := 1.0 + (highlight_strength * maxf(pulse_scale_max - 1.0, 0.0))
 		label.scale = Vector2.ONE * pulse_scale
 
+func _is_tree_animated_entity(entity: WordEntity) -> bool:
+	return entity != null and entity.text == "树"
+
+func _sync_tree_sprite_group(group: Node2D) -> void:
+	for child in group.get_children():
+		if child.name == "TreeSprite":
+			child.position = Vector2.ZERO
+			child.scale = Vector2.ONE
+			child.rotation = 0.0
+			child.visible = true
+			return
+	for child in group.get_children():
+		group.remove_child(child)
+		child.queue_free()
+	var tree_sprite := TreeSpriteScene.instantiate()
+	tree_sprite.name = "TreeSprite"
+	group.add_child(tree_sprite)
+
 func _apply_result(result: Dictionary) -> void:
 	if result.has("transition"):
 		_handle_transition(result)
 		return
+	var visual_requests := world.consume_visual_effects()
+	var visual_contexts := _prepare_visual_effect_contexts(visual_requests)
 	_refresh_view(str(result.get("message", "")))
-	_consume_visual_effects()
+	_consume_visual_effects(visual_requests, visual_contexts)
 	_consume_fullscreen_video_request()
 	if current_level_index == 0 and intro_phase == "lights" and result.get("success", false) and not world.has_pending_timed_effect():
 		_begin_intro_prompt()
@@ -491,19 +526,254 @@ func _consume_fullscreen_video_request() -> void:
 	world.fullscreen_video_request.clear()
 	_play_fullscreen_video(str(request.get("path", "")))
 
-func _consume_visual_effects() -> void:
-	if gem_burst_effect == null:
-		return
-	for request in world.consume_visual_effects():
-		if str(request.get("type", "")) != "gem_burst":
+func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> void:
+	for i in range(visual_requests.size()):
+		var request: Dictionary = visual_requests[i]
+		var effect_type := str(request.get("type", ""))
+		if effect_type == "gem_burst":
+			if gem_burst_effect == null:
+				continue
+			var origin_grid: Vector2 = request.get("origin_grid", GEM_ORIGIN_GRID)
+			gem_burst_effect.play_at(
+				_grid_to_pixels_float(origin_grid),
+				world.cell_size,
+				float(request.get("duration", 0.78)),
+				int(request.get("seed", 1947))
+			)
 			continue
-		var origin_grid: Vector2 = request.get("origin_grid", GEM_ORIGIN_GRID)
-		gem_burst_effect.play_at(
-			_grid_to_pixels_float(origin_grid),
-			world.cell_size,
-			float(request.get("duration", 0.78)),
-			int(request.get("seed", 1947))
-		)
+		if effect_type == "bridge_tree_transition":
+			var context: Dictionary = visual_contexts[i] if i < visual_contexts.size() else {}
+			call_deferred("_run_bridge_tree_transition", request.duplicate(true), context, _visual_effect_generation)
+
+func _prepare_visual_effect_contexts(visual_requests: Array) -> Array:
+	var contexts: Array = []
+	for request in visual_requests:
+		var request_dict: Dictionary = request
+		var effect_type := str(request_dict.get("type", ""))
+		if effect_type != "bridge_tree_transition":
+			contexts.append({})
+			continue
+		var context := {
+			"tree_overlays": [],
+			"bridge_overlays": []
+		}
+		var mode := str(request_dict.get("mode", ""))
+		if mode == "merge":
+			context["tree_overlays"] = _duplicate_groups_for_cells(request_dict.get("tree_cells", []))
+		elif mode == "split":
+			context["bridge_visual_specs"] = _capture_visual_specs_for_cells(request_dict.get("bridge_cells", []))
+			context["reveal_cells"] = _capture_new_entity_cells(request_dict.get("reveal_texts", []))
+		contexts.append(context)
+	return contexts
+
+func _capture_new_entity_cells(texts: Array) -> Array:
+	var cells: Array = []
+	var seen_cells: Dictionary = {}
+	for entity: WordEntity in world.entities.values():
+		if entity_labels.has(entity.id) or not texts.has(entity.text):
+			continue
+		for cell in entity.cells:
+			if seen_cells.has(cell):
+				continue
+			seen_cells[cell] = true
+			cells.append(cell)
+	return cells
+
+func _capture_visual_specs_for_cells(cells: Array) -> Array:
+	var specs: Array = []
+	var seen_cells: Dictionary = {}
+	for cell_value in cells:
+		var cell: Vector2i = cell_value
+		if seen_cells.has(cell):
+			continue
+		seen_cells[cell] = true
+		var spec := {
+			"position": _grid_to_pixels(cell),
+			"rotation_degrees": 0.0,
+			"text": "桥",
+			"color": Color.WHITE
+		}
+		var group: Node2D = _find_group_for_cell(cell)
+		if group == null:
+			specs.append(spec)
+			continue
+		var entity: WordEntity = null
+		for candidate: WordEntity in world.entities.values():
+			if candidate.cells.has(cell) and entity_labels.has(candidate.id):
+				entity = candidate
+				break
+		if entity == null:
+			specs.append(spec)
+			continue
+		var cell_index: int = entity.cells.find(cell)
+		var character: String = entity.text.substr(cell_index, 1) if cell_index >= 0 else entity.text
+		spec["rotation_degrees"] = entity.visual_rotation_degrees
+		spec["text"] = character
+		spec["color"] = entity.visual_color
+		specs.append(spec)
+	return specs
+
+func _build_visual_overlays(specs: Array) -> Array:
+	var overlays: Array = []
+	for spec_value in specs:
+		var spec: Dictionary = spec_value
+		var overlay := Node2D.new()
+		overlay.position = spec.get("position", Vector2.ZERO)
+		overlay.rotation_degrees = float(spec.get("rotation_degrees", 0.0))
+		overlay.z_index = 40
+		var visual_color: Color = spec.get("color", Color.WHITE)
+		var label: Label = _make_word_label(str(spec.get("text", "桥")), visual_color)
+		label.position = Vector2(0, -2)
+		overlay.add_child(label)
+		overlays.append(overlay)
+	return overlays
+
+func _duplicate_groups_for_cells(cells: Array) -> Array:
+	var overlays: Array = []
+	var seen_ids := {}
+	for cell in cells:
+		var group: Node2D = _find_group_for_cell(cell)
+		if group == null:
+			continue
+		var instance_id: int = group.get_instance_id()
+		if seen_ids.has(instance_id):
+			continue
+		seen_ids[instance_id] = true
+		var overlay: Node2D = group.duplicate()
+		overlay.z_index = 40
+		overlays.append(overlay)
+	return overlays
+
+func _find_group_for_cell(cell: Vector2i) -> Node2D:
+	for entity: WordEntity in world.entities.values():
+		if not entity_labels.has(entity.id):
+			continue
+		if entity.cells.has(cell):
+			return entity_labels[entity.id] as Node2D
+	return null
+
+func _find_groups_for_cells(cells: Array) -> Array:
+	var groups: Array = []
+	var seen_ids := {}
+	for cell in cells:
+		var group: Node2D = _find_group_for_cell(cell)
+		if group == null:
+			continue
+		var instance_id: int = group.get_instance_id()
+		if seen_ids.has(instance_id):
+			continue
+		seen_ids[instance_id] = true
+		groups.append(group)
+	return groups
+
+func _run_bridge_tree_transition(request: Dictionary, context: Dictionary, generation: int) -> void:
+	if generation != _visual_effect_generation or bridge_tree_effect_layer == null:
+		return
+	var mode := str(request.get("mode", ""))
+	var tree_fade_duration := float(request.get("tree_fade_duration", 0.42))
+	var tree_fade_in_duration := float(request.get("tree_fade_in_duration", 0.3))
+	var bridge_step_delay := float(request.get("bridge_step_delay", 0.055))
+	var bridge_fade_duration := float(request.get("bridge_fade_duration", 0.12))
+	if mode == "merge":
+		_run_bridge_tree_merge_transition(request, context, generation, tree_fade_duration, bridge_step_delay, bridge_fade_duration)
+	elif mode == "split":
+		_run_bridge_tree_split_transition(request, context, generation, tree_fade_in_duration, bridge_step_delay, bridge_fade_duration)
+
+func _run_bridge_tree_merge_transition(request: Dictionary, context: Dictionary, generation: int, tree_fade_duration: float, bridge_step_delay: float, bridge_fade_duration: float) -> void:
+	var overlays: Array = context.get("tree_overlays", [])
+	for overlay: Node2D in overlays:
+		if bridge_tree_effect_layer:
+			bridge_tree_effect_layer.add_child(overlay)
+	var tree_tween: Tween = null
+	if not overlays.is_empty():
+		tree_tween = create_tween()
+		tree_tween.set_parallel(true)
+		for overlay: Node2D in overlays:
+			overlay.modulate.a = 1.0
+			tree_tween.tween_property(overlay, "modulate:a", 0.0, tree_fade_duration)
+	var bridge_groups: Array = _find_groups_for_cells(request.get("bridge_cells", []))
+	_set_groups_alpha(bridge_groups, 0.0)
+	var bridge_columns: Dictionary = _group_effect_targets_by_x(bridge_groups)
+	for x in bridge_columns.keys():
+		if generation != _visual_effect_generation:
+			_clear_effect_overlays(overlays)
+			return
+		_tween_groups_alpha(bridge_columns[x], 1.0, bridge_fade_duration)
+		await get_tree().create_timer(bridge_step_delay).timeout
+	if tree_tween != null:
+		await tree_tween.finished
+	_clear_effect_overlays(overlays)
+
+func _run_bridge_tree_split_transition(request: Dictionary, context: Dictionary, generation: int, tree_fade_in_duration: float, bridge_step_delay: float, bridge_fade_duration: float) -> void:
+	var overlays: Array = _build_visual_overlays(context.get("bridge_visual_specs", []))
+	for overlay: Node2D in overlays:
+		if bridge_tree_effect_layer:
+			bridge_tree_effect_layer.add_child(overlay)
+	var reveal_groups: Array = _find_groups_for_cells(context.get("reveal_cells", []))
+	_set_groups_alpha(reveal_groups, 0.0)
+	var bridge_columns: Dictionary = _group_effect_targets_by_x(overlays, true)
+	for x in bridge_columns.keys():
+		if generation != _visual_effect_generation:
+			_clear_effect_overlays(overlays)
+			return
+		_tween_groups_alpha(bridge_columns[x], 0.0, bridge_fade_duration)
+		await get_tree().create_timer(bridge_step_delay).timeout
+	_clear_effect_overlays(overlays)
+	await get_tree().process_frame
+	var reveal_tween := create_tween()
+	reveal_tween.set_parallel(true)
+	for group in reveal_groups:
+		reveal_tween.tween_property(group, "modulate:a", 1.0, tree_fade_in_duration)
+	await reveal_tween.finished
+
+func _group_effect_targets_by_x(targets: Array, descending := false) -> Dictionary:
+	var grouped := {}
+	var x_values: Array[int] = []
+	for target in targets:
+		if target == null or not is_instance_valid(target):
+			continue
+		var canvas_item: CanvasItem = target as CanvasItem
+		if canvas_item == null:
+			continue
+		var grid_x := int(round(canvas_item.position.x / float(world.cell_size)))
+		if not grouped.has(grid_x):
+			grouped[grid_x] = []
+			x_values.append(grid_x)
+		grouped[grid_x].append(canvas_item)
+	x_values.sort()
+	if descending:
+		x_values.reverse()
+	var ordered := {}
+	for grid_x in x_values:
+		ordered[grid_x] = grouped[grid_x]
+	return ordered
+
+func _set_groups_alpha(groups: Array, alpha: float) -> void:
+	for group in groups:
+		if group == null or not is_instance_valid(group):
+			continue
+		var canvas_item: CanvasItem = group as CanvasItem
+		if canvas_item == null:
+			continue
+		canvas_item.modulate.a = alpha
+
+func _tween_groups_alpha(groups: Array, alpha: float, duration: float) -> void:
+	var tween := create_tween()
+	tween.set_parallel(true)
+	for group in groups:
+		if group == null or not is_instance_valid(group):
+			continue
+		var canvas_item: CanvasItem = group as CanvasItem
+		if canvas_item == null:
+			continue
+		tween.tween_property(canvas_item, "modulate:a", alpha, duration)
+
+func _clear_effect_overlays(overlays: Array) -> void:
+	for overlay in overlays:
+		if overlay != null and is_instance_valid(overlay):
+			var node: Node = overlay as Node
+			if node:
+				node.queue_free()
 
 func _play_gem_burst_preview() -> void:
 	if current_level_index != 0 or gem_burst_effect == null:
@@ -535,6 +805,7 @@ func _on_fullscreen_video_finished() -> void:
 
 func _load_level_index(index: int, overrides := {}) -> void:
 	current_level_index = clampi(index, 0, LEVEL_SEQUENCE.size() - 1)
+	_visual_effect_generation += 1
 	world.load_level(LEVEL_SEQUENCE[current_level_index].build_level())
 	if overrides.has("player_pos"):
 		world.player_pos = overrides.player_pos
@@ -559,6 +830,9 @@ func _load_level_index(index: int, overrides := {}) -> void:
 	_last_player_visible = world.player_visible
 	if world_event_timer:
 		world_event_timer.stop()
+	if bridge_tree_effect_layer:
+		for child in bridge_tree_effect_layer.get_children():
+			child.queue_free()
 	if player_sprite:
 		_set_player_idle_visual()
 
