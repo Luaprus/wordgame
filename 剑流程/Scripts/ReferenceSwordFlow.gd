@@ -84,6 +84,7 @@ const SLIME_RIGHT_SPAWN := Vector2i(4, 12)
 const FISSURE_EXIT_Y := [10, 11]
 const SLIME_RIGHT_EXIT_Y := [8]
 const SNAKE_SPAWN := Vector2i(16, 2)
+const SNAKE_PLAYER_SPAWN := Vector2i(16, 6)
 const SNAKE_SENTENCE_START := Vector2i(11, 5)
 const SNAKE_REVERSE_SENTENCE_START := Vector2i(10, 3)
 const SNAKE_BODY_TOP_Y := 10
@@ -101,6 +102,13 @@ const SNAKE_SECOND_TALK_INTERVAL := 12.0
 const SNAKE_RAY_INTERVAL := 5.0
 const SNAKE_RAY_WARNING_TIME := 0.45
 const SNAKE_RAY_HOLD_TIME := 0.55
+const SNAKE_RAY_MOVE_TIME := 1.5
+const SNAKE_RAY_DISTANCE := 780.0
+const SNAKE_SECOND_REACTION_DELAY := 0.35
+const SNAKE_SECOND_REACTION_HOLD_TIME := 1.0
+const SNAKE_SECOND_REACTION_FADE_TIME := 1.0
+const SNAKE_SECOND_REACTION_RESUME_DELAY := 0.8
+const SNAKE_SECOND_POST_REVERSE_DELAY := 4.0
 const SNAKE_OBJECT_RESULT_HOLD_TIME := 0.9
 const SNAKE_LOOP_SOURCE_ROWS := [
 	"＿＿＿＿＿壁＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿箱＿＿＿＿＿",
@@ -349,6 +357,9 @@ var snake_second_talk_timer := 0.0
 var snake_ray_timer := 0.0
 var snake_ray_disabled := false
 var snake_big_attack_disabled := false
+var snake_ray_active := false
+var snake_reverse_after_text: String = ""
+var snake_reverse_after_final := false
 var snake_ray_labels: Array[Label] = []
 
 var bgm_player: AudioStreamPlayer
@@ -1299,7 +1310,7 @@ func _prepare_snake_boss_state() -> void:
 
 func _begin_snake_boss_scene() -> void:
 	current_map = MAP_SNAKE
-	player_cell = SNAKE_SPAWN
+	player_cell = SNAKE_PLAYER_SPAWN
 	last_direction = Vector2i.UP
 	player_label.visible = true
 	_update_player_position()
@@ -1504,11 +1515,12 @@ func _update_snake_battle_motion(delta: float) -> void:
 			return
 		if snake_scroll_offset >= _snake_scroll_wrap_threshold():
 			snake_scroll_offset -= float(CELL * SNAKE_SCROLL_LOOP_ROWS)
-		if phase == Phase.SNAKE_SECOND and not sentence_active:
-			snake_second_talk_timer -= delta
-			if snake_second_talk_timer <= 0.0:
-				_show_snake_reverse_sentence()
-			elif not snake_ray_disabled:
+		if phase == Phase.SNAKE_SECOND:
+			if not sentence_active:
+				snake_second_talk_timer -= delta
+				if snake_second_talk_timer <= 0.0:
+					_show_snake_reverse_sentence()
+			if not snake_ray_disabled and not sentence_locked:
 				snake_ray_timer -= delta
 				if snake_ray_timer <= 0.0:
 					snake_ray_timer = SNAKE_RAY_INTERVAL
@@ -1597,7 +1609,7 @@ func _sync_snake_sentence_positions() -> void:
 		var label: Label = active_sentence_labels[i]
 		var cell: Vector2i = sentence_cells[i]
 		label.position.x = MAP_SNAKE * VIEWPORT_SIZE.x + cell.x * CELL
-		label.position.y = _snake_player_visual_y(cell.y)
+		label.position.y = roundf(_snake_player_visual_y(cell.y))
 
 
 func _snake_body_overlaps_sentence() -> bool:
@@ -1658,33 +1670,38 @@ func _shatter_snake_sentence() -> void:
 
 
 func _clear_snake_rays() -> void:
+	snake_ray_active = false
 	for label in snake_ray_labels:
 		label.queue_free()
 	snake_ray_labels.clear()
 
 
 func _fire_snake_ray() -> void:
-	if phase != Phase.SNAKE_SECOND or sentence_active or dialogue_active:
+	if phase != Phase.SNAKE_SECOND or dialogue_active or snake_ray_active:
 		return
 	_clear_snake_rays()
-	var ray_x := clampi(int(round(snake_follow_x)), 2, GRID_W - 3)
-	var start_y := 0
-	var end_y := SNAKE_BODY_BIG_TOP_Y + 1
+	snake_ray_active = true
+	var ray_x: int = clampi(int(round(snake_follow_x)), 2, GRID_W - 3)
+	var start_y: int = SNAKE_BODY_BIG_TOP_Y
+	var trail_count := 2
 	_play_se(SE_SNAKE_WINK)
-	for y in range(start_y, end_y):
-		var cell := Vector2i(ray_x, y)
-		var label := _make_snake_visible_cell_label("媚", cell, Color(1.0, 1.0, 1.0, 0.0))
+	for i in range(trail_count):
+		var cell := Vector2i(ray_x, start_y + i)
+		var label := _make_snake_visible_cell_label("眼", cell, Color(1.0, 1.0, 1.0, 0.0))
 		label.z_index = 34
 		actor_layer.add_child(label)
 		snake_ray_labels.append(label)
-	if player_cell.x == ray_x and player_cell.y < end_y:
-		_snake_failure("蛇妖的媚眼射出白光。", "我被蛇妖石化了。")
-		return
 	var tween := create_tween()
 	tween.set_parallel(true)
 	for label in snake_ray_labels:
 		tween.tween_property(label, "modulate:a", 1.0, SNAKE_RAY_WARNING_TIME)
+		tween.tween_property(label, "position:y", label.position.y - SNAKE_RAY_DISTANCE, SNAKE_RAY_MOVE_TIME).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	await tween.finished
+	if not snake_ray_active:
+		return
+	if player_cell.x == ray_x and player_cell.y <= start_y + trail_count:
+		_snake_failure("蛇妖的媚眼射出白光。", "我被蛇妖石化了。")
+		return
 	var fade := create_tween()
 	fade.set_parallel(true)
 	for label in snake_ray_labels:
@@ -1950,7 +1967,7 @@ func _snake_attack_sound(keyword: String) -> String:
 
 func _make_snake_visible_cell_label(text: String, cell: Vector2i, color: Color) -> Label:
 	var label := _make_world_cell_label(text, MAP_SNAKE, cell.x, cell.y, color)
-	label.position.y = _snake_player_visual_y(cell.y)
+	label.position.y = roundf(_snake_player_visual_y(cell.y))
 	return label
 
 
@@ -2087,11 +2104,11 @@ func _start_snake_second_phase() -> void:
 	], Callable(self, "_unlock_snake_second_phase"))
 
 
-func _unlock_snake_second_phase() -> void:
+func _unlock_snake_second_phase(delay: float = SNAKE_SECOND_TALK_DELAY) -> void:
 	phase = Phase.SNAKE_SECOND
 	input_locked = false
 	snake_current_keyword = ""
-	snake_second_talk_timer = maxf(snake_second_talk_timer, SNAKE_SECOND_TALK_DELAY)
+	snake_second_talk_timer = maxf(snake_second_talk_timer, delay)
 	snake_ray_timer = maxf(snake_ray_timer, SNAKE_RAY_INTERVAL)
 	snake_scroll_active = current_map == MAP_SNAKE and snake_stone_mode
 	_set_hint("")
@@ -2103,6 +2120,7 @@ func _show_snake_reverse_sentence() -> void:
 		return
 	phase = Phase.SNAKE_SECOND
 	snake_scroll_active = current_map == MAP_SNAKE and snake_stone_mode
+	_clear_dialogue()
 	_clear_snake_rays()
 	var data: Dictionary = _get_snake_reverse_data(snake_reverse_count)
 	var line: String = String(data["line"])
@@ -2245,11 +2263,11 @@ func _show_snake_speech_text(text: String) -> void:
 	for label in labels:
 		tween.tween_property(label, "modulate:a", 1.0, 0.16)
 	await tween.finished
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(SNAKE_SECOND_REACTION_HOLD_TIME).timeout
 	var out := create_tween()
 	out.set_parallel(true)
 	for label in labels:
-		out.tween_property(label, "modulate:a", 0.0, 0.25)
+		out.tween_property(label, "modulate:a", 0.0, SNAKE_SECOND_REACTION_FADE_TIME)
 	await out.finished
 	for label in labels:
 		label.queue_free()
@@ -2265,10 +2283,38 @@ func _snake_reverse_deleted() -> void:
 	_clear_sentence()
 	_apply_snake_reverse_effect(snake_reverse_count)
 	await _trim_snake_body_after_reverse()
-	if snake_reverse_count >= 3:
-		_start_dialogue(MAP_SNAKE, [_snake_dialogue_page(result), _snake_dialogue_page(after_text)], Callable(self, "_start_snake_defeat_sequence"))
-	else:
-		_start_dialogue(MAP_SNAKE, [_snake_dialogue_page(result), _snake_dialogue_page(after_text)], Callable(self, "_unlock_snake_second_phase"))
+	snake_reverse_after_text = after_text
+	snake_reverse_after_final = snake_reverse_count >= 3
+	_start_dialogue(MAP_SNAKE, [_snake_dialogue_page(result)], Callable(self, "_continue_snake_reverse_reaction"))
+
+
+func _continue_snake_reverse_reaction() -> void:
+	input_locked = true
+	snake_scroll_active = false
+	_clear_dialogue()
+	_clear_snake_rays()
+	await get_tree().create_timer(SNAKE_SECOND_REACTION_DELAY).timeout
+	if not snake_reverse_after_text.is_empty():
+		_start_dialogue(MAP_SNAKE, [_snake_dialogue_page(snake_reverse_after_text)], Callable(self, "_finish_snake_reverse_reaction"))
+		return
+	_finish_snake_reverse_reaction()
+
+
+func _finish_snake_reverse_reaction() -> void:
+	input_locked = true
+	snake_scroll_active = false
+	_clear_dialogue()
+	await get_tree().create_timer(SNAKE_SECOND_REACTION_RESUME_DELAY).timeout
+	if snake_reverse_after_final:
+		snake_reverse_after_text = ""
+		snake_reverse_after_final = false
+		_start_snake_defeat_sequence()
+		return
+	snake_reverse_after_text = ""
+	snake_reverse_after_final = false
+	snake_second_talk_timer = maxf(snake_second_talk_timer, SNAKE_SECOND_POST_REVERSE_DELAY)
+	snake_ray_timer = maxf(snake_ray_timer, SNAKE_RAY_INTERVAL)
+	_unlock_snake_second_phase(SNAKE_SECOND_POST_REVERSE_DELAY)
 
 
 func _snake_reverse_failed() -> void:
@@ -2392,7 +2438,7 @@ func _start_chapter_end_sequence() -> void:
 		["我刚想吃，诗人提醒我：", "勇者只能做正确的事。"],
 		["即使必须承受痛苦，", "也不能忘记自己是勇者。"],
 		["于是我继续上路。"],
-		["第二章结束。"]
+		["第二章结束。获得成就：2-5。"]
 	], Callable(self, "_complete_flow"))
 
 
@@ -2617,13 +2663,29 @@ func _show_death_screen(death_sentence: String) -> void:
 
 	var start_x := int((GRID_W - death_sentence.length()) / 2.0)
 	var y := 9
+	var labels: Array[Label] = []
 	for i in range(death_sentence.length()):
 		var label := _make_label(death_sentence.substr(i, 1), 56, DIALOGUE_COLOR)
 		label.position = Vector2((start_x + i) * CELL, y * CELL)
 		label.size = Vector2(CELL, CELL)
+		label.modulate.a = 0.0
 		death_layer.add_child(label)
+		labels.append(label)
+
+	var text_in := create_tween()
+	text_in.set_parallel(true)
+	for label in labels:
+		text_in.tween_property(label, "modulate:a", 1.0, 0.35)
+	await text_in.finished
 
 	await get_tree().create_timer(2.0).timeout
+
+	var out := create_tween()
+	out.set_parallel(true)
+	for label in labels:
+		out.tween_property(label, "modulate:a", 0.0, 0.35)
+	out.tween_property(back, "color:a", 0.0, 0.35)
+	await out.finished
 	_restore_death_checkpoint()
 
 
@@ -2993,7 +3055,7 @@ func _start_delete_sentence_lines(lines: Array, starts: Array[Vector2i], success
 			var cell := Vector2i(start.x + i, start.y)
 			var label := _make_world_cell_label(String(line_chars[i]), map_index, cell.x, cell.y, DIALOGUE_COLOR)
 			if map_index == MAP_SNAKE:
-				label.position.y = _snake_player_visual_y(cell.y)
+				label.position.y = roundf(_snake_player_visual_y(cell.y))
 			actor_layer.add_child(label)
 			active_sentence_labels.append(label)
 			sentence_cells.append(cell)
@@ -3034,6 +3096,7 @@ func _try_delete_front_char() -> void:
 
 	if sentence_fail_indices.has(front_index):
 		await _delete_sentence_index(front_index)
+		await _play_sentence_legal_animation()
 		if sentence_fail_callback.is_valid():
 			sentence_fail_callback.call()
 		return
@@ -3137,7 +3200,7 @@ func _play_sentence_legal_animation() -> void:
 	var frame := Control.new()
 	var frame_y := float(min_y * CELL)
 	if sentence_map_index == MAP_SNAKE:
-		frame_y = _snake_player_visual_y(min_y)
+		frame_y = roundf(_snake_player_visual_y(min_y))
 	frame.position = Vector2(sentence_map_index * VIEWPORT_SIZE.x + min_x * CELL, frame_y)
 	frame.size = Vector2((max_x - min_x + 1) * CELL, (max_y - min_y + 1) * CELL)
 	frame.z_index = -2
