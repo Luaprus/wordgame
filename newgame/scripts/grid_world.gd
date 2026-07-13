@@ -51,6 +51,7 @@ var typewriter_delay := 0.2
 var pending_interact_effect: Dictionary = {}
 var fullscreen_video_finished_effect: Dictionary = {}
 var fullscreen_video_request: Dictionary = {}
+var visual_effect_requests: Array = []
 var current_level: Dictionary = {}
 var rule_engine := RuleEngine.new()
 var highlight_animation_strengths: Dictionary = {}
@@ -134,6 +135,7 @@ func clear() -> void:
 	pending_interact_effect.clear()
 	fullscreen_video_finished_effect.clear()
 	fullscreen_video_request.clear()
+	visual_effect_requests.clear()
 	current_page_origin = Vector2i.ZERO
 	_next_id = 1
 	_map_caption_ids.clear()
@@ -703,6 +705,8 @@ func _apply_map_effect(config: Dictionary) -> void:
 		player_input_locked = bool(config.set_input_locked)
 	if config.has("set_event_locked"):
 		player_event_locked = bool(config.set_event_locked)
+	if config.has("visual_effect"):
+		visual_effect_requests.append(config.visual_effect.duplicate(true))
 	if config.has("set_pending_interact_effect"):
 		pending_interact_effect = config.set_pending_interact_effect
 	if config.has("set_pending_timed_effect"):
@@ -774,6 +778,11 @@ func _apply_map_effect(config: Dictionary) -> void:
 		restored.id = preserved_id
 		entities.erase(temp_id)
 		entities[preserved_id] = restored
+
+func consume_visual_effects() -> Array:
+	var requests := visual_effect_requests.duplicate(true)
+	visual_effect_requests.clear()
+	return requests
 
 func _apply_move_player_toward(move_config: Dictionary) -> void:
 	var target: Vector2i = move_config.get("target", player_pos)

@@ -27,6 +27,14 @@
   ],
   "doc_references": [
     {
+      "source": "L:/wordgame-map/wordgame/Scenes/Test/WASDMoveMe.tscn",
+      "used_for": "2026-07-13 玩家「我」字静止/移动视觉动画参考"
+    },
+    {
+      "source": "L:/wordgame-map/wordgame/Scripts/WASDMoveMeScene.gd",
+      "used_for": "2026-07-13 玩家「我」字 me_default / me_walk 切帧节奏参考"
+    },
+    {
       "source": "E:/Godot/wordgame/参考资料/图片参考/贝克思贝斯之剑流程.docx",
       "used_for": "文档图1-6：迷宫、拿剑、圣剑教学、空气、堵路、坠落"
     },
@@ -59,6 +67,7 @@
     "删“灯不亮了”的“不”，灯重新亮起",
     "删“没有空气”的“没”，洞窟恢复空气",
     "删“只有忘掉下去”的“忘”，触发脚底崩裂与坠落转场",
+    "三段 Backspace 教学目标字“不”“没”“忘”都会播放参考 Backspace.tscn 的右上到左下斩光、切字淡出与闪现消失；该效果由 BACKSPACE_CUT_ANIMATION_CHARS 指定复用目标，当前包含“不”“没”“忘”",
     "打败史莱姆后直接进入再战蛇妖",
     "一阶段滚动村庄中通过箱、货、仓、栈、店、铺、树、壁、坊九类对象删字助攻，三次成功后蛇妖暴怒变大",
     "二阶段蛇妖定时放话并发射媚眼射线，玩家依次删“你 / 走 / 过”反制蛇妖",

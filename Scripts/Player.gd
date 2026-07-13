@@ -52,6 +52,8 @@ func on_opacity_set(value):
 
 func init():
 	$Camera3D.init()
+	if has_signal("move_finished") and not move_finished.is_connected(_on_move_finished_hide_direction_marker):
+		move_finished.connect(_on_move_finished_hide_direction_marker)
 	
 	set_physics_process(true)
 
@@ -217,6 +219,8 @@ func move_by_input():
 			else:
 				set_through(false)
 			
+			show_direction_marker(input_direction)
+			
 			if input_direction == direction or InputSystem.is_direct_change_direction():
 				if move_straight(input_direction):
 					pulling_move(input_direction)
@@ -272,18 +276,14 @@ func trigger_action():
 		
 
 func set_direction(d):
-	play_dir_animation(d)
 	direction = d
 	
 func play_dir_animation(d):
-	var dirs = ["down", "left", "right", "up"]
-	if need_dir_animation:
-		$DirectionArrow/AnimationPlayer.stop(true)
-		$DirectionArrow/AnimationPlayer.play(dirs[d / 2 - 1])
-		need_dir_animation = false
-	elif direction != d:
-		$DirectionArrow/AnimationPlayer.stop(true)
-		$DirectionArrow/AnimationPlayer.play(dirs[d / 2 - 1])
+	show_direction_marker(d)
+
+func show_direction_marker(d):
+	if has_node("DirectionArrow") and $DirectionArrow.has_method("show_for_direction_code"):
+		$DirectionArrow.show_for_direction_code(d)
 
 func can_move():
 	if tileMap.is_any_event_running():
@@ -719,5 +719,9 @@ func move_straight(d):
 		if walk_ani.current_animation != "walk":
 			walk_ani.play("walk")
 
-	var is_success = super.move_straight(d)
-	return is_success
+	return super.move_straight(d)
+
+
+func _on_move_finished_hide_direction_marker() -> void:
+	if has_node("DirectionArrow") and $DirectionArrow.has_method("hide_marker"):
+		$DirectionArrow.hide_marker()

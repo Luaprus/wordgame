@@ -59,11 +59,14 @@ const TREASURE_ORIGIN := Vector2i(3, 3)
 const SWORD_SPAWN_WAIT := 3.0
 const SWORD_VISIBLE_TIME := 5.0
 const SLIME_REINFORCEMENT_INTERVAL := 4.0
+
 const SLIME_RANDOM_WAIT_MIN := 2.0
 const SLIME_RANDOM_WAIT_MAX := 3.0
 const SLIME_CHASE_WAIT_MIN := 1.0
 const SLIME_CHASE_WAIT_MAX := 2.0
 const SLIME_MOVE_TIME := 0.35
+
+
 const OPPORTUNITY_CELLS := [
 	Vector2i(2, 7),
 	Vector2i(7, 3),
@@ -325,7 +328,9 @@ var slime_waits: Array[float] = []
 var slime_moving: Array[bool] = []
 var slime_reinforcement_timer := 0.0
 var slime_reinforcement_cursor := 0
+
 var treasure_tutorial_labels: Array[Label] = []
+
 var pending_death_sentence := ""
 var death_checkpoint: Dictionary = {}
 var death_checkpoint_valid := false
@@ -376,6 +381,11 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+
+
+	_update_player_visual_animation(delta)
+	_update_continuous_player_movement(delta)
+
 	if phase == Phase.FIND_SWORD:
 		_update_sword(delta)
 	if opportunity_active:
