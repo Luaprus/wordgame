@@ -1,13 +1,9 @@
 {
   "level_id": "ch2_sword_tutorial",
   "display_name": "第二章 05_聖劍寶庫_復刻：圣剑流程、史莱姆后衔接再战蛇妖",
-  "target_project": "L:/wordgame-map/wordgame/剑流程",
+  "target_project": "E:/Godot/wordgame/剑流程",
   "target_scene": "res://Scenes/Maps/第二章/05_聖劍寶庫_復刻.tscn",
   "source_maps": [
-    {
-      "source": "D:/文字游戏/Scenes/Maps/第二章/05_聖劍寶庫.tscn",
-      "used_for": "2026-07-13 当前工作源：宝库、忘字删除、Backspace 删除触发链"
-    },
     {
       "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第二章/05_聖劍寶庫.tscn",
       "used_for": "宝库进入、机会提示、找剑、拿剑、圣剑动画、删字教学、掉落转场"
@@ -30,22 +26,6 @@
     }
   ],
   "doc_references": [
-    {
-      "source": "L:/wordgame-map/wordgame/Scenes/Test/WASDMoveMe.tscn",
-      "used_for": "2026-07-13 玩家「我」字静止/移动视觉动画参考"
-    },
-    {
-      "source": "L:/wordgame-map/wordgame/Scripts/WASDMoveMeScene.gd",
-      "used_for": "2026-07-13 玩家「我」字 me_default / me_walk 切帧节奏参考"
-    },
-    {
-      "source": "L:/wordgame-map/wordgame/Scenes/Test/SlimeMoveDemo.tscn",
-      "used_for": "2026-07-13 史莱姆「史」字视觉动画参考；只取内部缩放动画，不改运动路径和数量"
-    },
-    {
-      "source": "L:/wordgame-map/wordgame/Scenes/Animations/slime_move.tres",
-      "used_for": "2026-07-13 史莱姆「史」字 slime_move 缩放关键帧参考"
-    },
     {
       "source": "E:/Godot/wordgame/参考资料/图片参考/贝克思贝斯之剑流程.docx",
       "used_for": "文档图1-6：迷宫、拿剑、圣剑教学、空气、堵路、坠落"
@@ -75,12 +55,10 @@
     "墙面闪现“机会稍纵即逝”，进入限时找剑",
     "圣剑定期随机出现，5秒未接触则消失并稍后重刷",
     "玩家获得圣剑，播放拔剑音效、圣剑影片和震动",
-    "玩家移动支持方向键 / WASD 按住连续移动，并按 L:/wordgame-map/wordgame/Scripts/WASDMoveMeScene.gd 的 0.12 秒线性 Tween 从一个格心平滑移动到下一个格心",
     "诗人解释“清除文字之中恶的成分”与删除键",
     "删“灯不亮了”的“不”，灯重新亮起",
     "删“没有空气”的“没”，洞窟恢复空气",
-    "三段 Backspace 教学目标字“不”“没”“忘”都会播放参考 Backspace.tscn 的右上到左下斩光、切字淡出与闪现消失；该效果由 BACKSPACE_CUT_ANIMATION_CHARS 指定复用目标，当前包含“不”“没”“忘”",
-    "史莱姆段的所有可见“史”字播放参考 SlimeMoveDemo.tscn / slime_move.tres 的缩放动画；原有 SLIME_CELLS、数量、增援顺序、跑离路径不变",
+    "删“只有忘掉下去”的“忘”，触发脚底崩裂与坠落转场",
     "打败史莱姆后直接进入再战蛇妖",
     "一阶段滚动村庄中通过箱、货、仓、栈、店、铺、树、壁、坊九类对象删字助攻，三次成功后蛇妖暴怒变大",
     "二阶段蛇妖定时放话并发射媚眼射线，玩家依次删“你 / 走 / 过”反制蛇妖",
@@ -91,30 +69,6 @@
       {
         "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Fonts/Zpix-v3.1.6.ttf",
         "target": "res://Fonts/Zpix-v3.1.6.ttf"
-      }
-    ],
-    "sprites": [
-      {
-        "source": "L:/wordgame-map/wordgame/Sprites/me/me_default.png",
-        "target": "res://Assets/sprites/me/me_default.png",
-        "trigger": "玩家「我」静止视觉，参考 res://Scenes/Test/WASDMoveMe.tscn"
-      },
-      {
-        "source": "L:/wordgame-map/wordgame/Sprites/me/me_walk.png",
-        "target": "res://Assets/sprites/me/me_walk.png",
-        "trigger": "玩家「我」移动两帧视觉，参考 res://Scenes/Test/WASDMoveMe.tscn"
-      },
-      {
-        "source": "D:/文字游戏/Sprites/backspace_splash/splash.png",
-        "target": "res://Assets/sprites/backspace_splash/splash.png",
-        "trigger": "Backspace 删除教学目标字“不”“没”“忘”时的源逐帧斩光"
-      }
-    ],
-    "shaders": [
-      {
-        "source": "D:/文字游戏/Shader/cut2.gdshader",
-        "target": "res://Assets/shaders/cut2.gdshader",
-        "trigger": "Backspace 删除教学目标字“不”“没”“忘”时将目标字沿右上到左下方向切开并淡出"
       }
     ],
     "video": [
@@ -146,7 +100,7 @@
         "trigger": "圣剑消失"
       },
       {
-        "source": "D:/文字游戏/Sounds/se/第二章 音效/SE_2_23_sword_big_swing_B.wav",
+        "source": "E:/Godot/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Sounds/se/第二章 音效/SE_2_23_sword_big_swing_B.wav",
         "target": "res://Assets/audio/se/第二章 音效/SE_2_23_sword_big_swing_B.wav",
         "trigger": "圣剑影片切屏"
       },
