@@ -75,21 +75,6 @@ func _create_glow_texture() -> GradientTexture2D:
 	return texture
 
 func _draw() -> void:
-	if _font == null:
-		return
-	for entry in _lights:
-		var position: Vector2 = entry.get("position", Vector2.ZERO)
-		var phase_offset: float = float(entry.get("phase_offset", 0.0))
-		var phase: float = _elapsed * GLOW_SPEED + phase_offset
-		var wave: float = 0.5 + 0.5 * sin(phase)
-		var pulse: float = pow(wave, 1.25)
-		var baseline := position + Vector2(0.0, _cell_size - 8.0)
-		var far_color := Color(0.48, 0.86, 1.0, 0.045 + pulse * 0.055)
-		var glow_color := Color(0.58, 0.92, 1.0, 0.08 + pulse * 0.10)
-		var mid_color := Color(0.72, 0.96, 1.0, 0.14 + pulse * 0.16)
-		var near_color := Color(0.86, 0.99, 1.0, 0.23 + pulse * 0.20)
-		# Low-opacity full glyphs add a soft bloom without hard geometric edges.
-		draw_string(_font, baseline + Vector2(0.0, 5.0), "光", HORIZONTAL_ALIGNMENT_CENTER, _cell_size, 70, far_color)
-		draw_string(_font, baseline + Vector2(0.0, 3.0), "光", HORIZONTAL_ALIGNMENT_CENTER, _cell_size, 60, glow_color)
-		draw_string(_font, baseline + Vector2(0.0, 1.0), "光", HORIZONTAL_ALIGNMENT_CENTER, _cell_size, 51, mid_color)
-		draw_string(_font, baseline, "光", HORIZONTAL_ALIGNMENT_CENTER, _cell_size, 46, near_color)
+	# The visible "光" glyph comes from the scene label itself. This node only draws
+	# the soft radial bloom behind it so we don't introduce ghosted duplicate glyphs.
+	return

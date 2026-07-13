@@ -2,6 +2,7 @@ extends Node2D
 
 const PrecisionMovement = preload("res://scripts/precision_movement.gd")
 const PlayerDirectionMarker = preload("res://scripts/player_moving/player_direction_marker.gd")
+const OriginalFont = preload("res://Fonts/Zpix-v3.1.6.ttf")
 
 const CELL_SIZE := 60
 const GRID_SIZE := Vector2i(9, 5)
@@ -134,6 +135,7 @@ func _make_label(text: String, font_size: int, font_color: Color, bg_color := Co
 	label.text = text
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_override("font", OriginalFont)
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", font_color)
 	var style := StyleBoxFlat.new()

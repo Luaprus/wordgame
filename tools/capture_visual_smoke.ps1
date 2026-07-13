@@ -1,5 +1,7 @@
 $ErrorActionPreference = "Stop"
 
+throw "AUTOMATED VISUAL ACCEPTANCE PAUSED. Use recorded manual playthrough review; do not treat this script as completion evidence."
+
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot
 $VisualRules = Join-Path $WorkspaceRoot "harness/visual_checks.md"
 $ProjectCandidates = Get-ChildItem -LiteralPath $WorkspaceRoot -Directory |

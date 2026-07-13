@@ -8,7 +8,7 @@ const PageCamera = preload("res://scripts/page_camera.gd")
 const PrecisionMovement = preload("res://scripts/precision_movement.gd")
 const PlayerDirectionMarker = preload("res://scripts/player_moving/player_direction_marker.gd")
 const SmoothGridMover = preload("res://scripts/smooth_grid_mover.gd")
-const OriginalFont = preload("res://Fonts/Zpix.tres")
+const OriginalFont = preload("res://Fonts/Zpix-v3.1.6.ttf")
 
 const MOVE_REPEAT_INTERVAL := 0.28
 const FAST_MOVE_REPEAT_INTERVAL := 0.12

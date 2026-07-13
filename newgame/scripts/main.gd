@@ -1,6 +1,7 @@
 extends Node2D
 
 const GridWorld = preload("res://scripts/grid_world.gd")
+const WordEntity = preload("res://scripts/word_entity.gd")
 const LevelLoader = preload("res://scripts/level_loader.gd")
 const HelmetTutorial = preload("res://levels/helmet/helmet_tutorial.gd")
 const HelmetR1 = preload("res://levels/helmet/helmet_r1.gd")
@@ -15,11 +16,22 @@ const PrecisionMovement = preload("res://scripts/precision_movement.gd")
 const DemoRunner = preload("res://scripts/demo_runner.gd")
 const PlayerDirectionMarker = preload("res://scripts/player_moving/player_direction_marker.gd")
 const SmoothGridMover = preload("res://scripts/smooth_grid_mover.gd")
-const OriginalFont = preload("res://Fonts/Zpix.tres")
+const GemBurstEffect = preload("res://scripts/gem_burst_effect.gd")
+const LightGlowEffect = preload("res://scripts/light_glow_effect.gd")
+const OriginalFont = preload("res://Fonts/Zpix-v3.1.6.ttf")
 
-const MOVE_REPEAT_INTERVAL := 0.28
-const FAST_MOVE_REPEAT_INTERVAL := 0.12
-const WORD_FONT_SIZE := 42
+const WORD_FONT_SIZE := 56
+const GEM_COLOR := Color(0.0, 0.58, 0.62, 1.0)
+const GEM_ORIGIN_GRID := Vector2(15.5, 15.5)
+const GEM_REVEAL_SPEED := 8.0
+const INTRO_PROMPT_HOLD := 0.65
+const PLAYER_WALK_VISUAL_TIME := 0.12
+const PLAYER_WALK_FRAME_TIME := 0.055
+const PLAYER_MOVE_REPEAT_TIME := 0.12
+const PLAYER_BLOCKED_RETRY_TIME := 0.12
+const CREEK_WAVE_SPEED := TAU * 0.55
+const CREEK_WAVE_AMPLITUDE := 4.0
+const CREEK_MIN_X := 16
 const HIGHLIGHT_VISUAL_CONFIG_PATH := "res://assets/animations/highlight/highlight_visual_config.json"
 const GLOVE_PREVIEW_SCENE_PATH := "res://levels/glove/glove_preview.tscn"
 const STARTUP_ENTRY_ARG_PREFIX := "--entry="
@@ -43,6 +55,7 @@ var current_level_index := 0
 var entity_movers: Dictionary = {}
 var entity_labels: Dictionary = {}
 var player_label: Label
+var player_sprite: Sprite2D
 var map_layer: Node2D
 var demo_timer: Timer
 var world_event_timer: Timer
@@ -51,13 +64,23 @@ var direction_marker_fill: Polygon2D
 var direction_marker_outline: Line2D
 var direction_marker_timer: Timer
 var fullscreen_video_player: VideoStreamPlayer
+var gem_burst_effect
+var light_glow_effect
 var direction_marker_direction := Vector2i.ZERO
 var held_move_directions: Array[Vector2i] = []
-var move_repeat_elapsed := 0.0
 var move_visual_duration := 0.12
+var player_walk_visual_timer := 0.0
+var player_walk_frame_timer := 0.0
+var player_move_repeat_timer := 0.0
+var player_blocked_retry_timer := 0.0
 var _player_visual_ready := false
-var highlight_visual_config: Dictionary = {}
 var _last_player_visible := true
+var highlight_visual_config: Dictionary = {}
+var gem_labels: Array = []
+var intro_phase := "lights"
+var intro_reveal_elapsed := 0.0
+var intro_reveal_max_distance := 0.0
+var creek_wave_elapsed := 0.0
 
 func _ready() -> void:
 	var startup_scene_path := resolve_startup_scene_path(OS.get_cmdline_user_args())
@@ -72,15 +95,14 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	world.advance_highlight_animation(delta)
+	_update_player_visual_animation(delta)
+	if player_move_repeat_timer > 0.0:
+		player_move_repeat_timer = maxf(player_move_repeat_timer - delta, 0.0)
+	if player_blocked_retry_timer > 0.0:
+		player_blocked_retry_timer = maxf(player_blocked_retry_timer - delta, 0.0)
 	var direction := _current_held_direction()
-	if direction == Vector2i.ZERO:
-		move_repeat_elapsed = 0.0
-	else:
-		move_repeat_elapsed += delta
-		var interval := FAST_MOVE_REPEAT_INTERVAL if Input.is_key_pressed(KEY_SHIFT) else MOVE_REPEAT_INTERVAL
-		while move_repeat_elapsed >= interval:
-			move_repeat_elapsed -= interval
-			_apply_direction_step(direction)
+	if direction != Vector2i.ZERO and player_move_repeat_timer <= 0.0 and player_blocked_retry_timer <= 0.0:
+		_apply_direction_step(direction)
 
 	var changed := false
 	if _player_visual_ready:
@@ -93,6 +115,10 @@ func _process(delta: float) -> void:
 		changed = changed or previous_position != mover.current_position
 	if changed:
 		_apply_visual_positions()
+	creek_wave_elapsed = fmod(creek_wave_elapsed + delta, 10.0)
+	_apply_visual_positions()
+	_update_intro_sequence(delta)
+	_update_gem_labels()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not event is InputEventKey:
@@ -108,8 +134,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if key_event.echo:
 			return
 		_set_direction_held(direction, key_event.pressed)
-		if key_event.pressed:
-			move_repeat_elapsed = 0.0
+		if key_event.pressed and player_move_repeat_timer <= 0.0 and player_blocked_retry_timer <= 0.0:
 			_apply_direction_step(direction)
 		return
 	if not PrecisionMovement.should_process_key_event(key_event.pressed, key_event.echo, direction):
@@ -130,10 +155,19 @@ func _build_scene() -> void:
 	map_layer = Node2D.new()
 	map_layer.name = "MapLayer"
 	add_child(map_layer)
-	player_label = _make_word_label("我", Color(0.92, 0.92, 0.92), Color(0.05, 0.05, 0.05))
+	player_label = _make_word_label("", Color(0.92, 0.92, 0.92), Color.TRANSPARENT)
 	player_label.name = "Player"
+	player_label.pivot_offset = player_label.size * 0.5
 	map_layer.add_child(player_label)
+	_setup_player_sprite()
 	_build_direction_marker()
+	light_glow_effect = LightGlowEffect.new()
+	light_glow_effect.name = "LightGlowEffect"
+	light_glow_effect.z_index = 9
+	map_layer.add_child(light_glow_effect)
+	gem_burst_effect = GemBurstEffect.new()
+	gem_burst_effect.name = "GemBurstEffect"
+	map_layer.add_child(gem_burst_effect)
 	demo_timer = Timer.new()
 	demo_timer.wait_time = 0.55
 	demo_timer.one_shot = true
@@ -166,8 +200,9 @@ func _build_ui() -> void:
 func _refresh_view(_message := "") -> void:
 	_sync_entity_labels()
 	_sync_direction_marker()
-	player_label.text = world.player_text
+	player_label.text = "" if _uses_player_sprite() else world.player_text
 	player_label.visible = world.player_visible
+	_apply_intro_visibility()
 	page_camera.sync_to_world(world)
 	map_layer.position = page_camera.offset_pixels()
 	var player_target := _grid_to_pixels(world.player_pos)
@@ -182,6 +217,14 @@ func _refresh_view(_message := "") -> void:
 	player_label.move_to_front()
 	_start_pending_world_event()
 
+func _setup_player_sprite() -> void:
+	player_sprite = Sprite2D.new()
+	player_sprite.name = "PlayerVisual"
+	player_sprite.position = Vector2(world.cell_size, world.cell_size) * 0.5
+	player_sprite.z_index = 1
+	player_label.add_child(player_sprite)
+	_set_player_idle_visual()
+
 func _start_pending_world_event() -> void:
 	if world_event_timer == null:
 		return
@@ -189,6 +232,9 @@ func _start_pending_world_event() -> void:
 		world_event_timer.start(world.pending_timed_delay)
 
 func _sync_entity_labels() -> void:
+	gem_labels.clear()
+	intro_reveal_max_distance = 0.0
+	var light_entries: Array = []
 	var alive := {}
 	for entity in world.entities.values():
 		alive[entity.id] = true
@@ -203,12 +249,31 @@ func _sync_entity_labels() -> void:
 		var entity_mover = entity_movers.get(entity.id)
 		entity_mover.move_to(_grid_to_pixels(entity.grid_pos), move_visual_duration)
 		group.rotation_degrees = entity.visual_rotation_degrees
+		group.z_index = 10 if entity.text == "光" and not entity.solid else 0
 		_sync_entity_label_group(group, entity)
+		if entity.text == "光" and not entity.solid:
+			light_entries.append({
+				"position": entity_mover.current_position,
+				"phase_offset": float(entity.grid_pos.x + entity.grid_pos.y) * 0.48
+			})
+		for i in range(entity.text.length()):
+			var character: String = str(entity.text).substr(i, 1)
+			if not _is_blue_gem_character(character, entity.visual_color):
+				continue
+			var label: Label = group.get_child(i) as Label
+			var cell_center := _grid_to_pixels(entity.grid_pos + Vector2i(i, 0)) + Vector2(world.cell_size * 0.5, world.cell_size * 0.5)
+			gem_labels.append({"label": label, "position": cell_center, "base_color": entity.visual_color})
+			intro_reveal_max_distance = maxf(
+				intro_reveal_max_distance,
+				cell_center.distance_to(_grid_to_pixels_float(GEM_ORIGIN_GRID)) / float(world.cell_size)
+			)
 	for id in entity_labels.keys():
 		if not alive.has(id):
 			entity_labels[id].queue_free()
 			entity_labels.erase(id)
 			entity_movers.erase(id)
+	if light_glow_effect:
+		light_glow_effect.sync_lights(light_entries, float(world.cell_size), OriginalFont)
 
 func _clear_entity_visuals() -> void:
 	for group in entity_labels.values():
@@ -216,13 +281,151 @@ func _clear_entity_visuals() -> void:
 			group.queue_free()
 	entity_labels.clear()
 	entity_movers.clear()
+	gem_labels.clear()
+	if gem_burst_effect:
+		gem_burst_effect.stop()
+	if light_glow_effect:
+		light_glow_effect.clear()
+	creek_wave_elapsed = 0.0
+
+func _is_blue_gem_character(character: String, color: Color) -> bool:
+	return (character == "宝" or character == "石") and color == GEM_COLOR
+
+func _is_blue_gem_entity(entity) -> bool:
+	var text := str(entity.text)
+	for i in range(text.length()):
+		if _is_blue_gem_character(text.substr(i, 1), entity.visual_color):
+			return true
+	return false
+
+func _is_intro_prompt_entity(entity) -> bool:
+	var prompt_cells: Array = HelmetTutorial._intro_description_cells()
+	for cell in entity.cells:
+		if prompt_cells.has(cell):
+			return true
+	return false
+
+func _apply_intro_visibility() -> void:
+	for id in entity_labels.keys():
+		var entity: WordEntity = world.entities.get(id)
+		var group: Node2D = entity_labels.get(id)
+		if entity == null or group == null:
+			continue
+		var visible := true
+		var is_light := entity.text == "光" and not entity.solid
+		var is_prompt := _is_intro_prompt_entity(entity)
+		if intro_phase == "lights":
+			visible = is_light
+		elif intro_phase == "prompt":
+			visible = is_light or is_prompt
+		elif intro_phase == "gems":
+			visible = _is_blue_gem_entity(entity) or is_light or is_prompt
+		group.visible = visible
+		for child in group.get_children():
+			var label := child as Label
+			label.visible = visible and (intro_phase != "gems" or is_light or is_prompt)
+	if player_label:
+		player_label.visible = world.player_visible and intro_phase == "active"
+		if player_sprite:
+			player_sprite.visible = world.player_visible and intro_phase == "active" and _uses_player_sprite()
+
+func _update_gem_labels() -> void:
+	if gem_burst_effect == null:
+		return
+	for entry in gem_labels:
+		var label: Label = entry.label
+		var position: Vector2 = entry.position
+		var base_color: Color = entry.base_color
+		if intro_phase == "lights" or intro_phase == "prompt":
+			label.visible = false
+		elif intro_phase == "gems":
+			var distance_in_cells: float = position.distance_to(_grid_to_pixels_float(GEM_ORIGIN_GRID)) / float(world.cell_size)
+			label.visible = distance_in_cells <= intro_reveal_elapsed * GEM_REVEAL_SPEED
+			label.add_theme_color_override("font_color", base_color)
+		else:
+			label.visible = true
+			label.add_theme_color_override("font_color", gem_burst_effect.color_for_position(position, base_color))
+
+func _update_intro_sequence(delta: float) -> void:
+	if intro_phase == "prompt":
+		intro_reveal_elapsed += delta
+		if intro_reveal_elapsed >= INTRO_PROMPT_HOLD:
+			_begin_gem_reveal()
+		return
+	if intro_phase != "gems":
+		return
+	intro_reveal_elapsed += delta
+	var reveal_duration := intro_reveal_max_distance / GEM_REVEAL_SPEED + 0.18
+	if intro_reveal_elapsed < reveal_duration:
+		return
+	intro_phase = "active"
+	world.set_input_locked(false)
+	world.set_event_locked(false)
+	_refresh_view()
+	_play_gem_burst_preview()
+
+func _begin_gem_reveal() -> void:
+	if current_level_index != 0 or intro_phase != "prompt":
+		return
+	var light_cells := _current_light_cells()
+	world._apply_map_effect({
+		"remove_matching": [{"positions": light_cells, "texts": ["宝", "石"], "solid": true}],
+		"spawn_text": _restore_gems_without_light_overlap()
+	})
+	world.update_page()
+	world.set_input_locked(true)
+	world.set_event_locked(true)
+	intro_phase = "gems"
+	intro_reveal_elapsed = 0.0
+	_refresh_view()
+
+func _current_light_cells() -> Array:
+	var light_cells: Array = []
+	for entity in world.entities.values():
+		if entity.text == "光" and not entity.solid:
+			light_cells.append_array(entity.cells)
+	return light_cells
+
+func _restore_gems_without_light_overlap() -> Array:
+	var light_cells := {}
+	for cell in _current_light_cells():
+		light_cells[cell] = true
+	var restored: Array = []
+	for spawn_config in HelmetTutorial._restore_all_light_covered_treasure_text():
+		var entry: Dictionary = spawn_config
+		var position: Vector2i = entry.get("pos", Vector2i.ZERO)
+		if not light_cells.has(position):
+			restored.append(entry)
+	return restored
+
+func _begin_intro_prompt() -> void:
+	if current_level_index != 0 or intro_phase != "lights":
+		return
+	world.set_input_locked(true)
+	world.set_event_locked(true)
+	intro_phase = "prompt"
+	intro_reveal_elapsed = 0.0
+	_refresh_view()
 
 func _apply_visual_positions() -> void:
 	player_label.position = player_mover.current_position
 	for id in entity_labels.keys():
 		var mover = entity_movers.get(id)
 		if mover:
-			entity_labels[id].position = mover.current_position
+			var visual_position: Vector2 = mover.current_position
+			var entity: WordEntity = world.entities.get(id)
+			if _is_creek_visual_entity(entity):
+				visual_position.y += _creek_wave_offset(entity)
+			entity_labels[id].position = visual_position
+
+func _is_creek_visual_entity(entity: WordEntity) -> bool:
+	return current_level_index > 0 and entity != null and entity.text == "溪" and entity.grid_pos.x >= CREEK_MIN_X
+
+func _creek_wave_offset(entity: WordEntity) -> float:
+	var phase: float = creek_wave_elapsed * CREEK_WAVE_SPEED
+	phase += float(entity.grid_pos.x) * 0.52
+	phase += float(entity.grid_pos.y) * 0.16
+	return sin(phase) * CREEK_WAVE_AMPLITUDE
 
 func _sync_entity_label_group(group: Node2D, entity) -> void:
 	var text := str(entity.text)
@@ -239,10 +442,10 @@ func _sync_entity_label_group(group: Node2D, entity) -> void:
 		label.size = Vector2(world.cell_size, world.cell_size + 4)
 		label.pivot_offset = label.size * 0.5
 		var highlight_strength := world.get_highlight_animation_strength(entity.cells[i]) if i < entity.cells.size() else 0.0
-		var base_color := entity.visual_color
+		var base_color: Color = entity.visual_color
 		if entity.highlighted:
 			base_color = _highlight_config_color("matched_color", Color(1.0, 0.95, 0.32))
-		var animated_color := base_color.lerp(_highlight_config_color("accent_color", Color(1.0, 0.78, 0.18)), highlight_strength)
+		var animated_color: Color = base_color.lerp(_highlight_config_color("accent_color", Color(1.0, 0.78, 0.18)), highlight_strength)
 		label.add_theme_color_override("font_color", animated_color)
 		var pulse_scale_max := float(highlight_visual_config.get("pulse_scale_max", 1.14))
 		var pulse_scale := 1.0 + (highlight_strength * maxf(pulse_scale_max - 1.0, 0.0))
@@ -253,7 +456,10 @@ func _apply_result(result: Dictionary) -> void:
 		_handle_transition(result)
 		return
 	_refresh_view(str(result.get("message", "")))
+	_consume_visual_effects()
 	_consume_fullscreen_video_request()
+	if current_level_index == 0 and intro_phase == "lights" and result.get("success", false) and not world.has_pending_timed_effect():
+		_begin_intro_prompt()
 	if result.has("pending_delay"):
 		if world_event_timer.is_stopped():
 			world_event_timer.start(float(result.pending_delay))
@@ -285,6 +491,30 @@ func _consume_fullscreen_video_request() -> void:
 	world.fullscreen_video_request.clear()
 	_play_fullscreen_video(str(request.get("path", "")))
 
+func _consume_visual_effects() -> void:
+	if gem_burst_effect == null:
+		return
+	for request in world.consume_visual_effects():
+		if str(request.get("type", "")) != "gem_burst":
+			continue
+		var origin_grid: Vector2 = request.get("origin_grid", GEM_ORIGIN_GRID)
+		gem_burst_effect.play_at(
+			_grid_to_pixels_float(origin_grid),
+			world.cell_size,
+			float(request.get("duration", 0.78)),
+			int(request.get("seed", 1947))
+		)
+
+func _play_gem_burst_preview() -> void:
+	if current_level_index != 0 or gem_burst_effect == null:
+		return
+	gem_burst_effect.play_at(
+		_grid_to_pixels_float(GEM_ORIGIN_GRID),
+		world.cell_size,
+		0.78,
+		1947
+	)
+
 func _play_fullscreen_video(path: String) -> void:
 	if fullscreen_video_player == null or path.is_empty():
 		return
@@ -314,12 +544,23 @@ func _load_level_index(index: int, overrides := {}) -> void:
 		world.facing = overrides.player_facing
 	world.update_page()
 	_clear_entity_visuals()
+	if current_level_index == 0:
+		intro_phase = "lights"
+		intro_reveal_elapsed = 0.0
+		intro_reveal_max_distance = 0.0
+	else:
+		intro_phase = "active"
 	held_move_directions.clear()
-	move_repeat_elapsed = 0.0
+	player_move_repeat_timer = 0.0
+	player_blocked_retry_timer = 0.0
+	player_walk_visual_timer = 0.0
+	player_walk_frame_timer = 0.0
 	_player_visual_ready = false
 	_last_player_visible = world.player_visible
 	if world_event_timer:
 		world_event_timer.stop()
+	if player_sprite:
+		_set_player_idle_visual()
 
 func _resolve_world_event() -> void:
 	_apply_result(world.resolve_pending_timed_effect())
@@ -384,8 +625,12 @@ func _apply_direction_step(direction: Vector2i) -> void:
 		result = world.pull_front(direction)
 	else:
 		result = world.try_move_player(direction)
+	player_move_repeat_timer = PLAYER_MOVE_REPEAT_TIME
+	if not result.get("success", false):
+		player_blocked_retry_timer = PLAYER_BLOCKED_RETRY_TIME
 	_apply_result(result)
 	if result.get("success", false):
+		_play_player_walk_visual()
 		_show_direction_marker(direction)
 
 func _direction_from_key(keycode: Key) -> Vector2i:
@@ -393,6 +638,51 @@ func _direction_from_key(keycode: Key) -> Vector2i:
 
 func _grid_to_pixels(pos: Vector2i) -> Vector2:
 	return Vector2(pos.x * world.cell_size, pos.y * world.cell_size)
+
+func _grid_to_pixels_float(pos: Vector2) -> Vector2:
+	return pos * float(world.cell_size)
+
+func _uses_player_sprite() -> bool:
+	return world.player_text == "我"
+
+func _update_player_visual_animation(delta: float) -> void:
+	if player_sprite == null or player_walk_visual_timer <= 0.0:
+		return
+	player_walk_visual_timer = maxf(player_walk_visual_timer - delta, 0.0)
+	player_walk_frame_timer += delta
+	if player_walk_frame_timer >= PLAYER_WALK_FRAME_TIME:
+		player_walk_frame_timer = 0.0
+		player_sprite.frame = 1 - player_sprite.frame
+	if player_walk_visual_timer <= 0.0:
+		_set_player_idle_visual()
+
+func _play_player_walk_visual() -> void:
+	if player_sprite == null or not _uses_player_sprite():
+		return
+	player_sprite.texture = preload("res://assets/player/me_walk.png")
+	player_sprite.hframes = 2
+	player_sprite.vframes = 1
+	player_sprite.frame = 0
+	player_sprite.centered = true
+	player_sprite.scale = Vector2.ONE
+	player_sprite.modulate = Color.WHITE
+	player_sprite.rotation = 0.0
+	player_walk_visual_timer = PLAYER_WALK_VISUAL_TIME
+	player_walk_frame_timer = 0.0
+
+func _set_player_idle_visual() -> void:
+	if player_sprite == null:
+		return
+	player_sprite.texture = preload("res://assets/player/me_default.png")
+	player_sprite.hframes = 1
+	player_sprite.vframes = 1
+	player_sprite.frame = 0
+	player_sprite.centered = true
+	player_sprite.scale = Vector2.ONE
+	player_sprite.modulate = Color.WHITE
+	player_sprite.rotation = 0.0
+	player_walk_visual_timer = 0.0
+	player_walk_frame_timer = 0.0
 
 func _make_word_label(text: String, font_color := Color.WHITE, bg_color := Color.TRANSPARENT) -> Label:
 	var label := Label.new()

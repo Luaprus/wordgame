@@ -3,7 +3,7 @@ extends Node2D
 const TILE_TEXT := "桥"
 const TILE_SIZE := Vector2(60.0, 60.0)
 const SCENE_SIZE := Vector2(600.0, 420.0)
-const FONT_PATH := "res://Fonts/Zpix.ttf"
+const FONT_PATH := "res://Fonts/Zpix-v3.1.6.ttf"
 
 const TOP_TILES := [
 	{"name": "Top0", "pos": Vector2(30, 30), "rot": 10.0},
@@ -102,7 +102,7 @@ func _build_scene() -> void:
 	player_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	if _font != null:
 		player_label.add_theme_font_override("font", _font)
-	player_label.add_theme_font_size_override("font_size", 42)
+	player_label.add_theme_font_size_override("font_size", 56)
 	player_label.modulate = Color(0.98, 0.98, 0.98, 1.0)
 	_falling_player.add_child(player_label)
 
@@ -151,7 +151,7 @@ func _create_tile(tile: Dictionary) -> Node2D:
 	glyph.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	if _font != null:
 		glyph.add_theme_font_override("font", _font)
-	glyph.add_theme_font_size_override("font_size", 42)
+	glyph.add_theme_font_size_override("font_size", 56)
 	glyph.modulate = Color(0.97, 0.97, 0.97, 1.0)
 	holder.add_child(glyph)
 	return holder
