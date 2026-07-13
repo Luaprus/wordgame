@@ -5,6 +5,8 @@ const GRID_W := 32
 const GRID_H := 18
 const VIEWPORT_SIZE := Vector2(1920, 1080)
 const FONT := preload("res://Fonts/Zpix-v3.1.6.ttf")
+const ME_DEFAULT_TEXTURE := preload("res://Assets/sprites/me/me_default.png")
+const ME_WALK_TEXTURE := preload("res://Assets/sprites/me/me_walk.png")
 const START_AT_SNAKE_FOR_TEST := false
 
 const MAP_MAZE := 0
@@ -47,6 +49,10 @@ const SE_SNAKE_GRAB := "res://Assets/audio/se/sword_draw_out_1.wav"
 const SE_SNAKE_BITE := "res://Assets/audio/se/第二章 音效/SE_2_21_sword_crash_C.wav"
 const SE_SNAKE_HOLY := "res://Assets/audio/se/MEL/MEL_2_24_sword.wav"
 const SWORD_VIDEO := "res://Assets/video/u_sword.ogv"
+const BACKSPACE_SPLASH_TEXTURE := preload("res://Assets/sprites/backspace_splash/splash.png")
+const BACKSPACE_CUT_SHADER := preload("res://Assets/shaders/cut2.gdshader")
+const BACKSPACE_CUT_ANIMATION_CHARS := ["忘"]
+const BACKSPACE_CUT_MASK_EXTRA_X := 14.0
 
 const WALL_COLOR := Color(0.58, 0.58, 0.58, 1.0)
 const DIALOGUE_COLOR := Color(0.86, 0.86, 0.86, 1.0)
@@ -58,6 +64,10 @@ const TREASURE_ROOM_SPAWN := Vector2i(3, 5)
 const TREASURE_ORIGIN := Vector2i(3, 3)
 const SWORD_SPAWN_WAIT := 3.0
 const SWORD_VISIBLE_TIME := 5.0
+const PLAYER_WALK_VISUAL_TIME := 0.12
+const PLAYER_WALK_FRAME_TIME := 0.055
+const PLAYER_MOVE_REPEAT_TIME := 0.12
+const PLAYER_BLOCKED_RETRY_TIME := 0.12
 const SLIME_REINFORCEMENT_INTERVAL := 4.0
 const OPPORTUNITY_CELLS := [
 	Vector2i(2, 7),
@@ -261,6 +271,11 @@ var dark_overlay: ColorRect
 var blur_overlay: ColorRect
 
 var player_label: Label
+var player_sprite: Sprite2D
+var player_walk_visual_timer := 0.0
+var player_walk_frame_timer := 0.0
+var player_move_repeat_timer := 0.0
+var player_blocked_retry_timer := 0.0
 var sword_label: Label
 var toast_label: Label
 var hint_label: Label
@@ -356,6 +371,8 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	_update_player_visual_animation(delta)
+	_update_continuous_player_movement(delta)
 	if phase == Phase.FIND_SWORD:
 		_update_sword(delta)
 	if opportunity_active:
@@ -403,8 +420,64 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_DOWN, KEY_S:
 			direction = Vector2i.DOWN
 	if direction != Vector2i.ZERO:
-		last_direction = direction
-		_try_move_player(direction)
+		_move_player_from_input(direction)
+
+
+func _update_continuous_player_movement(delta: float) -> void:
+	if player_move_repeat_timer > 0.0:
+		player_move_repeat_timer = maxf(player_move_repeat_timer - delta, 0.0)
+	if player_blocked_retry_timer > 0.0:
+		player_blocked_retry_timer = maxf(player_blocked_retry_timer - delta, 0.0)
+
+	if dialogue_active or input_locked:
+		return
+
+	var held_direction := _get_held_direction()
+	if held_direction == Vector2i.ZERO:
+		return
+	if player_move_repeat_timer > 0.0 or player_blocked_retry_timer > 0.0:
+		return
+
+	_move_player_from_input(held_direction)
+
+
+func _get_held_direction() -> Vector2i:
+	if _is_direction_held(last_direction):
+		return last_direction
+
+	if Input.is_key_pressed(KEY_LEFT) or Input.is_key_pressed(KEY_A):
+		return Vector2i.LEFT
+	if Input.is_key_pressed(KEY_RIGHT) or Input.is_key_pressed(KEY_D):
+		return Vector2i.RIGHT
+	if Input.is_key_pressed(KEY_UP) or Input.is_key_pressed(KEY_W):
+		return Vector2i.UP
+	if Input.is_key_pressed(KEY_DOWN) or Input.is_key_pressed(KEY_S):
+		return Vector2i.DOWN
+
+	return Vector2i.ZERO
+
+
+func _is_direction_held(direction: Vector2i) -> bool:
+	match direction:
+		Vector2i.LEFT:
+			return Input.is_key_pressed(KEY_LEFT) or Input.is_key_pressed(KEY_A)
+		Vector2i.RIGHT:
+			return Input.is_key_pressed(KEY_RIGHT) or Input.is_key_pressed(KEY_D)
+		Vector2i.UP:
+			return Input.is_key_pressed(KEY_UP) or Input.is_key_pressed(KEY_W)
+		Vector2i.DOWN:
+			return Input.is_key_pressed(KEY_DOWN) or Input.is_key_pressed(KEY_S)
+		_:
+			return false
+
+
+func _move_player_from_input(direction: Vector2i) -> void:
+	last_direction = direction
+	var previous_cell := player_cell
+	_try_move_player(direction)
+	player_move_repeat_timer = PLAYER_MOVE_REPEAT_TIME
+	if player_cell == previous_cell:
+		player_blocked_retry_timer = PLAYER_BLOCKED_RETRY_TIME
 
 
 func _load_maps() -> void:
@@ -570,10 +643,11 @@ func _render_base_map(map_index: int, root: Control) -> void:
 
 
 func _create_actors() -> void:
-	player_label = _make_cell_label("我", player_cell.x, player_cell.y, PLAYER_COLOR)
+	player_label = _make_cell_label("", player_cell.x, player_cell.y, PLAYER_COLOR)
 	player_label.name = "Player"
 	player_label.z_index = 20
 	actor_layer.add_child(player_label)
+	_setup_player_sprite()
 
 	sword_label = _make_cell_label("剑", 0, 0, Color.WHITE)
 	sword_label.name = "Sword"
@@ -637,6 +711,7 @@ func _try_move_player(direction: Vector2i) -> void:
 		return
 
 	player_cell = next
+	_play_player_walk_visual()
 	_update_player_position()
 
 
@@ -2969,12 +3044,79 @@ func _try_delete_front_char() -> void:
 func _delete_sentence_index(index: int) -> void:
 	sentence_locked = true
 	var label := active_sentence_labels[index]
+	if _uses_backspace_cut_animation(label):
+		await _play_backspace_cut_animation(label)
+	else:
+		var tween := create_tween()
+		tween.set_parallel(true)
+		tween.tween_property(label, "modulate:a", 0.0, 0.22)
+		tween.tween_property(label, "scale", Vector2(1.7, 1.7), 0.22)
+		await tween.finished
+	label.visible = false
+
+
+func _uses_backspace_cut_animation(label: Label) -> bool:
+	return BACKSPACE_CUT_ANIMATION_CHARS.has(label.text)
+
+
+func _play_backspace_cut_animation(label: Label) -> void:
+	_play_se(SE_SWING)
+	var original_z_index := label.z_index
+	var original_material := label.material
+	var original_modulate := label.modulate
+
+	var mask := ColorRect.new()
+	mask.name = "BackspaceForgetMask"
+	mask.position = label.position - Vector2(BACKSPACE_CUT_MASK_EXTRA_X, 0)
+	mask.size = label.size + Vector2(BACKSPACE_CUT_MASK_EXTRA_X * 2.0, 0)
+	mask.color = Color.BLACK
+	mask.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mask.z_index = 70
+	actor_layer.add_child(mask)
+
+	label.z_index = 72
+	label.modulate = DIALOGUE_COLOR
+
+	var material := ShaderMaterial.new()
+	material.shader = BACKSPACE_CUT_SHADER
+	material.set_shader_parameter("degree", 45.0)
+	material.set_shader_parameter("time", 0.0)
+	label.material = material
+
+	var slash := Sprite2D.new()
+	slash.texture = BACKSPACE_SPLASH_TEXTURE
+	slash.hframes = 10
+	slash.vframes = 2
+	slash.frame = 0
+	slash.z_index = 74
+	slash.centered = true
+	slash.position = label.position + label.size * 0.5
+	slash.rotation_degrees = 45.0
+	actor_layer.add_child(slash)
+
 	var tween := create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(label, "modulate:a", 0.0, 0.22)
-	tween.tween_property(label, "scale", Vector2(1.7, 1.7), 0.22)
+	tween.tween_property(material, "shader_parameter/time", 1.0, 1.15).from(0.0)
+	tween.tween_property(slash, "frame", 17, 0.5).from(0)
+	tween.tween_property(label, "modulate:a", 0.18, 0.72).set_delay(0.28)
 	await tween.finished
-	label.visible = false
+
+	label.modulate.a = 0.0
+	await get_tree().create_timer(0.08).timeout
+	label.visible = true
+	label.material = null
+	label.modulate.a = 0.26
+	await get_tree().create_timer(0.08).timeout
+	label.modulate.a = 0.48
+	await get_tree().create_timer(0.06).timeout
+	label.modulate.a = 0.16
+	await get_tree().create_timer(0.08).timeout
+	label.modulate.a = 0.0
+	label.z_index = original_z_index
+	label.material = original_material
+	label.modulate = original_modulate
+	slash.queue_free()
+	mask.queue_free()
 
 
 func _play_sentence_legal_animation() -> void:
@@ -3076,6 +3218,61 @@ func _update_player_position() -> void:
 	if current_map == MAP_SNAKE:
 		y = _snake_player_visual_y(player_cell.y)
 	player_label.position = Vector2(current_map * VIEWPORT_SIZE.x + player_cell.x * CELL, y)
+
+
+func _setup_player_sprite() -> void:
+	player_sprite = Sprite2D.new()
+	player_sprite.name = "PlayerVisual"
+	player_sprite.position = Vector2(CELL, CELL) / 2.0
+	player_sprite.z_index = 1
+	player_label.add_child(player_sprite)
+	_set_player_idle_visual()
+
+
+func _update_player_visual_animation(delta: float) -> void:
+	if player_sprite == null or player_walk_visual_timer <= 0.0:
+		return
+
+	player_walk_visual_timer = maxf(player_walk_visual_timer - delta, 0.0)
+	player_walk_frame_timer += delta
+	if player_walk_frame_timer >= PLAYER_WALK_FRAME_TIME:
+		player_walk_frame_timer = 0.0
+		player_sprite.frame = 1 - player_sprite.frame
+
+	if player_walk_visual_timer <= 0.0:
+		_set_player_idle_visual()
+
+
+func _play_player_walk_visual() -> void:
+	if player_sprite == null:
+		return
+
+	player_sprite.texture = ME_WALK_TEXTURE
+	player_sprite.hframes = 2
+	player_sprite.vframes = 1
+	player_sprite.frame = 0
+	player_sprite.centered = true
+	player_sprite.scale = Vector2.ONE
+	player_sprite.modulate = Color.WHITE
+	player_sprite.rotation = 0.0
+	player_walk_visual_timer = PLAYER_WALK_VISUAL_TIME
+	player_walk_frame_timer = 0.0
+
+
+func _set_player_idle_visual() -> void:
+	if player_sprite == null:
+		return
+
+	player_sprite.texture = ME_DEFAULT_TEXTURE
+	player_sprite.hframes = 1
+	player_sprite.vframes = 1
+	player_sprite.frame = 0
+	player_sprite.centered = true
+	player_sprite.scale = Vector2.ONE
+	player_sprite.modulate = Color.WHITE
+	player_sprite.rotation = 0.0
+	player_walk_visual_timer = 0.0
+	player_walk_frame_timer = 0.0
 
 
 func _set_sword_position(cell: Vector2i) -> void:

@@ -6,7 +6,7 @@
 
 目标工程：
 
-- `E:/Godot/wordgame/剑流程`
+- `L:/wordgame-map/wordgame/剑流程`
 - 主场景：`res://Scenes/Maps/第二章/05_聖劍寶庫_復刻.tscn`
 - 当前主脚本：`res://Scripts/ReferenceSwordFlow.gd`
 - 原动态流程脚本保留：`res://Scripts/SwordTutorial.gd`
@@ -35,6 +35,48 @@
 - 未直接搬运源项目 `Event` / `Interpreter` 命令系统；表现由 `ReferenceSwordFlow.gd` 内的状态机、Tween 和文字 Label 重建。
 - 源码里蛇妖射线与物件攻击有更多独立动画节点；本复刻已按规则和可见反馈还原核心表现，但不是节点级逐一搬运。
 - 运行前如 Godot 未生成新音频 `.import`，请在编辑器中打开工程一次让资源自动导入。
+
+## 2026-07-13 我字动画接入
+
+本次只改 `res://Scenes/Maps/第二章/05_聖劍寶庫_復刻.tscn` 所挂脚本里的玩家视觉，不改操作方式、移动判定、删字规则或流程状态。
+
+- 参考动画场景：`L:/wordgame-map/wordgame/Scenes/Test/WASDMoveMe.tscn`。
+- 参考脚本：`L:/wordgame-map/wordgame/Scripts/WASDMoveMeScene.gd`。
+- 复制资源：`L:/wordgame-map/wordgame/Sprites/me/me_default.png` 到 `res://Assets/sprites/me/me_default.png`。
+- 复制资源：`L:/wordgame-map/wordgame/Sprites/me/me_walk.png` 到 `res://Assets/sprites/me/me_walk.png`。
+- `ReferenceSwordFlow.gd` 仍保留原 `player_label`、`player_cell`、输入处理和流程判定；现在将 `player_label` 文字清空，并挂 `Sprite2D` 子节点 `PlayerVisual` 作为可见的“我”。
+- 静止时显示 `me_default.png`；每次成功移动后短暂显示 `me_walk.png`，按 `WASDMoveMeScene.gd` 的节奏在两帧间切换，然后恢复静止图。
+- 方向键 / WASD 现在支持按住连续移动，使用 `WASDMoveMeScene.gd` 的 held-direction 思路：首次按下立即移动，按住后按固定间隔继续调用原有移动函数；撞墙或不可移动时有短暂冷却，避免提示刷屏。
+- 当前环境下 Godot 4.7 headless 打开 `L:\wordgame-map\wordgame\剑流程` 仍会在启动阶段 `signal 11` 崩溃，因此本次运行验收仍需在编辑器里手动打开主场景确认。
+
+## 2026-07-13 Backspace 删除“忘”动画接入
+
+本次把外层项目中修过的“我面对忘字按 Backspace 删除”的表现只应用到 `忘` 字，其他删字步骤暂时保持原来的淡出/放大表现。
+
+- 参考源地图：`D:\文字游戏\Scenes\Maps\第二章\05_聖劍寶庫.tscn`，其中 `忘` 事件为 `can_delete = true`。
+- 参考源动画：`D:\文字游戏\Scenes\Animations\Backspace.tscn` 与 `D:\文字游戏\Scenes\Animations\Backspace.gd`。
+- 接入源贴图：`D:\文字游戏\Sprites\backspace_splash\splash.png` 到 `res://Assets/sprites/backspace_splash/splash.png`。
+- 接入源 shader：`D:\文字游戏\Shader\cut2.gdshader` 到 `res://Assets/shaders/cut2.gdshader`。
+- `ReferenceSwordFlow.gd` 的 `_delete_sentence_index()` 只有在 `label.text == "忘"` 时调用 `_play_backspace_cut_animation()`，对 `忘` 套 `cut2.gdshader`，并播放 `splash.png` 的 2x10 逐帧斩光。
+- `忘` 字动画期间会临时创建 `BackspaceForgetMask` 黑底遮罩，覆盖目标格并向左右各扩 10px，用来复现原版中 `忘` 复现/变浅时对旁边“有”“掉”的局部遮挡。
+- “忘”字删除段仍由 `_start_delete_sentence(["只", "有", "忘", ...], 2, ...)` 触发；玩家操控“我”面对目标字按 Backspace 后播放右上到左下斜劈、字变浅、闪现、消失，再进入原本的脚底崩裂和坠落转场。
+- 删除音效沿用本复刻项目已有的源音效 `res://Assets/audio/se/第二章 音效/SE_2_23_sword_big_swing_B.wav`。
+
+### 删除“忘”字动画制作过程
+
+1. 目标字仍使用原复刻流程的 `Label`，不改移动、面对方向和 Backspace 判定。
+2. `_delete_sentence_index()` 先判断 `label.text` 是否在 `BACKSPACE_CUT_ANIMATION_CHARS` 中；当前列表只有 `"忘"`。
+3. 命中字后调用 `_play_backspace_cut_animation()`，先播放源挥剑音效，再给目标字套 `D:\文字游戏\Shader\cut2.gdshader`。
+4. 同时创建 `Sprite2D` 播放 `D:\文字游戏\Sprites\backspace_splash\splash.png` 的 2x10 帧，表现右上到左下的斩光。
+5. 动画期间创建 `BackspaceForgetMask` 黑底遮罩，遮住目标格并向左右扩展，模拟原版中 `忘` 变浅复现时压住旁边字边缘的效果。
+6. shader 推进结束后，目标字短暂全隐，再以较暗状态闪回，随后彻底透明并隐藏。
+7. 其他不在 `BACKSPACE_CUT_ANIMATION_CHARS` 的字继续使用原来的淡出和放大删除动画。
+
+### 复用方式
+
+- 要把同一套动画用在用户指定的另一个字上，只修改 `ReferenceSwordFlow.gd` 顶部的 `BACKSPACE_CUT_ANIMATION_CHARS`。
+- 例如要同时支持 `忘` 和 `不`，改为 `const BACKSPACE_CUT_ANIMATION_CHARS := ["忘", "不"]`。
+- 不需要改 `_delete_sentence_index()` 的流程，也不需要复制新的动画资源。
 
 ## 2026-07-11 静态地图验收版本
 

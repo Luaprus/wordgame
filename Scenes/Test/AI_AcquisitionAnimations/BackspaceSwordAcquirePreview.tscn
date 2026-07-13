@@ -1,0 +1,45 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Scenes/BackspaceSwordAcquirePreview.gd" id="1_script"]
+[ext_resource type="VideoStream" path="res://Sprites/ch2_sword/u_sword.ogv" id="2_video"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/UI.tscn" id="3_ui"]
+
+[node name="BackspaceSwordAcquirePreview" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="."]
+visible = false
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+stream = ExtResource("2_video")
+expand = false
+
+[node name="UI" parent="." instance=ExtResource("3_ui")]
+
+[node name="TitleLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 24.0
+offset_right = 960.0
+offset_bottom = 72.0
+
+[node name="KeywordLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 70.0
+offset_right = 1560.0
+offset_bottom = 104.0
+
+[node name="HintLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 104.0
+offset_right = 1760.0
+offset_bottom = 132.0

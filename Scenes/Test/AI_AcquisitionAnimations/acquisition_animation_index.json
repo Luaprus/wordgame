@@ -1,0 +1,53 @@
+{
+  "catalog_id": "ai_acquisition_animations",
+  "folder": "res://Scenes/Test/AI_AcquisitionAnimations",
+  "lookup_note": "Use any keyword in `keywords` to find the matching acquisition animation scene.",
+  "animations": [
+    {
+      "id": "backspace_sword_acquire",
+      "scene_path": "res://Scenes/Test/AI_AcquisitionAnimations/BackspaceSwordAcquirePreview.tscn",
+      "keywords": [
+        "获取动画",
+        "取得動畫",
+        "圣剑",
+        "聖劍",
+        "贝克斯贝斯之剑",
+        "貝克思貝斯之劍",
+        "backspace",
+        "剑",
+        "劍"
+      ],
+      "source_map": "D:/文字游戏/Scenes/Maps/第二章/05_聖劍寶庫.tscn"
+    },
+    {
+      "id": "durl_gloves_acquire",
+      "scene_path": "res://Scenes/Test/AI_AcquisitionAnimations/DurlGlovesAcquirePreview.tscn",
+      "keywords": [
+        "获取动画",
+        "取得動畫",
+        "手套",
+        "杜尔手套",
+        "杜爾手套",
+        "durl gloves",
+        "glove",
+        "gloves"
+      ],
+      "source_map": "D:/文字游戏/Scenes/Maps/第三章/04_手套教學.tscn"
+    },
+    {
+      "id": "four_eye_helmet_acquire",
+      "scene_path": "res://Scenes/Test/AI_AcquisitionAnimations/FourEyeHelmetAcquirePreview.tscn",
+      "keywords": [
+        "获取动画",
+        "取得動畫",
+        "头盔",
+        "頭盔",
+        "四目头盔",
+        "四目頭盔",
+        "helmet",
+        "four eye helmet"
+      ],
+      "source_map": "D:/文字游戏/Scenes/Maps/第四章/12_寶庫_穹頂.tscn"
+    }
+  ]
+}
