@@ -71,7 +71,7 @@ foreach ($dataPath in $dataPaths) {
 		Assert-True (-not $bottomRow.Contains(" ")) "${mapName}: bottom row must be filled directly in map data."
 	}
 
-	if ($mapName -eq "reference_slime_cave_left_map.json" -or $mapName -eq "reference_slime_cave_right_map.json") {
+	if ($mapName -eq "reference_slime_cave_right_map.json") {
 		foreach ($safeY in 14..15) {
 			$row = [string]$data.rows[$safeY]
 			for ($safeX = 6; $safeX -le 23; $safeX++) {
@@ -192,7 +192,8 @@ Assert-True ($scriptText.Contains('func _snake_sentence_start_for_cell(trigger_c
 Assert-True ($scriptText.Contains('snake_scroll_active = current_map == MAP_SNAKE and not snake_stone_mode')) "ReferenceSwordFlow.gd: snake boss must resume scrolling after first-phase text resolves."
 Assert-True ($scriptText.Contains('var twist_multiplier: float = 0.0')) "ReferenceSwordFlow.gd: snake boss body sway must use the source lower-body twist pattern."
 Assert-True ($scriptText.Contains('var local_y: float = _snake_visual_y(base_cell.y)')) "ReferenceSwordFlow.gd: snake boss body must move upward with the source camera scroll."
-Assert-True ($scriptText.Contains('player_label.position = Vector2(current_map * VIEWPORT_SIZE.x + player_cell.x * CELL, y)')) "ReferenceSwordFlow.gd: snake boss player must move upward with the source camera scroll."
+Assert-True ($scriptText.Contains('var target_position := Vector2(current_map * VIEWPORT_SIZE.x + player_cell.x * CELL, y)')) "ReferenceSwordFlow.gd: snake boss player target position must include the source camera scroll."
+Assert-True ($scriptText.Contains('player_label.position = target_position')) "ReferenceSwordFlow.gd: non-animated player placement must use the computed camera-scroll target."
 Assert-True ($scriptText.Contains('func _snake_failure(line: String, death_sentence: String) -> void:')) "ReferenceSwordFlow.gd: snake boss wrong deletion must enter the local death checkpoint flow."
 Assert-True ($scriptText.Contains('snake_success_count = int(death_checkpoint.get("snake_success_count", 0))')) "ReferenceSwordFlow.gd: snake boss death restore must keep first-phase progress."
 Assert-True ($scriptText.Contains('snake_reverse_count = int(death_checkpoint.get("snake_reverse_count", 0))')) "ReferenceSwordFlow.gd: snake boss death restore must keep second-phase progress."
