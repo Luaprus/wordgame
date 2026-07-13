@@ -17,6 +17,7 @@ var interact_effect: Dictionary = {}
 var split_positions: Array[Vector2i] = []
 var highlighted := false
 var visual_rotation_degrees := 0.0
+var visual_color := Color.WHITE
 
 func _init(entity_id := "", entity_text := "", pos := Vector2i.ZERO, occupied_cells: Array[Vector2i] = []) -> void:
 	id = entity_id
@@ -44,6 +45,7 @@ func set_from_config(config: Dictionary) -> void:
 		for pos in config.split_positions:
 			split_positions.append(pos)
 	visual_rotation_degrees = float(config.get("visual_rotation_degrees", visual_rotation_degrees))
+	visual_color = config.get("visual_color", visual_color)
 
 func move_by(delta: Vector2i) -> void:
 	grid_pos += delta

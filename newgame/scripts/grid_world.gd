@@ -39,10 +39,13 @@ var player_merge_effects: Dictionary = {}
 var player_split_rules: Dictionary = {}
 var player_split_effects: Dictionary = {}
 var passable_text_by_player: Dictionary = {}
+var entity_move_effects: Dictionary = {}
 var step_effects: Array = []
 var pending_timed_effect: Dictionary = {}
 var pending_timed_delay := 0.0
 var pending_interact_effect: Dictionary = {}
+var fullscreen_video_finished_effect: Dictionary = {}
+var fullscreen_video_request: Dictionary = {}
 var current_level: Dictionary = {}
 
 var _next_id := 1
@@ -76,7 +79,10 @@ func load_level(level: Dictionary) -> void:
 	player_split_rules = level.get("player_split_rules", {})
 	player_split_effects = level.get("player_split_effects", {})
 	passable_text_by_player = level.get("passable_text_by_player", {})
+	entity_move_effects = level.get("entity_move_effects", {})
 	step_effects = level.get("step_effects", [])
+	pending_timed_effect = level.get("initial_timed_effect", {})
+	pending_timed_delay = float(level.get("initial_timed_delay", 0.0))
 	_parse_rows(rows)
 	update_page()
 
@@ -102,10 +108,13 @@ func clear() -> void:
 	player_split_rules.clear()
 	player_split_effects.clear()
 	passable_text_by_player.clear()
+	entity_move_effects.clear()
 	step_effects.clear()
 	pending_timed_effect.clear()
 	pending_timed_delay = 0.0
 	pending_interact_effect.clear()
+	fullscreen_video_finished_effect.clear()
+	fullscreen_video_request.clear()
 	current_page_origin = Vector2i.ZERO
 	_next_id = 1
 	_map_caption_ids.clear()
@@ -297,11 +306,12 @@ func split_front() -> Dictionary:
 	var split_positions := _split_positions_for(entity)
 	if split_positions.size() != 2:
 		return {"success": false, "message": "split rule needs two positions"}
-	var space_result := _make_room_for_split(entity, split_positions)
+	var split_effect := _effect_for_target(split_effects.get(entity.text, {}), entity.grid_pos)
+	var space_result := _make_room_for_split(entity, split_positions, split_effect.get("remove_at", []))
 	if not space_result.success:
 		return space_result
 	entities.erase(entity.id)
-	_apply_map_effect(_effect_for_target(split_effects.get(entity.text, {}), entity.grid_pos))
+	_apply_map_effect(split_effect)
 	add_entity(str(parts[0]), split_positions[0], _config_for_text_at(str(parts[0]), split_positions[0], {
 		"solid": true,
 		"pushable": true,
@@ -337,8 +347,10 @@ func pull_front(move_direction: Vector2i) -> Dictionary:
 	if get_entity_at(new_player_pos):
 		return {"success": false, "message": "player target blocked"}
 	player_moving = true
+	var old_entity_pos := entity.grid_pos
 	player_pos = new_player_pos
 	move_entity_to(entity.id, old_player_pos)
+	_trigger_entity_move_effect(entity, old_entity_pos, entity.grid_pos, old_player_pos - old_entity_pos)
 	facing = -move_direction
 	update_page()
 	check_sentence_rules()
@@ -349,6 +361,7 @@ func move_entity_by(entity_id: String, direction: Vector2i) -> Dictionary:
 	var entity: WordEntity = entities.get(entity_id)
 	if not entity:
 		return {"success": false, "message": "missing entity"}
+	var old_pos := entity.grid_pos
 	var own_cells := {}
 	for cell in entity.cells:
 		own_cells[cell] = true
@@ -363,6 +376,7 @@ func move_entity_by(entity_id: String, direction: Vector2i) -> Dictionary:
 		if target == player_pos and not own_cells.has(target):
 			return {"success": false, "message": "blocked by player"}
 	entity.move_by(direction)
+	_trigger_entity_move_effect(entity, old_pos, entity.grid_pos, direction)
 	return {"success": true}
 
 func move_entity_to(entity_id: String, pos: Vector2i) -> Dictionary:
@@ -520,7 +534,7 @@ func _split_positions_for(entity: WordEntity) -> Array[Vector2i]:
 		return entity.split_positions.duplicate()
 	return [entity.grid_pos, entity.grid_pos + facing]
 
-func _make_room_for_split(entity: WordEntity, split_positions: Array[Vector2i]) -> Dictionary:
+func _make_room_for_split(entity: WordEntity, split_positions: Array[Vector2i], removable_positions: Array = []) -> Dictionary:
 	var split_direction := Vector2i.RIGHT
 	if split_positions.size() >= 2 and split_positions[0] != split_positions[1]:
 		split_direction = split_positions[1] - split_positions[0]
@@ -535,7 +549,7 @@ func _make_room_for_split(entity: WordEntity, split_positions: Array[Vector2i]) 
 				return {"success": false, "message": "player split target blocked"}
 			player_pos = pushed_pos
 		var blocker := get_entity_at(pos)
-		if blocker and blocker.id != entity.id:
+		if blocker and blocker.id != entity.id and not removable_positions.has(pos):
 			return {"success": false, "message": "split target blocked"}
 	return {"success": true}
 
@@ -567,6 +581,9 @@ func _apply_map_effect(config: Dictionary) -> void:
 		load_level(current_level.duplicate(true))
 		player_pos = reset_player_pos
 		update_page()
+		return
+	if config.has("move_player_toward"):
+		_apply_move_player_toward(config.move_player_toward)
 		return
 	if config.has("condition"):
 		var condition: Dictionary = config.condition
@@ -601,6 +618,10 @@ func _apply_map_effect(config: Dictionary) -> void:
 		last_message = str(config.last_message)
 	for pos in config.get("remove_at", []):
 		_erase_entities_at(pos)
+	for remove_config in config.get("remove_matching", []):
+		_erase_matching_entities(remove_config)
+	for matching_config in config.get("set_matching_config", []):
+		_set_matching_entity_config(matching_config)
 	for replace_config in config.get("replace_text", []):
 		if _replace_text_if_present(replace_config):
 			for pos in replace_config.get("remove_on_replace", []):
@@ -634,10 +655,36 @@ func _apply_map_effect(config: Dictionary) -> void:
 			entity = get_any_entity_at(entry.get("from"))
 		if entity:
 			move_entity_to(entity.id, entry.get("to"))
+			if entry.has("config"):
+				entity.set_from_config(entry.get("config"))
 	if config.has("fly_entity_left"):
 		_fly_entity_left(config.fly_entity_left)
+	if config.has("play_fullscreen_video"):
+		fullscreen_video_request = config.play_fullscreen_video
+		fullscreen_video_finished_effect = fullscreen_video_request.get("on_finished", {})
 	for text_config in config.get("spawn_text", []):
 		_spawn_effect_text(text_config)
+
+func _apply_move_player_toward(move_config: Dictionary) -> void:
+	var target: Vector2i = move_config.get("target", player_pos)
+	var step_delay := float(move_config.get("step_delay", 0.12))
+	if player_pos != target:
+		var delta := target - player_pos
+		var step := Vector2i.ZERO
+		if delta.x != 0:
+			step.x = 1 if delta.x > 0 else -1
+		elif delta.y != 0:
+			step.y = 1 if delta.y > 0 else -1
+		player_pos += step
+		if step != Vector2i.ZERO:
+			facing = step
+		update_page()
+		pending_timed_effect = {
+			"move_player_toward": move_config
+		}
+		pending_timed_delay = step_delay
+		return
+	_apply_map_effect(move_config.get("then", {}))
 
 func _fly_entity_left(fly_config: Dictionary) -> void:
 	var entity: WordEntity = null
@@ -694,8 +741,32 @@ func _effect_for_target(effect_config, target_pos: Vector2i) -> Dictionary:
 			return entry.get("effect", {})
 	return config.get("default", {})
 
+func _trigger_entity_move_effect(entity: WordEntity, old_pos: Vector2i, new_pos: Vector2i, direction: Vector2i) -> void:
+	if not entity_move_effects.has(entity.text):
+		return
+	var effect_config = entity_move_effects.get(entity.text)
+	var effect := {}
+	if effect_config is Callable:
+		effect = effect_config.call(self, entity, old_pos, new_pos, direction)
+	elif effect_config is Dictionary:
+		effect = _effect_for_target(effect_config, new_pos)
+	if effect is Dictionary and not effect.is_empty():
+		_apply_map_effect(effect)
+
 func has_pending_timed_effect() -> bool:
 	return not pending_timed_effect.is_empty()
+
+func has_fullscreen_video_finished_effect() -> bool:
+	return not fullscreen_video_finished_effect.is_empty()
+
+func resolve_fullscreen_video_finished_effect() -> Dictionary:
+	if fullscreen_video_finished_effect.is_empty():
+		return {"success": false, "message": "no fullscreen video finished effect"}
+	var effect := fullscreen_video_finished_effect
+	fullscreen_video_finished_effect = {}
+	fullscreen_video_request.clear()
+	_apply_map_effect(effect)
+	return {"success": true, "message": last_message}
 
 func resolve_pending_timed_effect() -> Dictionary:
 	if pending_timed_effect.is_empty():
@@ -733,8 +804,10 @@ func _step_condition_matches(condition_config) -> bool:
 		var entity := get_any_entity_at(absent.get("pos", Vector2i.ZERO))
 		if entity and entity.text == str(absent.get("text", "")):
 			return false
-	if condition.has("present_text_at"):
-		var present: Dictionary = condition.present_text_at
+	for key in condition.keys():
+		if not str(key).begins_with("present_text_at"):
+			continue
+		var present: Dictionary = condition[key]
 		var entity := get_any_entity_at(present.get("pos", Vector2i.ZERO))
 		if not entity or entity.text != str(present.get("text", "")):
 			return false
@@ -750,6 +823,44 @@ func _erase_entities_at(pos: Vector2i) -> void:
 		if entity and _map_caption_ids.get(entity.text, "") == id:
 			_map_caption_ids.erase(entity.text)
 		entities.erase(id)
+
+func _erase_matching_entities(remove_config: Dictionary) -> void:
+	var positions: Array = remove_config.get("positions", [])
+	var texts: Array = remove_config.get("texts", [])
+	var require_solid = remove_config.get("solid", null)
+	var erased_ids: Array[String] = []
+	for entity in entities.values():
+		if not texts.is_empty() and not texts.has(entity.text):
+			continue
+		if require_solid != null and entity.solid != bool(require_solid):
+			continue
+		var matches_position := positions.is_empty()
+		for pos in positions:
+			if entity.cells.has(pos):
+				matches_position = true
+				break
+		if matches_position and not erased_ids.has(entity.id):
+			erased_ids.append(entity.id)
+	for id in erased_ids:
+		var entity: WordEntity = entities.get(id)
+		if entity and _map_caption_ids.get(entity.text, "") == id:
+			_map_caption_ids.erase(entity.text)
+		entities.erase(id)
+
+func _set_matching_entity_config(matching_config: Dictionary) -> void:
+	var positions: Array = matching_config.get("positions", [])
+	var texts: Array = matching_config.get("texts", [])
+	var entity_config: Dictionary = matching_config.get("config", {})
+	for entity in entities.values():
+		if not texts.is_empty() and not texts.has(entity.text):
+			continue
+		var matches_position := positions.is_empty()
+		for pos in positions:
+			if entity.cells.has(pos):
+				matches_position = true
+				break
+		if matches_position:
+			entity.set_from_config(entity_config)
 
 func _replace_text_if_present(replace_config: Dictionary) -> bool:
 	var from_text := str(replace_config.get("from", ""))

@@ -94,8 +94,4 @@ static func _creek_interact_effect() -> Dictionary:
 	}
 
 static func _goose_effect() -> Dictionary:
-	return {
-		"set_player_text": "鹅",
-		"remove_at": _creek_hint_cells(),
-		"spawn_text": _creek_hint_text()
-	}
+	return {"set_player_text": "鹅"}

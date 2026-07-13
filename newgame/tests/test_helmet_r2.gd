@@ -65,11 +65,20 @@ func test_r2_bridge_and_distance_merge() -> void:
 	assert_any_text(world, Vector2i(8, 7), "一", "distance sentence contains 一")
 	assert_any_text(world, Vector2i(8, 8), "二", "distance sentence contains 二")
 	assert_any_text(world, Vector2i(9, 8), "十", "distance sentence contains 十")
+	assert_true(world.get_any_entity_at(Vector2i(2, 12)) == null, "bridge interaction does not show creek hint first line")
+	assert_true(world.get_any_entity_at(Vector2i(2, 13)) == null, "bridge interaction does not show creek hint second line")
 	assert_true(world.get_any_entity_at(Vector2i(2, 6)).solid, "distance hint text blocks movement")
 	world.player_pos = Vector2i(1, 6)
 	world.facing = Vector2i.RIGHT
 	var blocked_by_hint := world.try_move_player(Vector2i.RIGHT)
 	assert_true(not blocked_by_hint.success, "player cannot walk through distance hint text")
+
+	world.player_pos = Vector2i(20, 12)
+	world.facing = Vector2i.RIGHT
+	assert_true(world.interact_front().success, "creek interaction shows creek hint after bridge hint")
+	assert_any_text(world, Vector2i(2, 12), "无", "creek hint appears at its reserved first line")
+	assert_any_text(world, Vector2i(2, 13), "必", "creek hint appears at its reserved second line")
+	assert_true(world.get_any_entity_at(Vector2i(2, 14)) == null, "creek hint does not duplicate into extra rows")
 
 	world.player_pos = Vector2i(8, 9)
 	world.facing = Vector2i.UP
