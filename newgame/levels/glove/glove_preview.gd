@@ -28,6 +28,11 @@ const MAIN_SCENE_PATH := "res://Main.tscn"
 const RETURN_TO_MAIN_SHORTCUT_KEY := KEY_ESCAPE
 const GESTURE_TRANSITION_SWITCH_SECONDS := 0.5
 const GESTURE_FLASH_PEAK_ALPHA := 0.3
+const GLOVE_ACQUIRE_VIDEO_PATH := "res://assets/video/glove_acquire.ogv"
+const GLOVE_PUT_ON_SOUND_PATH := "res://assets/audio/glove_put_on.wav"
+const GLOVE_MELODY_SOUND_PATH := "res://assets/audio/glove_melody.wav"
+const DELETE_CUT_SOUND_PATH := "res://assets/audio/delete_cut.wav"
+const DELETE_CUT_DURATION := 1.15
 
 var world := GridWorld.new()
 var page_camera := PageCamera.new()
@@ -70,6 +75,17 @@ var gesture_flash_overlay: ColorRect
 var gesture_transition_active := false
 var gesture_transition_elapsed := 0.0
 var gesture_transition_duration := 1.0
+var acquisition_layer: CanvasLayer
+var acquisition_video: VideoStreamPlayer
+var acquisition_put_on_sound: AudioStreamPlayer
+var acquisition_melody_sound: AudioStreamPlayer
+var glove_acquisition_active := false
+var delete_cut_sound: AudioStreamPlayer
+var delete_cut_root: Node2D
+var delete_cut_left: Label
+var delete_cut_right: Label
+var delete_cut_slash: Line2D
+var delete_cut_elapsed := 0.0
 
 func _ready() -> void:
 	_build_scene()
@@ -97,10 +113,12 @@ func initialize_preview_world() -> void:
 	if _scene_ready:
 		page_camera.sync_to_world(world)
 		_refresh_view()
+		_consume_visual_effect_request()
 
 func _process(delta: float) -> void:
 	world.advance_highlight_animation(delta)
 	_advance_gesture_transition(delta)
+	_advance_delete_cut(delta)
 	if brave_loop_prompt.advance(delta):
 		_sync_brave_loop_prompt()
 	if gesture_loop_prompt.advance(delta):
@@ -310,6 +328,10 @@ func _build_scene() -> void:
 	gesture_flash_overlay.size = Vector2(1920, 1080)
 	gesture_flash_overlay.visible = false
 	gesture_flash_layer.add_child(gesture_flash_overlay)
+	_build_acquisition_overlay()
+	delete_cut_sound = AudioStreamPlayer.new()
+	delete_cut_sound.stream = load(DELETE_CUT_SOUND_PATH)
+	add_child(delete_cut_sound)
 	player_label = _make_word_label("我", Color(0.92, 0.92, 0.92), Color(0.05, 0.05, 0.05))
 	player_label.name = "Player"
 	map_layer.add_child(player_label)
@@ -468,6 +490,7 @@ func _sync_entity_label_group(group: Node2D, entity) -> void:
 func _apply_result(result: Dictionary) -> void:
 	_consume_gesture_transition_request()
 	_refresh_view(str(result.get("message", "")))
+	_consume_visual_effect_request()
 	if result.has("pending_delay"):
 		if world_event_timer.is_stopped():
 			world_event_timer.start(float(result.pending_delay))
@@ -501,6 +524,111 @@ func _advance_gesture_transition(delta: float) -> void:
 	gesture_transition_active = false
 	gesture_flash_overlay.visible = false
 	map_layer.position = page_camera.offset_pixels()
+
+func _build_acquisition_overlay() -> void:
+	acquisition_layer = CanvasLayer.new()
+	acquisition_layer.name = "GloveAcquisitionLayer"
+	acquisition_layer.layer = 120
+	acquisition_layer.visible = false
+	add_child(acquisition_layer)
+	var backdrop := ColorRect.new()
+	backdrop.color = Color(0.0, 0.0, 0.0, 1.0)
+	backdrop.size = Vector2(1920, 1080)
+	acquisition_layer.add_child(backdrop)
+	acquisition_video = VideoStreamPlayer.new()
+	acquisition_video.name = "GloveAcquisitionVideo"
+	acquisition_video.expand = true
+	acquisition_video.size = Vector2(1920, 1080)
+	acquisition_video.visible = false
+	acquisition_video.finished.connect(_finish_glove_acquisition)
+	acquisition_layer.add_child(acquisition_video)
+	acquisition_put_on_sound = AudioStreamPlayer.new()
+	acquisition_put_on_sound.stream = load(GLOVE_PUT_ON_SOUND_PATH)
+	acquisition_layer.add_child(acquisition_put_on_sound)
+	acquisition_melody_sound = AudioStreamPlayer.new()
+	acquisition_melody_sound.stream = load(GLOVE_MELODY_SOUND_PATH)
+	acquisition_layer.add_child(acquisition_melody_sound)
+
+func _consume_visual_effect_request() -> void:
+	var request: Dictionary = world.consume_visual_effect_request()
+	if request.is_empty():
+		return
+	match str(request.get("type", "")):
+		"glove_acquire":
+			_start_glove_acquisition()
+		"delete_cut":
+			_start_delete_cut(request)
+
+func _start_glove_acquisition() -> void:
+	if glove_acquisition_active:
+		return
+	glove_acquisition_active = true
+	acquisition_layer.visible = true
+	acquisition_video.visible = false
+	acquisition_put_on_sound.play()
+	call_deferred("_play_glove_acquisition_video")
+
+func _play_glove_acquisition_video() -> void:
+	await get_tree().create_timer(0.5).timeout
+	if not glove_acquisition_active:
+		return
+	acquisition_melody_sound.play()
+	acquisition_video.stream = load(GLOVE_ACQUIRE_VIDEO_PATH)
+	if acquisition_video.stream == null:
+		_finish_glove_acquisition()
+		return
+	acquisition_video.visible = true
+	acquisition_video.play()
+
+func _finish_glove_acquisition() -> void:
+	if not glove_acquisition_active:
+		return
+	glove_acquisition_active = false
+	acquisition_video.stop()
+	acquisition_layer.visible = false
+	world.player_input_locked = false
+	_refresh_view()
+
+func _start_delete_cut(request: Dictionary) -> void:
+	if delete_cut_root != null and is_instance_valid(delete_cut_root):
+		delete_cut_root.queue_free()
+	delete_cut_root = Node2D.new()
+	delete_cut_root.name = "DeleteCutEffect"
+	delete_cut_root.position = _grid_to_pixels(request.get("pos", Vector2i.ZERO))
+	map_layer.add_child(delete_cut_root)
+	delete_cut_left = _make_word_label(str(request.get("text", "")))
+	delete_cut_left.size = Vector2(world.cell_size * 0.5, world.cell_size)
+	delete_cut_left.clip_contents = true
+	delete_cut_root.add_child(delete_cut_left)
+	delete_cut_right = _make_word_label(str(request.get("text", "")))
+	delete_cut_right.size = Vector2(world.cell_size * 0.5, world.cell_size)
+	delete_cut_right.position.x = world.cell_size * 0.5
+	delete_cut_right.clip_contents = true
+	delete_cut_root.add_child(delete_cut_right)
+	delete_cut_slash = Line2D.new()
+	delete_cut_slash.width = 3.0
+	delete_cut_slash.default_color = Color(1.0, 1.0, 1.0, 0.95)
+	delete_cut_slash.points = PackedVector2Array([Vector2(-8, 8), Vector2(world.cell_size + 8, world.cell_size - 8)])
+	delete_cut_root.add_child(delete_cut_slash)
+	delete_cut_elapsed = 0.0
+	delete_cut_sound.play()
+
+func _advance_delete_cut(delta: float) -> void:
+	if delete_cut_root == null or not is_instance_valid(delete_cut_root):
+		return
+	delete_cut_elapsed += delta
+	var progress := clampf(delete_cut_elapsed / DELETE_CUT_DURATION, 0.0, 1.0)
+	delete_cut_left.position = Vector2(-26.0 * progress, 18.0 * progress)
+	delete_cut_left.rotation = -0.38 * progress
+	delete_cut_right.position = Vector2(world.cell_size * 0.5 + 26.0 * progress, -18.0 * progress)
+	delete_cut_right.rotation = 0.38 * progress
+	delete_cut_left.modulate.a = 1.0 - progress
+	delete_cut_right.modulate.a = 1.0 - progress
+	delete_cut_slash.modulate.a = maxf(0.0, 1.0 - progress * 1.8)
+	if progress < 1.0:
+		return
+	delete_cut_root.queue_free()
+	delete_cut_root = null
 
 func _resolve_world_event() -> void:
 	_apply_result(world.resolve_pending_timed_effect())

@@ -121,10 +121,16 @@ static func gesture_slot_move_effects() -> Array[Dictionary]:
 	return effects
 
 static func delete_word_effects() -> Array[Dictionary]:
+	var effect := _switch_hand_effect("release", "巨大手掌已经放开。")
+	effect["start_delete_visual"] = {
+		"type": "delete_cut",
+		"text": "不",
+		"pos": DELETE_NO_POS
+	}
 	return [{
 		"text": "不",
 		"pos": DELETE_NO_POS,
-		"effect": _switch_hand_effect("release", "巨大手掌已经放开。")
+		"effect": effect
 	}]
 
 static func release_preview_effect() -> Dictionary:

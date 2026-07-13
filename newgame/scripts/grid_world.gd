@@ -52,6 +52,7 @@ var pending_interact_effect: Dictionary = {}
 var fullscreen_video_finished_effect: Dictionary = {}
 var fullscreen_video_request: Dictionary = {}
 var gesture_transition_request: Dictionary = {}
+var visual_effect_request: Dictionary = {}
 var current_level: Dictionary = {}
 var rule_engine := RuleEngine.new()
 var highlight_animation_strengths: Dictionary = {}
@@ -94,6 +95,9 @@ func load_level(level: Dictionary) -> void:
 	pending_interact_effect = level.get("initial_interact_effect", {}).duplicate(true)
 	pending_timed_effect = level.get("initial_timed_effect", {})
 	pending_timed_delay = float(level.get("initial_timed_delay", 0.0))
+	visual_effect_request = level.get("initial_visual_effect", {}).duplicate(true)
+	if bool(visual_effect_request.get("lock_input", false)):
+		player_input_locked = true
 	_parse_rows(rows)
 	for spawn_config in level.get("initial_spawn", []):
 		var entry: Dictionary = spawn_config
@@ -136,6 +140,7 @@ func clear() -> void:
 	fullscreen_video_finished_effect.clear()
 	fullscreen_video_request.clear()
 	gesture_transition_request.clear()
+	visual_effect_request.clear()
 	current_page_origin = Vector2i.ZERO
 	_next_id = 1
 	_map_caption_ids.clear()
@@ -669,6 +674,8 @@ func _merge_split_positions(merged_text: String, first: WordEntity, second: Word
 	return [first.grid_pos, second.grid_pos]
 
 func _apply_map_effect(config: Dictionary) -> void:
+	if config.has("start_delete_visual"):
+		visual_effect_request = config.start_delete_visual.duplicate(true)
 	if config.has("start_gesture_transition"):
 		_start_gesture_transition(config.start_gesture_transition)
 		return
@@ -874,6 +881,11 @@ func has_pending_timed_effect() -> bool:
 func consume_gesture_transition_request() -> Dictionary:
 	var request := gesture_transition_request.duplicate(true)
 	gesture_transition_request.clear()
+	return request
+
+func consume_visual_effect_request() -> Dictionary:
+	var request := visual_effect_request.duplicate(true)
+	visual_effect_request.clear()
 	return request
 
 func _start_gesture_transition(definition: Dictionary) -> void:
