@@ -3,6 +3,7 @@ extends Node2D
 const GridWorld = preload("res://scripts/grid_world.gd")
 const GloveLevel = preload("res://levels/glove/glove_level.gd")
 const GloveEffects = preload("res://scripts/levels/glove/glove_effects.gd")
+const GloveLoopingPrompt = preload("res://scripts/levels/glove/glove_looping_prompt.gd")
 const GloveRouteRunner = preload("res://scripts/levels/glove/glove_route_runner.gd")
 const PageCamera = preload("res://scripts/page_camera.gd")
 const PrecisionMovement = preload("res://scripts/precision_movement.gd")
@@ -25,6 +26,8 @@ const STARTUP_CAPTURE_ARG_PREFIX := "--glove-capture="
 const STARTUP_DEBUG_ARG_PREFIX := "--glove-debug="
 const MAIN_SCENE_PATH := "res://Main.tscn"
 const RETURN_TO_MAIN_SHORTCUT_KEY := KEY_ESCAPE
+const GESTURE_TRANSITION_SWITCH_SECONDS := 0.5
+const GESTURE_FLASH_PEAK_ALPHA := 0.3
 
 var world := GridWorld.new()
 var page_camera := PageCamera.new()
@@ -57,6 +60,16 @@ var demo_elapsed := 0.0
 var demo_running := false
 var demo_paused := false
 var demo_delay := 0.32
+var brave_loop_prompt := GloveLoopingPrompt.new()
+var brave_loop_labels: Array[Label] = []
+var gesture_loop_prompt := GloveLoopingPrompt.new("改变手势，扭转守势！")
+var gesture_loop_prefix: Label
+var gesture_loop_labels: Array[Label] = []
+var gesture_flash_layer: CanvasLayer
+var gesture_flash_overlay: ColorRect
+var gesture_transition_active := false
+var gesture_transition_elapsed := 0.0
+var gesture_transition_duration := 1.0
 
 func _ready() -> void:
 	_build_scene()
@@ -87,6 +100,11 @@ func initialize_preview_world() -> void:
 
 func _process(delta: float) -> void:
 	world.advance_highlight_animation(delta)
+	_advance_gesture_transition(delta)
+	if brave_loop_prompt.advance(delta):
+		_sync_brave_loop_prompt()
+	if gesture_loop_prompt.advance(delta):
+		_sync_gesture_loop_prompt()
 	if demo_running and not demo_paused:
 		demo_elapsed += delta
 		if demo_elapsed >= demo_delay:
@@ -272,6 +290,8 @@ func _build_scene() -> void:
 	map_layer = Node2D.new()
 	map_layer.name = "MapLayer"
 	add_child(map_layer)
+	_build_brave_loop_prompt()
+	_build_gesture_loop_prompt()
 	transition_reference_overlay = Sprite2D.new()
 	transition_reference_overlay.name = "TransitionReferenceOverlay"
 	transition_reference_overlay.centered = false
@@ -279,6 +299,17 @@ func _build_scene() -> void:
 	transition_reference_overlay.visible = false
 	transition_reference_overlay.texture = _load_transition_reference_texture()
 	add_child(transition_reference_overlay)
+	gesture_flash_layer = CanvasLayer.new()
+	gesture_flash_layer.name = "GestureFlashLayer"
+	gesture_flash_layer.layer = 100
+	add_child(gesture_flash_layer)
+	gesture_flash_overlay = ColorRect.new()
+	gesture_flash_overlay.name = "GestureFlashOverlay"
+	gesture_flash_overlay.color = Color(1.0, 1.0, 1.0, 1.0)
+	gesture_flash_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	gesture_flash_overlay.size = Vector2(1920, 1080)
+	gesture_flash_overlay.visible = false
+	gesture_flash_layer.add_child(gesture_flash_overlay)
 	player_label = _make_word_label("我", Color(0.92, 0.92, 0.92), Color(0.05, 0.05, 0.05))
 	player_label.name = "Player"
 	map_layer.add_child(player_label)
@@ -322,6 +353,8 @@ func _refresh_view(_message := "") -> void:
 	if not _scene_ready:
 		return
 	_sync_entity_labels()
+	_sync_brave_loop_prompt()
+	_sync_gesture_loop_prompt()
 	_sync_direction_marker()
 	player_label.text = world.player_text
 	player_label.visible = world.player_visible
@@ -365,6 +398,51 @@ func _apply_visual_positions() -> void:
 		if mover:
 			entity_labels[id].position = mover.current_position
 
+func _build_brave_loop_prompt() -> void:
+	for index in range(GloveLoopingPrompt.TEXT.length()):
+		var label := _make_word_label("")
+		label.name = "BraveLoopPrompt_%d" % index
+		label.position = _grid_to_pixels(Vector2i(24, 5 + index))
+		map_layer.add_child(label)
+		brave_loop_labels.append(label)
+
+func _sync_brave_loop_prompt() -> void:
+	if brave_loop_labels.is_empty():
+		return
+	var visible := _has_fixed_brave()
+	var text := brave_loop_prompt.visible_text()
+	for index in range(brave_loop_labels.size()):
+		var label := brave_loop_labels[index]
+		label.visible = visible and index < text.length()
+		label.text = text.substr(index, 1) if index < text.length() else ""
+
+func _build_gesture_loop_prompt() -> void:
+	gesture_loop_prefix = _make_word_label("勇：")
+	gesture_loop_prefix.name = "GestureLoopPromptPrefix"
+	gesture_loop_prefix.position = _grid_to_pixels(Vector2i(1, 16))
+	map_layer.add_child(gesture_loop_prefix)
+	for index in range(gesture_loop_prompt.text.length()):
+		var label := _make_word_label("")
+		label.name = "GestureLoopPrompt_%d" % index
+		label.position = _grid_to_pixels(Vector2i(3 + index, 16))
+		map_layer.add_child(label)
+		gesture_loop_labels.append(label)
+
+func _sync_gesture_loop_prompt() -> void:
+	if gesture_loop_prefix == null:
+		return
+	var visible := _has_fixed_brave()
+	gesture_loop_prefix.visible = visible
+	var text := gesture_loop_prompt.visible_text()
+	for index in range(gesture_loop_labels.size()):
+		var label := gesture_loop_labels[index]
+		label.visible = visible and index < text.length()
+		label.text = text.substr(index, 1) if index < text.length() else ""
+
+func _has_fixed_brave() -> bool:
+	var brave = world.get_any_entity_at(Vector2i(24, 4))
+	return brave != null and brave.text == "勇"
+
 func _sync_entity_label_group(group: Node2D, entity) -> void:
 	var text := str(entity.text)
 	while group.get_child_count() > text.length():
@@ -388,12 +466,41 @@ func _sync_entity_label_group(group: Node2D, entity) -> void:
 		label.scale = Vector2.ONE * (1.0 + highlight_strength * 0.14)
 
 func _apply_result(result: Dictionary) -> void:
+	_consume_gesture_transition_request()
 	_refresh_view(str(result.get("message", "")))
 	if result.has("pending_delay"):
 		if world_event_timer.is_stopped():
 			world_event_timer.start(float(result.pending_delay))
 	elif world.has_pending_timed_effect() and world_event_timer.is_stopped():
 		world_event_timer.start(world.pending_timed_delay)
+
+func _consume_gesture_transition_request() -> void:
+	var request: Dictionary = world.consume_gesture_transition_request()
+	if request.is_empty():
+		return
+	gesture_transition_active = true
+	gesture_transition_elapsed = 0.0
+	gesture_transition_duration = float(request.get("duration", 1.0))
+	gesture_flash_overlay.color.a = 0.0
+	gesture_flash_overlay.visible = true
+
+func _advance_gesture_transition(delta: float) -> void:
+	if not gesture_transition_active:
+		return
+	gesture_transition_elapsed += delta
+	if gesture_transition_elapsed <= GESTURE_TRANSITION_SWITCH_SECONDS:
+		gesture_flash_overlay.color.a = GESTURE_FLASH_PEAK_ALPHA * gesture_transition_elapsed / GESTURE_TRANSITION_SWITCH_SECONDS
+	else:
+		var restore_elapsed := gesture_transition_elapsed - GESTURE_TRANSITION_SWITCH_SECONDS
+		gesture_flash_overlay.color.a = GESTURE_FLASH_PEAK_ALPHA * (1.0 - restore_elapsed / GESTURE_TRANSITION_SWITCH_SECONDS)
+	var shake_strength := 8.0
+	var shake := Vector2(sin(gesture_transition_elapsed * 100.0), cos(gesture_transition_elapsed * 83.0)) * shake_strength
+	map_layer.position = page_camera.offset_pixels() + shake
+	if gesture_transition_elapsed < gesture_transition_duration:
+		return
+	gesture_transition_active = false
+	gesture_flash_overlay.visible = false
+	map_layer.position = page_camera.offset_pixels()
 
 func _resolve_world_event() -> void:
 	_apply_result(world.resolve_pending_timed_effect())

@@ -51,6 +51,7 @@ var typewriter_delay := 0.2
 var pending_interact_effect: Dictionary = {}
 var fullscreen_video_finished_effect: Dictionary = {}
 var fullscreen_video_request: Dictionary = {}
+var gesture_transition_request: Dictionary = {}
 var current_level: Dictionary = {}
 var rule_engine := RuleEngine.new()
 var highlight_animation_strengths: Dictionary = {}
@@ -134,6 +135,7 @@ func clear() -> void:
 	pending_interact_effect.clear()
 	fullscreen_video_finished_effect.clear()
 	fullscreen_video_request.clear()
+	gesture_transition_request.clear()
 	current_page_origin = Vector2i.ZERO
 	_next_id = 1
 	_map_caption_ids.clear()
@@ -667,6 +669,9 @@ func _merge_split_positions(merged_text: String, first: WordEntity, second: Word
 	return [first.grid_pos, second.grid_pos]
 
 func _apply_map_effect(config: Dictionary) -> void:
+	if config.has("start_gesture_transition"):
+		_start_gesture_transition(config.start_gesture_transition)
+		return
 	var preserved_entities: Array[Dictionary] = []
 	for text in config.get("preserve_texts", []):
 		preserved_entities.append_array(_snapshot_entities_by_text(str(text)))
@@ -866,6 +871,20 @@ func _trigger_entity_move_effect(entity: WordEntity, old_pos: Vector2i, new_pos:
 func has_pending_timed_effect() -> bool:
 	return not pending_timed_effect.is_empty()
 
+func consume_gesture_transition_request() -> Dictionary:
+	var request := gesture_transition_request.duplicate(true)
+	gesture_transition_request.clear()
+	return request
+
+func _start_gesture_transition(definition: Dictionary) -> void:
+	player_input_locked = true
+	pending_timed_effect = definition.get("effect", {}).duplicate(true)
+	pending_timed_delay = float(definition.get("switch_delay", 0.25))
+	gesture_transition_request = {
+		"duration": float(definition.get("duration", 0.5)),
+		"switch_delay": pending_timed_delay
+	}
+
 func has_fullscreen_video_finished_effect() -> bool:
 	return not fullscreen_video_finished_effect.is_empty()
 
@@ -892,17 +911,23 @@ func resolve_pending_timed_effect() -> Dictionary:
 
 func _start_typewriter(definition: Dictionary) -> void:
 	typewriter_queue.clear()
-	var lines: Array = definition.get("lines", [])
-	var origin: Vector2i = definition.get("pos", Vector2i.ZERO)
-	var config: Dictionary = definition.get("config", {})
-	for line_index in range(lines.size()):
-		var line := str(lines[line_index])
-		for char_index in range(line.length()):
-			typewriter_queue.append({
-				"text": line.substr(char_index, 1),
-				"pos": origin + Vector2i(char_index, line_index),
-				"config": config
-			})
+	if definition.has("entries"):
+		for raw_entry in definition.entries:
+			var entry: Dictionary = raw_entry
+			if entry.has("text") and entry.has("pos"):
+				typewriter_queue.append(entry.duplicate(true))
+	else:
+		var lines: Array = definition.get("lines", [])
+		var origin: Vector2i = definition.get("pos", Vector2i.ZERO)
+		var config: Dictionary = definition.get("config", {})
+		for line_index in range(lines.size()):
+			var line := str(lines[line_index])
+			for char_index in range(line.length()):
+				typewriter_queue.append({
+					"text": line.substr(char_index, 1),
+					"pos": origin + Vector2i(char_index, line_index),
+					"config": config
+				})
 	typewriter_after_effect = definition.get("after_effect", {}).duplicate(true)
 	typewriter_delay = float(definition.get("char_delay", 0.2))
 	_advance_typewriter()
@@ -915,6 +940,8 @@ func _advance_typewriter() -> void:
 			_apply_map_effect(after_effect)
 		return
 	var entry: Dictionary = typewriter_queue.pop_front()
+	for replace_pos in entry.get("replace_at", []):
+		_erase_entities_at(replace_pos)
 	add_entity(str(entry.text), entry.pos, _config_for_text_at(str(entry.text), entry.pos, entry.get("config", {})))
 	if typewriter_queue.is_empty():
 		if not typewriter_after_effect.is_empty():

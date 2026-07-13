@@ -239,10 +239,10 @@ func _sync_entity_label_group(group: Node2D, entity) -> void:
 		label.size = Vector2(world.cell_size, world.cell_size + 4)
 		label.pivot_offset = label.size * 0.5
 		var highlight_strength := world.get_highlight_animation_strength(entity.cells[i]) if i < entity.cells.size() else 0.0
-		var base_color := entity.visual_color
+		var base_color: Color = entity.visual_color
 		if entity.highlighted:
 			base_color = _highlight_config_color("matched_color", Color(1.0, 0.95, 0.32))
-		var animated_color := base_color.lerp(_highlight_config_color("accent_color", Color(1.0, 0.78, 0.18)), highlight_strength)
+		var animated_color: Color = base_color.lerp(_highlight_config_color("accent_color", Color(1.0, 0.78, 0.18)), highlight_strength)
 		label.add_theme_color_override("font_color", animated_color)
 		var pulse_scale_max := float(highlight_visual_config.get("pulse_scale_max", 1.14))
 		var pulse_scale := 1.0 + (highlight_strength * maxf(pulse_scale_max - 1.0, 0.0))
