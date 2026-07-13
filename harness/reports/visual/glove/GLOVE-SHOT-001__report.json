@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-07-11T01:22:29.474073+08:00",
+  "feature_id": "F003",
+  "baseline_id": "GLOVE-SHOT-001",
+  "level_id": "glove",
+  "status": "pass",
+  "diff_pixel_count": 0,
+  "original_image_path": "harness/baselines/screenshots/images/glove/GLOVE_001.png",
+  "replay_image_path": "E:/wordgame copy/harness/reports/visual/glove/GLOVE-SHOT-001__replay.png",
+  "diff_image_path": "E:/wordgame copy/harness/reports/visual/glove/GLOVE-SHOT-001__diff.png",
+  "command": "python tools/compare_screenshots_test.py",
+  "original_size": {
+    "width": 1612,
+    "height": 1008
+  },
+  "replay_size": {
+    "width": 1612,
+    "height": 1008
+  }
+}

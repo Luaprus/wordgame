@@ -1,7 +1,14 @@
 {
   "project": "wordgame",
   "version": "0.1.0",
-  "status_values": ["todo", "claimed", "in_progress", "review", "blocked", "done"],
+  "status_values": [
+    "todo",
+    "claimed",
+    "in_progress",
+    "review",
+    "blocked",
+    "done"
+  ],
   "governance": {
     "progress_source": "harness/progress.jsonl",
     "rules": [
@@ -32,9 +39,9 @@
         "tools/capture_visual_smoke.ps1"
       ],
       "forbidden_files": [
-        "新建游戏项目/scripts/*",
-        "新建游戏项目/tests/*",
-        "新建游戏项目/Main.tscn"
+        "newgame/scripts/*",
+        "newgame/tests/*",
+        "newgame/Main.tscn"
       ],
       "acceptance_criteria": [
         "所有指定 harness 文件均存在",
@@ -69,7 +76,9 @@
       "priority": "must",
       "status": "done",
       "owner": null,
-      "depends_on": ["HARNESS-001"],
+      "depends_on": [
+        "HARNESS-001"
+      ],
       "allowed_files": [
         "harness/baselines/schema/*",
         "harness/baselines/index/*",
@@ -78,8 +87,8 @@
         "docs/baseline_schema.md"
       ],
       "forbidden_files": [
-        "新建游戏项目/scripts/*",
-        "新建游戏项目/Main.tscn"
+        "newgame/scripts/*",
+        "newgame/Main.tscn"
       ],
       "acceptance_criteria": [
         "七类基准表均有字段定义和 ID 命名规则",
@@ -108,7 +117,9 @@
       "priority": "must",
       "status": "done",
       "owner": null,
-      "depends_on": ["F001"],
+      "depends_on": [
+        "F001"
+      ],
       "allowed_files": [
         "harness/baselines/video/*",
         "tools/extract_video_baselines.*",
@@ -120,8 +131,8 @@
         "tools/validate_baselines.ps1"
       ],
       "forbidden_files": [
-        "新建游戏项目/scripts/*",
-        "新建游戏项目/tests/*"
+        "newgame/scripts/*",
+        "newgame/tests/*"
       ],
       "acceptance_criteria": [
         "剑关卡、手套关卡、四目头盔录屏均有元数据记录",
@@ -150,7 +161,9 @@
       "priority": "must",
       "status": "done",
       "owner": null,
-      "depends_on": ["F001"],
+      "depends_on": [
+        "F001"
+      ],
       "allowed_files": [
         "harness/baselines/screenshots/*",
         "tools/extract_docx_images.*",
@@ -160,8 +173,8 @@
         "docs/screenshot_baselines.md"
       ],
       "forbidden_files": [
-        "新建游戏项目/scripts/*",
-        "新建游戏项目/Main.tscn"
+        "newgame/scripts/*",
+        "newgame/Main.tscn"
       ],
       "acceptance_criteria": [
         "剑关卡 37 张、手套 18 张、四目头盔 31 张截图均有导出记录或差异说明",
@@ -189,7 +202,9 @@
       "priority": "must",
       "status": "done",
       "owner": null,
-      "depends_on": ["F001"],
+      "depends_on": [
+        "F001"
+      ],
       "allowed_files": [
         "harness/baselines/source_index/*",
         "tools/index_original_sources.*",
@@ -202,7 +217,7 @@
       ],
       "forbidden_files": [
         "参考资料/文字游戏源码/*",
-        "新建游戏项目/scripts/*"
+        "newgame/scripts/*"
       ],
       "acceptance_criteria": [
         "目标地图 .tscn 路径全部登记",
@@ -231,14 +246,19 @@
       "priority": "must",
       "status": "done",
       "owner": null,
-      "depends_on": ["F001", "F002", "F003", "F004"],
+      "depends_on": [
+        "F001",
+        "F002",
+        "F003",
+        "F004"
+      ],
       "allowed_files": [
         "tools/validate_baselines.*",
         "harness/reports/baseline/*",
         "docs/baseline_validation.md"
       ],
       "forbidden_files": [
-        "新建游戏项目/scripts/*"
+        "newgame/scripts/*"
       ],
       "acceptance_criteria": [
         "能检查必填字段、来源路径、时间码、帧号和资源路径",
@@ -267,12 +287,14 @@
       "priority": "must",
       "status": "done",
       "owner": null,
-      "depends_on": ["F005"],
+      "depends_on": [
+        "F005"
+      ],
       "allowed_files": [
-        "新建游戏项目/scripts/grid_world.gd",
-        "新建游戏项目/scripts/word_entity.gd",
-        "新建游戏项目/tests/test_gameplay_core.gd",
-        "新建游戏项目/tests/test_precision_movement.gd"
+        "newgame/scripts/grid_world.gd",
+        "newgame/scripts/word_entity.gd",
+        "newgame/tests/test_gameplay_core.gd",
+        "newgame/tests/test_precision_movement.gd"
       ],
       "forbidden_files": [
         "harness/baselines/*",
@@ -305,15 +327,17 @@
       "priority": "must",
       "status": "done",
       "owner": "ai-worker-1",
-      "depends_on": ["F006"],
+      "depends_on": [
+        "F006"
+      ],
       "allowed_files": [
-        "新建游戏项目/scripts/precision_movement.gd",
-        "新建游戏项目/scripts/grid_world.gd",
-        "新建游戏项目/scripts/main.gd",
-        "新建游戏项目/tests/test_precision_movement.gd"
+        "newgame/scripts/precision_movement.gd",
+        "newgame/scripts/grid_world.gd",
+        "newgame/scripts/main.gd",
+        "newgame/tests/test_precision_movement.gd"
       ],
       "forbidden_files": [
-        "新建游戏项目/scripts/level_loader.gd",
+        "newgame/scripts/level_loader.gd",
         "harness/baselines/*"
       ],
       "acceptance_criteria": [
@@ -348,13 +372,16 @@
       "priority": "must",
       "status": "done",
       "owner": "ai-worker-1",
-      "depends_on": ["F006", "F007"],
+      "depends_on": [
+        "F006",
+        "F007"
+      ],
       "allowed_files": [
-        "新建游戏项目/scripts/grid_world.gd",
-        "新建游戏项目/tests/test_gameplay_core.gd"
+        "newgame/scripts/grid_world.gd",
+        "newgame/tests/test_gameplay_core.gd"
       ],
       "forbidden_files": [
-        "新建游戏项目/scripts/demo_runner.gd",
+        "newgame/scripts/demo_runner.gd",
         "harness/baselines/*"
       ],
       "acceptance_criteria": [
@@ -381,15 +408,17 @@
       "title": "Backspace 删除",
       "description": "实现面前可删字删除、失败反馈、删除动画触发和句子状态重检。",
       "priority": "must",
-      "status": "todo",
-      "owner": null,
-      "depends_on": ["F008"],
+      "status": "in_progress",
+      "owner": "codex",
+      "depends_on": [
+        "F008"
+      ],
       "allowed_files": [
-        "新建游戏项目/scripts/grid_world.gd",
-        "新建游戏项目/scripts/word_entity.gd",
-        "新建游戏项目/tests/test_gameplay_core.gd",
-        "新建游戏项目/tests/test_visual_resources.gd",
-        "新建游戏项目/assets/animations/delete/*"
+        "newgame/scripts/grid_world.gd",
+        "newgame/scripts/word_entity.gd",
+        "newgame/tests/test_gameplay_core.gd",
+        "newgame/tests/test_visual_resources.gd",
+        "newgame/assets/animations/delete/*"
       ],
       "forbidden_files": [
         "harness/baselines/*"
@@ -423,14 +452,16 @@
       "title": "Tab 拆字",
       "description": "实现可拆字规则、拆出部件实体、失败反馈和状态重检。",
       "priority": "must",
-      "status": "todo",
-      "owner": null,
-      "depends_on": ["F008"],
+      "status": "in_progress",
+      "owner": "codex",
+      "depends_on": [
+        "F008"
+      ],
       "allowed_files": [
-        "新建游戏项目/scripts/grid_world.gd",
-        "新建游戏项目/scripts/word_entity.gd",
-        "新建游戏项目/tests/test_gameplay_core.gd",
-        "新建游戏项目/assets/animations/split/*"
+        "newgame/scripts/grid_world.gd",
+        "newgame/scripts/word_entity.gd",
+        "newgame/tests/test_gameplay_core.gd",
+        "newgame/assets/animations/split/*"
       ],
       "forbidden_files": [
         "harness/baselines/*"
@@ -459,13 +490,17 @@
       "title": "推字、合字与挤压规则",
       "description": "实现可推字移动、不可推阻挡、连锁推动、合字、挤压和句子重检。",
       "priority": "must",
-      "status": "todo",
-      "owner": null,
-      "depends_on": ["F007", "F008", "F010"],
+      "status": "in_progress",
+      "owner": "codex",
+      "depends_on": [
+        "F007",
+        "F008",
+        "F010"
+      ],
       "allowed_files": [
-        "新建游戏项目/scripts/grid_world.gd",
-        "新建游戏项目/scripts/word_entity.gd",
-        "新建游戏项目/tests/test_gameplay_core.gd"
+        "newgame/scripts/grid_world.gd",
+        "newgame/scripts/word_entity.gd",
+        "newgame/tests/test_gameplay_core.gd"
       ],
       "forbidden_files": [
         "harness/baselines/*"
@@ -495,14 +530,18 @@
       "title": "Alt 拉字",
       "description": "实现 Alt 锁定面前可拉字、仅允许向拉方向移动、松开解除锁定。",
       "priority": "must",
-      "status": "todo",
-      "owner": null,
-      "depends_on": ["F007", "F008", "F011"],
+      "status": "in_progress",
+      "owner": "codex",
+      "depends_on": [
+        "F007",
+        "F008",
+        "F011"
+      ],
       "allowed_files": [
-        "新建游戏项目/scripts/grid_world.gd",
-        "新建游戏项目/tests/test_gameplay_core.gd",
-        "新建游戏项目/tests/test_precision_movement.gd",
-        "新建游戏项目/assets/animations/pull/*"
+        "newgame/scripts/grid_world.gd",
+        "newgame/tests/test_gameplay_core.gd",
+        "newgame/tests/test_precision_movement.gd",
+        "newgame/assets/animations/pull/*"
       ],
       "forbidden_files": [
         "harness/baselines/*"
@@ -539,12 +578,15 @@
       "priority": "must",
       "status": "todo",
       "owner": null,
-      "depends_on": ["F006", "F011"],
+      "depends_on": [
+        "F006",
+        "F011"
+      ],
       "allowed_files": [
-        "新建游戏项目/scripts/typewriter.gd",
-        "新建游戏项目/scripts/grid_world.gd",
-        "新建游戏项目/tests/test_gameplay_core.gd",
-        "新建游戏项目/tests/test_visual_resources.gd"
+        "newgame/scripts/typewriter.gd",
+        "newgame/scripts/grid_world.gd",
+        "newgame/tests/test_gameplay_core.gd",
+        "newgame/tests/test_visual_resources.gd"
       ],
       "forbidden_files": [
         "harness/baselines/*"
@@ -578,14 +620,18 @@
       "title": "句子规则与高亮",
       "description": "实现横向/纵向扫描、句子匹配、变量开关、高亮动画和状态撤销规则。",
       "priority": "must",
-      "status": "todo",
-      "owner": null,
-      "depends_on": ["F011", "F013"],
+      "status": "done",
+      "owner": "codex",
+      "depends_on": [
+        "F011",
+        "F013"
+      ],
       "allowed_files": [
-        "新建游戏项目/scripts/grid_world.gd",
-        "新建游戏项目/scripts/rule_engine.gd",
-        "新建游戏项目/tests/test_gameplay_core.gd",
-        "新建游戏项目/assets/animations/highlight/*"
+        "newgame/scripts/grid_world.gd",
+        "newgame/scripts/rule_engine.gd",
+        "newgame/tests/test_gameplay_core.gd",
+        "newgame/assets/animations/highlight/*",
+        "newgame/scripts/main.gd"
       ],
       "forbidden_files": [
         "harness/baselines/*"
@@ -621,11 +667,14 @@
       "priority": "must",
       "status": "todo",
       "owner": null,
-      "depends_on": ["F004", "F014"],
+      "depends_on": [
+        "F004",
+        "F014"
+      ],
       "allowed_files": [
-        "新建游戏项目/scripts/audio_event_bus.gd",
-        "新建游戏项目/tests/test_gameplay_core.gd",
-        "新建游戏项目/tests/test_visual_resources.gd",
+        "newgame/scripts/audio_event_bus.gd",
+        "newgame/tests/test_gameplay_core.gd",
+        "newgame/tests/test_visual_resources.gd",
         "harness/reports/audio/*"
       ],
       "forbidden_files": [
@@ -655,12 +704,15 @@
       "title": "自动演示与回放框架",
       "description": "实现按基准输入序列自动运行关卡、导出状态和复刻截图。",
       "priority": "must",
-      "status": "todo",
-      "owner": null,
-      "depends_on": ["F014", "F015"],
+      "status": "done",
+      "owner": "codex",
+      "depends_on": [
+        "F014",
+        "F015"
+      ],
       "allowed_files": [
-        "新建游戏项目/scripts/demo_runner.gd",
-        "新建游戏项目/tests/test_visual_smoke_entry.gd",
+        "newgame/scripts/demo_runner.gd",
+        "newgame/tests/test_visual_smoke_entry.gd",
         "harness/demo_routes/*",
         "harness/reports/demo/*"
       ],
@@ -696,17 +748,21 @@
       "title": "视觉截图对比框架",
       "description": "生成原图、复刻图、差异图和视觉验收报告，默认零容差。",
       "priority": "must",
-      "status": "todo",
-      "owner": null,
-      "depends_on": ["F003", "F016"],
+      "status": "done",
+      "owner": "codex",
+      "depends_on": [
+        "F003",
+        "F016"
+      ],
       "allowed_files": [
         "tools/capture_visual_smoke.ps1",
         "tools/compare_screenshots.*",
         "harness/reports/visual/*",
-        "harness/visual_checks.md"
+        "harness/visual_checks.md",
+        "newgame/tools/capture_visual_smoke.ps1"
       ],
       "forbidden_files": [
-        "新建游戏项目/scripts/grid_world.gd"
+        "newgame/scripts/grid_world.gd"
       ],
       "acceptance_criteria": [
         "每个截图基准点能关联原图、复刻图和差异图",
@@ -739,7 +795,12 @@
       "priority": "must",
       "status": "done",
       "owner": "ai-worker-1",
-      "depends_on": ["F002", "F003", "F004", "F005"],
+      "depends_on": [
+        "F002",
+        "F003",
+        "F004",
+        "F005"
+      ],
       "allowed_files": [
         "harness/baselines/levels/sword/*",
         "harness/level_requirements.json",
@@ -749,7 +810,7 @@
         "tools/validate_baselines.ps1"
       ],
       "forbidden_files": [
-        "新建游戏项目/scripts/*"
+        "newgame/scripts/*"
       ],
       "acceptance_criteria": [
         "教学段、史莱姆段、蛇妖段、村中显现段均有基准记录",
@@ -777,11 +838,16 @@
       "priority": "must",
       "status": "todo",
       "owner": null,
-      "depends_on": ["F018", "F014", "F016", "F017"],
+      "depends_on": [
+        "F018",
+        "F014",
+        "F016",
+        "F017"
+      ],
       "allowed_files": [
-        "新建游戏项目/levels/sword/*",
-        "新建游戏项目/scripts/levels/sword/*",
-        "新建游戏项目/tests/test_sword_level.gd",
+        "newgame/levels/sword/*",
+        "newgame/scripts/levels/sword/*",
+        "newgame/tests/test_sword_level.gd",
         "harness/demo_routes/sword/*"
       ],
       "forbidden_files": [
@@ -819,15 +885,19 @@
       "priority": "must",
       "status": "todo",
       "owner": null,
-      "depends_on": ["F018", "F019", "F022"],
+      "depends_on": [
+        "F018",
+        "F019",
+        "F022"
+      ],
       "allowed_files": [
-        "新建游戏项目/levels/sword/*",
-        "新建游戏项目/scripts/levels/sword/*",
-        "新建游戏项目/tests/test_sword_level.gd",
+        "newgame/levels/sword/*",
+        "newgame/scripts/levels/sword/*",
+        "newgame/tests/test_sword_level.gd",
         "harness/demo_routes/sword/*"
       ],
       "forbidden_files": [
-        "新建游戏项目/scripts/grid_world.gd"
+        "newgame/scripts/grid_world.gd"
       ],
       "acceptance_criteria": [
         "蛇妖移动、摆动、攻击与基准一致",
@@ -860,11 +930,15 @@
       "priority": "must",
       "status": "todo",
       "owner": null,
-      "depends_on": ["F018", "F019", "F022"],
+      "depends_on": [
+        "F018",
+        "F019",
+        "F022"
+      ],
       "allowed_files": [
-        "新建游戏项目/levels/sword/*",
-        "新建游戏项目/scripts/levels/sword/*",
-        "新建游戏项目/tests/test_sword_level.gd",
+        "newgame/levels/sword/*",
+        "newgame/scripts/levels/sword/*",
+        "newgame/tests/test_sword_level.gd",
         "harness/demo_routes/sword/*"
       ],
       "forbidden_files": [
@@ -901,11 +975,14 @@
       "priority": "must",
       "status": "todo",
       "owner": null,
-      "depends_on": ["F018", "F017"],
+      "depends_on": [
+        "F018",
+        "F017"
+      ],
       "allowed_files": [
-        "新建游戏项目/assets/animations/sword/*",
-        "新建游戏项目/scripts/animation_player_bridge.gd",
-        "新建游戏项目/tests/test_visual_resources.gd",
+        "newgame/assets/animations/sword/*",
+        "newgame/scripts/animation_player_bridge.gd",
+        "newgame/tests/test_visual_resources.gd",
         "harness/reports/visual/sword/*"
       ],
       "forbidden_files": [
@@ -942,7 +1019,12 @@
       "priority": "must",
       "status": "done",
       "owner": "ai-worker-1",
-      "depends_on": ["F002", "F003", "F004", "F005"],
+      "depends_on": [
+        "F002",
+        "F003",
+        "F004",
+        "F005"
+      ],
       "allowed_files": [
         "harness/baselines/levels/glove/*",
         "harness/level_requirements.json",
@@ -952,7 +1034,7 @@
         "tools/validate_baselines.ps1"
       ],
       "forbidden_files": [
-        "新建游戏项目/scripts/*"
+        "newgame/scripts/*"
       ],
       "acceptance_criteria": [
         "正确路线和错误路线均有行为基准",
@@ -978,14 +1060,25 @@
       "title": "手套关卡全流程与路线实现",
       "description": "实现手套关卡正确路线、错误路线、失败反馈和流程推进。",
       "priority": "must",
-      "status": "todo",
-      "owner": null,
-      "depends_on": ["F023", "F014", "F016", "F017"],
+      "status": "in_progress",
+      "owner": "codex",
+      "depends_on": [
+        "F023",
+        "F014",
+        "F016",
+        "F017"
+      ],
       "allowed_files": [
-        "新建游戏项目/levels/glove/*",
-        "新建游戏项目/scripts/levels/glove/*",
-        "新建游戏项目/tests/test_glove_level.gd",
-        "harness/demo_routes/glove/*"
+        "newgame/levels/glove/*",
+        "newgame/scripts/levels/glove/*",
+        "newgame/tests/test_glove_level.gd",
+        "newgame/scripts/main.gd",
+        "newgame/tests/test_gameplay_core.gd",
+        "harness/demo_routes/glove/*",
+        "harness/reports/demo/glove/*",
+        "harness/contracts.md",
+        "harness/features.json",
+        "harness/progress.jsonl"
       ],
       "forbidden_files": [
         "harness/baselines/schema/*"
@@ -1021,15 +1114,18 @@
       "priority": "must",
       "status": "todo",
       "owner": null,
-      "depends_on": ["F023", "F024"],
+      "depends_on": [
+        "F023",
+        "F024"
+      ],
       "allowed_files": [
-        "新建游戏项目/levels/glove/*",
-        "新建游戏项目/scripts/levels/glove/*",
-        "新建游戏项目/tests/test_glove_level.gd",
-        "新建游戏项目/assets/animations/glove/*"
+        "newgame/levels/glove/*",
+        "newgame/scripts/levels/glove/*",
+        "newgame/tests/test_glove_level.gd",
+        "newgame/assets/animations/glove/*"
       ],
       "forbidden_files": [
-        "新建游戏项目/scripts/grid_world.gd"
+        "newgame/scripts/grid_world.gd"
       ],
       "acceptance_criteria": [
         "填入对应字后手掌变成对应手势",
@@ -1062,11 +1158,15 @@
       "priority": "must",
       "status": "todo",
       "owner": null,
-      "depends_on": ["F023", "F024", "F025"],
+      "depends_on": [
+        "F023",
+        "F024",
+        "F025"
+      ],
       "allowed_files": [
-        "新建游戏项目/levels/glove/*",
-        "新建游戏项目/scripts/levels/glove/*",
-        "新建游戏项目/tests/test_glove_level.gd",
+        "newgame/levels/glove/*",
+        "newgame/scripts/levels/glove/*",
+        "newgame/tests/test_glove_level.gd",
         "harness/demo_routes/glove/*"
       ],
       "forbidden_files": [
@@ -1103,7 +1203,12 @@
       "priority": "must",
       "status": "todo",
       "owner": null,
-      "depends_on": ["F002", "F003", "F004", "F005"],
+      "depends_on": [
+        "F002",
+        "F003",
+        "F004",
+        "F005"
+      ],
       "allowed_files": [
         "harness/baselines/levels/helmet/*",
         "harness/level_requirements.json",
@@ -1113,7 +1218,7 @@
         "tools/validate_baselines.ps1"
       ],
       "forbidden_files": [
-        "新建游戏项目/scripts/*"
+        "newgame/scripts/*"
       ],
       "acceptance_criteria": [
         "第一至第六关均有完整流程基准",
@@ -1141,11 +1246,17 @@
       "priority": "must",
       "status": "todo",
       "owner": null,
-      "depends_on": ["F027", "F031", "F014", "F016", "F017"],
+      "depends_on": [
+        "F027",
+        "F031",
+        "F014",
+        "F016",
+        "F017"
+      ],
       "allowed_files": [
-        "新建游戏项目/levels/helmet/*",
-        "新建游戏项目/scripts/levels/helmet/*",
-        "新建游戏项目/tests/test_helmet_level.gd",
+        "newgame/levels/helmet/*",
+        "newgame/scripts/levels/helmet/*",
+        "newgame/tests/test_helmet_level.gd",
         "harness/demo_routes/helmet/*"
       ],
       "forbidden_files": [
@@ -1182,15 +1293,19 @@
       "priority": "must",
       "status": "todo",
       "owner": null,
-      "depends_on": ["F027", "F028", "F031"],
+      "depends_on": [
+        "F027",
+        "F028",
+        "F031"
+      ],
       "allowed_files": [
-        "新建游戏项目/levels/helmet/*",
-        "新建游戏项目/scripts/levels/helmet/*",
-        "新建游戏项目/tests/test_helmet_level.gd",
+        "newgame/levels/helmet/*",
+        "newgame/scripts/levels/helmet/*",
+        "newgame/tests/test_helmet_level.gd",
         "harness/demo_routes/helmet/*"
       ],
       "forbidden_files": [
-        "新建游戏项目/scripts/grid_world.gd"
+        "newgame/scripts/grid_world.gd"
       ],
       "acceptance_criteria": [
         "第三关 44:05-45:49 流程与基准一致",
@@ -1223,11 +1338,15 @@
       "priority": "must",
       "status": "todo",
       "owner": null,
-      "depends_on": ["F027", "F029", "F031"],
+      "depends_on": [
+        "F027",
+        "F029",
+        "F031"
+      ],
       "allowed_files": [
-        "新建游戏项目/levels/helmet/*",
-        "新建游戏项目/scripts/levels/helmet/*",
-        "新建游戏项目/tests/test_helmet_level.gd",
+        "newgame/levels/helmet/*",
+        "newgame/scripts/levels/helmet/*",
+        "newgame/tests/test_helmet_level.gd",
         "harness/demo_routes/helmet/*"
       ],
       "forbidden_files": [
@@ -1265,12 +1384,15 @@
       "priority": "must",
       "status": "todo",
       "owner": null,
-      "depends_on": ["F027", "F017"],
+      "depends_on": [
+        "F027",
+        "F017"
+      ],
       "allowed_files": [
         "harness/baselines/levels/helmet/animation_reuse.*",
-        "新建游戏项目/assets/animations/helmet/*",
-        "新建游戏项目/scripts/levels/helmet/animation_config.gd",
-        "新建游戏项目/tests/test_helmet_level.gd"
+        "newgame/assets/animations/helmet/*",
+        "newgame/scripts/levels/helmet/animation_config.gd",
+        "newgame/tests/test_helmet_level.gd"
       ],
       "forbidden_files": [
         "harness/baselines/schema/*"
@@ -1324,8 +1446,8 @@
         "tools/generate_acceptance_report.*"
       ],
       "forbidden_files": [
-        "新建游戏项目/scripts/*",
-        "新建游戏项目/levels/*"
+        "newgame/scripts/*",
+        "newgame/levels/*"
       ],
       "acceptance_criteria": [
         "全部截图差异报告通过或有甲方批准差异",
@@ -1352,8 +1474,7 @@
         "人工验收记录归档",
         "progress.jsonl 已记录完成证据"
       ]
-    }
-    ,
+    },
     {
       "id": "F034",
       "title": "Grid Visual Smoothing",
@@ -1361,20 +1482,22 @@
       "priority": "must",
       "status": "done",
       "owner": "codex",
-      "depends_on": ["F007"],
+      "depends_on": [
+        "F007"
+      ],
       "allowed_files": [
-        "新建游戏项目/scripts/main.gd",
-        "新建游戏项目/scripts/smooth_grid_mover.gd",
-        "新建游戏项目/tests/test_smooth_grid_mover.gd",
-        "新建游戏项目/tools/run_all_tests.ps1",
+        "newgame/scripts/main.gd",
+        "newgame/scripts/smooth_grid_mover.gd",
+        "newgame/tests/test_smooth_grid_mover.gd",
+        "newgame/tools/run_all_tests.ps1",
         "harness/features.json",
         "harness/contracts.md",
         "harness/plan.md",
         "harness/progress.jsonl"
       ],
       "forbidden_files": [
-        "新建游戏项目/scripts/grid_world.gd",
-        "新建游戏项目/scripts/level_loader.gd",
+        "newgame/scripts/grid_world.gd",
+        "newgame/scripts/level_loader.gd",
         "harness/baselines/*"
       ],
       "acceptance_criteria": [
@@ -1386,7 +1509,7 @@
       "tests": [
         {
           "type": "unit",
-          "command": "powershell -ExecutionPolicy Bypass -File 新建游戏项目/tools/run_all_tests.ps1",
+          "command": "powershell -ExecutionPolicy Bypass -File newgame/tools/run_all_tests.ps1",
           "required": true
         }
       ],

@@ -1,0 +1,113 @@
+{
+	"baseline_id": "GLOVE-BEH-007",
+	"behavior_id": "GLOVE-TRANSITION-OUT",
+	"catalog_notes": "Runtime ending transition replay with screenshot-backed black-screen evidence.",
+	"catalog_status": "in_progress",
+	"checkpoints": [
+		{
+			"caption": "reuse verified correct route through transition",
+			"facing": [
+				0,
+				-1
+			],
+			"id": "transition_out",
+			"input_locked": false,
+			"label": "黑屏转场候选锚点",
+			"last_message": "",
+			"player_pos": [
+				20,
+				13
+			],
+			"ref": "GLOVE-SHOT-009",
+			"review_note": "通过完整真实正确路线稳定命中黑屏对白态；对白出现时机和镜头边界仍需人工确认。",
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"source_grid_id": "GLOVE-GRID-012",
+			"state_id": "transition_out",
+			"step_index": 0,
+			"verification_status": "candidate",
+			"visible": true
+		}
+	],
+	"feature_id": "F026",
+	"final_state": {
+		"facing": [
+			0,
+			-1
+		],
+		"input_locked": false,
+		"last_message": "",
+		"player_pos": [
+			20,
+			13
+		],
+		"visible": true
+	},
+	"level_id": "glove",
+	"route_id": "glove-transition-out-runtime",
+	"runtime_trace": {
+		"animation_ids": [],
+		"audio_ids": []
+	},
+	"steps": [
+		{
+			"caption": "reuse verified correct route through transition",
+			"checkpoint": {
+				"caption": "reuse verified correct route through transition",
+				"facing": [
+					0,
+					-1
+				],
+				"id": "transition_out",
+				"input_locked": false,
+				"label": "黑屏转场候选锚点",
+				"last_message": "",
+				"player_pos": [
+					20,
+					13
+				],
+				"ref": "GLOVE-SHOT-009",
+				"review_note": "通过完整真实正确路线稳定命中黑屏对白态；对白出现时机和镜头边界仍需人工确认。",
+				"runtime_trace": {
+					"animation_ids": [],
+					"audio_ids": []
+				},
+				"source_grid_id": "GLOVE-GRID-012",
+				"state_id": "transition_out",
+				"step_index": 0,
+				"verification_status": "candidate",
+				"visible": true
+			},
+			"expectation_failures": [
+				"player_pos expected (24, 5) got (20, 13)",
+				"visible expected false got true",
+				"input_locked expected true got false"
+			],
+			"expectations_checked": 3,
+			"facing": [
+				0,
+				-1
+			],
+			"index": 0,
+			"input_data": {
+				"route_path": "res://../harness/demo_routes/glove/glove_correct_route_runtime.json",
+				"through_caption": "enter transition"
+			},
+			"last_message": "",
+			"message": "player_pos expected (24, 5) got (20, 13); visible expected false got true; input_locked expected true got false",
+			"player_pos": [
+				20,
+				13
+			],
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"success": false,
+			"type": "route_segment"
+		}
+	],
+	"target_feature_id": "F026"
+}

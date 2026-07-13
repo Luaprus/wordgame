@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>手套关人工复查包</title>
+<style>
+body{font-family:'Microsoft YaHei',sans-serif;background:#111827;color:#e5e7eb;margin:0;padding:24px;line-height:1.5;}
+main{max-width:1360px;margin:0 auto;}
+h1,h2,h3{margin:0 0 12px;}
+section{background:#1f2937;border:1px solid #374151;border-radius:8px;padding:16px 18px;margin:0 0 16px;}
+table{width:100%;border-collapse:collapse;font-size:14px;}
+th,td{border-top:1px solid #374151;padding:8px 10px;text-align:left;vertical-align:top;}
+th{color:#93c5fd;font-weight:600;}
+thead th{border-top:none;}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;background:#0f172a;border:1px solid #475569;font-size:12px;}
+.ok{color:#86efac;}
+.warn{color:#fcd34d;}
+.danger{color:#fca5a5;}
+.muted{color:#94a3b8;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;}
+.card{background:#111827;border:1px solid #374151;border-radius:8px;padding:12px 14px;}
+.meta{display:grid;grid-template-columns:190px 1fr;gap:8px 12px;font-size:14px;}
+.meta div{padding:2px 0;}
+.path-list{display:grid;gap:8px;}
+.path-list a{color:#93c5fd;text-decoration:none;word-break:break-all;}
+.path-list a:hover{text-decoration:underline;}
+.small{font-size:12px;}
+.form-grid{display:grid;gap:12px;}
+.form-card{background:#111827;border:1px solid #374151;border-radius:8px;padding:12px 14px;}
+.field{display:grid;gap:6px;margin:0 0 10px;}
+.field input,.field select,.field textarea{width:100%;box-sizing:border-box;background:#0f172a;color:#e5e7eb;border:1px solid #475569;border-radius:6px;padding:8px 10px;font:inherit;}
+.field textarea{min-height:84px;resize:vertical;}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 16px;}
+.button{appearance:none;border:1px solid #475569;background:#0f172a;color:#e5e7eb;border-radius:6px;padding:8px 14px;font:inherit;cursor:pointer;}
+.button:hover{border-color:#93c5fd;}
+.label-line{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:13px;color:#cbd5e1;}
+code{font-family:Consolas,monospace;background:#0f172a;padding:1px 4px;border-radius:4px;}
+ul{margin:8px 0 0 18px;padding:0;}
+li{margin:4px 0;}
+</style>
+</head>
+<body>
+<main>
+<section>
+<h1>手套关人工复查包</h1>
+<div class="meta">
+<div>关卡标识</div><div><span class="pill">glove</span></div>
+<div>关卡名称</div><div>手套关</div>
+<div>生成时间</div><div>2026-07-13 08:20:13</div>
+<div>运行报告</div><div><span class="ok">11 条</span>，失败 <span class="warn">11 条</span></div>
+<div>辅助设置</div><div><span class="warn">0</span> 条非玩家真实输入；该数字降到 0 前，不能把 route 当作完整原版操作复刻。</div>
+<div>人工复查进度</div><div>待复查 <span class="warn">2</span>，人工确认 <span class="ok">0</span>，人工驳回 <span class="danger">0</span></div>
+<div>人工复查原则</div><div>候选锚点只表示“当前运行版能稳定命中”，不表示“已经确认和原版完全一致”。</div>
+</div>
+</section>
+<section><h2>先看这些文件</h2><div class="path-list">
+<a href="file:///E:/wordgame%20copy/newgame/levels/glove/level_manifest.json">关卡清单：E:/wordgame copy/newgame/levels/glove/level_manifest.json</a>
+<a href="file:///E:/wordgame%20copy/newgame/levels/glove/handoff.md">交接说明：E:/wordgame copy/newgame/levels/glove/handoff.md</a>
+<a href="file:///E:/wordgame%20copy/harness/demo_routes/glove/glove_flow_handoff.md">流程说明：E:/wordgame copy/harness/demo_routes/glove/glove_flow_handoff.md</a>
+<a href="file:///E:/wordgame%20copy/harness/demo_routes/glove/manual_review_checklist.md">人工复查清单：E:/wordgame copy/harness/demo_routes/glove/manual_review_checklist.md</a>
+<a href="file:///E:/wordgame%20copy/harness/reports/demo/glove/glove_runtime_reports_summary.json">route 汇总：E:/wordgame copy/harness/reports/demo/glove/glove_runtime_reports_summary.json</a>
+<a href="file:///E:/wordgame%20copy/harness/reports/demo/glove/glove_route_walkthroughs.md">route 步骤明细：E:/wordgame copy/harness/reports/demo/glove/glove_route_walkthroughs.md</a>
+<a href="file:///E:/wordgame%20copy/harness/reports/demo/glove/glove_source_evidence.json">源码证据 JSON：E:/wordgame copy/harness/reports/demo/glove/glove_source_evidence.json</a>
+<a href="file:///E:/wordgame%20copy/harness/reports/demo/glove/glove_source_evidence.md">源码证据 Markdown：E:/wordgame copy/harness/reports/demo/glove/glove_source_evidence.md</a>
+</div></section>
+<section><h2>组员怎么复查</h2><div class="grid">
+<div class="card"><h3>先核主流程</h3><div>先对照正确路线、错误路线和黑屏收尾三段，确认大面玩法顺序没有偏。</div></div>
+<div class="card"><h3>再核候选锚点</h3><div>候选锚点重点看时机、镜头、文案和可操作性，不一致就直接记“不一致 + 应改成什么”。</div></div>
+<div class="card"><h3>自然语言回传</h3><div>每条反馈至少写清：证据来源、玩家位置、可交互字、可选操作、实际结果。</div></div>
+</div></section>
+<section><h2>原始资料</h2><div class="path-list">
+<a href="file:///E:/wordgame%20copy/参考资料/视频参考/手套关卡全录屏.mkv">原始视频：E:/wordgame copy/参考资料/视频参考/手套关卡全录屏.mkv</a>
+<a href="file:///E:/wordgame%20copy/参考资料/图片参考/手套流程.docx">原始文档：E:/wordgame copy/参考资料/图片参考/手套流程.docx</a>
+<a href="file:///D:/文字游戏/Scenes/Maps/第三章/04_手套教學.tscn">原始地图：D:/文字游戏/Scenes/Maps/第三章/04_手套教學.tscn [GLOVE-SEG-CORRECT] 起点、生命线与正确路线主流程锚点。</a>
+<a href="file:///D:/文字游戏/Scenes/Maps/第三章/11_添譜來堂_開場.tscn">原始地图：D:/文字游戏/Scenes/Maps/第三章/11_添譜來堂_開場.tscn [GLOVE-SEG-GESTURES] 赞/一/二/赢等手势变化与环境音来源候选。</a>
+<a href="file:///D:/文字游戏/Scenes/Maps/第三章/14_添譜來堂_拳頭轉場.tscn">原始地图：D:/文字游戏/Scenes/Maps/第三章/14_添譜來堂_拳頭轉場.tscn [GLOVE-ANIM-004] 手势切换转场动画候选来源。</a>
+<a href="file:///D:/文字游戏/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn">原始地图：D:/文字游戏/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn [GLOVE-SEG-CORRECT] 好手势、删“不”后放开、掌中剑换位候选来源。</a>
+<a href="file:///D:/文字游戏/Scenes/Maps/第三章/16_添譜來堂_尾聲.tscn">原始地图：D:/文字游戏/Scenes/Maps/第三章/16_添譜來堂_尾聲.tscn [GLOVE-TRANSITION-OUT] 黑屏对白与收尾状态候选来源。</a>
+</div></section>
+<section><h2>当前 route 步骤明细</h2>
+<p class="muted small">下面列出当前运行版 route 的执行顺序；其中移动、互动等是玩家输入，标有“辅助设置”的步骤是演示器捷径，不代表原版真实操作。适合人工逐步对照哪里还不够像。</p>
+<div class="card" style="margin-bottom:12px;">
+<h3>正确路线运行版</h3>
+<div class="small muted">当前运行版主流程：露出好字、切到好手势、开生命线、切二手势、掌中剑右移、进入黑屏收尾。</div>
+<table><thead><tr><th>步骤</th><th>输入</th><th>结束坐标</th><th>朝向</th><th>末条文案</th></tr></thead><tbody>
+<tr><td>0. 记录起始布局</td><td>记录锚点</td><td><code>[20, 15]</code></td><td>右</td><td>记录起始布局</td></tr>
+<tr><td>1. 从起点走到下方生命线线索</td><td>移动路径：上、上</td><td><code>[20, 13]</code></td><td>上</td><td>text_at (21, 13) expected 线线 got </td></tr>
+</tbody></table></div>
+<div class="card" style="margin-bottom:12px;">
+<h3>错误路线运行版</h3>
+<div class="small muted">当前运行版失败路线：错误手势触发失败反馈，再互动可重置。</div>
+<table><thead><tr><th>步骤</th><th>输入</th><th>结束坐标</th><th>朝向</th><th>末条文案</th></tr></thead><tbody>
+<tr><td>0. 从起点走到生命线前</td><td>移动路径：上、上、上</td><td><code>[20, 13]</code></td><td>上</td><td>player_pos expected (20, 12) got (20, 13); text_at (21, 12) expected 线 got 掌</td></tr>
+</tbody></table></div>
+<div class="card" style="margin-bottom:12px;">
+<h3>手势轮换运行版</h3>
+<div class="small muted">当前运行版真实复用一手势前置，并连续搬运赢字入槽后切换赢手势。</div>
+<table><thead><tr><th>步骤</th><th>输入</th><th>结束坐标</th><th>朝向</th><th>末条文案</th></tr></thead><tbody>
+<tr><td>0. 复用真实主路线直到切换一手势</td><td>复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“切到一手势打开左侧通道”</td><td><code>[20, 13]</code></td><td>上</td><td>verified route segment failed</td></tr>
+</tbody></table></div>
+<div class="card" style="margin-bottom:12px;">
+<h3>赞字真实路线运行版</h3>
+<div class="small muted">当前运行版复用放开前置，真实拉出赞字并送入槽位；可见布局按源码继续保持放开。</div>
+<table><thead><tr><th>步骤</th><th>输入</th><th>结束坐标</th><th>朝向</th><th>末条文案</th></tr></thead><tbody>
+<tr><td>0. 复用真实路线直到放开手势</td><td>复用已验证真实路线：res://../harness/demo_routes/glove/glove_release_after_delete_runtime.json；执行到“切换到放开状态”</td><td><code>[20, 13]</code></td><td>上</td><td>verified route segment failed</td></tr>
+</tbody></table></div>
+<div class="card" style="margin-bottom:12px;">
+<h3>掌中剑换位运行版</h3>
+<div class="small muted">当前运行版掌中剑左右换位规则路线。</div>
+<table><thead><tr><th>步骤</th><th>输入</th><th>结束坐标</th><th>朝向</th><th>末条文案</th></tr></thead><tbody>
+<tr><td>0. 复用已验证正确路线直到掌中剑右移</td><td>复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“把掌中剑换到右边”</td><td><code>[20, 13]</code></td><td>上</td><td>player_pos expected (4, 1) got (20, 13); last_message expected 二指伸直，掌中剑换到了右边。 got ; text_at (28, 6) expected 剑 got </td></tr>
+</tbody></table></div>
+<div class="card" style="margin-bottom:12px;">
+<h3>好字线索运行版</h3>
+<div class="small muted">当前运行版好字线索与好手势辅助路线。</div>
+<table><thead><tr><th>步骤</th><th>输入</th><th>结束坐标</th><th>朝向</th><th>末条文案</th></tr></thead><tbody>
+<tr><td>0. 切到好手势辅助状态</td><td>复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“切到好手势”</td><td><code>[20, 13]</code></td><td>上</td><td>player_pos expected (30, 15) got (20, 13); last_message expected 巨大手掌，是好的手势。 got ; text_at (7, 8) expected 掌 got 勇：别被一条线给困住了！</td></tr>
+</tbody></table></div>
+<div class="card" style="margin-bottom:12px;">
+<h3>删“不”后放开运行版</h3>
+<div class="small muted">当前运行版删“不”后放开路线。</div>
+<table><thead><tr><th>步骤</th><th>输入</th><th>结束坐标</th><th>朝向</th><th>末条文案</th></tr></thead><tbody>
+<tr><td>0. 复用已验证正确路线直到一手势</td><td>复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“切到一手势打开左侧通道”</td><td><code>[20, 13]</code></td><td>上</td><td>player_pos expected (29, 14) got (20, 13)</td></tr>
+</tbody></table></div>
+<div class="card" style="margin-bottom:12px;">
+<h3>碰撞变化运行版</h3>
+<div class="small muted">当前运行版碰撞变化候选路线。</div>
+<table><thead><tr><th>步骤</th><th>输入</th><th>结束坐标</th><th>朝向</th><th>末条文案</th></tr></thead><tbody>
+<tr><td>0. 复用真实路线切到好手势</td><td>复用已验证真实路线：res://../harness/demo_routes/glove/glove_good_clue_runtime.json；执行到“切到好手势辅助状态”</td><td><code>[20, 13]</code></td><td>上</td><td>verified route segment failed</td></tr>
+</tbody></table></div>
+<div class="card" style="margin-bottom:12px;">
+<h3>生命线复闭运行版</h3>
+<div class="small muted">当前运行版生命线重新闭合路线。</div>
+<table><thead><tr><th>步骤</th><th>输入</th><th>结束坐标</th><th>朝向</th><th>末条文案</th></tr></thead><tbody>
+<tr><td>0. reuse verified correct route through opened path</td><td>复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“沿开路走到中段锚点”</td><td><code>[20, 13]</code></td><td>上</td><td>player_pos expected (24, 14) got (20, 13)</td></tr>
+</tbody></table></div>
+<div class="card" style="margin-bottom:12px;">
+<h3>路径打开运行版</h3>
+<div class="small muted">当前运行版打开生命线后的中段通路路线。</div>
+<table><thead><tr><th>步骤</th><th>输入</th><th>结束坐标</th><th>朝向</th><th>末条文案</th></tr></thead><tbody>
+<tr><td>0. 沿开路走到中段锚点</td><td>复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“沿开路走到中段锚点”</td><td><code>[20, 13]</code></td><td>上</td><td>player_pos expected (24, 14) got (20, 13); last_message expected 好手逼退了生命线。 got </td></tr>
+</tbody></table></div>
+<div class="card" style="margin-bottom:12px;">
+<h3>收尾转场运行版</h3>
+<div class="small muted">当前运行版收尾黑屏转场路线。</div>
+<table><thead><tr><th>步骤</th><th>输入</th><th>结束坐标</th><th>朝向</th><th>末条文案</th></tr></thead><tbody>
+<tr><td>0. 复用已验证正确路线直到黑屏转场</td><td>复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“进入黑屏转场”</td><td><code>[20, 13]</code></td><td>上</td><td>player_pos expected (24, 5) got (20, 13); visible expected false got true; input_locked expected true got false</td></tr>
+</tbody></table></div>
+</section>
+<section><h2>源码证据</h2>
+<p class="muted small">这些不是玩法完成证明，而是从原始 scene 中直接抽出的规则线索，用来缩小人工复查范围。</p>
+<div class="card" style="margin-bottom:12px;">
+<h3>爱手势在原始 scene 中确实存在</h3>
+<div>原始拳头关 scene 同时出现了爱手势节点、爱手势成立开关、第一次爱手势标记，以及切到手势动画状态 5 的逻辑。</div>
+<div class="small muted" style="margin-top:4px;">爱手势状态值：5</div>
+<div class="small muted" style="margin-top:4px;">首次成就：3-5</div>
+<div class="small muted" style="margin-top:4px;">PT 测试节点：T_愛的手勢</div>
+<div class="small muted" style="margin-top:8px;">来源：E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn</div>
+<div class="small muted" style="margin-top:8px;">证据：愛的手勢, ch3_愛的手勢成立, 第一次愛的手勢, change_gesture_animation</div>
+<div class="small" style="margin-top:8px;">结论：“爱手势是否存在”已经不是猜测；源码明确支持这个状态。当前仍未收口的是玩家如何稳定获得并激活它。</div>
+</div>
+<div class="card" style="margin-bottom:12px;">
+<h3>爱字在原始 scene 中有可推标签来源</h3>
+<div>原始拳头关 scene 在“零的手势”节点里挂了一段调查文本，其中 `愛` 被包在 `&lt;l&gt;...&lt;/l&gt;` 标签里，并通过 `label_settings` 明确标成 `can_push = true`。</div>
+<div class="small muted" style="margin-top:8px;">节点：零的手勢</div>
+<div class="small muted" style="margin-top:4px;">可推字：愛</div>
+<div class="small muted" style="margin-top:4px;">调查文本坐标：[1, 12]</div>
+<div class="small muted" style="margin-top:4px;">触发条件：s:ch3_手掌調查敘述出現==false</div>
+<div class="small muted" style="margin-top:8px;">来源：E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn</div>
+<div class="small muted" style="margin-top:8px;">证据：憐&lt;l&gt;愛&lt;/l&gt;之深, &quot;can_push&quot;: true, ch3_手掌調查敘述出現, 零的手勢</div>
+<div class="small" style="margin-top:8px;">结论：这说明原版里确实存在一个可被推出的“爱”字来源，所以当前问题已经从“爱字是不是完全没有来源”收缩成“调查文本如何触发、爱字如何落地、玩家能否稳定把它送入手势槽”。</div>
+<div class="small muted" style="margin-top:8px;white-space:pre-wrap;">命令片段：<code>@[type] {
+	&quot;texts&quot;: &quot;憐&lt;l&gt;愛&lt;/l&gt;之深，&amp;||責求之切，&amp;||勇者之情。&quot;, 
+	&quot;pos&quot;: [1,12], 
+	&quot;tags&quot;: [&quot;hand&quot;],
+	&quot;label_settings&quot;: {
+		&quot;l&quot;: {
+			&quot;can_push&quot;: true
+		}
+	},
+	&quot;z_index&quot;: 9,
+    &quot;is_dialog_end&quot;: true
+}</code></div>
+</div>
+<div class="card" style="margin-bottom:12px;">
+<h3>好手势与赞手势在源码里共用同一手势状态</h3>
+<div>原始拳头关 scene 把“好的手势成立”和“赞的手势成立”并到同一段逻辑里，并统一切到手势动画状态 1。</div>
+<div class="small muted" style="margin-top:8px;">来源：E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn</div>
+<div class="small muted" style="margin-top:8px;">证据：好的手勢成立, 讚的手勢成立, 好還是讚的手勢成立, change_gesture_animation</div>
+<div class="small" style="margin-top:8px;">结论：当前运行版把“好”和“赞”映射到同一个 like 布局不是拍脑袋，而是有源码级依据。后续更该核对的是碰撞细节，而不是先怀疑两者是否同态。</div>
+</div>
+<div class="card" style="margin-bottom:12px;">
+<h3>放开状态在原始 scene 中是独立手势分支</h3>
+<div>原始拳头关 scene 通过“＿会轻易放开”句子规则调用手势状态 6；在 [6,3] 播放 7 字合法句动画、齿轮岩石音效和镜头震动后切到放开布局。恢复“不”会调用状态 -1 返回此前的一般手势。</div>
+<div class="small muted" style="margin-top:8px;">来源：E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn</div>
+<div class="small muted" style="margin-top:8px;">证据：＿會輕易放開, arg_array: [6], arg_array: [-1], Vector2(6,3), SE_3_58_gear_rock.wav, shake_camera(80,15), animation key 0.8</div>
+<div class="small" style="margin-top:8px;">结论：删“不”后进入放开的规则、音效和关键时间点已有源码直接证据；剩余人工项只需核对实际缓动、画面震动观感和截图落帧。</div>
+</div>
+<div class="card" style="margin-bottom:12px;">
+<h3>掌中剑换位在原始 scene 中有明确状态标记</h3>
+<div>原始拳头关 scene 里存在“拿到掌中剑了”和“第一次剑换位置”等状态开关，用来区分剑是否已经换位。</div>
+<div class="small muted" style="margin-top:8px;">来源：E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn</div>
+<div class="small muted" style="margin-top:8px;">证据：拿到掌中劍了, 第一次劍換位置</div>
+<div class="small" style="margin-top:8px;">结论：当前运行版把掌中剑换位当成规则锚点是合理的。它在源码里本来就是一个独立的状态切换，不是纯视觉装饰。</div>
+</div>
+<div class="card" style="margin-bottom:12px;">
+<h3>拳头关黑屏与尾声三段对白链路已由源码确认</h3>
+<div>拳头关先用 2 秒遮屏，将玩家移动到 [24,5]，随后无额外转场效果进入 `第三章/16_添譜來堂_尾聲`；尾声开场依次显示三段对白。</div>
+<div class="small muted" style="margin-top:8px;">来源：E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn | E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/16_添譜來堂_尾聲.tscn</div>
+<div class="small muted" style="margin-top:8px;">证据：time_sec: 2.0, move_to_point [24,5], 第三章/16_添譜來堂_尾聲, 果然有兩把刷子, 你與我們都不同, 四三九七號勇者, 請無畏地上前吧</div>
+<div class="small" style="margin-top:8px;">结论：当前运行版可以直接按源码实现三页对白和目标地图记录；仍需人工核对的是逐帧打字速度、停顿和镜头构图，而不是文案或去向。</div>
+</div>
+<div class="card" style="margin-bottom:12px;">
+<h3>@[type]/@[clear_typed] 在测试地图里表现为打字机对白层</h3>
+<div>测试地图 map0001 / map0002 里的 `@[type]` 文本会用 `tags` 与 `clear_typed` 管理，同一事件本体的 `now_pos` 与 `type` 的 `pos` 明显分离。</div>
+<div class="small muted" style="margin-top:4px;">示例事件地图坐标：[6, 1]</div>
+<div class="small muted" style="margin-top:4px;">示例打字机坐标：[3, 9]</div>
+<div class="small muted" style="margin-top:4px;">示例标签：room</div>
+<div class="small muted" style="margin-top:4px;">示例地图：E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/map0002.tscn</div>
+<div class="small muted" style="margin-top:8px;">来源：E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/map0001.tscn | E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/map0002.tscn</div>
+<div class="small muted" style="margin-top:8px;">证据：@[clear_typed] &quot;typed&quot;, @[clear_typed] &quot;room&quot;, &quot;pos&quot;:[4,8], &quot;pos&quot;:[3,9], now_pos = Vector2( 6, 1 )</div>
+<div class="small" style="margin-top:8px;">结论：因此 love 线索里的 `pos: [1, 12]` 目前更应视为打字机对白层坐标候选，不应直接当成已确认的世界落点。`愛` 如何从对白层变成可实际推动的地图字，仍需更强证据。</div>
+</div>
+<div class="card" style="margin-bottom:12px;">
+<h3>Typewriter.gdc 暗示标签字会在运行时生成实体</h3>
+<div>原始 `Typewriter.gdc` 同时包含 `generated_in_runtime`、`exist_event`、`both`、`copy`、`label_settings`、`has_defalut_tag` 等关键 token。这说明 typewriter 系统不只是打印纯 UI 文本，而是在处理“已有事件 / 复制 / 运行时生成”这类对象分支。</div>
+<div class="small muted" style="margin-top:8px;">来源：E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/Typewriter.gdc</div>
+<div class="small muted" style="margin-top:8px;">证据：generated_in_runtime, exist_event, both, copy, label_settings, has_defalut_tag</div>
+<div class="small" style="margin-top:8px;">结论：结合 `零的手勢` 节点里 `&lt;l&gt;愛&lt;/l&gt;` + `can_push = true` 的 scene 配置，当前最强结论是：`愛` 不是先作为普通对白出现、再被另一个系统二次落成地图字；它更像是在 typewriter 层激活期间直接生成的可推动运行时字实体。这个结论仍属于源码推断，不等于已经逐帧复核过原版运行表现。</div>
+</div>
+</section>
+<section><h2>回传模板</h2><ol>
+<li>状态名：这一段是什么状态。</li>
+<li>证据来源：截图编号、视频时间点或路线名称。</li>
+<li>真实情况：玩家位置、可交互字、可选操作、实际结果。</li>
+<li>一致性判断：一致 / 不一致。</li>
+<li>修改建议：如果不一致，直接写应该改成什么。</li>
+</ol></section>
+<section><h2>结构化回传</h2>
+<div class="toolbar">
+<label class="field" style="min-width:260px;max-width:360px;margin:0;"><span>默认审核人</span><input id="reviewerName" type="text" placeholder="例如：glove-reviewer-1"></label>
+<button class="button" id="exportReviewBtn" type="button">导出复查结果 JSON</button>
+<button class="button" id="importReviewBtn" type="button">导入已有复查结果 JSON</button>
+<input id="importReviewInput" type="file" accept="application/json" style="display:none">
+</div>
+<div class="grid">
+<div class="form-card"><h3>候选锚点录入</h3><div id="checkpointReviewForm" class="form-grid"></div></div>
+<div class="form-card"><h3>路线步骤录入</h3><p class="muted small">只需要优先复查 3 条路线：正确路线运行版、路径打开运行版、收尾转场运行版。其余路线继续看上面的 route 步骤明细即可。</p><div id="routeStepReviewForm" class="form-grid"></div></div>
+<div class="form-card"><h3>人工复查焦点录入</h3><div id="focusReviewForm" class="form-grid"></div></div>
+</div>
+</section>
+<section><h2>人工复查焦点</h2>
+<table><thead><tr><th>焦点</th><th>状态</th><th>复查说明</th></tr></thead><tbody>
+<tr><td>正确路线真实逐步输入顺序</td><td>待复查</td><td></td></tr>
+<tr><td>爱字源码计算候选格 [2,12] 的原版运行确认，以及从该格推入手势槽的真实路径</td><td>待复查</td><td></td></tr>
+<tr><td>各手势逐格碰撞变化真值</td><td>待复查</td><td></td></tr>
+<tr><td>删“不”后放开动画的实际缓动、镜头震动观感与截图落帧</td><td>待复查</td><td></td></tr>
+<tr><td>尾声三段对白的逐帧打字速度、停顿与镜头构图</td><td>待复查</td><td></td></tr>
+</tbody></table></section>
+<section><h2>已确认锚点（自动证据）</h2>
+<p class="muted small">这些锚点已经被当前测试和 route report 反复命中，适合当作主流程/关键状态的自动真值。</p>
+<table><thead><tr><th>锚点 ID</th><th>运行路线</th><th>截图基线</th><th>格子基线</th><th>状态说明</th><th>玩家坐标</th><th>末条文案</th><th>人工状态</th><th>复查说明</th></tr></thead><tbody>
+<tr><td><code>initial_layout</code></td><td>正确路线运行版（glove-correct-route-runtime）</td><td><code>GLOVE-SHOT-001</code></td><td><code>GLOVE-GRID-001</code></td><td>起始布局锚点；记录起始布局；证据类型：截图+格子锚点</td><td><code>[20, 15]</code></td><td></td><td>待复查</td><td>程序已确认起点玩家坐标、掌墙和零手势字存在；完整镜头构图仍以人工视觉复查为准。</td></tr>
+<tr><td><code>sword_swap_right</code></td><td>掌中剑换位运行版（glove-sword-swap-runtime）</td><td><code></code></td><td><code></code></td><td>掌中剑右移规则锚点；掌中剑换到右边；证据类型：规则锚点</td><td><code>[20, 13]</code></td><td></td><td>待复查</td><td>该锚点通过完整真实正确路线证明：二手势会让掌中剑从左源坐标换到右源坐标。当前没有直连截图基线，因此它用于源码/规则交接。</td></tr>
+<tr><td><code>path_opened</code></td><td>路径打开运行版（glove-path-opened-runtime）</td><td><code>GLOVE-SHOT-012</code></td><td><code>GLOVE-GRID-008</code></td><td>开路后中段锚点；打开生命线后进入中段；证据类型：截图+格子锚点</td><td><code>[20, 13]</code></td><td></td><td>待复查</td><td>无</td></tr>
+</tbody></table>
+</section>
+<section><h2>已人工确认的候选锚点</h2>
+<p class="muted small">这些原本是 candidate，但已经有人工确认回写；仍保留人工痕迹，不混入自动 confirmed。</p>
+<table><thead><tr><th>锚点 ID</th><th>运行路线</th><th>截图基线</th><th>格子基线</th><th>状态说明</th><th>玩家坐标</th><th>末条文案</th><th>人工状态</th><th>复查说明</th></tr></thead><tbody>
+<tr><td colspan="9" class="muted">当前没有条目。</td></tr>
+</tbody></table>
+</section>
+<section><h2>候选锚点（必须人工复查）</h2>
+<p class="muted small">这些锚点只能说明运行版落到了相近状态，时机、语义、镜头边界或可操作性还没有收口。</p>
+<table><thead><tr><th>锚点 ID</th><th>运行路线</th><th>截图基线</th><th>格子基线</th><th>状态说明</th><th>玩家坐标</th><th>末条文案</th><th>人工状态</th><th>复查说明</th></tr></thead><tbody>
+<tr><td><code>good_hand_followup</code></td><td>好字线索运行版（glove-good-clue-runtime）</td><td><code>GLOVE-SHOT-008</code></td><td><code>GLOVE-GRID-015</code></td><td>候选：好手势连续路线候选锚点；切到好手势辅助状态；证据类型：截图+格子锚点</td><td><code>[20, 13]</code></td><td></td><td>待复查</td><td>已用真实拉字、推字和移动切到好手势；截图时机仍需人工确认。</td></tr>
+<tr><td><code>transition_out</code></td><td>收尾转场运行版（glove-transition-out-runtime）</td><td><code>GLOVE-SHOT-009</code></td><td><code>GLOVE-GRID-012</code></td><td>候选：黑屏转场候选锚点；进入黑屏转场；证据类型：截图+格子锚点</td><td><code>[20, 13]</code></td><td></td><td>待复查</td><td>通过完整真实正确路线稳定命中黑屏对白态；对白出现时机和镜头边界仍需人工确认。</td></tr>
+</tbody></table>
+</section>
+<section><h2>已人工驳回的候选锚点</h2>
+<p class="muted small">这些锚点已经被人工指出与原版不一致，后续修复时优先看这里。</p>
+<table><thead><tr><th>锚点 ID</th><th>运行路线</th><th>截图基线</th><th>格子基线</th><th>状态说明</th><th>玩家坐标</th><th>末条文案</th><th>人工状态</th><th>复查说明</th></tr></thead><tbody>
+<tr><td colspan="9" class="muted">当前没有条目。</td></tr>
+</tbody></table>
+</section>
+<section><h2>视觉 Smoke</h2>
+<table><thead><tr><th>截图基线</th><th>状态</th><th>像素差</th><th>报告路径</th></tr></thead><tbody>
+<tr><td><code>GLOVE-SHOT-009</code></td><td>通过</td><td>0</td><td><code>E:/wordgame copy/newgame/../harness/reports/visual/glove/GLOVE-SHOT-009__report.json</code></td></tr>
+<tr><td><code>GLOVE-SHOT-010</code></td><td>通过</td><td>0</td><td><code>E:/wordgame copy/newgame/../harness/reports/visual/glove/GLOVE-SHOT-010__report.json</code></td></tr>
+</tbody></table></section>
+<section><h2>当前验收条件</h2><ul>
+<li><strong>试玩入口能正常打开，且没有缺资源报错。</strong><span class="muted small">（preview_scene_opens_without_missing_resources）</span></li>
+<li><strong>手套关专项测试通过。</strong><span class="muted small">（res://tests/test_glove_level.gd passes）</span></li>
+<li><strong>仓库一键总测通过。</strong><span class="muted small">（tools/run_all_tests.ps1 passes）</span></li>
+<li><strong>视觉 smoke 一键脚本通过。</strong><span class="muted small">（tools/capture_visual_smoke.ps1 passes）</span></li>
+<li><strong>能导出 11 条手套关 runtime report，且失败数为 0。</strong><span class="muted small">（glove_runtime_reports_summary.json exports 11 runtime reports with failed_count = 0）</span></li>
+<li><strong>GLOVE-SHOT-009 和 GLOVE-SHOT-010 的视觉对比像素差保持为 0。</strong><span class="muted small">（GLOVE-SHOT-009 and GLOVE-SHOT-010 visual diff reports stay at 0 pixels）</span></li>
+<li><strong>level_manifest.json 与 handoff.md 已和当前运行行为保持同步。</strong><span class="muted small">（level_manifest.json and handoff.md are kept in sync with the current runtime behavior）</span></li>
+</ul></section>
+<script id="gloveReviewData" type="application/json">{
+	"checkpoint_reviews": [
+		{
+			"caption_localized": "切到好手势辅助状态",
+			"evidence_type": "screenshot_grid",
+			"evidence_type_label": "截图+格子锚点",
+			"id": "good_hand_followup",
+			"label": "好手势连续路线候选锚点",
+			"last_message": "",
+			"ref": "GLOVE-SHOT-008",
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": "",
+			"route_id": "glove-good-clue-runtime",
+			"route_label": "好字线索运行版",
+			"source_grid_id": "GLOVE-GRID-015"
+		},
+		{
+			"caption_localized": "进入黑屏转场",
+			"evidence_type": "screenshot_grid",
+			"evidence_type_label": "截图+格子锚点",
+			"id": "transition_out",
+			"label": "黑屏转场候选锚点",
+			"last_message": "",
+			"ref": "GLOVE-SHOT-009",
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": "",
+			"route_id": "glove-transition-out-runtime",
+			"route_label": "收尾转场运行版",
+			"source_grid_id": "GLOVE-GRID-012"
+		}
+	],
+	"focus_reviews": [
+		{
+			"focus": "正确路线真实逐步输入顺序",
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": ""
+		},
+		{
+			"focus": "爱字源码计算候选格 [2,12] 的原版运行确认，以及从该格推入手势槽的真实路径",
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": ""
+		},
+		{
+			"focus": "各手势逐格碰撞变化真值",
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": ""
+		},
+		{
+			"focus": "删“不”后放开动画的实际缓动、镜头震动观感与截图落帧",
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": ""
+		},
+		{
+			"focus": "尾声三段对白的逐帧打字速度、停顿与镜头构图",
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": ""
+		}
+	],
+	"level_id": "glove",
+	"route_step_reviews": [
+		{
+			"caption": "record initial layout anchor",
+			"caption_localized": "记录起始布局",
+			"facing": [
+				1,
+				0
+			],
+			"input_summary": "记录锚点",
+			"last_message": "记录起始布局",
+			"player_pos": [
+				20,
+				15
+			],
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": "",
+			"route_id": "glove-correct-route-runtime",
+			"route_label": "正确路线运行版",
+			"step_index": 0
+		},
+		{
+			"caption": "walk from start to lower lifeline clue",
+			"caption_localized": "从起点走到下方生命线线索",
+			"facing": [
+				0,
+				-1
+			],
+			"input_summary": "移动路径：上、上",
+			"last_message": "text_at (21, 13) expected 线线 got ",
+			"player_pos": [
+				20,
+				13
+			],
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": "",
+			"route_id": "glove-correct-route-runtime",
+			"route_label": "正确路线运行版",
+			"step_index": 1
+		},
+		{
+			"caption": "walk from opened lifeline to mid path anchor",
+			"caption_localized": "沿开路走到中段锚点",
+			"facing": [
+				0,
+				-1
+			],
+			"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“沿开路走到中段锚点”",
+			"last_message": "player_pos expected (24, 14) got (20, 13); last_message expected 好手逼退了生命线。 got ",
+			"player_pos": [
+				20,
+				13
+			],
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": "",
+			"route_id": "glove-path-opened-runtime",
+			"route_label": "路径打开运行版",
+			"step_index": 0
+		},
+		{
+			"caption": "reuse verified correct route through transition",
+			"caption_localized": "复用已验证正确路线直到黑屏转场",
+			"facing": [
+				0,
+				-1
+			],
+			"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“进入黑屏转场”",
+			"last_message": "player_pos expected (24, 5) got (20, 13); visible expected false got true; input_locked expected true got false",
+			"player_pos": [
+				20,
+				13
+			],
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": "",
+			"route_id": "glove-transition-out-runtime",
+			"route_label": "收尾转场运行版",
+			"step_index": 0
+		}
+	]
+}</script>
+<script>
+
+(function () {
+  const dataNode = document.getElementById('gloveReviewData');
+  if (!dataNode) return;
+  const reviewData = JSON.parse(dataNode.textContent);
+  const checkpointContainer = document.getElementById('checkpointReviewForm');
+  const routeStepContainer = document.getElementById('routeStepReviewForm');
+  const focusContainer = document.getElementById('focusReviewForm');
+  const reviewerNameInput = document.getElementById('reviewerName');
+  const exportButton = document.getElementById('exportReviewBtn');
+  const importButton = document.getElementById('importReviewBtn');
+  const importInput = document.getElementById('importReviewInput');
+
+  function statusOptions(type) {
+    if (type === 'focus') {
+      return [
+        { value: 'pending', label: '待复查' },
+        { value: 'resolved', label: '已解决' },
+        { value: 'rejected', label: '人工驳回' }
+      ];
+    }
+    return [
+      { value: 'pending', label: '待复查' },
+      { value: 'confirmed', label: '人工确认' },
+      { value: 'rejected', label: '人工驳回' }
+    ];
+  }
+
+  function buildSelect(type, selected) {
+    const select = document.createElement('select');
+    for (const option of statusOptions(type)) {
+      const el = document.createElement('option');
+      el.value = option.value;
+      el.textContent = option.label;
+      if (option.value === selected) el.selected = true;
+      select.appendChild(el);
+    }
+    return select;
+  }
+
+  function createField(labelText, input) {
+    const field = document.createElement('label');
+    field.className = 'field';
+    const label = document.createElement('span');
+    label.textContent = labelText;
+    field.appendChild(label);
+    field.appendChild(input);
+    return field;
+  }
+
+  function renderCheckpointForms() {
+    checkpointContainer.innerHTML = '';
+    for (const item of reviewData.checkpoint_reviews || []) {
+      const card = document.createElement('div');
+      card.className = 'form-card';
+      const title = document.createElement('h3');
+      title.textContent = `${item.label} (${item.id})`;
+      const meta = document.createElement('div');
+      meta.className = 'label-line';
+      meta.innerHTML = `<span>${item.route_label || item.route_id}</span><span>${item.evidence_type_label || ''}</span><span>${item.ref}</span><span>${item.source_grid_id}</span>`;
+      const lastMessage = document.createElement('div');
+      lastMessage.className = 'small muted';
+      lastMessage.textContent = `${item.caption_localized || ''}${item.last_message ? '｜' + item.last_message : ''}`;
+
+      const statusSelect = buildSelect('checkpoint', item.review_status || 'pending');
+      statusSelect.dataset.role = 'status';
+      const reviewerInput = document.createElement('input');
+      reviewerInput.type = 'text';
+      reviewerInput.value = item.reviewer || '';
+      reviewerInput.placeholder = '留空则使用默认审核人';
+      reviewerInput.dataset.role = 'reviewer';
+      const noteInput = document.createElement('textarea');
+      noteInput.value = item.resolution_note || '';
+      noteInput.placeholder = '写清楚一致/不一致以及要怎么改';
+      noteInput.dataset.role = 'note';
+
+      card.dataset.id = item.id;
+      card.dataset.ref = item.ref;
+      card.dataset.sourceGridId = item.source_grid_id;
+      card.dataset.routeId = item.route_id;
+      card.dataset.reviewedAt = item.reviewed_at || '';
+      card.appendChild(title);
+      card.appendChild(meta);
+      card.appendChild(lastMessage);
+      card.appendChild(createField('复查状态', statusSelect));
+      card.appendChild(createField('审核人', reviewerInput));
+      card.appendChild(createField('复查备注', noteInput));
+      checkpointContainer.appendChild(card);
+    }
+  }
+
+  function renderFocusForms() {
+    focusContainer.innerHTML = '';
+    for (const item of reviewData.focus_reviews || []) {
+      const card = document.createElement('div');
+      card.className = 'form-card';
+      const title = document.createElement('h3');
+      title.textContent = item.focus;
+      const statusSelect = buildSelect('focus', item.review_status || 'pending');
+      statusSelect.dataset.role = 'status';
+      const reviewerInput = document.createElement('input');
+      reviewerInput.type = 'text';
+      reviewerInput.value = item.reviewer || '';
+      reviewerInput.placeholder = '留空则使用默认审核人';
+      reviewerInput.dataset.role = 'reviewer';
+      const noteInput = document.createElement('textarea');
+      noteInput.value = item.resolution_note || '';
+      noteInput.placeholder = '写清楚目前确认到了哪一步';
+      noteInput.dataset.role = 'note';
+
+      card.dataset.focus = item.focus;
+      card.dataset.reviewedAt = item.reviewed_at || '';
+      card.appendChild(title);
+      card.appendChild(createField('复查状态', statusSelect));
+      card.appendChild(createField('审核人', reviewerInput));
+      card.appendChild(createField('复查备注', noteInput));
+      focusContainer.appendChild(card);
+    }
+  }
+
+  function renderRouteStepForms() {
+    routeStepContainer.innerHTML = '';
+    for (const item of reviewData.route_step_reviews || []) {
+      const card = document.createElement('div');
+      card.className = 'form-card';
+      const title = document.createElement('h3');
+      title.textContent = `${item.route_label || item.route_id} / ${item.step_index}. ${item.caption_localized || item.caption}`;
+      const meta = document.createElement('div');
+      meta.className = 'label-line';
+      meta.innerHTML = `<span>${item.input_summary || ''}</span><span>${JSON.stringify(item.player_pos || [])}</span><span>${JSON.stringify(item.facing || [])}</span>`;
+      const lastMessage = document.createElement('div');
+      lastMessage.className = 'small muted';
+      lastMessage.textContent = item.last_message || '';
+
+      const statusSelect = buildSelect('checkpoint', item.review_status || 'pending');
+      statusSelect.dataset.role = 'status';
+      const reviewerInput = document.createElement('input');
+      reviewerInput.type = 'text';
+      reviewerInput.value = item.reviewer || '';
+      reviewerInput.placeholder = '留空则使用默认审核人';
+      reviewerInput.dataset.role = 'reviewer';
+      const noteInput = document.createElement('textarea');
+      noteInput.value = item.resolution_note || '';
+      noteInput.placeholder = '写清楚这一步与原版是否一致，差异点和建议改法';
+      noteInput.dataset.role = 'note';
+
+      card.dataset.routeId = item.route_id;
+      card.dataset.stepIndex = String(item.step_index);
+      card.dataset.reviewedAt = item.reviewed_at || '';
+      card.appendChild(title);
+      card.appendChild(meta);
+      card.appendChild(lastMessage);
+      card.appendChild(createField('复查状态', statusSelect));
+      card.appendChild(createField('审核人', reviewerInput));
+      card.appendChild(createField('复查备注', noteInput));
+      routeStepContainer.appendChild(card);
+    }
+  }
+
+  function currentTimestamp() {
+    const now = new Date();
+    const pad = (value) => String(value).padStart(2, '0');
+    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  }
+
+  function collectReviews() {
+    const defaultReviewer = (reviewerNameInput.value || '').trim();
+    const checkpointReviews = Array.from(checkpointContainer.children).map((card) => {
+      const status = card.querySelector('[data-role="status"]').value;
+      const reviewer = (card.querySelector('[data-role="reviewer"]').value || defaultReviewer).trim();
+      const reviewedAt = status === 'pending' ? '' : (card.dataset.reviewedAt || currentTimestamp());
+      return {
+        id: card.dataset.id,
+        ref: card.dataset.ref,
+        source_grid_id: card.dataset.sourceGridId,
+        route_id: card.dataset.routeId,
+        review_status: status,
+        reviewer: reviewer,
+        reviewed_at: reviewedAt,
+        resolution_note: card.querySelector('[data-role="note"]').value.trim()
+      };
+    });
+    const routeStepReviews = Array.from(routeStepContainer.children).map((card) => {
+      const status = card.querySelector('[data-role="status"]').value;
+      const reviewer = (card.querySelector('[data-role="reviewer"]').value || defaultReviewer).trim();
+      const reviewedAt = status === 'pending' ? '' : (card.dataset.reviewedAt || currentTimestamp());
+      return {
+        route_id: card.dataset.routeId,
+        step_index: Number(card.dataset.stepIndex),
+        review_status: status,
+        reviewer: reviewer,
+        reviewed_at: reviewedAt,
+        resolution_note: card.querySelector('[data-role="note"]').value.trim()
+      };
+    });
+    const focusReviews = Array.from(focusContainer.children).map((card) => {
+      const status = card.querySelector('[data-role="status"]').value;
+      const reviewer = (card.querySelector('[data-role="reviewer"]').value || defaultReviewer).trim();
+      const reviewedAt = status === 'pending' ? '' : (card.dataset.reviewedAt || currentTimestamp());
+      return {
+        focus: card.dataset.focus,
+        review_status: status,
+        reviewer: reviewer,
+        reviewed_at: reviewedAt,
+        resolution_note: card.querySelector('[data-role="note"]').value.trim()
+      };
+    });
+    return {
+      level_id: reviewData.level_id,
+      updated_at: currentTimestamp(),
+      checkpoint_reviews: checkpointReviews,
+      route_step_reviews: routeStepReviews,
+      focus_reviews: focusReviews
+    };
+  }
+
+  function applyReviewData(doc) {
+    const checkpointMap = new Map((doc.checkpoint_reviews || []).map((item) => [`${item.id}|${item.ref}|${item.source_grid_id}`, item]));
+    for (const card of checkpointContainer.children) {
+      const key = `${card.dataset.id}|${card.dataset.ref}|${card.dataset.sourceGridId}`;
+      const item = checkpointMap.get(key);
+      if (!item) continue;
+      card.querySelector('[data-role="status"]').value = item.review_status || 'pending';
+      card.querySelector('[data-role="reviewer"]').value = item.reviewer || '';
+      card.querySelector('[data-role="note"]').value = item.resolution_note || '';
+      card.dataset.reviewedAt = item.reviewed_at || '';
+    }
+    const routeStepMap = new Map((doc.route_step_reviews || []).map((item) => [`${item.route_id}|${item.step_index}`, item]));
+    for (const card of routeStepContainer.children) {
+      const key = `${card.dataset.routeId}|${card.dataset.stepIndex}`;
+      const item = routeStepMap.get(key);
+      if (!item) continue;
+      card.querySelector('[data-role="status"]').value = item.review_status || 'pending';
+      card.querySelector('[data-role="reviewer"]').value = item.reviewer || '';
+      card.querySelector('[data-role="note"]').value = item.resolution_note || '';
+      card.dataset.reviewedAt = item.reviewed_at || '';
+    }
+    const focusMap = new Map((doc.focus_reviews || []).map((item) => [item.focus, item]));
+    for (const card of focusContainer.children) {
+      const item = focusMap.get(card.dataset.focus);
+      if (!item) continue;
+      card.querySelector('[data-role="status"]').value = item.review_status || 'pending';
+      card.querySelector('[data-role="reviewer"]').value = item.reviewer || '';
+      card.querySelector('[data-role="note"]').value = item.resolution_note || '';
+      card.dataset.reviewedAt = item.reviewed_at || '';
+    }
+  }
+
+  exportButton.addEventListener('click', () => {
+    const payload = collectReviews();
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'glove_manual_review_result.json';
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  importButton.addEventListener('click', () => importInput.click());
+  importInput.addEventListener('change', async () => {
+    const file = importInput.files && importInput.files[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const doc = JSON.parse(text);
+      applyReviewData(doc);
+    } catch (error) {
+      alert('导入失败：' + error.message);
+    }
+  });
+
+  renderCheckpointForms();
+  renderRouteStepForms();
+  renderFocusForms();
+})();
+
+</script>
+</main></body></html>

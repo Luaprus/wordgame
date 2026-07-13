@@ -1,0 +1,70 @@
+{
+  "level_id": "sword",
+  "routes": [
+    {
+      "route_id": "sword-tutorial-slime",
+      "target_feature_id": "F019",
+      "baseline_id": "SWORD-BEH-001",
+      "behavior_id": "SWORD-TUTORIAL-FLOW",
+      "route_path": "res://../harness/demo_routes/sword/sword_tutorial_slime_route.json",
+      "status": "blocked",
+      "notes": "教学段成功路线入口；待把逐步输入拆进可执行 steps。"
+    },
+    {
+      "route_id": "sword-slime-success",
+      "target_feature_id": "F019",
+      "baseline_id": "SWORD-BEH-002",
+      "behavior_id": "SWORD-SLIME-SUCCESS",
+      "status": "blocked",
+      "notes": "史莱姆成功路线入口；待补逐格输入与关键状态截图。"
+    },
+    {
+      "route_id": "sword-slime-failure",
+      "target_feature_id": "F019",
+      "baseline_id": "SWORD-BEH-003",
+      "behavior_id": "SWORD-SLIME-FAILURE",
+      "status": "blocked",
+      "notes": "史莱姆失败路线入口；待补失败前置状态与反馈截图。"
+    },
+    {
+      "route_id": "sword-snake-open",
+      "target_feature_id": "F020",
+      "baseline_id": "SWORD-BEH-004",
+      "behavior_id": "SWORD-SNAKE-PHASE-OPEN",
+      "status": "blocked",
+      "notes": "蛇妖开场与战斗推进入口。"
+    },
+    {
+      "route_id": "sword-snake-damage",
+      "target_feature_id": "F020",
+      "baseline_id": "SWORD-BEH-005",
+      "behavior_id": "SWORD-SNAKE-DAMAGE",
+      "status": "blocked",
+      "notes": "蛇妖受伤/剥皮/抖动链入口。"
+    },
+    {
+      "route_id": "sword-snake-failure",
+      "target_feature_id": "F020",
+      "baseline_id": "SWORD-BEH-006",
+      "behavior_id": "SWORD-SNAKE-FAILURE",
+      "status": "blocked",
+      "notes": "蛇妖失败反馈入口。"
+    },
+    {
+      "route_id": "sword-village-dissolve",
+      "target_feature_id": "F021",
+      "baseline_id": "SWORD-BEH-007",
+      "behavior_id": "SWORD-VILLAGE-DISSOLVE",
+      "status": "blocked",
+      "notes": "村中显现演出入口。"
+    },
+    {
+      "route_id": "sword-transition-out",
+      "target_feature_id": "F021",
+      "baseline_id": "SWORD-BEH-008",
+      "behavior_id": "SWORD-TRANSITION-OUT",
+      "status": "blocked",
+      "notes": "收尾转场入口。"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $Godot = "E:\Godot\Godot_v4.7-stable_win64_console.exe"
@@ -20,6 +20,7 @@ $tests = @(
     "res://tests/test_smooth_grid_mover.gd",
     "res://tests/test_visual_resources.gd",
     "res://tests/test_precision_movement.gd",
+    "res://tests/test_glove_level.gd",
     "res://tests/test_visual_smoke_entry.gd"
 )
 

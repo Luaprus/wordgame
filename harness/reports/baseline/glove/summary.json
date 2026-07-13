@@ -1,5 +1,5 @@
 ﻿{
-    "blocked":  38,
+    "blocked":  39,
     "by_kind":  {
                     "behavior":  {
                                      "blocked":  8,
@@ -14,9 +14,9 @@
                                   "confirmed":  0
                               },
                     "grid":  {
-                                 "blocked":  14,
+                                 "blocked":  15,
                                  "manual_required":  0,
-                                 "total":  14,
+                                 "total":  15,
                                  "confirmed":  0
                              },
                     "animation":  {
@@ -28,8 +28,8 @@
                 },
     "confirmed":  0,
     "manual_required":  0,
-    "generated_at":  "2026-07-10T10:32:24.1036869+08:00",
-    "total_records":  38,
+    "generated_at":  "2026-07-12T19:18:19.6310480+08:00",
+    "total_records":  39,
     "record_ids":  [
                        "GLOVE-ANIM-001",
                        "GLOVE-ANIM-002",
@@ -68,7 +68,8 @@
                        "GLOVE-GRID-011",
                        "GLOVE-GRID-012",
                        "GLOVE-GRID-013",
-                       "GLOVE-GRID-014"
+                       "GLOVE-GRID-014",
+                       "GLOVE-GRID-015"
                    ],
     "level_id":  "glove"
 }

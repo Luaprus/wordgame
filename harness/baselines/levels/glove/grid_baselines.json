@@ -277,6 +277,26 @@
       "objects": [
         { "ref": "GLOVE-SHOT-018", "summary": "玩家字、勇者字、手势说明“赞”、巨掌墙体、碰撞变化候选区域。" }
       ]
+    },
+    {
+      "id": "GLOVE-GRID-015",
+      "feature_id": "F023",
+      "level_id": "glove",
+      "source_type": "docx",
+      "source_path": "参考资料/图片参考/手套流程.docx",
+      "source_timecode": null,
+      "source_frame": null,
+      "source_scene": null,
+      "status": "blocked",
+      "notes": "对应 GLOVE-SHOT-008。该截图可作为“好”字入槽后切到好手势的辅助锚点，能确认巨掌布局、文案“是好的手势”与中段台词，但它在原版游戏流程中的精确前后关系仍需人工复查。",
+      "state_id": "good_hand_followup",
+      "map_size": { "width": null, "height": null },
+      "cell_size": 60,
+      "player_initial_grid": { "x": 26, "y": 15 },
+      "player_initial_direction": null,
+      "objects": [
+        { "ref": "GLOVE-SHOT-008", "summary": "玩家字、勇者字、巨掌墙体、手势说明“好”、战术提示文案。" }
+      ]
     }
   ]
 }

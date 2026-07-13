@@ -1,0 +1,228 @@
+{
+	"baseline_id": "FRAMEWORK-DEMO-001",
+	"behavior_id": "",
+	"failed_steps": 0,
+	"feature_id": "F016",
+	"final_state": {
+		"current_page_origin": [
+			32,
+			0
+		],
+		"facing": [
+			1,
+			0
+		],
+		"player_pos": [
+			32,
+			1
+		],
+		"rule_state": {
+			"switches": {},
+			"variables": {}
+		}
+	},
+	"level_id": "framework",
+	"route_id": "framework-demo",
+	"snapshots": [
+		"E:/wordgame copy/newgame/../harness/reports/demo/framework_demo_snapshot.png"
+	],
+	"steps": [
+		{
+			"facing": [
+				1,
+				0
+			],
+			"index": 0,
+			"message": "move to watch",
+			"player_pos": [
+				3,
+				1
+			],
+			"success": true,
+			"type": "set_player"
+		},
+		{
+			"facing": [
+				1,
+				0
+			],
+			"index": 1,
+			"message": "手表可以查看人类世界的时间",
+			"player_pos": [
+				3,
+				1
+			],
+			"success": true,
+			"type": "action"
+		},
+		{
+			"facing": [
+				1,
+				0
+			],
+			"index": 2,
+			"message": "face deletable word",
+			"player_pos": [
+				4,
+				2
+			],
+			"success": true,
+			"type": "set_player"
+		},
+		{
+			"facing": [
+				1,
+				0
+			],
+			"index": 3,
+			"message": "",
+			"player_pos": [
+				4,
+				2
+			],
+			"success": true,
+			"type": "action"
+		},
+		{
+			"facing": [
+				1,
+				0
+			],
+			"index": 4,
+			"message": "push stone",
+			"player_pos": [
+				6,
+				1
+			],
+			"success": true,
+			"type": "set_player"
+		},
+		{
+			"facing": [
+				1,
+				0
+			],
+			"index": 5,
+			"message": "",
+			"player_pos": [
+				7,
+				1
+			],
+			"success": true,
+			"type": "action"
+		},
+		{
+			"facing": [
+				-1,
+				0
+			],
+			"index": 6,
+			"message": "prepare pull",
+			"player_pos": [
+				9,
+				1
+			],
+			"success": true,
+			"type": "set_player"
+		},
+		{
+			"facing": [
+				-1,
+				0
+			],
+			"index": 7,
+			"message": "",
+			"player_pos": [
+				10,
+				1
+			],
+			"success": true,
+			"type": "action"
+		},
+		{
+			"facing": [
+				1,
+				0
+			],
+			"index": 8,
+			"message": "prepare split",
+			"player_pos": [
+				7,
+				2
+			],
+			"success": true,
+			"type": "set_player"
+		},
+		{
+			"facing": [
+				1,
+				0
+			],
+			"index": 9,
+			"message": "",
+			"player_pos": [
+				7,
+				2
+			],
+			"success": true,
+			"type": "action"
+		},
+		{
+			"facing": [
+				1,
+				0
+			],
+			"index": 10,
+			"message": "merge split parts",
+			"player_pos": [
+				7,
+				2
+			],
+			"success": true,
+			"type": "merge"
+		},
+		{
+			"facing": [
+				1,
+				0
+			],
+			"index": 11,
+			"message": "trigger sentence rule",
+			"player_pos": [
+				7,
+				2
+			],
+			"success": true,
+			"type": "sentence"
+		},
+		{
+			"facing": [
+				1,
+				0
+			],
+			"index": 12,
+			"message": "move to page edge",
+			"player_pos": [
+				31,
+				1
+			],
+			"success": true,
+			"type": "set_player"
+		},
+		{
+			"facing": [
+				1,
+				0
+			],
+			"index": 13,
+			"message": "",
+			"player_pos": [
+				32,
+				1
+			],
+			"success": true,
+			"type": "action"
+		}
+	],
+	"target_feature_id": ""
+}

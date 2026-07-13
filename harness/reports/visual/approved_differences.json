@@ -1,0 +1,12 @@
+{
+  "approvals": [
+    {
+      "baseline_id": "FRAMEWORK-SMOKE-001",
+      "level_id": "framework",
+      "reason": "Windows capture includes a dynamic top title-bar strip; measured diffs are confined to rows 0-37 and do not affect the gameplay content area.",
+      "approved_scope": "title_bar_only",
+      "measured_bbox": [0, 0, 1549, 37],
+      "approved_at": "2026-07-12T08:00:00+08:00"
+    }
+  ]
+}

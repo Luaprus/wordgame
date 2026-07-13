@@ -1,0 +1,145 @@
+{
+  "level_id": "glove",
+  "display_name": "手套关",
+  "owner": "codex",
+  "status": "in_progress",
+  "source": {
+    "external_root": "D:/文字游戏",
+    "source_maps": [
+      {
+        "source_map": "D:/文字游戏/Scenes/Maps/第三章/04_手套教學.tscn",
+        "local_reference_map": "E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/04_手套教學.tscn",
+        "event": "GLOVE-SEG-CORRECT",
+        "notes": "起点、生命线与正确路线主流程锚点。"
+      },
+      {
+        "source_map": "D:/文字游戏/Scenes/Maps/第三章/11_添譜來堂_開場.tscn",
+        "local_reference_map": "E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/11_添譜來堂_開場.tscn",
+        "event": "GLOVE-SEG-GESTURES",
+        "notes": "赞/一/二/赢等手势变化与环境音来源候选。"
+      },
+      {
+        "source_map": "D:/文字游戏/Scenes/Maps/第三章/14_添譜來堂_拳頭轉場.tscn",
+        "local_reference_map": "E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/14_添譜來堂_拳頭轉場.tscn",
+        "event": "GLOVE-ANIM-004",
+        "notes": "手势切换转场动画候选来源。"
+      },
+      {
+        "source_map": "D:/文字游戏/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn",
+        "local_reference_map": "E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn",
+        "event": "GLOVE-SEG-CORRECT",
+        "notes": "好手势、删“不”后放开、掌中剑换位候选来源。"
+      },
+      {
+        "source_map": "D:/文字游戏/Scenes/Maps/第三章/16_添譜來堂_尾聲.tscn",
+        "local_reference_map": "E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/16_添譜來堂_尾聲.tscn",
+        "event": "GLOVE-TRANSITION-OUT",
+        "notes": "黑屏对白与收尾状态候选来源。"
+      }
+    ],
+    "source_video": "E:/wordgame copy/参考资料/视频参考/手套关卡全录屏.mkv",
+    "source_docx": "E:/wordgame copy/参考资料/图片参考/手套流程.docx"
+  },
+  "target": {
+    "godot_version": "4.7",
+    "preview_scene": "res://levels/glove/glove_preview.tscn",
+    "level_script": "res://levels/glove/glove_level.gd",
+    "report_export_entry": "res://scripts/levels/glove/glove_route_report_export_main.gd"
+  },
+  "map": {
+    "runtime_model": "GridWorld dictionary level",
+    "screen_size": [32, 18],
+    "cell_size": 60,
+    "player_spawn_pos": [20, 15],
+    "player_facing": [1, 0],
+    "bounded": true,
+    "notes": "当前仓库不是直接回写原始 Scene/Maps 目录，而是通过 glove_level.gd + glove_preview.tscn 生成可回放运行版。"
+  },
+  "flow": {
+    "entry_from": [
+      "打开 res://levels/glove/glove_preview.tscn",
+      "F5 回放正确路线",
+      "F6 回放错误路线",
+      "F7 回放路径打开中段",
+      "F8 回放收尾转场"
+    ],
+    "exit_to": [
+      {
+        "event": "transition_out",
+        "target": "黑屏对白收尾",
+        "status": "candidate",
+        "notes": "是否直接接到下一张原版地图仍需人工复查。"
+      }
+    ],
+    "route_ids": [
+      "glove_correct_route_runtime",
+      "glove_wrong_route_runtime",
+      "glove_gesture_cycle_runtime",
+      "glove_like_gesture_runtime",
+      "glove_release_after_delete_runtime",
+      "glove_collision_change_runtime",
+      "glove_good_clue_runtime",
+      "glove_lifeline_reclose_runtime",
+      "glove_path_opened_runtime",
+      "glove_transition_out_runtime",
+      "glove_sword_swap_runtime"
+    ]
+  },
+  "states": {
+    "confirmed": [
+      "initial_zero",
+      "gesture_like",
+      "gesture_one",
+      "gesture_two",
+      "gesture_win",
+      "gesture_good",
+      "lifeline_blocked",
+      "lifeline_open",
+      "path_opened",
+      "failure_feedback",
+      "transition_out",
+      "sword_swap_left",
+      "sword_swap_right"
+    ],
+    "candidate": [
+      "released_after_delete_no",
+      "collision_changed",
+      "good_hand_followup",
+      "love_gesture_validity"
+    ]
+  },
+  "reports": {
+    "runtime_summary": "harness/reports/demo/glove/glove_runtime_reports_summary.json",
+    "visual_smoke": [
+      "harness/reports/visual/glove/GLOVE-SHOT-009__report.json",
+      "harness/reports/visual/glove/GLOVE-SHOT-010__report.json"
+    ],
+    "manual_review": [
+      "harness/demo_routes/glove/manual_review_checklist.md",
+      "harness/demo_routes/glove/glove_flow_handoff.md"
+    ]
+  },
+  "required_resources": {
+    "animation_baselines": "harness/baselines/levels/glove/animation_baselines.json",
+    "audio_baselines": "harness/baselines/levels/glove/audio_baselines.json",
+    "behavior_baselines": "harness/baselines/levels/glove/behavior_baselines.json",
+    "grid_baselines": "harness/baselines/levels/glove/grid_baselines.json"
+  },
+  "acceptance": [
+    "preview_scene_opens_without_missing_resources",
+    "res://tests/test_glove_level.gd passes",
+    "tools/run_all_tests.ps1 passes",
+    "tools/capture_visual_smoke.ps1 passes",
+    "glove_runtime_reports_summary.json exports 11 runtime reports with failed_count = 0",
+    "GLOVE-SHOT-009 and GLOVE-SHOT-010 visual diff reports stay at 0 pixels",
+    "level_manifest.json and handoff.md are kept in sync with the current runtime behavior"
+  ],
+  "manual_review_focus": [
+    "正确路线真实逐步输入顺序",
+    "爱字源码计算候选格 [2,12] 的原版运行确认，以及从该格推入手势槽的真实路径",
+    "各手势逐格碰撞变化真值",
+    "删“不”后放开动画的实际缓动、镜头震动观感与截图落帧",
+    "尾声三段对白的逐帧打字速度、停顿与镜头构图"
+  ],
+  "notes": "当前 handoff 以“可运行真值 + candidate 标记”区分自动证据与人工复查，不把候选锚点伪装成原版真值。"
+}

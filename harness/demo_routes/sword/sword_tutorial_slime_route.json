@@ -1,0 +1,17 @@
+{
+  "route_id": "sword-tutorial-slime",
+  "feature_id": "F016",
+  "target_feature_id": "F019",
+  "baseline_id": "SWORD-BEH-001",
+  "behavior_id": "SWORD-TUTORIAL-FLOW",
+  "level_id": "sword",
+  "world_source": "test_level",
+  "route_stage": "skeleton",
+  "notes": "Minimal executable skeleton route for the sword level pack. Uses the shared test level until F019 gameplay scenes are wired.",
+  "steps": [
+    { "type": "set_player", "pos": [3, 1], "facing": [1, 0], "caption": "face watch interaction" },
+    { "type": "action", "action": "interact", "direction": [0, 0], "caption": "interact succeeds" },
+    { "type": "set_player", "pos": [4, 2], "facing": [1, 0], "caption": "face deletable word" },
+    { "type": "action", "action": "delete", "direction": [0, 0], "caption": "delete succeeds" }
+  ]
+}

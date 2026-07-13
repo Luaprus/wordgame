@@ -1,0 +1,20 @@
+{
+  "route_id": "glove-collision-change",
+  "feature_id": "F024",
+  "target_feature_id": "F024",
+  "baseline_id": "GLOVE-BEH-005",
+  "behavior_id": "GLOVE-COLLISION-CHANGE",
+  "level_id": "glove",
+  "world_source": "glove_level",
+  "route_stage": "canonical",
+  "notes": "真实复用已验证的碰撞变化路线，连续通过左侧和下方入口。",
+  "steps": [
+    {
+      "type": "route_segment",
+      "route_path": "res://../harness/demo_routes/glove/glove_collision_change_runtime.json",
+      "through_caption": "好手势时通过下方入口",
+      "caption": "复用已验证碰撞变化路线",
+      "expect": {"player_pos": [0,11], "last_message": "巨大手掌，是好的手势。"}
+    }
+  ]
+}

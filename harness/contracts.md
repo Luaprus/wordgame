@@ -3,8 +3,9 @@
 ## 总规则
 
 - `harness/*` 是治理、需求、基准、报告和验收层，不直接包含 Godot 运行逻辑。
-- `tools/*` 是根目录一键入口和工程辅助脚本，可以调用 `新建游戏项目/tools/*`，但不应绕过 harness 校验。
-- `新建游戏项目/*` 是 Godot 4.7 复刻工程。
+- `tools/*` 是根目录一键入口和工程辅助脚本，可以调用 `newgame/tools/*`，但不应绕过 harness 校验。
+- `newgame/tools/*` 属于项目内测试与 smoke 辅助层；当根目录一键验证依赖这些脚本时，允许在对应 feature 的 `allowed_files` 中显式纳入并修复稳定性问题。
+- `newgame/*` 是 Godot 4.7 复刻工程。
 - `参考资料/*` 是只读原版资料，不允许修改。
 - 基准表是实现的输入，不允许由实现结果反向覆盖原版基准。
 
@@ -102,6 +103,7 @@
 - 面向交互：所有交互入口统一调用面向判定。
 - 字实体：文字、坐标、层级、碰撞、可推、可拉、可删、可拆、可合、可交互、可见性条件。
 - 规则引擎：横向/纵向扫描、句子匹配、变量/开关更新、撤销规则。
+- 规则高亮演出：句子命中后的高亮动画允许由 `newgame/scripts/main.gd` 这一渲染桥接层消费基座状态来表现，但不得把句子判定逻辑搬出 `grid_world.gd` / `rule_engine.gd`。
 - 动画事件：由行为触发，记录触发时间和基准 id。
 - 音频事件：由行为或动画触发，记录触发时间和基准 id。
 
@@ -114,6 +116,13 @@
 - 动画参数来自动画基准表。
 - 音频触发来自音频基准表。
 - 自动演示路线必须与视频/行为基准对应。
+
+### 头盔关冻结约束
+
+- `newgame/levels/helmet/*` 与其现有流程细节默认视为已锁定参考实现。
+- 在剑关与手套关的公共前置能力建设阶段，不主动回改头盔关内部细节、节奏、坐标或演出。
+- 如果后续统一接入主测试链时出现接口层或加载层问题，只允许做最小桥接修复，不允许借机重写头盔关内容。
+- 任何需要改动头盔关玩法细节的需求，必须先更新 `harness/features.json`、`harness/plan.md` 与 `harness/progress.jsonl`，把原因和影响范围写清楚。
 
 关卡层不得：
 
@@ -141,5 +150,46 @@
 
 - Visual smoothing is presentation-only.
 - It may interpolate screen-space motion between two valid grid states.
-- It must not mutate gameplay truth in `新建游戏项目/scripts/grid_world.gd`.
+- It must not mutate gameplay truth in `newgame/scripts/grid_world.gd`.
 - The final rendered position after interpolation must equal the exact target grid cell position.
+
+## F024 手套关文档流程配置契约
+
+- `initial_interact_effect` 表示关卡加载后仅可消费一次的开场互动；带有 `only_without_front_target: true` 时，只能在玩家前方没有实体时触发，不得抢占正常的面对实体互动。
+- `entity_move_effects` 表示字实体经过真实推、拉或移动后触发的地图变化。每项必须声明 `text`，并通过 `from`、`to` 或 `leaves_from` 限定触发范围。
+- `entity_move_effects` 只能响应已经完成的合法格子移动，不得直接伪造玩家位置、手势槽或字实体位置。
+- 手套关图一至图七以 `参考资料/手套关流程.docx` 为流程权威；旧 route 与该文档冲突时必须重建，不能以旧测试通过作为保留错误流程的理由。
+
+## F024 手套关主入口桥接契约
+
+- `Main.tscn` 仍然保持头盔关默认启动入口；不允许把项目默认首屏切成手套关。
+- `newgame/scripts/main.gd` 只允许增加显式场景切换桥接，例如启动参数解析或专用快捷键，把用户导向 `res://levels/glove/glove_preview.tscn`。
+- 这层桥接不得改写头盔关 `LEVEL_SEQUENCE`、现有输入规则、移动规则或高亮渲染契约。
+- `res://levels/glove/glove_preview.tscn` / `glove_preview.gd` 可以补充返回 `res://Main.tscn` 的轻量通道，但不得把手套关逻辑重新耦合回头盔关内部状态。
+- 相关验证必须至少覆盖：
+  - `newgame/tests/test_gameplay_core.gd` 中的主入口桥接解析。
+  - `newgame/tests/test_glove_level.gd` 中的手套试玩页返回桥接解析。
+  - 根目录一键验证脚本的 fresh 通过证据。
+
+## F025 Glove Helper Route Contract
+
+- F024 的 canonical/runtime/helper 路线均禁止使用 `set_player`、`set_gesture_slot`、`place_at_palm`；不得以测试布置代替玩家可执行流程。
+- 路线只允许使用玩家真实输入、受约束的 `route_segment`，或由源码条件自动触发的 `source_event`。
+- `route_segment` 只允许复用已经存在、可独立通过测试的 canonical/runtime 路线；必须同时声明 `route_path` 与唯一的 `through_caption`。
+- `route_segment` 必须从被引用路线起点真实执行每个输入直到指定 caption，不允许直接复制最终坐标、开关或实体状态；来源缺失、终止 caption 缺失或内部步骤失败时，外层路线必须失败。
+- 外层 route report 必须记录被引用路线和终止 caption，并可在该步骤上挂自己的 checkpoint；完整逐步输入证据仍以被引用路线的独立 report 为准。
+- 禁止形成循环引用。当前 `glove-transition-out` 只能单向复用 `glove-correct-route`，正确路线不得反向引用 transition helper。
+
+### F024 Action Sequence Contract
+
+- `action_sequence` 只用于压缩可重复审计的长输入序列；每一项必须明确声明 `action` 与 `direction`。
+- runner 必须按顺序逐项调用现有 `GridWorld.try_player_action`，不得直接修改玩家、实体、手势槽或关卡开关。
+- 任一输入失败时整个步骤必须立即失败；route report 必须原样保留完整 `actions` 数组。
+- `action_sequence` 与逐条 `action` 的行为语义必须一致，并由专项测试覆盖。
+
+## F024 Source Event Contract
+
+- `source_event` 仅用于复刻源码中由地图事件自动执行的动作，不代表玩家瞬移或辅助设置。
+- route 必须提供源码事件对应的 `pos`；运行时通过 `GridWorld.trigger_step_effect_at(pos)` 执行现有条件和 effect。
+- 事件条件不满足、事件不存在或地图未提供该 API 时，route 必须失败。
+- 手套关收尾的 `勇` 事件负责源码中的 `[24,5]` 自动交接、遮屏、锁输入和尾声对白；玩家路线不再穿过不可达掌墙。

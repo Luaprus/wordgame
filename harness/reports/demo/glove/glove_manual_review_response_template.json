@@ -1,0 +1,110 @@
+{
+	"checkpoint_reviews": [
+		{
+			"id": "good_hand_followup",
+			"ref": "GLOVE-SHOT-008",
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": "",
+			"route_id": "glove-good-clue-runtime",
+			"source_grid_id": "GLOVE-GRID-015"
+		},
+		{
+			"id": "transition_out",
+			"ref": "GLOVE-SHOT-009",
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": "",
+			"route_id": "glove-transition-out-runtime",
+			"source_grid_id": "GLOVE-GRID-012"
+		}
+	],
+	"focus_reviews": [
+		{
+			"focus": "正确路线真实逐步输入顺序",
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": ""
+		},
+		{
+			"focus": "爱字源码计算候选格 [2,12] 的原版运行确认，以及从该格推入手势槽的真实路径",
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": ""
+		},
+		{
+			"focus": "各手势逐格碰撞变化真值",
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": ""
+		},
+		{
+			"focus": "删“不”后放开动画的实际缓动、镜头震动观感与截图落帧",
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": ""
+		},
+		{
+			"focus": "尾声三段对白的逐帧打字速度、停顿与镜头构图",
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": ""
+		}
+	],
+	"generated_at": "2026-07-13 08:20:13",
+	"level_id": "glove",
+	"note": "填写 checkpoint_reviews、route_step_reviews 和 focus_reviews 后，可用 glove_manual_review_import_main.gd 导入到 harness/demo_routes/glove/manual_review_overrides.json。",
+	"route_step_reviews": [
+		{
+			"caption": "record initial layout anchor",
+			"caption_localized": "记录起始布局",
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": "",
+			"route_id": "glove-correct-route-runtime",
+			"route_label": "正确路线运行版",
+			"step_index": 0
+		},
+		{
+			"caption": "walk from start to lower lifeline clue",
+			"caption_localized": "从起点走到下方生命线线索",
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": "",
+			"route_id": "glove-correct-route-runtime",
+			"route_label": "正确路线运行版",
+			"step_index": 1
+		},
+		{
+			"caption": "walk from opened lifeline to mid path anchor",
+			"caption_localized": "沿开路走到中段锚点",
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": "",
+			"route_id": "glove-path-opened-runtime",
+			"route_label": "路径打开运行版",
+			"step_index": 0
+		},
+		{
+			"caption": "reuse verified correct route through transition",
+			"caption_localized": "复用已验证正确路线直到黑屏转场",
+			"resolution_note": "",
+			"review_status": "pending",
+			"reviewed_at": "",
+			"reviewer": "",
+			"route_id": "glove-transition-out-runtime",
+			"route_label": "收尾转场运行版",
+			"step_index": 0
+		}
+	]
+}

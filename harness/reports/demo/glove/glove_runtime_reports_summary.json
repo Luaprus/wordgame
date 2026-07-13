@@ -1,0 +1,85 @@
+{
+	"exported_count": 11,
+	"failed_count": 11,
+	"level_id": "glove",
+	"output_dir": "E:/wordgame copy/newgame/../harness/reports/demo/glove",
+	"reports": [
+		{
+			"checkpoint_count": 1,
+			"failed_step": 1,
+			"report_path": "E:/wordgame copy/newgame/../harness/reports/demo/glove/glove-correct-route-runtime__report.json",
+			"route_id": "glove-correct-route-runtime",
+			"success": false
+		},
+		{
+			"checkpoint_count": 0,
+			"failed_step": 0,
+			"report_path": "E:/wordgame copy/newgame/../harness/reports/demo/glove/glove-wrong-route-runtime__report.json",
+			"route_id": "glove-wrong-route-runtime",
+			"success": false
+		},
+		{
+			"checkpoint_count": 0,
+			"failed_step": 0,
+			"report_path": "E:/wordgame copy/newgame/../harness/reports/demo/glove/glove-gesture-cycle-runtime__report.json",
+			"route_id": "glove-gesture-cycle-runtime",
+			"success": false
+		},
+		{
+			"checkpoint_count": 0,
+			"failed_step": 0,
+			"report_path": "E:/wordgame copy/newgame/../harness/reports/demo/glove/glove-like-gesture-runtime__report.json",
+			"route_id": "glove-like-gesture-runtime",
+			"success": false
+		},
+		{
+			"checkpoint_count": 1,
+			"failed_step": 0,
+			"report_path": "E:/wordgame copy/newgame/../harness/reports/demo/glove/glove-sword-swap-runtime__report.json",
+			"route_id": "glove-sword-swap-runtime",
+			"success": false
+		},
+		{
+			"checkpoint_count": 1,
+			"failed_step": 0,
+			"report_path": "E:/wordgame copy/newgame/../harness/reports/demo/glove/glove-good-clue-runtime__report.json",
+			"route_id": "glove-good-clue-runtime",
+			"success": false
+		},
+		{
+			"checkpoint_count": 0,
+			"failed_step": 0,
+			"report_path": "E:/wordgame copy/newgame/../harness/reports/demo/glove/glove-release-after-delete-runtime__report.json",
+			"route_id": "glove-release-after-delete-runtime",
+			"success": false
+		},
+		{
+			"checkpoint_count": 0,
+			"failed_step": 0,
+			"report_path": "E:/wordgame copy/newgame/../harness/reports/demo/glove/glove-collision-change-runtime__report.json",
+			"route_id": "glove-collision-change-runtime",
+			"success": false
+		},
+		{
+			"checkpoint_count": 0,
+			"failed_step": 0,
+			"report_path": "E:/wordgame copy/newgame/../harness/reports/demo/glove/glove-lifeline-reclose-runtime__report.json",
+			"route_id": "glove-lifeline-reclose-runtime",
+			"success": false
+		},
+		{
+			"checkpoint_count": 1,
+			"failed_step": 0,
+			"report_path": "E:/wordgame copy/newgame/../harness/reports/demo/glove/glove-path-opened-runtime__report.json",
+			"route_id": "glove-path-opened-runtime",
+			"success": false
+		},
+		{
+			"checkpoint_count": 1,
+			"failed_step": 0,
+			"report_path": "E:/wordgame copy/newgame/../harness/reports/demo/glove/glove-transition-out-runtime__report.json",
+			"route_id": "glove-transition-out-runtime",
+			"success": false
+		}
+	]
+}

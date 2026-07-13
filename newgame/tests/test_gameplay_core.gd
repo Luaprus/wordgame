@@ -1,6 +1,8 @@
 extends SceneTree
 
 const GridWorld = preload("res://scripts/grid_world.gd")
+const MainSceneScript = preload("res://scripts/main.gd")
+const GLOVE_PREVIEW_SCENE_PATH := "res://levels/glove/glove_preview.tscn"
 
 var failures: Array[String] = []
 
@@ -10,6 +12,12 @@ func _init() -> void:
 	test_facing_gate_requires_target_in_front()
 	test_interact_delete_push_pull()
 	test_split_merge_and_sentence_rule()
+	test_sentence_rules_support_vertical_matches_and_revert_state()
+	test_sentence_rules_can_keep_state_after_match_breaks()
+	test_sentence_match_starts_highlight_animation_state()
+	test_highlight_visual_config_resource_is_present()
+	test_main_scene_resolves_glove_startup_entry_arg()
+	test_main_scene_resolves_glove_scene_shortcut()
 	test_pull_direction_is_locked_to_player_side()
 	test_push_into_merge_target_auto_merges()
 	test_merged_word_splits_to_source_cells_and_moves_player()
@@ -229,6 +237,147 @@ func test_split_merge_and_sentence_rule() -> void:
 	assert_equal(result["天气"].message, "已识别", "sentence rule emits configured caption")
 	assert_true(world.highlighted_cells.has(sentence_start), "sentence start cell highlighted")
 	assert_true(world.highlighted_cells.has(air.grid_pos), "sentence second cell highlighted")
+
+func test_sentence_rules_support_vertical_matches_and_revert_state() -> void:
+	var world = GridWorld.new()
+	world.load_level({
+		"rows": [
+			" A  ",
+			" B  ",
+			"    "
+		],
+		"sentence_rules": {
+			"AB": {
+				"direction": "vertical",
+				"message": "vertical matched",
+				"set_switches": {"gate_open": true},
+				"set_variables": {"bridge_stage": 2}
+			}
+		}
+	})
+	assert_true(world.has_method("get_rule_state"), "world exposes rule state query")
+	var matched = world.check_sentence_rules()
+	assert_true(matched.has("AB"), "vertical sentence rule recognizes stacked text")
+	assert_true(world.highlighted_cells.has(Vector2i(1, 0)), "vertical match highlights first cell")
+	assert_true(world.highlighted_cells.has(Vector2i(1, 1)), "vertical match highlights second cell")
+	if world.has_method("get_rule_state"):
+		var state: Dictionary = world.get_rule_state()
+		assert_equal(state.get("switches", {}).get("gate_open"), true, "matching rule enables configured switch")
+		assert_equal(state.get("variables", {}).get("bridge_stage"), 2, "matching rule writes configured variable")
+	var lower = world.get_entity_at(Vector2i(1, 1))
+	assert_true(lower != null, "vertical fixture second word exists before breaking match")
+	if lower:
+		world.move_entity_to(lower.id, Vector2i(2, 1))
+	var after_break = world.check_sentence_rules()
+	assert_false(after_break.has("AB"), "vertical sentence rule no longer matches after text moves away")
+	assert_false(world.highlighted_cells.has(Vector2i(1, 0)), "highlight clears after rule stops matching")
+	if world.has_method("get_rule_state"):
+		var cleared_state: Dictionary = world.get_rule_state()
+		assert_false(cleared_state.get("switches", {}).has("gate_open"), "reverting rule clears configured switch")
+		assert_false(cleared_state.get("variables", {}).has("bridge_stage"), "reverting rule clears configured variable")
+
+func test_sentence_rules_can_keep_state_after_match_breaks() -> void:
+	var world = GridWorld.new()
+	world.load_level({
+		"rows": [
+			"AB ",
+			"   "
+		],
+		"sentence_rules": {
+			"AB": {
+				"message": "sticky matched",
+				"set_switches": {"sticky_gate": true},
+				"set_variables": {"sticky_stage": 7},
+				"persist_state_on_miss": true
+			}
+		}
+	})
+	assert_true(world.has_method("get_rule_state"), "world exposes rule state query for sticky rules")
+	var matched = world.check_sentence_rules()
+	assert_true(matched.has("AB"), "horizontal sentence rule matches control fixture")
+	var second = world.get_entity_at(Vector2i(1, 0))
+	assert_true(second != null, "sticky fixture second word exists before breaking match")
+	if second:
+		world.move_entity_to(second.id, Vector2i(2, 1))
+	var after_break = world.check_sentence_rules()
+	assert_false(after_break.has("AB"), "sticky rule also stops matching after text moves away")
+	if world.has_method("get_rule_state"):
+		var sticky_state: Dictionary = world.get_rule_state()
+		assert_equal(sticky_state.get("switches", {}).get("sticky_gate"), true, "sticky rule keeps configured switch after match breaks")
+		assert_equal(sticky_state.get("variables", {}).get("sticky_stage"), 7, "sticky rule keeps configured variable after match breaks")
+
+func test_sentence_match_starts_highlight_animation_state() -> void:
+	var world = make_world()
+	assert_true(world.has_method("get_highlight_animation_strength"), "world exposes highlight animation strength query")
+	assert_true(world.has_method("advance_highlight_animation"), "world exposes highlight animation tick")
+	if not world.has_method("get_highlight_animation_strength") or not world.has_method("advance_highlight_animation"):
+		return
+	var sentence := String(world.sentence_rules.keys()[0])
+	var first = world.find_first_entity_by_text(sentence.substr(0, 1))
+	var second = world.find_first_entity_by_text(sentence.substr(1, 1))
+	assert_true(first != null, "highlight animation fixture first word exists")
+	assert_true(second != null, "highlight animation fixture second word exists")
+	if first == null or second == null:
+		return
+	var sentence_start: Vector2i = second.grid_pos - Vector2i(1, 0)
+	world.move_entity_to(first.id, sentence_start)
+	world.check_sentence_rules()
+	var start_strength := float(world.get_highlight_animation_strength(sentence_start))
+	assert_true(start_strength > 0.9, "sentence match starts highlight animation near full strength")
+	world.advance_highlight_animation(0.4)
+	var mid_strength := float(world.get_highlight_animation_strength(sentence_start))
+	assert_true(mid_strength > 0.0 and mid_strength < start_strength, "highlight animation strength decays over time")
+	world.advance_highlight_animation(2.0)
+	assert_equal(float(world.get_highlight_animation_strength(sentence_start)), 0.0, "highlight animation strength eventually returns to zero")
+
+func test_highlight_visual_config_resource_is_present() -> void:
+	var main_view = MainSceneScript.new()
+	assert_true(FileAccess.file_exists("res://assets/animations/highlight/highlight_visual_config.json"), "highlight visual config resource exists")
+	assert_true(main_view.has_method("load_highlight_visual_config"), "main scene exposes highlight visual config loader")
+	if not main_view.has_method("load_highlight_visual_config"):
+		main_view.queue_free()
+		return
+	var config: Dictionary = main_view.load_highlight_visual_config()
+	assert_true(float(config.get("pulse_scale_max", 0.0)) > 1.0, "highlight config defines pulse scale above 1.0")
+	assert_true(config.has("accent_color"), "highlight config defines accent color")
+	assert_true(config.has("matched_color"), "highlight config defines matched color")
+	main_view.queue_free()
+
+func test_main_scene_resolves_glove_startup_entry_arg() -> void:
+	var main_view = MainSceneScript.new()
+	assert_true(main_view.has_method("resolve_startup_scene_path"), "main scene exposes startup scene-path parser")
+	if not main_view.has_method("resolve_startup_scene_path"):
+		main_view.queue_free()
+		return
+	assert_equal(
+		str(main_view.resolve_startup_scene_path(PackedStringArray(["--entry=glove"]))),
+		GLOVE_PREVIEW_SCENE_PATH,
+		"main scene maps --entry=glove to the glove preview scene"
+	)
+	assert_equal(
+		str(main_view.resolve_startup_scene_path(PackedStringArray(["--entry=helmet"]))),
+		"",
+		"main scene keeps the default helmet flow for unknown or default entry keys"
+	)
+	main_view.queue_free()
+
+func test_main_scene_resolves_glove_scene_shortcut() -> void:
+	var main_view = MainSceneScript.new()
+	assert_true(main_view.has_method("resolve_scene_shortcut_from_keycode"), "main scene exposes scene shortcut resolver")
+	if not main_view.has_method("resolve_scene_shortcut_from_keycode"):
+		main_view.queue_free()
+		return
+	assert_equal(
+		str(main_view.resolve_scene_shortcut_from_keycode(KEY_F9)),
+		GLOVE_PREVIEW_SCENE_PATH,
+		"main scene reserves F9 as the glove preview shortcut"
+	)
+	assert_equal(
+		str(main_view.resolve_scene_shortcut_from_keycode(KEY_F5)),
+		"",
+		"existing demo hotkey remains unrelated to scene switching"
+	)
+	main_view.queue_free()
 
 func test_pull_direction_is_locked_to_player_side() -> void:
 	var sideways_world = make_pull_fixture()

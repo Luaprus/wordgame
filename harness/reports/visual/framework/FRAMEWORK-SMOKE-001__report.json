@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-07-12T19:12:33.944530+08:00",
+  "feature_id": "F017",
+  "baseline_id": "FRAMEWORK-SMOKE-001",
+  "level_id": "framework",
+  "status": "pass",
+  "diff_pixel_count": 0,
+  "original_image_path": "E:/wordgame copy/harness/reports/visual/framework/FRAMEWORK-SMOKE-001__original.png",
+  "replay_image_path": "E:/wordgame copy/harness/reports/visual/framework/FRAMEWORK-SMOKE-001__replay.png",
+  "diff_image_path": "E:/wordgame copy/harness/reports/visual/framework/FRAMEWORK-SMOKE-001__diff.png",
+  "command": "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1",
+  "original_size": {
+    "width": 1550,
+    "height": 902
+  },
+  "replay_size": {
+    "width": 1550,
+    "height": 902
+  }
+}

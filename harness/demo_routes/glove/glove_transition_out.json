@@ -1,0 +1,33 @@
+{
+  "route_id": "glove-transition-out",
+  "feature_id": "F026",
+  "target_feature_id": "F026",
+  "baseline_id": "GLOVE-BEH-007",
+  "behavior_id": "GLOVE-TRANSITION-OUT",
+  "level_id": "glove",
+  "world_source": "glove_level",
+  "route_stage": "canonical",
+  "notes": "Canonical transition route reuses the verified canonical correct route through the ending transition.",
+  "steps": [
+    {
+      "type": "route_segment",
+      "route_path": "res://../harness/demo_routes/glove/glove_correct_route.json",
+      "through_caption": "enter transition",
+      "caption": "reuse verified canonical route through transition",
+      "checkpoint": {
+        "id": "transition_out",
+        "state_id": "transition_out",
+        "ref": "GLOVE-SHOT-009",
+        "label": "黑屏转场候选锚点",
+        "source_grid_id": "GLOVE-GRID-012",
+        "verification_status": "candidate",
+        "review_note": "通过完整真实正确路线稳定命中黑屏对白态；对白出现时机和镜头边界仍需人工确认。"
+      },
+      "expect": {
+        "player_pos": [24, 5],
+        "visible": false,
+        "input_locked": true
+      }
+    }
+  ]
+}

@@ -141,11 +141,47 @@ git status --short
 ## 2026-07-10 范围修正
 
 - F007 的验收标准包含 “方向键和 WASD 均可移动”。
-- 真实键位入口位于 `新建游戏项目/scripts/main.gd`，如果不允许修改该文件，WASD 无法进入实际运行链路，验收会失真。
-- 因此 F007 的 `allowed_files` 补充 `新建游戏项目/scripts/main.gd`，用途仅限把方向键/WASD 映射复用到同一移动入口，不允许在该文件扩展与 F007 无关的玩法逻辑。
+- 真实键位入口位于 `newgame/scripts/main.gd`，如果不允许修改该文件，WASD 无法进入实际运行链路，验收会失真。
+- 因此 F007 的 `allowed_files` 补充 `newgame/scripts/main.gd`，用途仅限把方向键/WASD 映射复用到同一移动入口，不允许在该文件扩展与 F007 无关的玩法逻辑。
 ## F034 Grid Visual Smoothing
 
 - Goal: make on-screen movement continuous while preserving exact grid landing positions.
 - Scope: presentation layer only; no gameplay-rule edits in `grid_world.gd`.
-- Files: `新建游戏项目/scripts/main.gd`, `新建游戏项目/scripts/smooth_grid_mover.gd`, `新建游戏项目/tests/test_smooth_grid_mover.gd`, `新建游戏项目/tools/run_all_tests.ps1`.
+- Files: `newgame/scripts/main.gd`, `newgame/scripts/smooth_grid_mover.gd`, `newgame/tests/test_smooth_grid_mover.gd`, `newgame/tools/run_all_tests.ps1`.
 - Proof: red-green test for interpolation contract plus full one-click test run.
+
+## 2026-07-12 手套关主入口桥接
+
+- 当前手套关主体已经可运行、可回放、可测试，但仍然隐藏在 `res://levels/glove/glove_preview.tscn` 直接打开入口后面。
+- 为了让非代码组员从项目默认启动链路里稳定进入手套关，本轮允许在 `F024` 下追加一层最小入口桥接。
+- 本轮额外允许修改：
+  - `newgame/scripts/main.gd`
+  - `newgame/tests/test_gameplay_core.gd`
+- 这层桥接只允许做两件事：
+  - 在不改变头盔默认启动路径的前提下，提供一个显式的手套关切换入口。
+  - 为手套试玩页补一个返回主入口的轻量通道，便于人工验收往返。
+- 明确禁止：
+  - 改写头盔关 `LEVEL_SEQUENCE` 的既有流程含义。
+  - 借机重构 `Main.tscn` 的通用渲染、移动、玩法规则。
+  - 在 `main.gd` 中加入与手套关入口无关的新玩法逻辑。
+- 验收仍以 `tools/run_all_tests.ps1` 和需要时的 `tools/capture_visual_smoke.ps1` 为准。
+
+## 2026-07-11 Next Goal
+
+- Head/helmet level stays frozen as the reference implementation. Do not proactively retune its internal details, pacing, coordinates, or presentation.
+- Only minimal bridge fixes are allowed if needed to connect it into shared test or loading paths.
+- Immediate goal: close the remaining acceptance gaps for `F014`, `F016`, and `F017` before starting broad sword/glove gameplay implementation.
+- Concrete work:
+  1. Audit which parts of `F014` / `F016` / `F017` are already backed by fresh test evidence and which parts are still only framework samples.
+  2. Promote `harness/demo_routes/sword/*` and `harness/demo_routes/glove/*` from route indexes into executable route skeletons, with at least one real minimal runnable route for each level pack.
+  3. Promote screenshot comparison from framework-only smoke into real sword/glove baseline entry points that reliably emit `original`, `replay`, `diff`, and `report` artifacts.
+  4. Re-run one-click verification and only then decide whether `F014`, `F016`, and `F017` can move to `done`.
+- After that, move into sword `F018-F022` and glove `F024-F026` implementation on top of the stabilized shared framework.
+
+
+## 2026-07-11 手套关测试接线例外
+
+- 当前正在执行 `F024` / `F025` 的手套关实现。
+- 为满足“没有一键测试脚本验证，不允许标记完成”的治理规则，本轮允许额外修改 `newgame/tools/run_all_tests.ps1`。
+- 该例外的唯一目的，是把 `res://tests/test_glove_level.gd` 接入项目级一键测试入口，形成可重复的完成证据。
+- 本例外不授权在 `newgame/tools/run_all_tests.ps1` 中加入与手套关无关的逻辑改造。

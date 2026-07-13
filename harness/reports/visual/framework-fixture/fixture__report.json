@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-07-11T01:22:18.593309+08:00",
+  "feature_id": "F017",
+  "baseline_id": "FRAMEWORK-FIXTURE-BASELINE-001",
+  "level_id": "framework",
+  "status": "pass",
+  "diff_pixel_count": 0,
+  "original_image_path": "E:/wordgame copy/harness/reports/visual/framework-fixture/fixture__original.png",
+  "replay_image_path": "E:/wordgame copy/harness/reports/visual/framework-fixture/fixture__original.png",
+  "diff_image_path": "E:/wordgame copy/harness/reports/visual/framework-fixture/fixture__diff.png",
+  "command": "python tools/compare_screenshots_test.py",
+  "original_size": {
+    "width": 1550,
+    "height": 902
+  },
+  "replay_size": {
+    "width": 1550,
+    "height": 902
+  }
+}

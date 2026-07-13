@@ -33,4 +33,47 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
+$CompareScript = Join-Path $WorkspaceRoot "tools/compare_screenshots.py"
+if (-not (Test-Path -LiteralPath $CompareScript)) {
+    throw "Screenshot compare script missing: $CompareScript"
+}
+
+$ProjectSmoke = Join-Path $ProjectRoot "test-output/main-scene-smoke.png"
+if (-not (Test-Path -LiteralPath $ProjectSmoke)) {
+    throw "Project smoke screenshot missing: $ProjectSmoke"
+}
+
+$VisualOutputDir = Join-Path $WorkspaceRoot "harness/reports/visual/framework"
+New-Item -ItemType Directory -Force -Path $VisualOutputDir | Out-Null
+
+$OriginalPath = Join-Path $VisualOutputDir "FRAMEWORK-SMOKE-001__original.png"
+$ReplayPath = Join-Path $VisualOutputDir "FRAMEWORK-SMOKE-001__replay.png"
+$DiffPath = Join-Path $VisualOutputDir "FRAMEWORK-SMOKE-001__diff.png"
+$ReportPath = Join-Path $VisualOutputDir "FRAMEWORK-SMOKE-001__report.json"
+$ApprovalsPath = Join-Path $WorkspaceRoot "harness/reports/visual/approved_differences.json"
+
+if (-not (Test-Path -LiteralPath $OriginalPath)) {
+    throw "Framework baseline screenshot missing: $OriginalPath"
+}
+
+if (-not (Test-Path -LiteralPath $ApprovalsPath)) {
+    throw "Approved differences file missing: $ApprovalsPath"
+}
+
+Copy-Item -LiteralPath $ProjectSmoke -Destination $ReplayPath -Force
+
+& python $CompareScript `
+    --feature-id F017 `
+    --baseline-id FRAMEWORK-SMOKE-001 `
+    --level-id framework `
+    --original $OriginalPath `
+    --replay $ReplayPath `
+    --diff $DiffPath `
+    --report $ReportPath `
+    --command "powershell -ExecutionPolicy Bypass -File tools/capture_visual_smoke.ps1" `
+    --approvals $ApprovalsPath
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+}
+
 Write-Host "Root visual smoke passed."

@@ -1,0 +1,42 @@
+{
+  "route_id": "glove-collision-change-runtime",
+  "feature_id": "F024",
+  "target_feature_id": "F024",
+  "baseline_id": "GLOVE-BEH-005",
+  "behavior_id": "GLOVE-COLLISION-CHANGE",
+  "level_id": "glove",
+  "world_source": "glove_level",
+  "route_stage": "runtime",
+  "notes": "真实复用好手势路线进入与赞同态的布局，再连续走过左侧和下方入口验证碰撞变化。",
+  "steps": [
+    {
+      "type": "route_segment",
+      "route_path": "res://../harness/demo_routes/glove/glove_good_clue_runtime.json",
+      "through_caption": "switch to the good-hand gesture",
+      "caption": "复用真实路线切到好手势"
+    },
+    {
+      "type": "checkpoint",
+      "caption": "好手势触发同态碰撞布局",
+      "checkpoint": {
+        "id": "collision_changed",
+        "state_id": "gesture_like",
+        "ref": "GLOVE-SHOT-018",
+        "label": "好/赞同态碰撞锚点",
+        "source_grid_id": "GLOVE-GRID-014",
+        "verification_status": "candidate",
+        "review_note": "源码确认好与赞共用手势状态；本路线用真实好字路径证明同态碰撞布局。"
+      },
+      "expect": {"player_pos": [30, 15], "last_message": "巨大手掌，是好的手势。"}
+    },
+    {
+      "type": "move_path",
+      "path": [[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[-1,0],[0,-1],[0,-1],[0,-1],[0,-1],[0,-1],[0,-1],[0,-1]],
+      "caption": "从真实好手势落点走到左侧入口",
+      "expect": {"player_pos": [5, 8]}
+    },
+    {"type": "move_path", "path": [[-1,0]], "caption": "好手势时通过左侧入口", "expect": {"player_pos": [4,8]}},
+    {"type": "move_path", "path": [[-1,0],[-1,0],[-1,0],[0,1],[0,1],[0,1]], "caption": "沿开放通道走到下方入口", "expect": {"player_pos": [1,11]}},
+    {"type": "move_path", "path": [[-1,0]], "caption": "好手势时通过下方入口", "expect": {"player_pos": [0,11]}}
+  ]
+}

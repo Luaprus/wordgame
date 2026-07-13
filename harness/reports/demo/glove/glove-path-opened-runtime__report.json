@@ -1,0 +1,108 @@
+{
+	"baseline_id": "GLOVE-BEH-006",
+	"behavior_id": "GLOVE-PATH-OPENED",
+	"catalog_notes": "Runtime opened-path route anchored at the mid-path checkpoint.",
+	"catalog_status": "in_progress",
+	"checkpoints": [
+		{
+			"caption": "walk from opened lifeline to mid path anchor",
+			"facing": [
+				0,
+				-1
+			],
+			"id": "path_opened",
+			"input_locked": false,
+			"label": "开路后中段锚点",
+			"last_message": "",
+			"player_pos": [
+				20,
+				13
+			],
+			"ref": "GLOVE-SHOT-012",
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"source_grid_id": "GLOVE-GRID-008",
+			"state_id": "path_opened",
+			"step_index": 0,
+			"visible": true
+		}
+	],
+	"feature_id": "F024",
+	"final_state": {
+		"facing": [
+			0,
+			-1
+		],
+		"input_locked": false,
+		"last_message": "",
+		"player_pos": [
+			20,
+			13
+		],
+		"visible": true
+	},
+	"level_id": "glove",
+	"route_id": "glove-path-opened-runtime",
+	"runtime_trace": {
+		"animation_ids": [],
+		"audio_ids": []
+	},
+	"steps": [
+		{
+			"caption": "walk from opened lifeline to mid path anchor",
+			"checkpoint": {
+				"caption": "walk from opened lifeline to mid path anchor",
+				"facing": [
+					0,
+					-1
+				],
+				"id": "path_opened",
+				"input_locked": false,
+				"label": "开路后中段锚点",
+				"last_message": "",
+				"player_pos": [
+					20,
+					13
+				],
+				"ref": "GLOVE-SHOT-012",
+				"runtime_trace": {
+					"animation_ids": [],
+					"audio_ids": []
+				},
+				"source_grid_id": "GLOVE-GRID-008",
+				"state_id": "path_opened",
+				"step_index": 0,
+				"visible": true
+			},
+			"expectation_failures": [
+				"player_pos expected (24, 14) got (20, 13)",
+				"last_message expected 好手逼退了生命线。 got "
+			],
+			"expectations_checked": 5,
+			"facing": [
+				0,
+				-1
+			],
+			"index": 0,
+			"input_data": {
+				"route_path": "res://../harness/demo_routes/glove/glove_correct_route_runtime.json",
+				"through_caption": "walk from opened lifeline to mid path anchor"
+			},
+			"last_message": "",
+			"message": "player_pos expected (24, 14) got (20, 13); last_message expected 好手逼退了生命线。 got ",
+			"player_pos": [
+				20,
+				13
+			],
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"success": false,
+			"type": "route_segment"
+		}
+	],
+	"target_feature_id": "F024"
+}

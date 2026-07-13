@@ -20,6 +20,10 @@ const OriginalFont = preload("res://Fonts/Zpix.tres")
 const MOVE_REPEAT_INTERVAL := 0.28
 const FAST_MOVE_REPEAT_INTERVAL := 0.12
 const WORD_FONT_SIZE := 42
+const HIGHLIGHT_VISUAL_CONFIG_PATH := "res://assets/animations/highlight/highlight_visual_config.json"
+const GLOVE_PREVIEW_SCENE_PATH := "res://levels/glove/glove_preview.tscn"
+const STARTUP_ENTRY_ARG_PREFIX := "--entry="
+const GLOVE_SCENE_SHORTCUT_KEY := KEY_F9
 const LEVEL_SEQUENCE := [
 	HelmetTutorial,
 	HelmetR1,
@@ -52,15 +56,22 @@ var held_move_directions: Array[Vector2i] = []
 var move_repeat_elapsed := 0.0
 var move_visual_duration := 0.12
 var _player_visual_ready := false
+var highlight_visual_config: Dictionary = {}
 var _last_player_visible := true
 
 func _ready() -> void:
+	var startup_scene_path := resolve_startup_scene_path(OS.get_cmdline_user_args())
+	if not startup_scene_path.is_empty():
+		call_deferred("_switch_to_scene", startup_scene_path)
+		return
+	highlight_visual_config = load_highlight_visual_config()
 	_load_level_index(0)
 	page_camera.sync_to_world(world)
 	_build_scene()
 	_refresh_view()
 
 func _process(delta: float) -> void:
+	world.advance_highlight_animation(delta)
 	var direction := _current_held_direction()
 	if direction == Vector2i.ZERO:
 		move_repeat_elapsed = 0.0
@@ -87,6 +98,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not event is InputEventKey:
 		return
 	var key_event := event as InputEventKey
+	if key_event.pressed and not key_event.echo:
+		var shortcut_scene_path := resolve_scene_shortcut_from_keycode(key_event.keycode)
+		if not shortcut_scene_path.is_empty():
+			call_deferred("_switch_to_scene", shortcut_scene_path)
+			return
 	var direction := _direction_from_key(key_event.keycode)
 	if direction != Vector2i.ZERO:
 		if key_event.echo:
@@ -221,7 +237,16 @@ func _sync_entity_label_group(group: Node2D, entity) -> void:
 		label.text = text.substr(i, 1)
 		label.position = Vector2(i * world.cell_size, -2)
 		label.size = Vector2(world.cell_size, world.cell_size + 4)
-		label.add_theme_color_override("font_color", Color(1.0, 0.95, 0.32) if entity.highlighted else entity.visual_color)
+		label.pivot_offset = label.size * 0.5
+		var highlight_strength := world.get_highlight_animation_strength(entity.cells[i]) if i < entity.cells.size() else 0.0
+		var base_color := entity.visual_color
+		if entity.highlighted:
+			base_color = _highlight_config_color("matched_color", Color(1.0, 0.95, 0.32))
+		var animated_color := base_color.lerp(_highlight_config_color("accent_color", Color(1.0, 0.78, 0.18)), highlight_strength)
+		label.add_theme_color_override("font_color", animated_color)
+		var pulse_scale_max := float(highlight_visual_config.get("pulse_scale_max", 1.14))
+		var pulse_scale := 1.0 + (highlight_strength * maxf(pulse_scale_max - 1.0, 0.0))
+		label.scale = Vector2.ONE * pulse_scale
 
 func _apply_result(result: Dictionary) -> void:
 	if result.has("transition"):
@@ -388,3 +413,60 @@ func _make_word_label(text: String, font_color := Color.WHITE, bg_color := Color
 		style.content_margin_bottom = 0
 		label.add_theme_stylebox_override("normal", style)
 	return label
+
+func load_highlight_visual_config() -> Dictionary:
+	var defaults := {
+		"pulse_scale_max": 1.14,
+		"accent_color": [1.0, 0.78, 0.18, 1.0],
+		"matched_color": [1.0, 0.95, 0.32, 1.0]
+	}
+	if not FileAccess.file_exists(HIGHLIGHT_VISUAL_CONFIG_PATH):
+		return defaults
+	var config_file := FileAccess.open(HIGHLIGHT_VISUAL_CONFIG_PATH, FileAccess.READ)
+	if config_file == null:
+		return defaults
+	var parsed = JSON.parse_string(config_file.get_as_text())
+	if parsed is Dictionary:
+		var merged := defaults.duplicate(true)
+		for key in (parsed as Dictionary).keys():
+			merged[key] = parsed[key]
+		return merged
+	return defaults
+
+func _highlight_config_color(key: String, fallback: Color) -> Color:
+	if highlight_visual_config.is_empty():
+		highlight_visual_config = load_highlight_visual_config()
+	var value = highlight_visual_config.get(key, [])
+	if value is Array and value.size() >= 3:
+		return Color(
+			float(value[0]),
+			float(value[1]),
+			float(value[2]),
+			float(value[3]) if value.size() >= 4 else 1.0
+		)
+	return fallback
+
+func resolve_startup_scene_path(args: PackedStringArray) -> String:
+	for arg in args:
+		var value := str(arg)
+		if not value.begins_with(STARTUP_ENTRY_ARG_PREFIX):
+			continue
+		return _entry_scene_path_for_key(value.trim_prefix(STARTUP_ENTRY_ARG_PREFIX))
+	return ""
+
+func resolve_scene_shortcut_from_keycode(keycode: Key) -> String:
+	if keycode == GLOVE_SCENE_SHORTCUT_KEY:
+		return GLOVE_PREVIEW_SCENE_PATH
+	return ""
+
+func _entry_scene_path_for_key(entry_key: String) -> String:
+	match entry_key:
+		"glove":
+			return GLOVE_PREVIEW_SCENE_PATH
+		_:
+			return ""
+
+func _switch_to_scene(scene_path: String) -> void:
+	if scene_path.is_empty() or get_tree() == null:
+		return
+	get_tree().change_scene_to_file(scene_path)

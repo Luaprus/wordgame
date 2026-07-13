@@ -1,0 +1,71 @@
+{
+	"baseline_id": "GLOVE-BEH-008",
+	"behavior_id": "GLOVE-FAILURE-FEEDBACK",
+	"catalog_notes": "Runtime wrong-route replay covering failure feedback and reset.",
+	"catalog_status": "in_progress",
+	"checkpoints": [],
+	"feature_id": "F026",
+	"final_state": {
+		"facing": [
+			0,
+			-1
+		],
+		"input_locked": false,
+		"last_message": "",
+		"player_pos": [
+			20,
+			13
+		],
+		"visible": true
+	},
+	"level_id": "glove",
+	"route_id": "glove-wrong-route-runtime",
+	"runtime_trace": {
+		"animation_ids": [],
+		"audio_ids": []
+	},
+	"steps": [
+		{
+			"caption": "从起点走到生命线前",
+			"expectation_failures": [
+				"player_pos expected (20, 12) got (20, 13)",
+				"text_at (21, 12) expected 线 got 掌"
+			],
+			"expectations_checked": 3,
+			"facing": [
+				0,
+				-1
+			],
+			"index": 0,
+			"input_data": {
+				"path": [
+					[
+						0.0,
+						-1.0
+					],
+					[
+						0.0,
+						-1.0
+					],
+					[
+						0.0,
+						-1.0
+					]
+				]
+			},
+			"last_message": "",
+			"message": "player_pos expected (20, 12) got (20, 13); text_at (21, 12) expected 线 got 掌",
+			"player_pos": [
+				20,
+				13
+			],
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"success": false,
+			"type": "move_path"
+		}
+	],
+	"target_feature_id": "F026"
+}

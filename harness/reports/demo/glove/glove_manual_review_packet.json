@@ -1,0 +1,877 @@
+{
+	"acceptance": [
+		"preview_scene_opens_without_missing_resources",
+		"res://tests/test_glove_level.gd passes",
+		"tools/run_all_tests.ps1 passes",
+		"tools/capture_visual_smoke.ps1 passes",
+		"glove_runtime_reports_summary.json exports 11 runtime reports with failed_count = 0",
+		"GLOVE-SHOT-009 and GLOVE-SHOT-010 visual diff reports stay at 0 pixels",
+		"level_manifest.json and handoff.md are kept in sync with the current runtime behavior"
+	],
+	"acceptance_details": [
+		{
+			"id": "preview_scene_opens_without_missing_resources",
+			"text": "试玩入口能正常打开，且没有缺资源报错。"
+		},
+		{
+			"id": "res://tests/test_glove_level.gd passes",
+			"text": "手套关专项测试通过。"
+		},
+		{
+			"id": "tools/run_all_tests.ps1 passes",
+			"text": "仓库一键总测通过。"
+		},
+		{
+			"id": "tools/capture_visual_smoke.ps1 passes",
+			"text": "视觉 smoke 一键脚本通过。"
+		},
+		{
+			"id": "glove_runtime_reports_summary.json exports 11 runtime reports with failed_count = 0",
+			"text": "能导出 11 条手套关 runtime report，且失败数为 0。"
+		},
+		{
+			"id": "GLOVE-SHOT-009 and GLOVE-SHOT-010 visual diff reports stay at 0 pixels",
+			"text": "GLOVE-SHOT-009 和 GLOVE-SHOT-010 的视觉对比像素差保持为 0。"
+		},
+		{
+			"id": "level_manifest.json and handoff.md are kept in sync with the current runtime behavior",
+			"text": "level_manifest.json 与 handoff.md 已和当前运行行为保持同步。"
+		}
+	],
+	"auxiliary_setup_count": 0,
+	"auxiliary_setup_steps": [],
+	"candidate_checkpoints": [
+		{
+			"caption": "switch to the good-hand gesture",
+			"caption_localized": "切到好手势辅助状态",
+			"evidence_type": "screenshot_grid",
+			"evidence_type_label": "截图+格子锚点",
+			"facing": [
+				0,
+				-1
+			],
+			"id": "good_hand_followup",
+			"input_locked": false,
+			"label": "好手势连续路线候选锚点",
+			"last_message": "",
+			"manual_review_status": "pending",
+			"manual_review_status_label": "待复查",
+			"player_pos": [
+				20,
+				13
+			],
+			"ref": "GLOVE-SHOT-008",
+			"review_note": "已用真实拉字、推字和移动切到好手势；截图时机仍需人工确认。",
+			"route_id": "glove-good-clue-runtime",
+			"route_label": "好字线索运行版",
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"source_grid_id": "GLOVE-GRID-015",
+			"state_id": "good_hand_followup",
+			"step_index": 0,
+			"verification_label": "候选",
+			"verification_status": "candidate",
+			"visible": true
+		},
+		{
+			"caption": "reuse verified correct route through transition",
+			"caption_localized": "进入黑屏转场",
+			"evidence_type": "screenshot_grid",
+			"evidence_type_label": "截图+格子锚点",
+			"facing": [
+				0,
+				-1
+			],
+			"id": "transition_out",
+			"input_locked": false,
+			"label": "黑屏转场候选锚点",
+			"last_message": "",
+			"manual_review_status": "pending",
+			"manual_review_status_label": "待复查",
+			"player_pos": [
+				20,
+				13
+			],
+			"ref": "GLOVE-SHOT-009",
+			"review_note": "通过完整真实正确路线稳定命中黑屏对白态；对白出现时机和镜头边界仍需人工确认。",
+			"route_id": "glove-transition-out-runtime",
+			"route_label": "收尾转场运行版",
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"source_grid_id": "GLOVE-GRID-012",
+			"state_id": "transition_out",
+			"step_index": 0,
+			"verification_label": "候选",
+			"verification_status": "candidate",
+			"visible": true
+		}
+	],
+	"confirmed_checkpoints": [
+		{
+			"caption": "record initial layout anchor",
+			"caption_localized": "记录起始布局",
+			"evidence_type": "screenshot_grid",
+			"evidence_type_label": "截图+格子锚点",
+			"facing": [
+				1,
+				0
+			],
+			"id": "initial_layout",
+			"input_locked": false,
+			"label": "起始布局锚点",
+			"last_message": "",
+			"manual_review_status": "pending",
+			"manual_review_status_label": "待复查",
+			"player_pos": [
+				20,
+				15
+			],
+			"ref": "GLOVE-SHOT-001",
+			"review_note": "程序已确认起点玩家坐标、掌墙和零手势字存在；完整镜头构图仍以人工视觉复查为准。",
+			"route_id": "glove-correct-route-runtime",
+			"route_label": "正确路线运行版",
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"source_grid_id": "GLOVE-GRID-001",
+			"state_id": "initial",
+			"step_index": 0,
+			"verification_label": "已确认",
+			"visible": true
+		},
+		{
+			"caption": "reuse verified correct route through right sword swap",
+			"caption_localized": "掌中剑换到右边",
+			"evidence_type": "rule_only",
+			"evidence_type_label": "规则锚点",
+			"facing": [
+				0,
+				-1
+			],
+			"id": "sword_swap_right",
+			"input_locked": false,
+			"label": "掌中剑右移规则锚点",
+			"last_message": "",
+			"manual_review_status": "pending",
+			"manual_review_status_label": "待复查",
+			"player_pos": [
+				20,
+				13
+			],
+			"ref": "",
+			"review_note": "该锚点通过完整真实正确路线证明：二手势会让掌中剑从左源坐标换到右源坐标。当前没有直连截图基线，因此它用于源码/规则交接。",
+			"route_id": "glove-sword-swap-runtime",
+			"route_label": "掌中剑换位运行版",
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"state_id": "sword_swap_right",
+			"step_index": 0,
+			"verification_label": "已确认",
+			"visible": true
+		},
+		{
+			"caption": "walk from opened lifeline to mid path anchor",
+			"caption_localized": "打开生命线后进入中段",
+			"evidence_type": "screenshot_grid",
+			"evidence_type_label": "截图+格子锚点",
+			"facing": [
+				0,
+				-1
+			],
+			"id": "path_opened",
+			"input_locked": false,
+			"label": "开路后中段锚点",
+			"last_message": "",
+			"manual_review_status": "pending",
+			"manual_review_status_label": "待复查",
+			"player_pos": [
+				20,
+				13
+			],
+			"ref": "GLOVE-SHOT-012",
+			"route_id": "glove-path-opened-runtime",
+			"route_label": "路径打开运行版",
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"source_grid_id": "GLOVE-GRID-008",
+			"state_id": "path_opened",
+			"step_index": 0,
+			"verification_label": "已确认",
+			"visible": true
+		}
+	],
+	"display_name": "手套关",
+	"failed_report_count": 11,
+	"generated_at": "2026-07-13 08:20:13",
+	"generated_from": {
+		"flow_handoff_path": "E:/wordgame copy/harness/demo_routes/glove/glove_flow_handoff.md",
+		"handoff_path": "E:/wordgame copy/newgame/levels/glove/handoff.md",
+		"manifest_path": "E:/wordgame copy/newgame/levels/glove/level_manifest.json",
+		"manual_review_checklist_path": "E:/wordgame copy/harness/demo_routes/glove/manual_review_checklist.md",
+		"route_walkthroughs_path": "E:/wordgame copy/harness/reports/demo/glove/glove_route_walkthroughs.md",
+		"source_evidence_markdown_path": "E:/wordgame copy/harness/reports/demo/glove/glove_source_evidence.md",
+		"source_evidence_path": "E:/wordgame copy/harness/reports/demo/glove/glove_source_evidence.json",
+		"summary_path": "E:/wordgame copy/harness/reports/demo/glove/glove_runtime_reports_summary.json"
+	},
+	"level_id": "glove",
+	"manual_review_focus": [
+		"正确路线真实逐步输入顺序",
+		"爱字源码计算候选格 [2,12] 的原版运行确认，以及从该格推入手势槽的真实路径",
+		"各手势逐格碰撞变化真值",
+		"删“不”后放开动画的实际缓动、镜头震动观感与截图落帧",
+		"尾声三段对白的逐帧打字速度、停顿与镜头构图"
+	],
+	"manual_review_focus_items": [
+		{
+			"focus": "正确路线真实逐步输入顺序",
+			"resolution_note": "",
+			"review_status": "pending",
+			"review_status_label": "待复查"
+		},
+		{
+			"focus": "爱字源码计算候选格 [2,12] 的原版运行确认，以及从该格推入手势槽的真实路径",
+			"resolution_note": "",
+			"review_status": "pending",
+			"review_status_label": "待复查"
+		},
+		{
+			"focus": "各手势逐格碰撞变化真值",
+			"resolution_note": "",
+			"review_status": "pending",
+			"review_status_label": "待复查"
+		},
+		{
+			"focus": "删“不”后放开动画的实际缓动、镜头震动观感与截图落帧",
+			"resolution_note": "",
+			"review_status": "pending",
+			"review_status_label": "待复查"
+		},
+		{
+			"focus": "尾声三段对白的逐帧打字速度、停顿与镜头构图",
+			"resolution_note": "",
+			"review_status": "pending",
+			"review_status_label": "待复查"
+		}
+	],
+	"report_count": 11,
+	"review_guidance": [
+		{
+			"detail": "先对照正确路线、错误路线和黑屏收尾三段，确认大面玩法顺序没有偏。",
+			"title": "先核主流程"
+		},
+		{
+			"detail": "候选锚点重点看时机、镜头、文案和可操作性，不一致就直接记“不一致 + 应改成什么”。",
+			"title": "再核候选锚点"
+		},
+		{
+			"detail": "每条反馈至少写清：证据来源、玩家位置、可交互字、可选操作、实际结果。",
+			"title": "自然语言回传"
+		}
+	],
+	"review_summary": {
+		"auxiliary_setup_count": 0,
+		"confirmed_count": 3,
+		"pending_candidate_count": 2,
+		"reviewed_confirmed_count": 0,
+		"reviewed_rejected_count": 0
+	},
+	"reviewed_confirmed_checkpoints": [],
+	"reviewed_rejected_checkpoints": [],
+	"route_step_reviews": [
+		{
+			"caption": "record initial layout anchor",
+			"caption_localized": "记录起始布局",
+			"facing": [
+				1,
+				0
+			],
+			"input_summary": "记录锚点",
+			"last_message": "记录起始布局",
+			"player_pos": [
+				20,
+				15
+			],
+			"resolution_note": "",
+			"review_status": "pending",
+			"review_status_label": "待复查",
+			"reviewed_at": "",
+			"reviewer": "",
+			"route_id": "glove-correct-route-runtime",
+			"route_label": "正确路线运行版",
+			"step_index": 0
+		},
+		{
+			"caption": "walk from start to lower lifeline clue",
+			"caption_localized": "从起点走到下方生命线线索",
+			"facing": [
+				0,
+				-1
+			],
+			"input_summary": "移动路径：上、上",
+			"last_message": "text_at (21, 13) expected 线线 got ",
+			"player_pos": [
+				20,
+				13
+			],
+			"resolution_note": "",
+			"review_status": "pending",
+			"review_status_label": "待复查",
+			"reviewed_at": "",
+			"reviewer": "",
+			"route_id": "glove-correct-route-runtime",
+			"route_label": "正确路线运行版",
+			"step_index": 1
+		},
+		{
+			"caption": "walk from opened lifeline to mid path anchor",
+			"caption_localized": "沿开路走到中段锚点",
+			"facing": [
+				0,
+				-1
+			],
+			"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“沿开路走到中段锚点”",
+			"last_message": "player_pos expected (24, 14) got (20, 13); last_message expected 好手逼退了生命线。 got ",
+			"player_pos": [
+				20,
+				13
+			],
+			"resolution_note": "",
+			"review_status": "pending",
+			"review_status_label": "待复查",
+			"reviewed_at": "",
+			"reviewer": "",
+			"route_id": "glove-path-opened-runtime",
+			"route_label": "路径打开运行版",
+			"step_index": 0
+		},
+		{
+			"caption": "reuse verified correct route through transition",
+			"caption_localized": "复用已验证正确路线直到黑屏转场",
+			"facing": [
+				0,
+				-1
+			],
+			"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“进入黑屏转场”",
+			"last_message": "player_pos expected (24, 5) got (20, 13); visible expected false got true; input_locked expected true got false",
+			"player_pos": [
+				20,
+				13
+			],
+			"resolution_note": "",
+			"review_status": "pending",
+			"review_status_label": "待复查",
+			"reviewed_at": "",
+			"reviewer": "",
+			"route_id": "glove-transition-out-runtime",
+			"route_label": "收尾转场运行版",
+			"step_index": 0
+		}
+	],
+	"route_walkthroughs": [
+		{
+			"route_id": "glove-correct-route-runtime",
+			"route_label": "正确路线运行版",
+			"steps": [
+				{
+					"caption": "record initial layout anchor",
+					"caption_localized": "记录起始布局",
+					"facing": [
+						1,
+						0
+					],
+					"index": 0,
+					"input_summary": "记录锚点",
+					"last_message": "记录起始布局",
+					"player_pos": [
+						20,
+						15
+					],
+					"type": "checkpoint"
+				},
+				{
+					"caption": "walk from start to lower lifeline clue",
+					"caption_localized": "从起点走到下方生命线线索",
+					"facing": [
+						0,
+						-1
+					],
+					"index": 1,
+					"input_summary": "移动路径：上、上",
+					"last_message": "text_at (21, 13) expected 线线 got ",
+					"player_pos": [
+						20,
+						13
+					],
+					"type": "move_path"
+				}
+			],
+			"summary": "当前运行版主流程：露出好字、切到好手势、开生命线、切二手势、掌中剑右移、进入黑屏收尾。"
+		},
+		{
+			"route_id": "glove-wrong-route-runtime",
+			"route_label": "错误路线运行版",
+			"steps": [
+				{
+					"caption": "从起点走到生命线前",
+					"caption_localized": "从起点走到生命线前",
+					"facing": [
+						0,
+						-1
+					],
+					"index": 0,
+					"input_summary": "移动路径：上、上、上",
+					"last_message": "player_pos expected (20, 12) got (20, 13); text_at (21, 12) expected 线 got 掌",
+					"player_pos": [
+						20,
+						13
+					],
+					"type": "move_path"
+				}
+			],
+			"summary": "当前运行版失败路线：错误手势触发失败反馈，再互动可重置。"
+		},
+		{
+			"route_id": "glove-gesture-cycle-runtime",
+			"route_label": "手势轮换运行版",
+			"steps": [
+				{
+					"caption": "复用真实主路线直到切换一手势",
+					"caption_localized": "复用真实主路线直到切换一手势",
+					"facing": [
+						0,
+						-1
+					],
+					"index": 0,
+					"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“切到一手势打开左侧通道”",
+					"last_message": "verified route segment failed",
+					"player_pos": [
+						20,
+						13
+					],
+					"type": "route_segment"
+				}
+			],
+			"summary": "当前运行版真实复用一手势前置，并连续搬运赢字入槽后切换赢手势。"
+		},
+		{
+			"route_id": "glove-like-gesture-runtime",
+			"route_label": "赞字真实路线运行版",
+			"steps": [
+				{
+					"caption": "复用真实路线直到放开手势",
+					"caption_localized": "复用真实路线直到放开手势",
+					"facing": [
+						0,
+						-1
+					],
+					"index": 0,
+					"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_release_after_delete_runtime.json；执行到“切换到放开状态”",
+					"last_message": "verified route segment failed",
+					"player_pos": [
+						20,
+						13
+					],
+					"type": "route_segment"
+				}
+			],
+			"summary": "当前运行版复用放开前置，真实拉出赞字并送入槽位；可见布局按源码继续保持放开。"
+		},
+		{
+			"route_id": "glove-sword-swap-runtime",
+			"route_label": "掌中剑换位运行版",
+			"steps": [
+				{
+					"caption": "reuse verified correct route through right sword swap",
+					"caption_localized": "复用已验证正确路线直到掌中剑右移",
+					"facing": [
+						0,
+						-1
+					],
+					"index": 0,
+					"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“把掌中剑换到右边”",
+					"last_message": "player_pos expected (4, 1) got (20, 13); last_message expected 二指伸直，掌中剑换到了右边。 got ; text_at (28, 6) expected 剑 got ",
+					"player_pos": [
+						20,
+						13
+					],
+					"type": "route_segment"
+				}
+			],
+			"summary": "当前运行版掌中剑左右换位规则路线。"
+		},
+		{
+			"route_id": "glove-good-clue-runtime",
+			"route_label": "好字线索运行版",
+			"steps": [
+				{
+					"caption": "switch to the good-hand gesture",
+					"caption_localized": "切到好手势辅助状态",
+					"facing": [
+						0,
+						-1
+					],
+					"index": 0,
+					"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“切到好手势”",
+					"last_message": "player_pos expected (30, 15) got (20, 13); last_message expected 巨大手掌，是好的手势。 got ; text_at (7, 8) expected 掌 got 勇：别被一条线给困住了！",
+					"player_pos": [
+						20,
+						13
+					],
+					"type": "route_segment"
+				}
+			],
+			"summary": "当前运行版好字线索与好手势辅助路线。"
+		},
+		{
+			"route_id": "glove-release-after-delete-runtime",
+			"route_label": "删“不”后放开运行版",
+			"steps": [
+				{
+					"caption": "reuse verified correct route through one gesture",
+					"caption_localized": "复用已验证正确路线直到一手势",
+					"facing": [
+						0,
+						-1
+					],
+					"index": 0,
+					"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“切到一手势打开左侧通道”",
+					"last_message": "player_pos expected (29, 14) got (20, 13)",
+					"player_pos": [
+						20,
+						13
+					],
+					"type": "route_segment"
+				}
+			],
+			"summary": "当前运行版删“不”后放开路线。"
+		},
+		{
+			"route_id": "glove-collision-change-runtime",
+			"route_label": "碰撞变化运行版",
+			"steps": [
+				{
+					"caption": "复用真实路线切到好手势",
+					"caption_localized": "复用真实路线切到好手势",
+					"facing": [
+						0,
+						-1
+					],
+					"index": 0,
+					"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_good_clue_runtime.json；执行到“切到好手势辅助状态”",
+					"last_message": "verified route segment failed",
+					"player_pos": [
+						20,
+						13
+					],
+					"type": "route_segment"
+				}
+			],
+			"summary": "当前运行版碰撞变化候选路线。"
+		},
+		{
+			"route_id": "glove-lifeline-reclose-runtime",
+			"route_label": "生命线复闭运行版",
+			"steps": [
+				{
+					"caption": "reuse verified correct route through opened path",
+					"caption_localized": "reuse verified correct route through opened path",
+					"facing": [
+						0,
+						-1
+					],
+					"index": 0,
+					"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“沿开路走到中段锚点”",
+					"last_message": "player_pos expected (24, 14) got (20, 13)",
+					"player_pos": [
+						20,
+						13
+					],
+					"type": "route_segment"
+				}
+			],
+			"summary": "当前运行版生命线重新闭合路线。"
+		},
+		{
+			"route_id": "glove-path-opened-runtime",
+			"route_label": "路径打开运行版",
+			"steps": [
+				{
+					"caption": "walk from opened lifeline to mid path anchor",
+					"caption_localized": "沿开路走到中段锚点",
+					"facing": [
+						0,
+						-1
+					],
+					"index": 0,
+					"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“沿开路走到中段锚点”",
+					"last_message": "player_pos expected (24, 14) got (20, 13); last_message expected 好手逼退了生命线。 got ",
+					"player_pos": [
+						20,
+						13
+					],
+					"type": "route_segment"
+				}
+			],
+			"summary": "当前运行版打开生命线后的中段通路路线。"
+		},
+		{
+			"route_id": "glove-transition-out-runtime",
+			"route_label": "收尾转场运行版",
+			"steps": [
+				{
+					"caption": "reuse verified correct route through transition",
+					"caption_localized": "复用已验证正确路线直到黑屏转场",
+					"facing": [
+						0,
+						-1
+					],
+					"index": 0,
+					"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“进入黑屏转场”",
+					"last_message": "player_pos expected (24, 5) got (20, 13); visible expected false got true; input_locked expected true got false",
+					"player_pos": [
+						20,
+						13
+					],
+					"type": "route_segment"
+				}
+			],
+			"summary": "当前运行版收尾黑屏转场路线。"
+		}
+	],
+	"source_artifacts": [
+		{
+			"href": "file:///E:/wordgame%20copy/参考资料/视频参考/手套关卡全录屏.mkv",
+			"label": "原始视频：E:/wordgame copy/参考资料/视频参考/手套关卡全录屏.mkv"
+		},
+		{
+			"href": "file:///E:/wordgame%20copy/参考资料/图片参考/手套流程.docx",
+			"label": "原始文档：E:/wordgame copy/参考资料/图片参考/手套流程.docx"
+		},
+		{
+			"href": "file:///D:/文字游戏/Scenes/Maps/第三章/04_手套教學.tscn",
+			"label": "原始地图：D:/文字游戏/Scenes/Maps/第三章/04_手套教學.tscn [GLOVE-SEG-CORRECT] 起点、生命线与正确路线主流程锚点。"
+		},
+		{
+			"href": "file:///D:/文字游戏/Scenes/Maps/第三章/11_添譜來堂_開場.tscn",
+			"label": "原始地图：D:/文字游戏/Scenes/Maps/第三章/11_添譜來堂_開場.tscn [GLOVE-SEG-GESTURES] 赞/一/二/赢等手势变化与环境音来源候选。"
+		},
+		{
+			"href": "file:///D:/文字游戏/Scenes/Maps/第三章/14_添譜來堂_拳頭轉場.tscn",
+			"label": "原始地图：D:/文字游戏/Scenes/Maps/第三章/14_添譜來堂_拳頭轉場.tscn [GLOVE-ANIM-004] 手势切换转场动画候选来源。"
+		},
+		{
+			"href": "file:///D:/文字游戏/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn",
+			"label": "原始地图：D:/文字游戏/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn [GLOVE-SEG-CORRECT] 好手势、删“不”后放开、掌中剑换位候选来源。"
+		},
+		{
+			"href": "file:///D:/文字游戏/Scenes/Maps/第三章/16_添譜來堂_尾聲.tscn",
+			"label": "原始地图：D:/文字游戏/Scenes/Maps/第三章/16_添譜來堂_尾聲.tscn [GLOVE-TRANSITION-OUT] 黑屏对白与收尾状态候选来源。"
+		}
+	],
+	"source_findings": [
+		{
+			"achievement_id": "3-5",
+			"evidence_tokens": [
+				"愛的手勢",
+				"ch3_愛的手勢成立",
+				"第一次愛的手勢",
+				"change_gesture_animation"
+			],
+			"first_love_switch": "ch3_第一次愛的手勢",
+			"id": "SRC-LOVE-GESTURE",
+			"implication": "“爱手势是否存在”已经不是猜测；源码明确支持这个状态。当前仍未收口的是玩家如何稳定获得并激活它。",
+			"love_activation_switch": "ch3_愛的手勢成立",
+			"love_state_value": 5,
+			"pt_love_test_node": "T_愛的手勢",
+			"pt_source_path": "E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/50_添譜來堂_拳頭PT用.tscn",
+			"source_path": "E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn",
+			"summary": "原始拳头关 scene 同时出现了爱手势节点、爱手势成立开关、第一次爱手势标记，以及切到手势动画状态 5 的逻辑。",
+			"title": "爱手势在原始 scene 中确实存在"
+		},
+		{
+			"commands_excerpt": "@[type] {\n\t\"texts\": \"憐<l>愛</l>之深，&||責求之切，&||勇者之情。\", \n\t\"pos\": [1,12], \n\t\"tags\": [\"hand\"],\n\t\"label_settings\": {\n\t\t\"l\": {\n\t\t\t\"can_push\": true\n\t\t}\n\t},\n\t\"z_index\": 9,\n    \"is_dialog_end\": true\n}",
+			"computed_label_grid_candidate": [
+				2,
+				12
+			],
+			"computed_label_grid_method": "type 起点 x + 标签前可见字符数；标签标记与停顿控制符不占格",
+			"computed_label_grid_status": "source_inference",
+			"evidence_tokens": [
+				"憐<l>愛</l>之深",
+				"\"can_push\": true",
+				"ch3_手掌調查敘述出現",
+				"零的手勢"
+			],
+			"gating_condition": "s:ch3_手掌調查敘述出現==false",
+			"id": "SRC-LOVE-WORD-SOURCE",
+			"implication": "这说明原版里确实存在一个可被推出的“爱”字来源，所以当前问题已经从“爱字是不是完全没有来源”收缩成“调查文本如何触发、爱字如何落地、玩家能否稳定把它送入手势槽”。",
+			"label_can_push": true,
+			"pushable_label_tag": "l",
+			"pushable_label_text": "愛",
+			"source_path": "E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn",
+			"source_scene_node": "零的手勢",
+			"summary": "原始拳头关 scene 在“零的手势”节点里挂了一段调查文本，其中 `愛` 被包在 `<l>...</l>` 标签里，并通过 `label_settings` 明确标成 `can_push = true`。",
+			"title": "爱字在原始 scene 中有可推标签来源",
+			"typed_text_pos": [
+				1,
+				12
+			],
+			"typed_texts_raw": "憐<l>愛</l>之深，&||責求之切，&||勇者之情。"
+		},
+		{
+			"evidence_tokens": [
+				"好的手勢成立",
+				"讚的手勢成立",
+				"好還是讚的手勢成立",
+				"change_gesture_animation"
+			],
+			"id": "SRC-GOOD-LIKE-SHARED",
+			"implication": "当前运行版把“好”和“赞”映射到同一个 like 布局不是拍脑袋，而是有源码级依据。后续更该核对的是碰撞细节，而不是先怀疑两者是否同态。",
+			"source_path": "E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn",
+			"summary": "原始拳头关 scene 把“好的手势成立”和“赞的手势成立”并到同一段逻辑里，并统一切到手势动画状态 1。",
+			"title": "好手势与赞手势在源码里共用同一手势状态"
+		},
+		{
+			"audio_path": "res://Sounds/se/第三章 音效/SE_3_58_gear_rock.wav",
+			"camera_shake": [
+				80,
+				15
+			],
+			"evidence_tokens": [
+				"＿會輕易放開",
+				"arg_array: [6]",
+				"arg_array: [-1]",
+				"Vector2(6,3)",
+				"SE_3_58_gear_rock.wav",
+				"shake_camera(80,15)",
+				"animation key 0.8"
+			],
+			"gesture_switch_key_seconds": 0.8,
+			"id": "SRC-RELEASE-GESTURE",
+			"implication": "删“不”后进入放开的规则、音效和关键时间点已有源码直接证据；剩余人工项只需核对实际缓动、画面震动观感和截图落帧。",
+			"release_gesture_argument": 6,
+			"release_sentence": "＿會輕易放開",
+			"restore_gesture_argument": -1,
+			"restore_sentence": "不會輕易放開",
+			"sentence_animation_pos": [
+				6,
+				3
+			],
+			"sentence_text_count": 7,
+			"source_path": "E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn",
+			"summary": "原始拳头关 scene 通过“＿会轻易放开”句子规则调用手势状态 6；在 [6,3] 播放 7 字合法句动画、齿轮岩石音效和镜头震动后切到放开布局。恢复“不”会调用状态 -1 返回此前的一般手势。",
+			"title": "放开状态在原始 scene 中是独立手势分支"
+		},
+		{
+			"evidence_tokens": [
+				"拿到掌中劍了",
+				"第一次劍換位置"
+			],
+			"id": "SRC-SWORD-SWAP",
+			"implication": "当前运行版把掌中剑换位当成规则锚点是合理的。它在源码里本来就是一个独立的状态切换，不是纯视觉装饰。",
+			"source_path": "E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn",
+			"summary": "原始拳头关 scene 里存在“拿到掌中剑了”和“第一次剑换位置”等状态开关，用来区分剑是否已经换位。",
+			"title": "掌中剑换位在原始 scene 中有明确状态标记"
+		},
+		{
+			"dialogue_page_count": 3,
+			"evidence_tokens": [
+				"time_sec: 2.0",
+				"move_to_point [24,5]",
+				"第三章/16_添譜來堂_尾聲",
+				"果然有兩把刷子",
+				"你與我們都不同",
+				"四三九七號勇者",
+				"請無畏地上前吧"
+			],
+			"fade_seconds": 2.0,
+			"handoff_player_pos": [
+				24,
+				5
+			],
+			"id": "SRC-TRANSITION-TAIL",
+			"implication": "当前运行版可以直接按源码实现三页对白和目标地图记录；仍需人工核对的是逐帧打字速度、停顿和镜头构图，而不是文案或去向。",
+			"source_path": "E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn | E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/16_添譜來堂_尾聲.tscn",
+			"summary": "拳头关先用 2 秒遮屏，将玩家移动到 [24,5]，随后无额外转场效果进入 `第三章/16_添譜來堂_尾聲`；尾声开场依次显示三段对白。",
+			"target_map": "第三章/16_添譜來堂_尾聲",
+			"title": "拳头关黑屏与尾声三段对白链路已由源码确认",
+			"transition_type": "none"
+		},
+		{
+			"evidence_tokens": [
+				"@[clear_typed] \"typed\"",
+				"@[clear_typed] \"room\"",
+				"\"pos\":[4,8]",
+				"\"pos\":[3,9]",
+				"now_pos = Vector2( 6, 1 )"
+			],
+			"id": "SRC-TYPEWRITER-LAYER",
+			"implication": "因此 love 线索里的 `pos: [1, 12]` 目前更应视为打字机对白层坐标候选，不应直接当成已确认的世界落点。`愛` 如何从对白层变成可实际推动的地图字，仍需更强证据。",
+			"intro_clear_tag": "typed",
+			"intro_source_path": "E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/map0001.tscn",
+			"intro_typed_pos": [
+				4,
+				8
+			],
+			"sample_clear_tag": "room",
+			"sample_event_now_pos": [
+				6,
+				1
+			],
+			"sample_source_path": "E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/map0002.tscn",
+			"sample_tag": "room",
+			"sample_typed_pos": [
+				3,
+				9
+			],
+			"source_path": "E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/map0001.tscn | E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/map0002.tscn",
+			"summary": "测试地图 map0001 / map0002 里的 `@[type]` 文本会用 `tags` 与 `clear_typed` 管理，同一事件本体的 `now_pos` 与 `type` 的 `pos` 明显分离。",
+			"title": "@[type]/@[clear_typed] 在测试地图里表现为打字机对白层"
+		},
+		{
+			"contains_both": true,
+			"contains_copy": true,
+			"contains_exist_event": true,
+			"contains_generated_in_runtime": true,
+			"contains_has_default_tag": true,
+			"contains_label_settings": true,
+			"evidence_tokens": [
+				"generated_in_runtime",
+				"exist_event",
+				"both",
+				"copy",
+				"label_settings",
+				"has_defalut_tag"
+			],
+			"id": "SRC-TYPEWRITER-RUNTIME-GENERATION",
+			"implication": "结合 `零的手勢` 节点里 `<l>愛</l>` + `can_push = true` 的 scene 配置，当前最强结论是：`愛` 不是先作为普通对白出现、再被另一个系统二次落成地图字；它更像是在 typewriter 层激活期间直接生成的可推动运行时字实体。这个结论仍属于源码推断，不等于已经逐帧复核过原版运行表现。",
+			"source_path": "E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/Typewriter.gdc",
+			"summary": "原始 `Typewriter.gdc` 同时包含 `generated_in_runtime`、`exist_event`、`both`、`copy`、`label_settings`、`has_defalut_tag` 等关键 token。这说明 typewriter 系统不只是打印纯 UI 文本，而是在处理“已有事件 / 复制 / 运行时生成”这类对象分支。",
+			"supports_runtime_pushable_label_inference": true,
+			"title": "Typewriter.gdc 暗示标签字会在运行时生成实体"
+		}
+	],
+	"visual_reports": [
+		{
+			"baseline_id": "GLOVE-SHOT-009",
+			"diff_pixel_count": 0,
+			"report_path": "E:/wordgame copy/newgame/../harness/reports/visual/glove/GLOVE-SHOT-009__report.json",
+			"status": "pass"
+		},
+		{
+			"baseline_id": "GLOVE-SHOT-010",
+			"diff_pixel_count": 0,
+			"report_path": "E:/wordgame copy/newgame/../harness/reports/visual/glove/GLOVE-SHOT-010__report.json",
+			"status": "pass"
+		}
+	]
+}

@@ -1,0 +1,140 @@
+{
+	"baseline_id": "GLOVE-BEH-001",
+	"behavior_id": "GLOVE-CORRECT-ROUTE",
+	"catalog_notes": "Runtime main-flow route with checkpoint-rich replay coverage.",
+	"catalog_status": "in_progress",
+	"checkpoints": [
+		{
+			"caption": "record initial layout anchor",
+			"facing": [
+				1,
+				0
+			],
+			"id": "initial_layout",
+			"input_locked": false,
+			"label": "起始布局锚点",
+			"last_message": "",
+			"player_pos": [
+				20,
+				15
+			],
+			"ref": "GLOVE-SHOT-001",
+			"review_note": "程序已确认起点玩家坐标、掌墙和零手势字存在；完整镜头构图仍以人工视觉复查为准。",
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"source_grid_id": "GLOVE-GRID-001",
+			"state_id": "initial",
+			"step_index": 0,
+			"visible": true
+		}
+	],
+	"feature_id": "F024",
+	"final_state": {
+		"facing": [
+			0,
+			-1
+		],
+		"input_locked": false,
+		"last_message": "",
+		"player_pos": [
+			20,
+			13
+		],
+		"visible": true
+	},
+	"level_id": "glove",
+	"route_id": "glove-correct-route-runtime",
+	"runtime_trace": {
+		"animation_ids": [],
+		"audio_ids": []
+	},
+	"steps": [
+		{
+			"caption": "record initial layout anchor",
+			"checkpoint": {
+				"caption": "record initial layout anchor",
+				"facing": [
+					1,
+					0
+				],
+				"id": "initial_layout",
+				"input_locked": false,
+				"label": "起始布局锚点",
+				"last_message": "",
+				"player_pos": [
+					20,
+					15
+				],
+				"ref": "GLOVE-SHOT-001",
+				"review_note": "程序已确认起点玩家坐标、掌墙和零手势字存在；完整镜头构图仍以人工视觉复查为准。",
+				"runtime_trace": {
+					"animation_ids": [],
+					"audio_ids": []
+				},
+				"source_grid_id": "GLOVE-GRID-001",
+				"state_id": "initial",
+				"step_index": 0,
+				"visible": true
+			},
+			"expectation_failures": [],
+			"expectations_checked": 3,
+			"facing": [
+				1,
+				0
+			],
+			"index": 0,
+			"input_data": {},
+			"last_message": "",
+			"message": "record initial layout anchor",
+			"player_pos": [
+				20,
+				15
+			],
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"success": true,
+			"type": "checkpoint"
+		},
+		{
+			"caption": "walk from start to lower lifeline clue",
+			"expectation_failures": [
+				"text_at (21, 13) expected 线线 got "
+			],
+			"expectations_checked": 2,
+			"facing": [
+				0,
+				-1
+			],
+			"index": 1,
+			"input_data": {
+				"path": [
+					[
+						0.0,
+						-1.0
+					],
+					[
+						0.0,
+						-1.0
+					]
+				]
+			},
+			"last_message": "",
+			"message": "text_at (21, 13) expected 线线 got ",
+			"player_pos": [
+				20,
+				13
+			],
+			"runtime_trace": {
+				"animation_ids": [],
+				"audio_ids": []
+			},
+			"success": false,
+			"type": "move_path"
+		}
+	],
+	"target_feature_id": "F024"
+}
