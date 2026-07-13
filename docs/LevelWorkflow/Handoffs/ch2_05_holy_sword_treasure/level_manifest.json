@@ -10,8 +10,8 @@
 	"source_map": "D:/文字游戏/Scenes/Maps/第二章/05_聖劍寶庫.tscn",
 	"animation_sources": [
 	  "D:/文字游戏/Scenes/Animations/Backspace.tscn",
-      "D:/文字游戏/Scenes/Animations/Backspace.gd",
-      "D:/文字游戏/Scenes/Animations/Backspace_fail.tscn",
+	  "D:/文字游戏/Scenes/Animations/Backspace.gd",
+	  "D:/文字游戏/Scenes/Animations/Backspace_fail.tscn",
       "D:/文字游戏/Scripts/DrawText.gd"
 	]
   },

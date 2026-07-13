@@ -51,7 +51,7 @@ const SE_SNAKE_HOLY := "res://Assets/audio/se/MEL/MEL_2_24_sword.wav"
 const SWORD_VIDEO := "res://Assets/video/u_sword.ogv"
 const BACKSPACE_SPLASH_TEXTURE := preload("res://Assets/sprites/backspace_splash/splash.png")
 const BACKSPACE_CUT_SHADER := preload("res://Assets/shaders/cut2.gdshader")
-const BACKSPACE_CUT_ANIMATION_CHARS := ["忘"]
+const BACKSPACE_CUT_ANIMATION_CHARS := ["不", "没", "忘"]
 const BACKSPACE_CUT_MASK_EXTRA_X := 14.0
 
 const WALL_COLOR := Color(0.58, 0.58, 0.58, 1.0)
@@ -66,6 +66,7 @@ const SWORD_SPAWN_WAIT := 3.0
 const SWORD_VISIBLE_TIME := 5.0
 const PLAYER_WALK_VISUAL_TIME := 0.12
 const PLAYER_WALK_FRAME_TIME := 0.055
+const PLAYER_MOVE_TIME := 0.12
 const PLAYER_MOVE_REPEAT_TIME := 0.12
 const PLAYER_BLOCKED_RETRY_TIME := 0.12
 const SLIME_REINFORCEMENT_INTERVAL := 4.0
@@ -284,6 +285,7 @@ var player_walk_visual_timer := 0.0
 var player_walk_frame_timer := 0.0
 var player_move_repeat_timer := 0.0
 var player_blocked_retry_timer := 0.0
+var player_move_tween: Tween
 var sword_label: Label
 var toast_label: Label
 var hint_label: Label
@@ -431,6 +433,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_DOWN, KEY_S:
 			direction = Vector2i.DOWN
 	if direction != Vector2i.ZERO:
+		if player_move_repeat_timer > 0.0 or player_blocked_retry_timer > 0.0:
+			return
 		_move_player_from_input(direction)
 
 
@@ -723,7 +727,7 @@ func _try_move_player(direction: Vector2i) -> void:
 
 	player_cell = next
 	_play_player_walk_visual()
-	_update_player_position()
+	_update_player_position(true)
 
 
 func _is_walkable(map_index: int, cell: Vector2i) -> bool:
@@ -3276,11 +3280,20 @@ func _is_sentence_cell(cell: Vector2i) -> bool:
 	return sentence_active and sentence_cells.has(cell)
 
 
-func _update_player_position() -> void:
+func _update_player_position(smooth := false) -> void:
 	var y: float = float(player_cell.y * CELL)
 	if current_map == MAP_SNAKE:
 		y = _snake_player_visual_y(player_cell.y)
-	player_label.position = Vector2(current_map * VIEWPORT_SIZE.x + player_cell.x * CELL, y)
+	var target_position := Vector2(current_map * VIEWPORT_SIZE.x + player_cell.x * CELL, y)
+
+	if is_instance_valid(player_move_tween):
+		player_move_tween.kill()
+
+	if smooth:
+		player_move_tween = create_tween()
+		player_move_tween.tween_property(player_label, "position", target_position, PLAYER_MOVE_TIME).set_trans(Tween.TRANS_LINEAR)
+	else:
+		player_label.position = target_position
 
 
 func _setup_player_sprite() -> void:

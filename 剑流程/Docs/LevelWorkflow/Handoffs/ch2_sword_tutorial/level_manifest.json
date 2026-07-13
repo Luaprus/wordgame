@@ -67,11 +67,11 @@
     "墙面闪现“机会稍纵即逝”，进入限时找剑",
     "圣剑定期随机出现，5秒未接触则消失并稍后重刷",
     "玩家获得圣剑，播放拔剑音效、圣剑影片和震动",
-    "玩家移动支持方向键 / WASD 按住连续移动，参考 L:/wordgame-map/wordgame/Scripts/WASDMoveMeScene.gd 的 held-direction 逻辑",
+    "玩家移动支持方向键 / WASD 按住连续移动，并按 L:/wordgame-map/wordgame/Scripts/WASDMoveMeScene.gd 的 0.12 秒线性 Tween 从一个格心平滑移动到下一个格心",
     "诗人解释“清除文字之中恶的成分”与删除键",
     "删“灯不亮了”的“不”，灯重新亮起",
     "删“没有空气”的“没”，洞窟恢复空气",
-    "删“只有忘掉下去”的“忘”时，才播放参考 Backspace.tscn 的右上到左下斩光、切字淡出与闪现消失，并用黑底遮罩局部覆盖旁边“有”“掉”；该效果由 BACKSPACE_CUT_ANIMATION_CHARS 指定复用目标，当前仅包含“忘”",
+    "三段 Backspace 教学目标字“不”“没”“忘”都会播放参考 Backspace.tscn 的右上到左下斩光、切字淡出与闪现消失；该效果由 BACKSPACE_CUT_ANIMATION_CHARS 指定复用目标，当前包含“不”“没”“忘”",
     "打败史莱姆后直接进入再战蛇妖",
     "一阶段滚动村庄中通过箱、货、仓、栈、店、铺、树、壁、坊九类对象删字助攻，三次成功后蛇妖暴怒变大",
     "二阶段蛇妖定时放话并发射媚眼射线，玩家依次删“你 / 走 / 过”反制蛇妖",
@@ -98,14 +98,14 @@
       {
         "source": "D:/文字游戏/Sprites/backspace_splash/splash.png",
         "target": "res://Assets/sprites/backspace_splash/splash.png",
-        "trigger": "Backspace 删除“忘”字时的源逐帧斩光；当前不应用到其他删字步骤"
+        "trigger": "Backspace 删除教学目标字“不”“没”“忘”时的源逐帧斩光"
       }
     ],
     "shaders": [
       {
         "source": "D:/文字游戏/Shader/cut2.gdshader",
         "target": "res://Assets/shaders/cut2.gdshader",
-        "trigger": "Backspace 删除“忘”字时将目标字沿右上到左下方向切开并淡出"
+        "trigger": "Backspace 删除教学目标字“不”“没”“忘”时将目标字沿右上到左下方向切开并淡出"
       }
     ],
     "video": [
