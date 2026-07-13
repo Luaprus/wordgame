@@ -58,26 +58,66 @@
 - 参考源动画：`D:\文字游戏\Scenes\Animations\Backspace.tscn` 与 `D:\文字游戏\Scenes\Animations\Backspace.gd`。
 - 接入源贴图：`D:\文字游戏\Sprites\backspace_splash\splash.png` 到 `res://Assets/sprites/backspace_splash/splash.png`。
 - 接入源 shader：`D:\文字游戏\Shader\cut2.gdshader` 到 `res://Assets/shaders/cut2.gdshader`。
-- `ReferenceSwordFlow.gd` 的 `_delete_sentence_index()` 只有在 `label.text` 位于 `BACKSPACE_CUT_ANIMATION_CHARS` 中时调用 `_play_backspace_cut_animation()`；当前列表为 `["不", "没", "忘"]`。
-- 目标字动画期间会临时创建 `BackspaceForgetMask` 黑底遮罩，覆盖目标格并向左右各扩 10px，用来复现原版中字复现/变浅时对旁边字边缘的局部遮挡。
+- `ReferenceSwordFlow.gd` 的 `_delete_sentence_index()` 只有在 `label.text` 位于 `BACKSPACE_CUT_ANIMATION_CHARS` 中时调用 `_play_backspace_cut_animation()`；当前列表为 `["忘", "对", "不", "来", "没"]`。
+- 目标字动画期间会临时创建 `BackspaceCutMask` 黑底遮罩，覆盖目标格并向左右各扩 14px，用来复现原版中字复现/变浅时对旁边字边缘的局部遮挡。
 - 三段删除分别由 `_start_delete_sentence(["灯", "不", "亮", "了", "。"], 1, ...)`、`_start_delete_sentence(["没", "有", "空", "气"], 0, ...)`、`_start_delete_sentence(["只", "有", "忘", ...], 2, ...)` 触发；玩家操控“我”面对目标字按 Backspace 后播放右上到左下斜劈、字变浅、闪现、消失，再进入各自原本流程。
 - 删除音效沿用本复刻项目已有的源音效 `res://Assets/audio/se/第二章 音效/SE_2_23_sword_big_swing_B.wav`。
 
 ### 删除教学字动画制作过程
 
 1. 目标字仍使用原复刻流程的 `Label`，不改移动、面对方向和 Backspace 判定。
-2. `_delete_sentence_index()` 先判断 `label.text` 是否在 `BACKSPACE_CUT_ANIMATION_CHARS` 中；当前列表为 `"不"`、`"没"`、`"忘"`。
+2. `_delete_sentence_index()` 先判断 `label.text` 是否在 `BACKSPACE_CUT_ANIMATION_CHARS` 中；当前列表为 `"忘"`、`"对"`、`"不"`、`"来"`、`"没"`。
 3. 命中字后调用 `_play_backspace_cut_animation()`，先播放源挥剑音效，再给目标字套 `D:\文字游戏\Shader\cut2.gdshader`。
 4. 同时创建 `Sprite2D` 播放 `D:\文字游戏\Sprites\backspace_splash\splash.png` 的 2x10 帧，表现右上到左下的斩光。
-5. 动画期间创建 `BackspaceForgetMask` 黑底遮罩，遮住目标格并向左右扩展，模拟原版中目标字变浅复现时压住旁边字边缘的效果。
+5. 动画期间创建 `BackspaceCutMask` 黑底遮罩，遮住目标格并向左右扩展，模拟原版中目标字变浅复现时压住旁边字边缘的效果。
 6. shader 推进结束后，目标字短暂全隐，再以较暗状态闪回，随后彻底透明并隐藏。
 7. 其他不在 `BACKSPACE_CUT_ANIMATION_CHARS` 的字继续使用原来的淡出和放大删除动画。
 
 ### 复用方式
 
-- 要把同一套动画用在用户指定的另一个字上，只修改 `ReferenceSwordFlow.gd` 顶部的 `BACKSPACE_CUT_ANIMATION_CHARS`。
-- 要把同一套动画用在用户指定的另一个字上，继续追加到 `BACKSPACE_CUT_ANIMATION_CHARS` 列表即可。
-- 不需要改 `_delete_sentence_index()` 的流程，也不需要复制新的动画资源。
+- 只修改 `res://Scripts/ReferenceSwordFlow.gd` 顶部的 `BACKSPACE_CUT_ANIMATION_CHARS`，在现有列表末尾追加用户指定的字。
+- 这是累加名单。除非用户明确要求移除，否则不得删除或替换已有字符；当前必须保留 `"忘"`、`"对"`、`"不"`、`"来"`、`"没"`。
+- 不需要改 `_delete_sentence_index()`、`_play_backspace_cut_animation()`，也不需要复制新的动画、贴图或音效资源。
+
+### 后续对话交接提示（可直接复制）
+
+向后续对话输入时，直接使用下面这段，将 `【新字】` 替换成要加入的单个字或多个字：
+
+```text
+在 L:/wordgame-map/wordgame/剑流程 项目中，把可删除字“【新字】”加入 Backspace 斜劈删除动画。
+只在 res://Scripts/ReferenceSwordFlow.gd 的 BACKSPACE_CUT_ANIMATION_CHARS 中追加，不要删除、替换或改变现有的“忘、对、不、来、没”。
+复用现有 _play_backspace_cut_animation()，不要复制函数或原创资源；资源必须继续使用 D:/文字游戏 的 splash.png、cut2.gdshader 和已有挥剑音效。
+同步更新 Docs/LevelWorkflow/Handoffs/ch2_sword_tutorial/handoff.md 与 level_manifest.json，并做脚本、场景引用、资源路径和 JSON 静态检查。
+```
+
+接手对话应执行的完整约束如下：
+
+```text
+项目：L:/wordgame-map/wordgame/剑流程
+需求：把指定可删除字加入 Backspace 斜劈删除动画。
+
+只在 res://Scripts/ReferenceSwordFlow.gd 顶部的
+BACKSPACE_CUT_ANIMATION_CHARS 中追加指定字，保留当前已有的：忘、对、不、来、没。
+这是累加配置；用户未明确要求时，不得移除任何已有字。
+
+命中名单的 Label 会自动复用 _play_backspace_cut_animation()：
+1. 使用 D:/文字游戏/Sprites/backspace_splash/splash.png 的逐帧斩光；
+2. 使用 D:/文字游戏/Shader/cut2.gdshader 切开目标字；
+3. 用 BackspaceCutMask 局部遮挡相邻字；
+4. 完成变浅、闪现、消失。
+
+不要复制动画函数或创建原创资源。同步更新本 handoff.md 与
+Docs/LevelWorkflow/Handoffs/ch2_sword_tutorial/level_manifest.json，至少静态检查脚本名单、场景脚本引用、源资源路径和 JSON 格式。
+```
+
+## 2026-07-13 史莱姆“史”字动画接入
+
+本次按用户指定参考 `L:/wordgame-map/wordgame/Scenes/Test/SlimeMoveDemo.tscn`，把其中“史”字的 `slime_move.tres` 缩放动画接入到 `ReferenceSwordFlow.gd` 的史莱姆段。
+
+- 参考场景：`L:/wordgame-map/wordgame/Scenes/Test/SlimeMoveDemo.tscn`。
+- 参考动画：`L:/wordgame-map/wordgame/Scenes/Animations/slime_move.tres`，长度 `0.35s`，关键缩放为 `Vector2(1.2, 0.85)` 后回到 `Vector2(1, 1)`。
+- `ReferenceSwordFlow.gd` 只新增视觉采样：`_update_slime_visual_animation()` 和 `_sample_slime_move_scale()`；外层“史”字仍由原来的 `SLIME_CELLS`、`SLIME_INITIAL_INDICES`、`SLIME_REINFORCEMENT_INDICES` 控制。
+- 没有改变“史”的数量、出生顺序、碰撞格、跑离路径或阶段流程。
 
 ## 2026-07-11 静态地图验收版本
 
