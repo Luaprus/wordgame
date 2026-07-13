@@ -39,6 +39,14 @@
       "used_for": "2026-07-13 玩家「我」字 me_default / me_walk 切帧节奏参考"
     },
     {
+      "source": "L:/wordgame-map/wordgame/Scenes/Test/SlimeMoveDemo.tscn",
+      "used_for": "2026-07-13 史莱姆「史」字视觉动画参考；只取内部缩放动画，不改运动路径和数量"
+    },
+    {
+      "source": "L:/wordgame-map/wordgame/Scenes/Animations/slime_move.tres",
+      "used_for": "2026-07-13 史莱姆「史」字 slime_move 缩放关键帧参考"
+    },
+    {
       "source": "E:/Godot/wordgame/参考资料/图片参考/贝克思贝斯之剑流程.docx",
       "used_for": "文档图1-6：迷宫、拿剑、圣剑教学、空气、堵路、坠落"
     },
@@ -72,6 +80,7 @@
     "删“灯不亮了”的“不”，灯重新亮起",
     "删“没有空气”的“没”，洞窟恢复空气",
     "三段 Backspace 教学目标字“不”“没”“忘”都会播放参考 Backspace.tscn 的右上到左下斩光、切字淡出与闪现消失；该效果由 BACKSPACE_CUT_ANIMATION_CHARS 指定复用目标，当前包含“不”“没”“忘”",
+    "史莱姆段的所有可见“史”字播放参考 SlimeMoveDemo.tscn / slime_move.tres 的缩放动画；原有 SLIME_CELLS、数量、增援顺序、跑离路径不变",
     "打败史莱姆后直接进入再战蛇妖",
     "一阶段滚动村庄中通过箱、货、仓、栈、店、铺、树、壁、坊九类对象删字助攻，三次成功后蛇妖暴怒变大",
     "二阶段蛇妖定时放话并发射媚眼射线，玩家依次删“你 / 走 / 过”反制蛇妖",

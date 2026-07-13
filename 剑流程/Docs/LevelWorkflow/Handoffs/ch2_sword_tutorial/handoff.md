@@ -79,6 +79,15 @@
 - 要把同一套动画用在用户指定的另一个字上，继续追加到 `BACKSPACE_CUT_ANIMATION_CHARS` 列表即可。
 - 不需要改 `_delete_sentence_index()` 的流程，也不需要复制新的动画资源。
 
+## 2026-07-13 史莱姆“史”字动画接入
+
+本次按用户指定参考 `L:/wordgame-map/wordgame/Scenes/Test/SlimeMoveDemo.tscn`，把其中“史”字的 `slime_move.tres` 缩放动画接入到 `ReferenceSwordFlow.gd` 的史莱姆段。
+
+- 参考场景：`L:/wordgame-map/wordgame/Scenes/Test/SlimeMoveDemo.tscn`。
+- 参考动画：`L:/wordgame-map/wordgame/Scenes/Animations/slime_move.tres`，长度 `0.35s`，关键缩放为 `Vector2(1.2, 0.85)` 后回到 `Vector2(1, 1)`。
+- `ReferenceSwordFlow.gd` 只新增视觉采样：`_update_slime_visual_animation()` 和 `_sample_slime_move_scale()`；外层“史”字仍由原来的 `SLIME_CELLS`、`SLIME_INITIAL_INDICES`、`SLIME_REINFORCEMENT_INDICES` 控制。
+- 没有改变“史”的数量、出生顺序、碰撞格、跑离路径或阶段流程。
+
 ## 2026-07-11 静态地图验收版本
 
 本次按 `E:/Godot/wordgame/LevelWorkflow` 的地图标准先交付静态地图，不进入动态流程。

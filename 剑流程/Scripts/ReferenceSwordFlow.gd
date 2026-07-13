@@ -70,6 +70,16 @@ const PLAYER_MOVE_TIME := 0.12
 const PLAYER_MOVE_REPEAT_TIME := 0.12
 const PLAYER_BLOCKED_RETRY_TIME := 0.12
 const SLIME_REINFORCEMENT_INTERVAL := 4.0
+const SLIME_MOVE_ANIMATION_LENGTH := 0.35
+const SLIME_MOVE_CYCLE_LENGTH := 0.70
+const SLIME_MOVE_KEY_TIMES := [0.0, 0.01, 0.2, 0.34, 0.35]
+const SLIME_MOVE_KEY_SCALES := [
+	Vector2(1.0, 1.0),
+	Vector2(1.0, 1.0),
+	Vector2(1.2, 0.85),
+	Vector2(1.0, 1.0),
+	Vector2(1.0, 1.0),
+]
 const OPPORTUNITY_CELLS := [
 	Vector2i(2, 7),
 	Vector2i(7, 3),
@@ -334,6 +344,7 @@ var slime_labels: Array[Label] = []
 var slime_visible: Array[bool] = []
 var slime_reinforcement_timer := 0.0
 var slime_reinforcement_cursor := 0
+var slime_move_animation_time := 0.0
 var pending_death_sentence := ""
 var death_checkpoint: Dictionary = {}
 var death_checkpoint_valid := false
@@ -386,6 +397,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	_update_player_visual_animation(delta)
 	_update_continuous_player_movement(delta)
+	_update_slime_visual_animation(delta)
 	if phase == Phase.FIND_SWORD:
 		_update_sword(delta)
 	if opportunity_active:
@@ -2695,10 +2707,12 @@ func _show_death_screen(death_sentence: String) -> void:
 
 func _show_slimes() -> void:
 	_clear_slimes()
+	slime_move_animation_time = 0.0
 	for i in range(SLIME_CELLS.size()):
 		var cell: Vector2i = SLIME_CELLS[i]
 		var label := _make_world_cell_label("史", MAP_SLIME_RIGHT, cell.x, cell.y, DIALOGUE_COLOR)
 		label.z_index = 18
+		label.pivot_offset = Vector2(CELL * 0.5, CELL * 0.5)
 		label.visible = SLIME_INITIAL_INDICES.has(i)
 		actor_layer.add_child(label)
 		slime_labels.append(label)
@@ -2712,14 +2726,17 @@ func _clear_slimes() -> void:
 	slime_visible.clear()
 	slime_reinforcement_timer = 0.0
 	slime_reinforcement_cursor = 0
+	slime_move_animation_time = 0.0
 
 
 func _restore_slimes(visible_state: Array) -> void:
 	_clear_slimes()
+	slime_move_animation_time = 0.0
 	for i in range(SLIME_CELLS.size()):
 		var cell: Vector2i = SLIME_CELLS[i]
 		var label := _make_world_cell_label("史", MAP_SLIME_RIGHT, cell.x, cell.y, DIALOGUE_COLOR)
 		label.z_index = 18
+		label.pivot_offset = Vector2(CELL * 0.5, CELL * 0.5)
 		label.visible = i < visible_state.size() and bool(visible_state[i])
 		actor_layer.add_child(label)
 		slime_labels.append(label)
@@ -2794,6 +2811,31 @@ func _is_visible_slime_cell(cell: Vector2i) -> bool:
 		if slime_visible.size() > i and slime_visible[i] and SLIME_CELLS[i] == cell:
 			return true
 	return false
+
+
+func _update_slime_visual_animation(delta: float) -> void:
+	if slime_labels.is_empty():
+		return
+	slime_move_animation_time = fmod(slime_move_animation_time + delta, SLIME_MOVE_CYCLE_LENGTH)
+	var animated_scale := _sample_slime_move_scale(slime_move_animation_time)
+	for label in slime_labels:
+		if not is_instance_valid(label):
+			continue
+		label.pivot_offset = Vector2(CELL * 0.5, CELL * 0.5)
+		label.scale = animated_scale if label.visible else Vector2.ONE
+
+
+func _sample_slime_move_scale(time: float) -> Vector2:
+	if time >= SLIME_MOVE_ANIMATION_LENGTH:
+		return Vector2.ONE
+	for i in range(SLIME_MOVE_KEY_TIMES.size() - 1):
+		var start_time: float = SLIME_MOVE_KEY_TIMES[i]
+		var end_time: float = SLIME_MOVE_KEY_TIMES[i + 1]
+		if time <= end_time:
+			var span := maxf(end_time - start_time, 0.001)
+			var weight := clampf((time - start_time) / span, 0.0, 1.0)
+			return SLIME_MOVE_KEY_SCALES[i].lerp(SLIME_MOVE_KEY_SCALES[i + 1], weight)
+	return Vector2.ONE
 
 
 func _chars(text: String) -> Array[String]:
