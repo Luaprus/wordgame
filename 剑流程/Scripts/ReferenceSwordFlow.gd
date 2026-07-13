@@ -73,11 +73,14 @@ const SLIME_MOVE_KEY_SCALES := [
 	Vector2(1.0, 1.0),
 	Vector2(1.0, 1.0),
 ]
+
 const SLIME_RANDOM_WAIT_MIN := 2.0
 const SLIME_RANDOM_WAIT_MAX := 3.0
 const SLIME_CHASE_WAIT_MIN := 1.0
 const SLIME_CHASE_WAIT_MAX := 2.0
 const SLIME_MOVE_TIME := 0.35
+
+
 const OPPORTUNITY_CELLS := [
 	Vector2i(2, 7),
 	Vector2i(7, 3),
