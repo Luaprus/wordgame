@@ -41,6 +41,7 @@ var player_merge_effects: Dictionary = {}
 var player_split_rules: Dictionary = {}
 var player_split_effects: Dictionary = {}
 var passable_text_by_player: Dictionary = {}
+var pullable_texts: PackedStringArray = PackedStringArray()
 var player_water_animation: Dictionary = {}
 var player_submerged := false
 var entity_move_effects: Variant = {}
@@ -91,6 +92,7 @@ func load_level(level: Dictionary) -> void:
 	player_split_rules = level.get("player_split_rules", {})
 	player_split_effects = level.get("player_split_effects", {})
 	passable_text_by_player = level.get("passable_text_by_player", {})
+	set_pullable_texts(level.get("pullable_texts", []))
 	player_water_animation = level.get("player_water_animation", {}).duplicate(true)
 	player_submerged = bool(level.get("player_submerged", false))
 	entity_move_effects = level.get("entity_move_effects", {})
@@ -133,6 +135,7 @@ func clear() -> void:
 	player_split_rules.clear()
 	player_split_effects.clear()
 	passable_text_by_player.clear()
+	pullable_texts = PackedStringArray()
 	player_water_animation.clear()
 	player_submerged = false
 	entity_move_effects.clear()
@@ -215,6 +218,14 @@ func set_ignored_row_texts(texts: Array) -> void:
 		if not normalized.has(value):
 			normalized.append(value)
 	ignored_row_texts = normalized
+
+func set_pullable_texts(texts: Array) -> void:
+	var normalized := PackedStringArray()
+	for text in texts:
+		var value := str(text)
+		if not normalized.has(value):
+			normalized.append(value)
+	pullable_texts = normalized
 
 func get_rule_state() -> Dictionary:
 	return rule_engine.get_state()
@@ -417,6 +428,8 @@ func pull_front(move_direction: Vector2i) -> Dictionary:
 	var entity: WordEntity = front_target.entity
 	if not entity.pushable:
 		return {"success": false, "message": "nothing pullable"}
+	if not pullable_texts.is_empty() and not pullable_texts.has(entity.text):
+		return {"success": false, "message": "nothing pullable"}
 	if move_direction != -facing:
 		return {"success": false, "message": "pull direction locked"}
 	var old_player_pos := player_pos
@@ -429,6 +442,13 @@ func pull_front(move_direction: Vector2i) -> Dictionary:
 	player_moving = true
 	player_pos = new_player_pos
 	move_entity_to(entity.id, old_player_pos)
+	if entity.text == "镜":
+		visual_effect_requests.append({
+			"type": "pull_particles",
+			"origin_grid": old_player_pos,
+			"duration": 0.42,
+			"seed": old_player_pos.x * 97 + old_player_pos.y * 53
+		})
 	facing = -move_direction
 	update_page()
 	check_sentence_rules()

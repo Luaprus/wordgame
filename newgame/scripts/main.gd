@@ -18,6 +18,7 @@ const PlayerDirectionMarker = preload("res://scripts/player_moving/player_direct
 const SmoothGridMover = preload("res://scripts/smooth_grid_mover.gd")
 const GemBurstEffect = preload("res://scripts/gem_burst_effect.gd")
 const LightGlowEffect = preload("res://scripts/light_glow_effect.gd")
+const PullParticleEffect = preload("res://scripts/pull_particle_effect.gd")
 const TreeSpriteScene = preload("res://scenes/animations/TreeSprite.tscn")
 const OriginalFont = preload("res://Fonts/Zpix-v3.1.6.ttf")
 
@@ -83,6 +84,7 @@ var direction_marker_timer: Timer
 var fullscreen_video_player: VideoStreamPlayer
 var gem_burst_effect
 var light_glow_effect
+var pull_particle_effect
 var direction_marker_direction := Vector2i.ZERO
 var held_move_directions: Array[Vector2i] = []
 var move_visual_duration := 0.12
@@ -198,6 +200,10 @@ func _build_scene() -> void:
 	gem_burst_effect = GemBurstEffect.new()
 	gem_burst_effect.name = "GemBurstEffect"
 	map_layer.add_child(gem_burst_effect)
+	pull_particle_effect = PullParticleEffect.new()
+	pull_particle_effect.name = "PullParticleEffect"
+	pull_particle_effect.z_index = 18
+	map_layer.add_child(pull_particle_effect)
 	demo_timer = Timer.new()
 	demo_timer.wait_time = 0.55
 	demo_timer.one_shot = true
@@ -475,10 +481,10 @@ func _is_horizontal_shake_entity(entity: WordEntity) -> bool:
 	return entity != null and entity.visual_horizontal_shake_amplitude > 0.0
 
 func _horizontal_shake_offset(entity: WordEntity) -> float:
-	var speed := entity.visual_horizontal_shake_speed
+	var speed: float = float(entity.visual_horizontal_shake_speed)
 	if speed <= 0.0:
 		speed = BRIDGE_SHAKE_DEFAULT_SPEED
-	var phase := bridge_shake_elapsed * speed + entity.visual_horizontal_shake_phase
+	var phase: float = bridge_shake_elapsed * speed + float(entity.visual_horizontal_shake_phase)
 	return sin(phase) * entity.visual_horizontal_shake_amplitude
 
 func _sync_entity_label_group(group: Node2D, entity) -> void:
@@ -587,6 +593,17 @@ func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> 
 				world.cell_size,
 				float(request.get("duration", 0.78)),
 				int(request.get("seed", 1947))
+			)
+			continue
+		if effect_type == "pull_particles":
+			if pull_particle_effect == null:
+				continue
+			var origin_grid: Vector2 = request.get("origin_grid", Vector2.ZERO)
+			pull_particle_effect.play_at(
+				_grid_to_pixels_float(origin_grid),
+				float(world.cell_size),
+				float(request.get("duration", 0.42)),
+				int(request.get("seed", 2371))
 			)
 			continue
 		if effect_type == "player_river_enter":
