@@ -29,6 +29,14 @@ static func build_level() -> Dictionary:
 		},
 		"passable_text_by_player": {
 			"鹅": ["溪"]
+		},
+		"player_water_animation": {
+			"player_text": "鹅",
+			"water_text": "溪",
+			"submerge_offset": 30.0,
+			"jump_height": 30.0,
+			"enter_duration": 0.5,
+			"exit_duration": 0.3
 		}
 	}
 

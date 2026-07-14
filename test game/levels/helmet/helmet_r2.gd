@@ -1,6 +1,7 @@
 extends RefCounted
 
 const LEVEL_NAME := "四目头盔 过河第二关"
+const BridgeTreeVisuals = preload("res://levels/helmet/bridge_tree_visuals.gd")
 
 static func build_level() -> Dictionary:
 	return {
@@ -313,6 +314,7 @@ static func _bridge_phase_one_effect() -> Dictionary:
 	spawn.append_array(_phase_one_bridge_spawn())
 	return {
 		"remove_at": _river_dynamic_cells(),
+		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _bridge_cells(-3)),
 		"replace_text": [_hint_bridge_merge_replace()],
 		"spawn": spawn
 	}
@@ -322,6 +324,7 @@ static func _bridge_phase_two_remerge_effect() -> Dictionary:
 	spawn.append_array(_bridge_spawn(0))
 	return {
 		"remove_at": _river_dynamic_cells(),
+		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _bridge_cells(0)),
 		"replace_text": [_hint_bridge_merge_replace()],
 		"spawn": spawn
 	}
@@ -347,6 +350,7 @@ static func _distance_solved_effect() -> Dictionary:
 static func _restore_initial_effect() -> Dictionary:
 	return {
 		"remove_at": _river_dynamic_cells(),
+		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _bridge_cells(-3) + _bridge_cells(0)),
 		"replace_text": [_hint_bridge_split_replace()],
 		"spawn": _creek_and_tree_spawn()
 	}

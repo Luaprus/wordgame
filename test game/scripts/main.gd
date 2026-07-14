@@ -18,18 +18,27 @@ const PlayerDirectionMarker = preload("res://scripts/player_moving/player_direct
 const SmoothGridMover = preload("res://scripts/smooth_grid_mover.gd")
 const GemBurstEffect = preload("res://scripts/gem_burst_effect.gd")
 const LightGlowEffect = preload("res://scripts/light_glow_effect.gd")
-const OriginalFont = preload("res://Fonts/Zpix.tres")
+const TreeSpriteScene = preload("res://scenes/animations/TreeSprite.tscn")
+const OriginalFont = preload("res://Fonts/Zpix-v3.1.6.ttf")
 
-const MOVE_REPEAT_INTERVAL := 0.28
-const FAST_MOVE_REPEAT_INTERVAL := 0.12
-const WORD_FONT_SIZE := 42
+const WORD_FONT_SIZE := 56
 const GEM_COLOR := Color(0.0, 0.58, 0.62, 1.0)
 const GEM_ORIGIN_GRID := Vector2(15.5, 15.5)
 const GEM_REVEAL_SPEED := 8.0
 const INTRO_PROMPT_HOLD := 0.65
+const PLAYER_WALK_VISUAL_TIME := 0.12
+const PLAYER_WALK_FRAME_TIME := 0.055
+const PLAYER_MOVE_REPEAT_TIME := 0.12
+const PLAYER_BLOCKED_RETRY_TIME := 0.12
 const CREEK_WAVE_SPEED := TAU * 0.55
 const CREEK_WAVE_AMPLITUDE := 4.0
 const CREEK_MIN_X := 16
+const RIVER_DEPTH_STEP := 10
+const RIVER_PLAYER_DEPTH_OFFSET := 5
+const HIGHLIGHT_VISUAL_CONFIG_PATH := "res://assets/animations/highlight/highlight_visual_config.json"
+const GLOVE_PREVIEW_SCENE_PATH := "res://levels/glove/glove_preview.tscn"
+const STARTUP_ENTRY_ARG_PREFIX := "--entry="
+const GLOVE_SCENE_SHORTCUT_KEY := KEY_F9
 const LEVEL_SEQUENCE := [
 	HelmetTutorial,
 	HelmetR1,
@@ -41,6 +50,11 @@ const LEVEL_SEQUENCE := [
 	HelmetReturn
 ]
 
+@export var startup_level_index := 0
+@export var startup_player_pos := Vector2i(-1, -1)
+@export var startup_player_text := ""
+@export var startup_player_facing := Vector2i.ZERO
+
 var world := GridWorld.new()
 var page_camera := PageCamera.new()
 var demo := DemoRunner.new()
@@ -49,7 +63,9 @@ var current_level_index := 0
 var entity_movers: Dictionary = {}
 var entity_labels: Dictionary = {}
 var player_label: Label
+var player_sprite: Sprite2D
 var map_layer: Node2D
+var bridge_tree_effect_layer: Node2D
 var demo_timer: Timer
 var world_event_timer: Timer
 var direction_marker: Node2D
@@ -61,10 +77,18 @@ var gem_burst_effect
 var light_glow_effect
 var direction_marker_direction := Vector2i.ZERO
 var held_move_directions: Array[Vector2i] = []
-var move_repeat_elapsed := 0.0
 var move_visual_duration := 0.12
+var player_walk_visual_timer := 0.0
+var player_walk_frame_timer := 0.0
+var player_move_repeat_timer := 0.0
+var player_blocked_retry_timer := 0.0
 var _player_visual_ready := false
 var _last_player_visible := true
+var player_river_visual_offset := 0.0
+var player_river_tween: Tween
+var player_river_action_locked := false
+var _visual_effect_generation := 0
+var highlight_visual_config: Dictionary = {}
 var gem_labels: Array = []
 var intro_phase := "lights"
 var intro_reveal_elapsed := 0.0
@@ -72,21 +96,26 @@ var intro_reveal_max_distance := 0.0
 var creek_wave_elapsed := 0.0
 
 func _ready() -> void:
-	_load_level_index(1)
+	var startup_scene_path := resolve_startup_scene_path(OS.get_cmdline_user_args())
+	if not startup_scene_path.is_empty():
+		call_deferred("_switch_to_scene", startup_scene_path)
+		return
+	highlight_visual_config = load_highlight_visual_config()
+	_load_level_index(startup_level_index, _startup_level_overrides())
 	page_camera.sync_to_world(world)
 	_build_scene()
 	_refresh_view()
 
 func _process(delta: float) -> void:
+	world.advance_highlight_animation(delta)
+	_update_player_visual_animation(delta)
+	if player_move_repeat_timer > 0.0:
+		player_move_repeat_timer = maxf(player_move_repeat_timer - delta, 0.0)
+	if player_blocked_retry_timer > 0.0:
+		player_blocked_retry_timer = maxf(player_blocked_retry_timer - delta, 0.0)
 	var direction := _current_held_direction()
-	if direction == Vector2i.ZERO:
-		move_repeat_elapsed = 0.0
-	else:
-		move_repeat_elapsed += delta
-		var interval := FAST_MOVE_REPEAT_INTERVAL if Input.is_key_pressed(KEY_SHIFT) else MOVE_REPEAT_INTERVAL
-		while move_repeat_elapsed >= interval:
-			move_repeat_elapsed -= interval
-			_apply_direction_step(direction)
+	if not player_river_action_locked and direction != Vector2i.ZERO and player_move_repeat_timer <= 0.0 and player_blocked_retry_timer <= 0.0:
+		_apply_direction_step(direction)
 
 	var changed := false
 	if _player_visual_ready:
@@ -108,16 +137,22 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not event is InputEventKey:
 		return
 	var key_event := event as InputEventKey
+	if key_event.pressed and not key_event.echo:
+		var shortcut_scene_path := resolve_scene_shortcut_from_keycode(key_event.keycode)
+		if not shortcut_scene_path.is_empty():
+			call_deferred("_switch_to_scene", shortcut_scene_path)
+			return
 	var direction := _direction_from_key(key_event.keycode)
 	if direction != Vector2i.ZERO:
 		if key_event.echo:
 			return
 		_set_direction_held(direction, key_event.pressed)
-		if key_event.pressed:
-			move_repeat_elapsed = 0.0
+		if not player_river_action_locked and key_event.pressed and player_move_repeat_timer <= 0.0 and player_blocked_retry_timer <= 0.0:
 			_apply_direction_step(direction)
 		return
 	if not PrecisionMovement.should_process_key_event(key_event.pressed, key_event.echo, direction):
+		return
+	if player_river_action_locked:
 		return
 	if key_event.keycode == KEY_F5:
 		demo.start()
@@ -135,10 +170,16 @@ func _build_scene() -> void:
 	map_layer = Node2D.new()
 	map_layer.name = "MapLayer"
 	add_child(map_layer)
-	player_label = _make_word_label("我", Color(0.92, 0.92, 0.92), Color(0.05, 0.05, 0.05))
+	player_label = _make_word_label("", Color(0.92, 0.92, 0.92), Color.TRANSPARENT)
 	player_label.name = "Player"
+	player_label.pivot_offset = player_label.size * 0.5
 	map_layer.add_child(player_label)
+	_setup_player_sprite()
 	_build_direction_marker()
+	bridge_tree_effect_layer = Node2D.new()
+	bridge_tree_effect_layer.name = "BridgeTreeEffectLayer"
+	bridge_tree_effect_layer.z_index = 19
+	map_layer.add_child(bridge_tree_effect_layer)
 	light_glow_effect = LightGlowEffect.new()
 	light_glow_effect.name = "LightGlowEffect"
 	light_glow_effect.z_index = 9
@@ -178,7 +219,7 @@ func _build_ui() -> void:
 func _refresh_view(_message := "") -> void:
 	_sync_entity_labels()
 	_sync_direction_marker()
-	player_label.text = world.player_text
+	player_label.text = "" if _uses_player_sprite() else world.player_text
 	player_label.visible = world.player_visible
 	_apply_intro_visibility()
 	page_camera.sync_to_world(world)
@@ -192,8 +233,17 @@ func _refresh_view(_message := "") -> void:
 		player_mover.move_to(player_target, move_visual_duration)
 	_last_player_visible = world.player_visible
 	_apply_visual_positions()
+	_sync_player_depth()
 	player_label.move_to_front()
 	_start_pending_world_event()
+
+func _setup_player_sprite() -> void:
+	player_sprite = Sprite2D.new()
+	player_sprite.name = "PlayerVisual"
+	player_sprite.position = Vector2(world.cell_size, world.cell_size) * 0.5
+	player_sprite.z_index = 1
+	player_label.add_child(player_sprite)
+	_set_player_idle_visual()
 
 func _start_pending_world_event() -> void:
 	if world_event_timer == null:
@@ -219,7 +269,7 @@ func _sync_entity_labels() -> void:
 		var entity_mover = entity_movers.get(entity.id)
 		entity_mover.move_to(_grid_to_pixels(entity.grid_pos), move_visual_duration)
 		group.rotation_degrees = entity.visual_rotation_degrees
-		group.z_index = 10 if entity.text == "光" and not entity.solid else 0
+		group.z_index = _entity_depth_for(entity)
 		_sync_entity_label_group(group, entity)
 		if entity.text == "光" and not entity.solid:
 			light_entries.append({
@@ -292,10 +342,11 @@ func _apply_intro_visibility() -> void:
 			visible = _is_blue_gem_entity(entity) or is_light or is_prompt
 		group.visible = visible
 		for child in group.get_children():
-			var label := child as Label
-			label.visible = visible and (intro_phase != "gems" or is_light or is_prompt)
+			child.visible = visible and (intro_phase != "gems" or is_light or is_prompt)
 	if player_label:
 		player_label.visible = world.player_visible and intro_phase == "active"
+		if player_sprite:
+			player_sprite.visible = world.player_visible and intro_phase == "active" and _uses_player_sprite()
 
 func _update_gem_labels() -> void:
 	if gem_burst_effect == null:
@@ -376,7 +427,8 @@ func _begin_intro_prompt() -> void:
 	_refresh_view()
 
 func _apply_visual_positions() -> void:
-	player_label.position = player_mover.current_position
+	player_label.position = player_mover.current_position + Vector2(0.0, player_river_visual_offset)
+	_sync_player_depth()
 	for id in entity_labels.keys():
 		var mover = entity_movers.get(id)
 		if mover:
@@ -389,6 +441,17 @@ func _apply_visual_positions() -> void:
 func _is_creek_visual_entity(entity: WordEntity) -> bool:
 	return current_level_index > 0 and entity != null and entity.text == "溪" and entity.grid_pos.x >= CREEK_MIN_X
 
+func _entity_depth_for(entity: WordEntity) -> int:
+	if _is_creek_visual_entity(entity):
+		return entity.grid_pos.y * RIVER_DEPTH_STEP
+	return 10 if entity.text == "光" and not entity.solid else 0
+
+func _sync_player_depth() -> void:
+	if world.player_submerged:
+		player_label.z_index = world.player_pos.y * RIVER_DEPTH_STEP + RIVER_PLAYER_DEPTH_OFFSET
+	else:
+		player_label.z_index = 0
+
 func _creek_wave_offset(entity: WordEntity) -> float:
 	var phase: float = creek_wave_elapsed * CREEK_WAVE_SPEED
 	phase += float(entity.grid_pos.x) * 0.52
@@ -396,7 +459,16 @@ func _creek_wave_offset(entity: WordEntity) -> float:
 	return sin(phase) * CREEK_WAVE_AMPLITUDE
 
 func _sync_entity_label_group(group: Node2D, entity) -> void:
+	if _is_tree_animated_entity(entity):
+		_sync_tree_sprite_group(group)
+		return
+
 	var text := str(entity.text)
+	for child in group.get_children():
+		if child is Label:
+			continue
+		group.remove_child(child)
+		child.queue_free()
 	while group.get_child_count() > text.length():
 		var child := group.get_child(group.get_child_count() - 1)
 		group.remove_child(child)
@@ -408,14 +480,43 @@ func _sync_entity_label_group(group: Node2D, entity) -> void:
 		label.text = text.substr(i, 1)
 		label.position = Vector2(i * world.cell_size, -2)
 		label.size = Vector2(world.cell_size, world.cell_size + 4)
-		label.add_theme_color_override("font_color", Color(1.0, 0.95, 0.32) if entity.highlighted else entity.visual_color)
+		label.pivot_offset = label.size * 0.5
+		var highlight_strength := world.get_highlight_animation_strength(entity.cells[i]) if i < entity.cells.size() else 0.0
+		var base_color: Color = entity.visual_color
+		if entity.highlighted:
+			base_color = _highlight_config_color("matched_color", Color(1.0, 0.95, 0.32))
+		var animated_color: Color = base_color.lerp(_highlight_config_color("accent_color", Color(1.0, 0.78, 0.18)), highlight_strength)
+		label.add_theme_color_override("font_color", animated_color)
+		var pulse_scale_max := float(highlight_visual_config.get("pulse_scale_max", 1.14))
+		var pulse_scale := 1.0 + (highlight_strength * maxf(pulse_scale_max - 1.0, 0.0))
+		label.scale = Vector2.ONE * pulse_scale
+
+func _is_tree_animated_entity(entity: WordEntity) -> bool:
+	return entity != null and entity.text == "树"
+
+func _sync_tree_sprite_group(group: Node2D) -> void:
+	for child in group.get_children():
+		if child.name == "TreeSprite":
+			child.position = Vector2.ZERO
+			child.scale = Vector2.ONE
+			child.rotation = 0.0
+			child.visible = true
+			return
+	for child in group.get_children():
+		group.remove_child(child)
+		child.queue_free()
+	var tree_sprite := TreeSpriteScene.instantiate()
+	tree_sprite.name = "TreeSprite"
+	group.add_child(tree_sprite)
 
 func _apply_result(result: Dictionary) -> void:
 	if result.has("transition"):
 		_handle_transition(result)
 		return
+	var visual_requests: Array = world.consume_visual_effects()
+	var visual_contexts: Array = _prepare_visual_effect_contexts(visual_requests)
 	_refresh_view(str(result.get("message", "")))
-	_consume_visual_effects()
+	_consume_visual_effects(visual_requests, visual_contexts)
 	_consume_fullscreen_video_request()
 	if current_level_index == 0 and intro_phase == "lights" and result.get("success", false) and not world.has_pending_timed_effect():
 		_begin_intro_prompt()
@@ -450,19 +551,311 @@ func _consume_fullscreen_video_request() -> void:
 	world.fullscreen_video_request.clear()
 	_play_fullscreen_video(str(request.get("path", "")))
 
-func _consume_visual_effects() -> void:
-	if gem_burst_effect == null:
-		return
-	for request in world.consume_visual_effects():
-		if str(request.get("type", "")) != "gem_burst":
+func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> void:
+	for i in range(visual_requests.size()):
+		var request: Dictionary = visual_requests[i]
+		var effect_type := str(request.get("type", ""))
+		if effect_type == "gem_burst":
+			if gem_burst_effect == null:
+				continue
+			var origin_grid: Vector2 = request.get("origin_grid", GEM_ORIGIN_GRID)
+			gem_burst_effect.play_at(
+				_grid_to_pixels_float(origin_grid),
+				world.cell_size,
+				float(request.get("duration", 0.78)),
+				int(request.get("seed", 1947))
+			)
 			continue
-		var origin_grid: Vector2 = request.get("origin_grid", GEM_ORIGIN_GRID)
-		gem_burst_effect.play_at(
-			_grid_to_pixels_float(origin_grid),
-			world.cell_size,
-			float(request.get("duration", 0.78)),
-			int(request.get("seed", 1947))
-		)
+		if effect_type == "player_river_enter":
+			_play_player_river_enter(request)
+			continue
+		if effect_type == "player_river_exit":
+			_play_player_river_exit(request)
+			continue
+		if effect_type == "bridge_tree_transition":
+			var context: Dictionary = visual_contexts[i] if i < visual_contexts.size() else {}
+			call_deferred("_run_bridge_tree_transition", request.duplicate(true), context, _visual_effect_generation)
+
+func _prepare_visual_effect_contexts(visual_requests: Array) -> Array:
+	var contexts: Array = []
+	for request in visual_requests:
+		var request_dict: Dictionary = request
+		var effect_type := str(request_dict.get("type", ""))
+		if effect_type != "bridge_tree_transition":
+			contexts.append({})
+			continue
+		var context := {
+			"tree_overlays": [],
+			"bridge_overlays": []
+		}
+		var mode := str(request_dict.get("mode", ""))
+		if mode == "merge":
+			context["tree_overlays"] = _duplicate_groups_for_cells(request_dict.get("tree_cells", []))
+		elif mode == "split":
+			context["bridge_visual_specs"] = _capture_visual_specs_for_cells(request_dict.get("bridge_cells", []))
+			context["reveal_cells"] = _capture_new_entity_cells(
+				request_dict.get("reveal_texts", []),
+				request_dict.get("delayed_water_cells", request_dict.get("bridge_cells", []))
+			)
+		contexts.append(context)
+	return contexts
+
+func _capture_new_entity_cells(texts: Array, delayed_water_cells: Array) -> Array:
+	var cells: Array = []
+	var seen_cells: Dictionary = {}
+	for entity: WordEntity in world.entities.values():
+		if entity_labels.has(entity.id) or not texts.has(entity.text):
+			continue
+		for cell in entity.cells:
+			if entity.text == "溪" and not delayed_water_cells.has(cell):
+				continue
+			if seen_cells.has(cell):
+				continue
+			seen_cells[cell] = true
+			cells.append(cell)
+	return cells
+
+func _capture_visual_specs_for_cells(cells: Array) -> Array:
+	var specs: Array = []
+	var seen_cells: Dictionary = {}
+	for cell_value in cells:
+		var cell: Vector2i = cell_value
+		if seen_cells.has(cell):
+			continue
+		seen_cells[cell] = true
+		var spec := {
+			"position": _grid_to_pixels(cell),
+			"rotation_degrees": 0.0,
+			"text": "桥",
+			"color": Color.WHITE
+		}
+		var group: Node2D = _find_group_for_cell(cell)
+		if group == null:
+			specs.append(spec)
+			continue
+		var entity: WordEntity = null
+		for candidate: WordEntity in world.entities.values():
+			if candidate.cells.has(cell) and entity_labels.has(candidate.id):
+				entity = candidate
+				break
+		if entity == null:
+			specs.append(spec)
+			continue
+		var cell_index: int = entity.cells.find(cell)
+		var character: String = entity.text.substr(cell_index, 1) if cell_index >= 0 else entity.text
+		spec["rotation_degrees"] = entity.visual_rotation_degrees
+		spec["text"] = character
+		spec["color"] = entity.visual_color
+		specs.append(spec)
+	return specs
+
+func _build_visual_overlays(specs: Array) -> Array:
+	var overlays: Array = []
+	for spec_value in specs:
+		var spec: Dictionary = spec_value
+		var overlay := Node2D.new()
+		overlay.position = spec.get("position", Vector2.ZERO)
+		overlay.rotation_degrees = float(spec.get("rotation_degrees", 0.0))
+		overlay.z_index = 40
+		var visual_color: Color = spec.get("color", Color.WHITE)
+		var label: Label = _make_word_label(str(spec.get("text", "桥")), visual_color)
+		label.position = Vector2(0, -2)
+		overlay.add_child(label)
+		overlays.append(overlay)
+	return overlays
+
+func _duplicate_groups_for_cells(cells: Array) -> Array:
+	var overlays: Array = []
+	var seen_ids := {}
+	for cell in cells:
+		var group: Node2D = _find_group_for_cell(cell)
+		if group == null:
+			continue
+		var instance_id: int = group.get_instance_id()
+		if seen_ids.has(instance_id):
+			continue
+		seen_ids[instance_id] = true
+		var overlay: Node2D = group.duplicate()
+		overlay.z_index = 40
+		overlays.append(overlay)
+	return overlays
+
+func _find_group_for_cell(cell: Vector2i) -> Node2D:
+	for entity: WordEntity in world.entities.values():
+		if not entity_labels.has(entity.id):
+			continue
+		if entity.cells.has(cell):
+			return entity_labels[entity.id] as Node2D
+	return null
+
+func _find_groups_for_cells(cells: Array) -> Array:
+	var groups: Array = []
+	var seen_ids := {}
+	for cell in cells:
+		var group: Node2D = _find_group_for_cell(cell)
+		if group == null:
+			continue
+		var instance_id: int = group.get_instance_id()
+		if seen_ids.has(instance_id):
+			continue
+		seen_ids[instance_id] = true
+		groups.append(group)
+	return groups
+
+func _run_bridge_tree_transition(request: Dictionary, context: Dictionary, generation: int) -> void:
+	if generation != _visual_effect_generation or bridge_tree_effect_layer == null:
+		return
+	var mode := str(request.get("mode", ""))
+	var tree_fade_duration := float(request.get("tree_fade_duration", 0.42))
+	var tree_fade_in_duration := float(request.get("tree_fade_in_duration", 0.3))
+	var bridge_step_delay := float(request.get("bridge_step_delay", 0.055))
+	var bridge_fade_duration := float(request.get("bridge_fade_duration", 0.12))
+	if mode == "merge":
+		_run_bridge_tree_merge_transition(request, context, generation, tree_fade_duration, bridge_step_delay, bridge_fade_duration)
+	elif mode == "split":
+		_run_bridge_tree_split_transition(request, context, generation, tree_fade_in_duration, bridge_step_delay, bridge_fade_duration)
+
+func _run_bridge_tree_merge_transition(request: Dictionary, context: Dictionary, generation: int, tree_fade_duration: float, bridge_step_delay: float, bridge_fade_duration: float) -> void:
+	var overlays: Array = context.get("tree_overlays", [])
+	for overlay: Node2D in overlays:
+		if bridge_tree_effect_layer:
+			bridge_tree_effect_layer.add_child(overlay)
+	var tree_tween: Tween = null
+	if not overlays.is_empty():
+		tree_tween = create_tween()
+		tree_tween.set_parallel(true)
+		for overlay: Node2D in overlays:
+			overlay.modulate.a = 1.0
+			tree_tween.tween_property(overlay, "modulate:a", 0.0, tree_fade_duration)
+	var bridge_groups: Array = _find_groups_for_cells(request.get("bridge_cells", []))
+	_set_groups_alpha(bridge_groups, 0.0)
+	var bridge_columns: Dictionary = _group_effect_targets_by_x(bridge_groups)
+	for x in bridge_columns.keys():
+		if generation != _visual_effect_generation:
+			_clear_effect_overlays(overlays)
+			return
+		_tween_groups_alpha(bridge_columns[x], 1.0, bridge_fade_duration)
+		await get_tree().create_timer(bridge_step_delay).timeout
+	if tree_tween != null:
+		await tree_tween.finished
+	_clear_effect_overlays(overlays)
+
+func _run_bridge_tree_split_transition(request: Dictionary, context: Dictionary, generation: int, tree_fade_in_duration: float, bridge_step_delay: float, bridge_fade_duration: float) -> void:
+	var overlays: Array = _build_visual_overlays(context.get("bridge_visual_specs", []))
+	for overlay: Node2D in overlays:
+		if bridge_tree_effect_layer:
+			bridge_tree_effect_layer.add_child(overlay)
+	var reveal_groups: Array = _find_groups_for_cells(context.get("reveal_cells", []))
+	_set_groups_alpha(reveal_groups, 0.0)
+	var bridge_columns: Dictionary = _group_effect_targets_by_x(overlays, true)
+	for x in bridge_columns.keys():
+		if generation != _visual_effect_generation:
+			_clear_effect_overlays(overlays)
+			return
+		_tween_groups_alpha(bridge_columns[x], 0.0, bridge_fade_duration)
+		await get_tree().create_timer(bridge_step_delay).timeout
+	_clear_effect_overlays(overlays)
+	await get_tree().process_frame
+	var reveal_tween := create_tween()
+	reveal_tween.set_parallel(true)
+	for group in reveal_groups:
+		reveal_tween.tween_property(group, "modulate:a", 1.0, tree_fade_in_duration)
+	await reveal_tween.finished
+
+func _play_player_river_enter(request: Dictionary) -> void:
+	var submerge_offset := float(request.get("submerge_offset", world.cell_size * 0.5))
+	var jump_height := float(request.get("jump_height", world.cell_size * 0.5))
+	var duration := float(request.get("enter_duration", 0.5))
+	var hold_time := minf(duration * 0.4, 0.2)
+	var sink_time := maxf(duration - hold_time, 0.05)
+	_start_player_river_tween()
+	player_river_tween.tween_method(_set_player_river_visual_offset, player_river_visual_offset, -jump_height, hold_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	player_river_tween.tween_method(_set_player_river_visual_offset, -jump_height, submerge_offset, sink_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+func _play_player_river_exit(request: Dictionary) -> void:
+	var submerge_offset := float(request.get("submerge_offset", world.cell_size * 0.5))
+	var jump_height := float(request.get("jump_height", world.cell_size * 0.5))
+	var duration := float(request.get("exit_duration", 0.3))
+	var rise_time := maxf(duration * 0.45, 0.05)
+	var hop_time := maxf(duration * 0.25, 0.05)
+	var land_time := maxf(duration - rise_time - hop_time, 0.05)
+	if player_river_visual_offset < submerge_offset:
+		_set_player_river_visual_offset(submerge_offset)
+	_start_player_river_tween()
+	player_river_tween.tween_method(_set_player_river_visual_offset, player_river_visual_offset, 0.0, rise_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	player_river_tween.tween_method(_set_player_river_visual_offset, 0.0, -jump_height, hop_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	player_river_tween.tween_method(_set_player_river_visual_offset, -jump_height, 0.0, land_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+func _start_player_river_tween() -> void:
+	if player_river_tween and player_river_tween.is_valid():
+		player_river_tween.kill()
+	player_river_tween = create_tween()
+	player_river_action_locked = true
+	player_river_tween.finished.connect(_unlock_player_river_action)
+
+func _unlock_player_river_action() -> void:
+	player_river_action_locked = false
+	player_move_repeat_timer = PLAYER_MOVE_REPEAT_TIME
+
+func _set_player_river_visual_offset(value: float) -> void:
+	player_river_visual_offset = value
+	_apply_visual_positions()
+
+func _reset_player_river_visual() -> void:
+	if player_river_tween and player_river_tween.is_valid():
+		player_river_tween.kill()
+	player_river_tween = null
+	player_river_action_locked = false
+	player_river_visual_offset = 0.0
+
+func _group_effect_targets_by_x(targets: Array, descending := false) -> Dictionary:
+	var grouped := {}
+	var x_values: Array[int] = []
+	for target in targets:
+		if target == null or not is_instance_valid(target):
+			continue
+		var canvas_item: CanvasItem = target as CanvasItem
+		if canvas_item == null:
+			continue
+		var grid_x := int(round(canvas_item.position.x / float(world.cell_size)))
+		if not grouped.has(grid_x):
+			grouped[grid_x] = []
+			x_values.append(grid_x)
+		grouped[grid_x].append(canvas_item)
+	x_values.sort()
+	if descending:
+		x_values.reverse()
+	var ordered := {}
+	for grid_x in x_values:
+		ordered[grid_x] = grouped[grid_x]
+	return ordered
+
+func _set_groups_alpha(groups: Array, alpha: float) -> void:
+	for group in groups:
+		if group == null or not is_instance_valid(group):
+			continue
+		var canvas_item: CanvasItem = group as CanvasItem
+		if canvas_item == null:
+			continue
+		canvas_item.modulate.a = alpha
+
+func _tween_groups_alpha(groups: Array, alpha: float, duration: float) -> void:
+	var tween := create_tween()
+	tween.set_parallel(true)
+	for group in groups:
+		if group == null or not is_instance_valid(group):
+			continue
+		var canvas_item: CanvasItem = group as CanvasItem
+		if canvas_item == null:
+			continue
+		tween.tween_property(canvas_item, "modulate:a", alpha, duration)
+
+func _clear_effect_overlays(overlays: Array) -> void:
+	for overlay in overlays:
+		if overlay != null and is_instance_valid(overlay):
+			var node: Node = overlay as Node
+			if node:
+				node.queue_free()
 
 func _play_gem_burst_preview() -> void:
 	if current_level_index != 0 or gem_burst_effect == null:
@@ -494,6 +887,7 @@ func _on_fullscreen_video_finished() -> void:
 
 func _load_level_index(index: int, overrides := {}) -> void:
 	current_level_index = clampi(index, 0, LEVEL_SEQUENCE.size() - 1)
+	_visual_effect_generation += 1
 	world.load_level(LEVEL_SEQUENCE[current_level_index].build_level())
 	if overrides.has("player_pos"):
 		world.player_pos = overrides.player_pos
@@ -503,6 +897,7 @@ func _load_level_index(index: int, overrides := {}) -> void:
 		world.facing = overrides.player_facing
 	world.update_page()
 	_clear_entity_visuals()
+	_reset_player_river_visual()
 	if current_level_index == 0:
 		intro_phase = "lights"
 		intro_reveal_elapsed = 0.0
@@ -510,11 +905,29 @@ func _load_level_index(index: int, overrides := {}) -> void:
 	else:
 		intro_phase = "active"
 	held_move_directions.clear()
-	move_repeat_elapsed = 0.0
+	player_move_repeat_timer = 0.0
+	player_blocked_retry_timer = 0.0
+	player_walk_visual_timer = 0.0
+	player_walk_frame_timer = 0.0
 	_player_visual_ready = false
 	_last_player_visible = world.player_visible
 	if world_event_timer:
 		world_event_timer.stop()
+	if bridge_tree_effect_layer:
+		for child in bridge_tree_effect_layer.get_children():
+			child.queue_free()
+	if player_sprite:
+		_set_player_idle_visual()
+
+func _startup_level_overrides() -> Dictionary:
+	var overrides := {}
+	if startup_player_pos.x >= 0 and startup_player_pos.y >= 0:
+		overrides["player_pos"] = startup_player_pos
+	if not startup_player_text.is_empty():
+		overrides["player_text"] = startup_player_text
+	if startup_player_facing != Vector2i.ZERO:
+		overrides["player_facing"] = startup_player_facing
+	return overrides
 
 func _resolve_world_event() -> void:
 	_apply_result(world.resolve_pending_timed_effect())
@@ -574,13 +987,19 @@ func _current_held_direction() -> Vector2i:
 	return held_move_directions[held_move_directions.size() - 1]
 
 func _apply_direction_step(direction: Vector2i) -> void:
+	if player_river_action_locked:
+		return
 	var result: Dictionary
 	if Input.is_key_pressed(KEY_ALT):
 		result = world.pull_front(direction)
 	else:
 		result = world.try_move_player(direction)
+	player_move_repeat_timer = PLAYER_MOVE_REPEAT_TIME
+	if not result.get("success", false):
+		player_blocked_retry_timer = PLAYER_BLOCKED_RETRY_TIME
 	_apply_result(result)
 	if result.get("success", false):
+		_play_player_walk_visual()
 		_show_direction_marker(direction)
 
 func _direction_from_key(keycode: Key) -> Vector2i:
@@ -591,6 +1010,48 @@ func _grid_to_pixels(pos: Vector2i) -> Vector2:
 
 func _grid_to_pixels_float(pos: Vector2) -> Vector2:
 	return pos * float(world.cell_size)
+
+func _uses_player_sprite() -> bool:
+	return world.player_text == "我"
+
+func _update_player_visual_animation(delta: float) -> void:
+	if player_sprite == null or player_walk_visual_timer <= 0.0:
+		return
+	player_walk_visual_timer = maxf(player_walk_visual_timer - delta, 0.0)
+	player_walk_frame_timer += delta
+	if player_walk_frame_timer >= PLAYER_WALK_FRAME_TIME:
+		player_walk_frame_timer = 0.0
+		player_sprite.frame = 1 - player_sprite.frame
+	if player_walk_visual_timer <= 0.0:
+		_set_player_idle_visual()
+
+func _play_player_walk_visual() -> void:
+	if player_sprite == null or not _uses_player_sprite():
+		return
+	player_sprite.texture = preload("res://assets/player/me_walk.png")
+	player_sprite.hframes = 2
+	player_sprite.vframes = 1
+	player_sprite.frame = 0
+	player_sprite.centered = true
+	player_sprite.scale = Vector2.ONE
+	player_sprite.modulate = Color.WHITE
+	player_sprite.rotation = 0.0
+	player_walk_visual_timer = PLAYER_WALK_VISUAL_TIME
+	player_walk_frame_timer = 0.0
+
+func _set_player_idle_visual() -> void:
+	if player_sprite == null:
+		return
+	player_sprite.texture = preload("res://assets/player/me_default.png")
+	player_sprite.hframes = 1
+	player_sprite.vframes = 1
+	player_sprite.frame = 0
+	player_sprite.centered = true
+	player_sprite.scale = Vector2.ONE
+	player_sprite.modulate = Color.WHITE
+	player_sprite.rotation = 0.0
+	player_walk_visual_timer = 0.0
+	player_walk_frame_timer = 0.0
 
 func _make_word_label(text: String, font_color := Color.WHITE, bg_color := Color.TRANSPARENT) -> Label:
 	var label := Label.new()
@@ -611,3 +1072,60 @@ func _make_word_label(text: String, font_color := Color.WHITE, bg_color := Color
 		style.content_margin_bottom = 0
 		label.add_theme_stylebox_override("normal", style)
 	return label
+
+func load_highlight_visual_config() -> Dictionary:
+	var defaults := {
+		"pulse_scale_max": 1.14,
+		"accent_color": [1.0, 0.78, 0.18, 1.0],
+		"matched_color": [1.0, 0.95, 0.32, 1.0]
+	}
+	if not FileAccess.file_exists(HIGHLIGHT_VISUAL_CONFIG_PATH):
+		return defaults
+	var config_file := FileAccess.open(HIGHLIGHT_VISUAL_CONFIG_PATH, FileAccess.READ)
+	if config_file == null:
+		return defaults
+	var parsed = JSON.parse_string(config_file.get_as_text())
+	if parsed is Dictionary:
+		var merged := defaults.duplicate(true)
+		for key in (parsed as Dictionary).keys():
+			merged[key] = parsed[key]
+		return merged
+	return defaults
+
+func _highlight_config_color(key: String, fallback: Color) -> Color:
+	if highlight_visual_config.is_empty():
+		highlight_visual_config = load_highlight_visual_config()
+	var value = highlight_visual_config.get(key, [])
+	if value is Array and value.size() >= 3:
+		return Color(
+			float(value[0]),
+			float(value[1]),
+			float(value[2]),
+			float(value[3]) if value.size() >= 4 else 1.0
+		)
+	return fallback
+
+func resolve_startup_scene_path(args: PackedStringArray) -> String:
+	for arg in args:
+		var value := str(arg)
+		if not value.begins_with(STARTUP_ENTRY_ARG_PREFIX):
+			continue
+		return _entry_scene_path_for_key(value.trim_prefix(STARTUP_ENTRY_ARG_PREFIX))
+	return ""
+
+func resolve_scene_shortcut_from_keycode(keycode: Key) -> String:
+	if keycode == GLOVE_SCENE_SHORTCUT_KEY:
+		return GLOVE_PREVIEW_SCENE_PATH
+	return ""
+
+func _entry_scene_path_for_key(entry_key: String) -> String:
+	match entry_key:
+		"glove":
+			return GLOVE_PREVIEW_SCENE_PATH
+		_:
+			return ""
+
+func _switch_to_scene(scene_path: String) -> void:
+	if scene_path.is_empty() or get_tree() == null:
+		return
+	get_tree().change_scene_to_file(scene_path)
