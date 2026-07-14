@@ -43,6 +43,8 @@ const BRIDGE_COLLAPSE_FALL_DISTANCE := 72.0
 const BRIDGE_COLLAPSE_PLAYER_FALL_DISTANCE := 84.0
 const BRIDGE_COLLAPSE_MASK_PADDING := 6.0
 const PUSH_FLASH_FRAME_LOCAL_X := [-18.5, -20.0, -27.5, -38.5, -45.5, -50.0, -55.0, -58.0, -60.0, -61.0, -61.5, -62.0, -64.5, -65.0, -68.0, -68.0]
+const BRIDGE_MERGE_YELLOW := Color(1.0, 0.92, 0.22, 0.58)
+const BRIDGE_MERGE_YELLOW_SOFT := Color(1.0, 0.92, 0.22, 0.16)
 const RIVER_DEPTH_STEP := 10
 const RIVER_PLAYER_DEPTH_OFFSET := 5
 const HIGHLIGHT_VISUAL_CONFIG_PATH := "res://assets/animations/highlight/highlight_visual_config.json"
@@ -617,6 +619,9 @@ func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> 
 		if effect_type == "player_push_flash":
 			_play_player_push_flash(request)
 			continue
+		if effect_type == "word_merge_flash" or effect_type == "bridge_word_merge_flash":
+			call_deferred("_run_word_merge_flash", request.duplicate(true), _visual_effect_generation)
+			continue
 		if effect_type == "bridge_tree_transition":
 			var context: Dictionary = visual_contexts[i] if i < visual_contexts.size() else {}
 			call_deferred("_run_bridge_tree_transition", request.duplicate(true), context, _visual_effect_generation)
@@ -1053,6 +1058,195 @@ func _play_player_push_flash(request: Dictionary) -> void:
 	var tween := create_tween()
 	tween.tween_method(Callable(self, "_set_push_flash_progress").bind(sprite, base_position, direction), 0.0, 1.0, 0.5)
 	tween.tween_callback(Callable(sprite, "queue_free"))
+
+func _run_word_merge_flash(request: Dictionary, generation: int) -> void:
+	if generation != _visual_effect_generation or bridge_tree_effect_layer == null:
+		return
+	var merged_pos: Vector2i = request.get("merged_pos", world.player_pos)
+	var merged_group: Node2D = _find_group_for_cell(merged_pos)
+	if merged_group:
+		merged_group.modulate.a = 0.0
+	var hide_player := bool(request.get("is_player_merge", false))
+	if hide_player and player_label:
+		player_label.modulate.a = 0.0
+	var overlay := Node2D.new()
+	overlay.name = "WordMergeFlash"
+	overlay.position = _grid_to_pixels(merged_pos)
+	overlay.z_index = 620
+	bridge_tree_effect_layer.add_child(overlay)
+
+	var pair_info := _build_word_merge_pair(
+		str(request.get("left_text", request.get("first_text", "乔"))),
+		str(request.get("right_text", request.get("second_text", "木"))),
+		str(request.get("pair_layout", "horizontal"))
+	)
+	var pair_root: Node2D = pair_info.root
+	var pair_labels: Array = pair_info.labels
+	var pair_layout := str(pair_info.get("layout", "horizontal"))
+	overlay.add_child(pair_root)
+	var pop_info := _build_word_merge_pop(str(request.get("merged_text", "桥")))
+	var pop_root: Node2D = pop_info.root
+	var dots: Array = pop_info.dots
+	pop_root.modulate.a = 0.0
+	pop_root.position = Vector2(0.0, 8.0)
+	pop_root.scale = Vector2(0.72, 0.72)
+	overlay.add_child(pop_root)
+
+	var compress_tween := create_tween()
+	compress_tween.set_parallel(true)
+	for label_value in pair_labels:
+		var label := label_value as Label
+		if label == null:
+			continue
+		if pair_layout == "vertical":
+			label.scale.y = 0.76
+			compress_tween.tween_property(label, "scale:y", 0.5, 0.16).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		else:
+			label.scale.x = 0.76
+			compress_tween.tween_property(label, "scale:x", 0.5, 0.16).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	compress_tween.tween_property(pair_root, "modulate:a", 1.0, 0.08)
+	await compress_tween.finished
+
+	if generation != _visual_effect_generation:
+		if hide_player and player_label:
+			player_label.modulate.a = 1.0
+		_clear_effect_overlays([overlay])
+		return
+	await get_tree().create_timer(0.08).timeout
+
+	var pop_tween := create_tween()
+	pop_tween.set_parallel(true)
+	pop_tween.tween_property(pair_root, "modulate:a", 0.0, 0.22)
+	pop_tween.tween_property(pop_root, "modulate:a", 1.0, 0.08)
+	pop_tween.tween_property(pop_root, "position:y", -8.0, 0.14).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	pop_tween.tween_property(pop_root, "scale", Vector2(1.14, 1.14), 0.14).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	for dot_value in dots:
+		var dot := dot_value as Node2D
+		if dot == null:
+			continue
+		dot.modulate.a = 0.0
+		dot.scale = Vector2(0.2, 0.2)
+		pop_tween.tween_property(dot, "modulate:a", 1.0, 0.1)
+		pop_tween.tween_property(dot, "scale", Vector2.ONE, 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	await pop_tween.finished
+
+	if generation != _visual_effect_generation:
+		if hide_player and player_label:
+			player_label.modulate.a = 1.0
+		_clear_effect_overlays([overlay])
+		return
+	var settle_tween := create_tween()
+	settle_tween.set_parallel(true)
+	settle_tween.tween_property(pop_root, "position", Vector2.ZERO, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	settle_tween.tween_property(pop_root, "scale", Vector2.ONE, 0.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	for dot_value in dots:
+		var dot := dot_value as Node2D
+		if dot == null:
+			continue
+		var dot_direction := (dot.position - Vector2(world.cell_size * 0.5, world.cell_size * 0.5)).normalized()
+		dot_direction = Vector2.RIGHT if dot_direction == Vector2.ZERO else dot_direction
+		settle_tween.tween_property(dot, "position", dot.position + dot_direction * 32.0, 0.26)
+		settle_tween.tween_property(dot, "modulate:a", 0.0, 0.22)
+	await settle_tween.finished
+
+	if merged_group and is_instance_valid(merged_group):
+		merged_group.modulate.a = 1.0
+	if hide_player and player_label:
+		player_label.modulate.a = 1.0
+	_clear_effect_overlays([overlay])
+
+func _build_word_merge_pair(first_text: String, second_text: String, pair_layout := "horizontal") -> Dictionary:
+	var root := Node2D.new()
+	root.name = "WordMergePair"
+	root.modulate.a = 0.96
+	var fill := ColorRect.new()
+	fill.name = "BridgeMergeFill"
+	fill.color = BRIDGE_MERGE_YELLOW_SOFT
+	fill.position = Vector2(5.0, 6.0)
+	fill.size = Vector2(50.0, 48.0)
+	fill.z_index = 0
+	root.add_child(fill)
+	_add_bridge_merge_frame(root)
+	var first_label: Label
+	var second_label: Label
+	if pair_layout == "vertical":
+		first_label = _make_half_height_merge_label(first_text, 0.0)
+		second_label = _make_half_height_merge_label(second_text, 30.0)
+	else:
+		first_label = _make_half_width_merge_label(first_text, 0.0)
+		second_label = _make_half_width_merge_label(second_text, 30.0)
+	root.add_child(first_label)
+	root.add_child(second_label)
+	return {
+		"root": root,
+		"labels": [first_label, second_label],
+		"layout": pair_layout
+	}
+
+func _make_half_width_merge_label(text: String, x_offset: float) -> Label:
+	var label := _make_word_label(text, Color(0.76, 0.76, 0.62, 0.9))
+	label.name = "BridgeMergeHalfWord"
+	label.position = Vector2(x_offset, -2.0)
+	label.scale = Vector2(0.5, 1.0)
+	label.z_index = 2
+	return label
+
+func _make_half_height_merge_label(text: String, y_offset: float) -> Label:
+	var label := _make_word_label(text, Color(0.76, 0.76, 0.62, 0.9))
+	label.name = "BridgeMergeHalfWord"
+	label.position = Vector2(0.0, y_offset - 2.0)
+	label.scale = Vector2(1.0, 0.5)
+	label.z_index = 2
+	return label
+
+func _add_bridge_merge_frame(root: Node2D) -> void:
+	var rect := Rect2(Vector2(4.0, 5.0), Vector2(52.0, 50.0))
+	var thickness := 3.0
+	_add_bridge_merge_frame_strip(root, Vector2(rect.position.x, rect.position.y), Vector2(rect.size.x, thickness))
+	_add_bridge_merge_frame_strip(root, Vector2(rect.position.x, rect.position.y + rect.size.y - thickness), Vector2(rect.size.x, thickness))
+	_add_bridge_merge_frame_strip(root, Vector2(rect.position.x, rect.position.y), Vector2(thickness, rect.size.y))
+	_add_bridge_merge_frame_strip(root, Vector2(rect.position.x + rect.size.x - thickness, rect.position.y), Vector2(thickness, rect.size.y))
+
+func _add_bridge_merge_frame_strip(root: Node2D, strip_position: Vector2, strip_size: Vector2) -> void:
+	var strip := ColorRect.new()
+	strip.name = "BridgeMergeFrame"
+	strip.color = BRIDGE_MERGE_YELLOW
+	strip.position = strip_position
+	strip.size = strip_size
+	strip.z_index = 1
+	root.add_child(strip)
+
+func _build_word_merge_pop(text: String) -> Dictionary:
+	var root := Node2D.new()
+	root.name = "WordMergePop"
+	var merged_label := _make_word_label(text)
+	merged_label.name = "WordMergePopWord"
+	merged_label.pivot_offset = Vector2(world.cell_size * 0.5, world.cell_size * 0.5)
+	merged_label.z_index = 4
+	root.add_child(merged_label)
+	var dots: Array = []
+	for dot_position in [Vector2(4.0, 10.0), Vector2(56.0, 9.0), Vector2(10.0, 53.0), Vector2(62.0, 46.0)]:
+		var dot := _make_bridge_merge_dot(dot_position)
+		root.add_child(dot)
+		dots.append(dot)
+	return {
+		"root": root,
+		"dots": dots
+	}
+
+func _make_bridge_merge_dot(dot_position: Vector2) -> Node2D:
+	var dot := Polygon2D.new()
+	dot.name = "BridgeMergeYellowDot"
+	var points := PackedVector2Array()
+	var radius := 4.0
+	for i in range(12):
+		var angle := TAU * float(i) / 12.0
+		points.append(Vector2(cos(angle), sin(angle)) * radius)
+	dot.polygon = points
+	dot.color = Color(1.0, 0.92, 0.22, 0.82)
+	dot.position = dot_position
+	dot.z_index = 5
+	return dot
 
 func _push_flash_rotation(direction: Vector2i) -> float:
 	if direction == Vector2i.RIGHT:

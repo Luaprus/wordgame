@@ -69,6 +69,19 @@
     "render_logic": "res://scripts/main.gd",
     "notes": "玩家成功推动可推字一格时触发一次；按源 Push.tscn 的 0-15 帧、0.5s、四方向旋转/偏移播放。"
   },
+  "word_merge_flash": {
+    "source_maps": [
+      "D:/文字游戏/Scenes/Maps/測試用/t10.tscn",
+      "D:/文字游戏/Scenes/Maps/第四章/15_3_新河岸幻覺_第三關.tscn",
+      "D:/文字游戏/Scenes/Maps/第四章/15_5_新河岸幻覺_第五關.tscn",
+      "D:/文字游戏/Scenes/Maps/第四章/15_2_新河岸幻覺_第二關.tscn",
+      "D:/文字游戏/Scenes/Maps/第四章/15_6_新河岸幻覺_第六關.tscn"
+    ],
+    "source_animation": "D:/文字游戏/Scenes/Animations/merge_new_event_animation.tscn",
+    "runtime_logic": "res://scripts/grid_world.gd",
+    "render_logic": "res://scripts/main.gd",
+    "notes": "人+也合成为他、乔+木合成为桥、木+古合成为枯、水+难合成为滩、一+二合成为三、我+鸟合成为鹅时触发局部合成特效：两个字按合成前格子方向压缩进浅黄色矩形框，随后结果字跳出并出现四个浅黄色圆点。合成前同行时按左到右画并横向压缩；同列时按上到下画并纵向压缩，例如我在下、鸟在上时显示为上鸟下我。玩家参与的我+鸟合成鹅会在结果字弹出期间临时隐藏真实玩家字，避免叠字。该效果参考源四目头盔桥/河滩/枯水位/新河岸幻觉关卡与通用 merge_new_event_animation，用运行时代码绘制，未新增外部贴图或音效。"
+  },
   "required_resources": {
     "new_external_art": [
       {
