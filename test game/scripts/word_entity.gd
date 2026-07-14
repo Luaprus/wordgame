@@ -18,6 +18,9 @@ var split_positions: Array[Vector2i] = []
 var highlighted := false
 var visual_rotation_degrees := 0.0
 var visual_color := Color.WHITE
+var visual_horizontal_shake_amplitude := 0.0
+var visual_horizontal_shake_speed := 0.0
+var visual_horizontal_shake_phase := 0.0
 
 func _init(entity_id := "", entity_text := "", pos := Vector2i.ZERO, occupied_cells: Array[Vector2i] = []) -> void:
 	id = entity_id
@@ -46,6 +49,9 @@ func set_from_config(config: Dictionary) -> void:
 			split_positions.append(pos)
 	visual_rotation_degrees = float(config.get("visual_rotation_degrees", visual_rotation_degrees))
 	visual_color = config.get("visual_color", visual_color)
+	visual_horizontal_shake_amplitude = float(config.get("visual_horizontal_shake_amplitude", visual_horizontal_shake_amplitude))
+	visual_horizontal_shake_speed = float(config.get("visual_horizontal_shake_speed", visual_horizontal_shake_speed))
+	visual_horizontal_shake_phase = float(config.get("visual_horizontal_shake_phase", visual_horizontal_shake_phase))
 
 func move_by(delta: Vector2i) -> void:
 	grid_pos += delta
