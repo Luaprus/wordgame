@@ -10,6 +10,23 @@ $SwordProject = [string]::Concat([char]0x5251, [char]0x6D41, [char]0x7A0B)
 $Sources = @("root", "newgame", "test game", $SwordProject)
 $ExcludedRootDirectories = @(".git", ".godot", ".worktrees", "newgame", "test game", $SwordProject)
 $ExcludedRootFiles = @("docs/migration/project-source-hashes.tsv")
+$ResolvedOutputPath = $null
+if ($OutputPath) {
+    $ResolvedOutputPath = if ([System.IO.Path]::IsPathRooted($OutputPath)) {
+        [System.IO.Path]::GetFullPath($OutputPath)
+    } else {
+        [System.IO.Path]::GetFullPath((Join-Path (Get-Location) $OutputPath))
+    }
+
+    $normalizedWorkspaceRoot = $WorkspaceRoot.TrimEnd([char[]]@('\', '/'))
+    $workspacePrefix = $normalizedWorkspaceRoot + [System.IO.Path]::DirectorySeparatorChar
+    if ($ResolvedOutputPath.StartsWith($workspacePrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+        $outputRelativePath = $ResolvedOutputPath.Substring($workspacePrefix.Length).Replace('\', '/')
+        if ($ExcludedRootFiles -notcontains $outputRelativePath) {
+            $ExcludedRootFiles += $outputRelativePath
+        }
+    }
+}
 $Tab = [char]9
 
 function Get-ProjectFiles {
@@ -143,16 +160,11 @@ foreach ($source in $Sources) {
 }
 
 if ($OutputPath) {
-    $resolvedOutputPath = if ([System.IO.Path]::IsPathRooted($OutputPath)) {
-        $OutputPath
-    } else {
-        Join-Path (Get-Location) $OutputPath
-    }
-    $outputDirectory = Split-Path -Parent $resolvedOutputPath
+    $outputDirectory = Split-Path -Parent $ResolvedOutputPath
     if ($outputDirectory) {
         [System.IO.Directory]::CreateDirectory($outputDirectory) | Out-Null
     }
-    [System.IO.File]::WriteAllLines($resolvedOutputPath, $lines, (New-Object System.Text.UTF8Encoding($false)))
+    [System.IO.File]::WriteAllLines($ResolvedOutputPath, $lines, (New-Object System.Text.UTF8Encoding($false)))
 } else {
     $lines
 }
