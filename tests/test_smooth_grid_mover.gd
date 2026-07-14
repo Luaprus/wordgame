@@ -15,7 +15,7 @@ func _init() -> void:
 		quit(1)
 
 func test_interpolates_before_snapping_to_target() -> void:
-	var smooth_grid_mover = load("res://scripts/smooth_grid_mover.gd")
+	var smooth_grid_mover = load("res://gameplay/smooth_grid_mover.gd")
 	assert_true(smooth_grid_mover != null, "smooth mover script exists")
 	if smooth_grid_mover == null:
 		return
@@ -36,7 +36,7 @@ func test_interpolates_before_snapping_to_target() -> void:
 	assert_false(mover.is_animating, "mover stops animating once the target is reached")
 
 func test_zero_duration_snaps_immediately() -> void:
-	var smooth_grid_mover = load("res://scripts/smooth_grid_mover.gd")
+	var smooth_grid_mover = load("res://gameplay/smooth_grid_mover.gd")
 	if smooth_grid_mover == null:
 		return
 

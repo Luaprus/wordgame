@@ -1,8 +1,8 @@
 extends SceneTree
 
-const DemoRunner = preload("res://scripts/demo_runner.gd")
-const GridWorld = preload("res://scripts/grid_world.gd")
-const LevelLoader = preload("res://scripts/level_loader.gd")
+const DemoRunner = preload("res://gameplay/demo_runner.gd")
+const GridWorld = preload("res://core/grid_world.gd")
+const LevelLoader = preload("res://core/level_loader.gd")
 const GloveLevel = preload("res://levels/glove/glove_level.gd")
 const GloveRouteRunner = preload("res://scripts/levels/glove/glove_route_runner.gd")
 

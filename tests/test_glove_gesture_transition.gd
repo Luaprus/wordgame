@@ -1,7 +1,7 @@
 extends SceneTree
 
 const GloveLevel = preload("res://levels/glove/glove_level.gd")
-const GridWorld = preload("res://scripts/grid_world.gd")
+const GridWorld = preload("res://core/grid_world.gd")
 const GloveLayouts = preload("res://scripts/levels/glove/glove_layouts.gd")
 
 func _init() -> void:

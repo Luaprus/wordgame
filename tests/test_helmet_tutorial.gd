@@ -1,6 +1,6 @@
 extends SceneTree
 
-const GridWorld = preload("res://scripts/grid_world.gd")
+const GridWorld = preload("res://core/grid_world.gd")
 const HelmetTutorial = preload("res://levels/helmet/helmet_tutorial.gd")
 
 var failures: Array[String] = []

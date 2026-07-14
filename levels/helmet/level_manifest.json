@@ -34,12 +34,12 @@
     ]
   },
   "target": {
-    "runtime_entry": "res://Main.tscn",
+    "runtime_entry": "res://app/Main.tscn",
     "preview_scene": "res://levels/helmet/helmet_river_goose_preview.tscn",
     "bridge_preview_scene": "res://levels/helmet/helmet_bridge_shake_preview.tscn",
     "level_script": "res://levels/helmet/helmet_r6.gd",
-    "world_script": "res://scripts/grid_world.gd",
-    "render_script": "res://scripts/main.gd"
+    "world_script": "res://core/grid_world.gd",
+    "render_script": "res://app/main.gd"
   },
   "map": {
     "screen_size": [32, 18],

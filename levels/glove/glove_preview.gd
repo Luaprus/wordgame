@@ -1,13 +1,13 @@
 extends Node2D
 
-const GridWorld = preload("res://scripts/grid_world.gd")
+const GridWorld = preload("res://core/grid_world.gd")
 const GloveLevel = preload("res://levels/glove/glove_level.gd")
 const GloveEffects = preload("res://scripts/levels/glove/glove_effects.gd")
 const GloveRouteRunner = preload("res://scripts/levels/glove/glove_route_runner.gd")
-const PageCamera = preload("res://scripts/page_camera.gd")
-const PrecisionMovement = preload("res://scripts/precision_movement.gd")
-const PlayerDirectionMarker = preload("res://scripts/player_moving/player_direction_marker.gd")
-const SmoothGridMover = preload("res://scripts/smooth_grid_mover.gd")
+const PageCamera = preload("res://gameplay/page_camera.gd")
+const PrecisionMovement = preload("res://gameplay/precision_movement.gd")
+const PlayerDirectionMarker = preload("res://gameplay/player_moving/player_direction_marker.gd")
+const SmoothGridMover = preload("res://gameplay/smooth_grid_mover.gd")
 const OriginalFont = preload("res://Fonts/Zpix-v3.1.6.ttf")
 
 const MOVE_REPEAT_INTERVAL := 0.28
@@ -23,7 +23,7 @@ const STARTUP_ROUTE_ARG_PREFIX := "--glove-route="
 const STARTUP_DEMO_ARG_PREFIX := "--glove-demo="
 const STARTUP_CAPTURE_ARG_PREFIX := "--glove-capture="
 const STARTUP_DEBUG_ARG_PREFIX := "--glove-debug="
-const MAIN_SCENE_PATH := "res://Main.tscn"
+const MAIN_SCENE_PATH := "res://app/Main.tscn"
 const RETURN_TO_MAIN_SHORTCUT_KEY := KEY_ESCAPE
 
 var world := GridWorld.new()

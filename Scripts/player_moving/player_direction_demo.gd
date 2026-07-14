@@ -1,7 +1,7 @@
 extends Node2D
 
-const PrecisionMovement = preload("res://scripts/precision_movement.gd")
-const PlayerDirectionMarker = preload("res://scripts/player_moving/player_direction_marker.gd")
+const PrecisionMovement = preload("res://gameplay/precision_movement.gd")
+const PlayerDirectionMarker = preload("res://gameplay/player_moving/player_direction_marker.gd")
 const OriginalFont = preload("res://Fonts/Zpix-v3.1.6.ttf")
 
 const CELL_SIZE := 60

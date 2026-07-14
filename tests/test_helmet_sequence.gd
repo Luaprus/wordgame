@@ -1,6 +1,6 @@
 extends SceneTree
 
-const GridWorld = preload("res://scripts/grid_world.gd")
+const GridWorld = preload("res://core/grid_world.gd")
 const HelmetR1 = preload("res://levels/helmet/helmet_r1.gd")
 const HelmetR6 = preload("res://levels/helmet/helmet_r6.gd")
 const HelmetReturn = preload("res://levels/helmet/helmet_return.gd")

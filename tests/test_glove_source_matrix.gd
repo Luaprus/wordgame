@@ -2,7 +2,7 @@ extends SceneTree
 
 const BASELINE_PATH := "res://../harness/baselines/levels/glove/source_matrices.json"
 const GloveLevel = preload("res://levels/glove/glove_level.gd")
-const GridWorld = preload("res://scripts/grid_world.gd")
+const GridWorld = preload("res://core/grid_world.gd")
 
 func _init() -> void:
 	var baseline := _read_json(BASELINE_PATH)

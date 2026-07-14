@@ -1,4 +1,4 @@
-﻿extends RefCounted
+extends RefCounted
 
 const ROUTES_INDEX_PATH := "res://../harness/demo_routes/glove/routes.json"
 const GLOVE_LEVEL_PATH := "res://levels/glove/glove_level.gd"
@@ -16,7 +16,7 @@ const ROUTE_STEP_REVIEW_PRIORITY_ROUTE_IDS := [
 	"glove-path-opened-runtime",
 	"glove-transition-out-runtime"
 ]
-const GridWorld = preload("res://scripts/grid_world.gd")
+const GridWorld = preload("res://core/grid_world.gd")
 const GloveLayouts = preload("res://scripts/levels/glove/glove_layouts.gd")
 const GloveRouteRunner = preload("res://scripts/levels/glove/glove_route_runner.gd")
 const GloveSourceSceneParser = preload("res://scripts/levels/glove/glove_source_scene_parser.gd")

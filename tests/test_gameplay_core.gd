@@ -1,7 +1,7 @@
 extends SceneTree
 
-const GridWorld = preload("res://scripts/grid_world.gd")
-const MainSceneScript = preload("res://scripts/main.gd")
+const GridWorld = preload("res://core/grid_world.gd")
+const MainSceneScript = preload("res://app/main.gd")
 const GLOVE_PREVIEW_SCENE_PATH := "res://levels/glove/glove_preview.tscn"
 
 var failures: Array[String] = []

@@ -1,4 +1,4 @@
-﻿extends SceneTree
+extends SceneTree
 
 const GLOVE_LEVEL_PATH := "res://levels/glove/glove_level.gd"
 const GLOVE_CORRECT_ROUTE_PATH := "res://../harness/demo_routes/glove/glove_correct_route.json"
@@ -21,12 +21,12 @@ const GLOVE_TRANSITION_OUT_ROUTE_RUNTIME_PATH := "res://../harness/demo_routes/g
 const GLOVE_SWORD_SWAP_ROUTE_RUNTIME_PATH := "res://../harness/demo_routes/glove/glove_sword_swap_runtime.json"
 const GLOVE_ROUTES_INDEX_PATH := "res://../harness/demo_routes/glove/routes.json"
 const GLOVE_PREVIEW_SCENE_PATH := "res://levels/glove/glove_preview.tscn"
-const MAIN_SCENE_PATH := "res://Main.tscn"
+const MAIN_SCENE_PATH := "res://app/Main.tscn"
 const GLOVE_LEVEL_MANIFEST_PATH := "res://levels/glove/level_manifest.json"
 const GLOVE_HANDOFF_PATH := "res://levels/glove/handoff.md"
 const GLOVE_REPORT_OUTPUT_DIR := "res://../harness/reports/demo/glove"
 const GLOVE_MANUAL_REVIEW_OVERRIDES_PATH := "res://../harness/demo_routes/glove/manual_review_overrides.json"
-const GridWorld = preload("res://scripts/grid_world.gd")
+const GridWorld = preload("res://core/grid_world.gd")
 const GloveEffects = preload("res://scripts/levels/glove/glove_effects.gd")
 const GloveRouteRunner = preload("res://scripts/levels/glove/glove_route_runner.gd")
 const GloveRouteReportExporter = preload("res://scripts/levels/glove/glove_route_report_exporter.gd")

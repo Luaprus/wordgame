@@ -1,8 +1,8 @@
 extends RefCounted
 
-const PrecisionMovement = preload("res://scripts/precision_movement.gd")
-const RuleEngine = preload("res://scripts/rule_engine.gd")
-const WordEntity = preload("res://scripts/word_entity.gd")
+const PrecisionMovement = preload("res://gameplay/precision_movement.gd")
+const RuleEngine = preload("res://core/rule_engine.gd")
+const WordEntity = preload("res://core/word_entity.gd")
 
 const ACTION_MOVE := "move"
 const ACTION_INTERACT := "interact"

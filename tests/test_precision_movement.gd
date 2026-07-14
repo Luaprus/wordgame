@@ -1,8 +1,8 @@
 extends SceneTree
 
-const GridWorld = preload("res://scripts/grid_world.gd")
-const PrecisionMovement = preload("res://scripts/precision_movement.gd")
-const PlayerDirectionMarker = preload("res://scripts/player_moving/player_direction_marker.gd")
+const GridWorld = preload("res://core/grid_world.gd")
+const PrecisionMovement = preload("res://gameplay/precision_movement.gd")
+const PlayerDirectionMarker = preload("res://gameplay/player_moving/player_direction_marker.gd")
 const PlayerDirectionDemoScene = preload("res://scenes/player_moving/PlayerDirectionDemo.tscn")
 
 var failures: Array[String] = []
