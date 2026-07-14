@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Animations/BridgeRecreated.tscn" id="1_bridge"]
+
+[node name="HelmetBridgeShakePreview" type="Node2D"]
+
+[node name="BridgeRecreated" parent="." instance=ExtResource("1_bridge")]
+play_original_bridge_sequence = false
+play_idle_bridge_shake = true
+show_test_grid = true

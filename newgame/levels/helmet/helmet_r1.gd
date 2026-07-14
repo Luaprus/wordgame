@@ -1,6 +1,7 @@
 extends RefCounted
 
 const LEVEL_NAME := "四目头盔 过河第一关"
+const BridgeTreeVisuals = preload("res://levels/helmet/bridge_tree_visuals.gd")
 
 static func build_level() -> Dictionary:
 	return {
@@ -105,6 +106,7 @@ static func _bridge_merge_effect() -> Dictionary:
 		spawn.append({"text": "桥", "pos": cell, "config": {"solid": true, "pushable": false, "splittable": false}})
 	return {
 		"remove_at": remove_at,
+		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _river_bridge_cells()),
 		"replace_text": [
 			{
 				"from": "这乔木看起来很结实，",
@@ -127,6 +129,7 @@ static func _bridge_split_effect() -> Dictionary:
 	spawn.append({"text": "木", "pos": Vector2i(19, 10)})
 	return {
 		"remove_at": _river_bridge_cells(),
+		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _river_bridge_cells(), _creek_replaced_cells()),
 		"replace_text": [
 			{
 				"from": "这桥看起来很结实，",

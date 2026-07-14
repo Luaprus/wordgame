@@ -3,70 +3,39 @@ extends Node2D
 const GRID_COLUMNS := 32
 const GRID_ROWS := 18
 const CELL_SIZE := 60.0
-const VIEWPORT_SIZE := Vector2(1920.0, 1200.0)
-const PLAYFIELD_OFFSET_Y := 60.0
+const VIEWPORT_SIZE := Vector2(1920.0, 1080.0)
+const PLAYFIELD_OFFSET_Y := 0.0
 const TOP_BAR_COLOR := Color(0.14, 0.14, 0.14, 1.0)
-const PLAYFIELD_COLOR := Color(0.0, 0.0, 0.0, 1.0)
+const PLAYFIELD_COLOR := Color(0.03137255, 0.03137255, 0.03137255, 1.0)
+const GRID_LINE_COLOR := Color(1.0, 1.0, 1.0, 0.08)
 const DIALOGUE_FONT := preload("res://Fonts/Zpix.tres")
 const WORD_SPRITE_SCENE := preload("res://Scenes/Events/WordSprite.tscn")
+const RIVER_SCENE := preload("res://Scenes/Animations/Ch4RiverFlow/Ch4RiverFlow.tscn")
+const RIVER_POSITION := Vector2(1020.0, 0.0)
 
-const WATER_TEXT_TOP := "溪溪溪溪溪\n溪溪溪溪溪\n溪溪溪溪溪\n溪溪溪溪溪\n溪溪溪溪溪\n溪溪溪溪溪\n溪溪溪溪溪\n溪溪溪溪溪"
-const WATER_TEXT_MID := "溪溪溪溪溪\n溪溪溪溪溪\n溪溪溪溪溪\n溪溪溪溪溪\n溪溪溪溪溪"
-const WATER_TEXT_BOTTOM_LEFT := "溪溪溪溪\n溪溪溪溪\n溪溪溪溪\n溪溪溪溪\n溪溪溪溪"
-
-const WATER_WAVE_SHADER := """
-shader_type canvas_item;
-
-uniform float w : hint_range(0.0, 32.0) = 7.0;
-uniform float h : hint_range(0.0, 18.0) = 5.0;
-uniform float zero : hint_range(0.0, 1.0) = 0.725;
-uniform float amp : hint_range(0.0, 1.0) = 0.023;
-uniform float f : hint_range(0.0, 100.0) = 23.0;
-uniform float speed := 3.0;
-
-float wave(vec2 my_uv, float t, float my_zero, float my_amp, float freq) {
-	float alpha = step(
-		my_uv.y,
-		my_zero + my_amp * sin(freq * my_uv.x + t) + 0.25 * my_amp * sin(freq * 1.5 * my_uv.x - t)
-	);
-	return alpha;
-}
-
-void fragment() {
-	vec4 src = texture(TEXTURE, UV);
-	vec2 uv = UV;
-	uv.x *= w * 13.0;
-	uv.y *= h * 13.0;
-	vec2 id = floor(uv);
-	vec2 uv_by_id = vec2((id.x + 0.5) / (w * 13.0), (id.y + 0.5) / (h * 13.0));
-	float mask = wave(uv_by_id, fract(-TIME / speed) * PI * 2.0, zero, amp, f);
-	COLOR = vec4(src.rgb, src.a * mask);
-}
-"""
-
-const BRIDGE_GROUP_ORIGIN := Vector2(1140.0, 480.0)
+const BRIDGE_GROUP_ORIGIN := Vector2(1140.0, 420.0)
 const BRIDGE_LOOP_TIMES := [0.0, 0.5, 1.0, 1.5, 2.0]
 const BRIDGE_BREAK_TIMES := [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]
 
 const BRIDGE_TILES := [
-	{"name": "Bridge01", "pos": Vector2(24.0, 156.0), "rot": -8.0, "jitter": 0.0, "start_y": 190.0, "break_mid_y": -1.0, "break_end_y": -1.0},
-	{"name": "Bridge02", "pos": Vector2(90.0, 214.0), "rot": -14.0, "jitter": 2.0, "start_y": 190.0, "break_mid_y": -1.0, "break_end_y": -1.0},
-	{"name": "Bridge03", "pos": Vector2(140.0, 208.0), "rot": -11.0, "jitter": 3.0, "start_y": 190.0, "break_mid_y": 268.0, "break_end_y": 328.0},
-	{"name": "Bridge04", "pos": Vector2(190.0, 202.0), "rot": -7.0, "jitter": 4.0, "start_y": 190.0, "break_mid_y": 262.0, "break_end_y": 322.0},
-	{"name": "Bridge05", "pos": Vector2(240.0, 198.0), "rot": -2.0, "jitter": 5.0, "start_y": 190.0, "break_mid_y": 258.0, "break_end_y": 318.0},
-	{"name": "Bridge06", "pos": Vector2(290.0, 202.0), "rot": 4.0, "jitter": 4.0, "start_y": 190.0, "break_mid_y": 262.0, "break_end_y": 322.0},
-	{"name": "Bridge07", "pos": Vector2(340.0, 208.0), "rot": 10.0, "jitter": 3.0, "start_y": 190.0, "break_mid_y": 268.0, "break_end_y": 328.0},
-	{"name": "Bridge08", "pos": Vector2(390.0, 214.0), "rot": 14.0, "jitter": 2.0, "start_y": 190.0, "break_mid_y": -1.0, "break_end_y": -1.0},
-	{"name": "Bridge09", "pos": Vector2(464.0, 156.0), "rot": 8.0, "jitter": 0.0, "start_y": 190.0, "break_mid_y": -1.0, "break_end_y": -1.0},
-	{"name": "Bridge10", "pos": Vector2(24.0, 336.0), "rot": -8.0, "jitter": 0.0, "start_y": 276.0, "break_mid_y": -1.0, "break_end_y": -1.0},
-	{"name": "Bridge11", "pos": Vector2(90.0, 276.0), "rot": -14.0, "jitter": 2.0, "start_y": 276.0, "break_mid_y": -1.0, "break_end_y": -1.0},
-	{"name": "Bridge12", "pos": Vector2(140.0, 270.0), "rot": -11.0, "jitter": 3.0, "start_y": 276.0, "break_mid_y": 336.0, "break_end_y": 396.0},
-	{"name": "Bridge13", "pos": Vector2(190.0, 264.0), "rot": -7.0, "jitter": 4.0, "start_y": 276.0, "break_mid_y": 330.0, "break_end_y": 390.0},
-	{"name": "Bridge14", "pos": Vector2(240.0, 260.0), "rot": -2.0, "jitter": 5.0, "start_y": 276.0, "break_mid_y": 326.0, "break_end_y": 386.0},
-	{"name": "Bridge15", "pos": Vector2(290.0, 264.0), "rot": 4.0, "jitter": 4.0, "start_y": 276.0, "break_mid_y": 330.0, "break_end_y": 390.0},
-	{"name": "Bridge16", "pos": Vector2(340.0, 270.0), "rot": 10.0, "jitter": 3.0, "start_y": 276.0, "break_mid_y": 336.0, "break_end_y": 396.0},
-	{"name": "Bridge17", "pos": Vector2(390.0, 276.0), "rot": 14.0, "jitter": 2.0, "start_y": 276.0, "break_mid_y": -1.0, "break_end_y": -1.0},
-	{"name": "Bridge18", "pos": Vector2(464.0, 336.0), "rot": 8.0, "jitter": 0.0, "start_y": 276.0, "break_mid_y": -1.0, "break_end_y": -1.0}
+	{"name": "Bridge01", "pos": Vector2(30.0, 30.0), "rot": -8.0, "jitter": 0.0, "start_y": 190.0, "break_mid_y": -1.0, "break_end_y": -1.0},
+	{"name": "Bridge02", "pos": Vector2(90.0, 90.0), "rot": -14.0, "jitter": 2.0, "start_y": 190.0, "break_mid_y": -1.0, "break_end_y": -1.0},
+	{"name": "Bridge03", "pos": Vector2(150.0, 90.0), "rot": -11.0, "jitter": 3.0, "start_y": 190.0, "break_mid_y": 268.0, "break_end_y": 328.0},
+	{"name": "Bridge04", "pos": Vector2(210.0, 90.0), "rot": -7.0, "jitter": 4.0, "start_y": 190.0, "break_mid_y": 262.0, "break_end_y": 322.0},
+	{"name": "Bridge05", "pos": Vector2(270.0, 90.0), "rot": -2.0, "jitter": 5.0, "start_y": 190.0, "break_mid_y": 258.0, "break_end_y": 318.0},
+	{"name": "Bridge06", "pos": Vector2(330.0, 90.0), "rot": 4.0, "jitter": 4.0, "start_y": 190.0, "break_mid_y": 262.0, "break_end_y": 322.0},
+	{"name": "Bridge07", "pos": Vector2(390.0, 90.0), "rot": 10.0, "jitter": 3.0, "start_y": 190.0, "break_mid_y": 268.0, "break_end_y": 328.0},
+	{"name": "Bridge08", "pos": Vector2(450.0, 90.0), "rot": 14.0, "jitter": 2.0, "start_y": 190.0, "break_mid_y": -1.0, "break_end_y": -1.0},
+	{"name": "Bridge09", "pos": Vector2(510.0, 30.0), "rot": 8.0, "jitter": 0.0, "start_y": 190.0, "break_mid_y": -1.0, "break_end_y": -1.0},
+	{"name": "Bridge10", "pos": Vector2(30.0, 270.0), "rot": -8.0, "jitter": 0.0, "start_y": 276.0, "break_mid_y": -1.0, "break_end_y": -1.0},
+	{"name": "Bridge11", "pos": Vector2(90.0, 210.0), "rot": -14.0, "jitter": 2.0, "start_y": 276.0, "break_mid_y": -1.0, "break_end_y": -1.0},
+	{"name": "Bridge12", "pos": Vector2(150.0, 210.0), "rot": -11.0, "jitter": 3.0, "start_y": 276.0, "break_mid_y": 336.0, "break_end_y": 396.0},
+	{"name": "Bridge13", "pos": Vector2(210.0, 210.0), "rot": -7.0, "jitter": 4.0, "start_y": 276.0, "break_mid_y": 330.0, "break_end_y": 390.0},
+	{"name": "Bridge14", "pos": Vector2(270.0, 210.0), "rot": -2.0, "jitter": 5.0, "start_y": 276.0, "break_mid_y": 326.0, "break_end_y": 386.0},
+	{"name": "Bridge15", "pos": Vector2(330.0, 210.0), "rot": 4.0, "jitter": 4.0, "start_y": 276.0, "break_mid_y": 330.0, "break_end_y": 390.0},
+	{"name": "Bridge16", "pos": Vector2(390.0, 210.0), "rot": 10.0, "jitter": 3.0, "start_y": 276.0, "break_mid_y": 336.0, "break_end_y": 396.0},
+	{"name": "Bridge17", "pos": Vector2(450.0, 210.0), "rot": 14.0, "jitter": 2.0, "start_y": 276.0, "break_mid_y": -1.0, "break_end_y": -1.0},
+	{"name": "Bridge18", "pos": Vector2(510.0, 270.0), "rot": 8.0, "jitter": 0.0, "start_y": 276.0, "break_mid_y": -1.0, "break_end_y": -1.0}
 ]
 
 const BRIDGE_BREAK_ROTATIONS := [
@@ -93,9 +62,9 @@ const BRIDGE_BREAK_ROTATIONS := [
 var _animation_player: AnimationPlayer
 var _bridge_tiles: Array[Node2D] = []
 var _falling_player: Node2D
-var _water_blocks: Array[Node2D] = []
 @export var play_original_bridge_sequence := false
 @export var play_idle_bridge_shake := true
+@export var show_test_grid := false
 
 
 func _ready() -> void:
@@ -144,14 +113,43 @@ func _add_playfield() -> void:
 	playfield.size = Vector2(VIEWPORT_SIZE.x, GRID_ROWS * CELL_SIZE)
 	playfield.color = PLAYFIELD_COLOR
 	add_child(playfield)
+	if show_test_grid:
+		_add_test_grid()
+
+
+func _add_test_grid() -> void:
+	var grid_size := Vector2(GRID_COLUMNS * CELL_SIZE, GRID_ROWS * CELL_SIZE)
+	for x in range(GRID_COLUMNS + 1):
+		var line := Line2D.new()
+		line.name = "GridV%d" % x
+		var px := float(x) * CELL_SIZE
+		line.points = PackedVector2Array([
+			Vector2(px, PLAYFIELD_OFFSET_Y),
+			Vector2(px, PLAYFIELD_OFFSET_Y + grid_size.y)
+		])
+		line.width = 1.0
+		line.default_color = GRID_LINE_COLOR
+		add_child(line)
+
+	for y in range(GRID_ROWS + 1):
+		var line := Line2D.new()
+		line.name = "GridH%d" % y
+		var py := PLAYFIELD_OFFSET_Y + float(y) * CELL_SIZE
+		line.points = PackedVector2Array([
+			Vector2(0.0, py),
+			Vector2(grid_size.x, py)
+		])
+		line.width = 1.0
+		line.default_color = GRID_LINE_COLOR
+		add_child(line)
 
 
 func _add_dialogue() -> void:
 	var label := Label.new()
 	label.name = "Dialogue"
 	label.position = Vector2(80.0, 126.0)
-	label.size = Vector2(760.0, 180.0)
-	label.text = "一条溪水阻挡前路。旁边的桥  我\n很好用， 感觉应该再得上忙。"
+	label.size = Vector2(860.0, 420.0)
+	label.text = "一条溪水阻挡前路。旁边的桥\n很好用，  感觉应该帮得上忙。\n\n这桥  看起来很好用，\n小心点肯定帮得上忙。\n\n无法跨越的湍急野溪，我\n而桥下的坚石河水难\n撑得起沉甸甸的重量。"
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	if DIALOGUE_FONT != null:
@@ -162,32 +160,31 @@ func _add_dialogue() -> void:
 
 
 func _add_water() -> void:
-	_water_blocks.append(_create_word_block("WaterTop", WATER_TEXT_TOP, Vector2i(22, 0)))
-	_water_blocks.append(_create_animated_word_block("WaterMid", WATER_TEXT_MID, Vector2i(22, 11)))
-	_water_blocks.append(_create_animated_word_block("WaterBottomLeft", WATER_TEXT_BOTTOM_LEFT, Vector2i(17, 13), 0.7, 0.03, 21.0))
+	var river := RIVER_SCENE.instantiate()
+	river.name = "River"
+	river.position = RIVER_POSITION
+	add_child(river)
 
 
 func _add_player_hint() -> void:
-	var me := _create_word_sprite("PlayerHint", "我", _cell_center(Vector2i(16, 2)))
-	add_child(me)
+	_create_word_sprite("PlayerHint", "我", _cell_center(Vector2i(16, 2)))
 
 
 func _add_bridge_masks() -> void:
-	for mask_pos in [
-		Vector2(90.0, 276.0),
-		Vector2(140.0, 270.0),
-		Vector2(190.0, 264.0),
-		Vector2(240.0, 260.0),
-		Vector2(290.0, 264.0),
-		Vector2(340.0, 270.0),
-		Vector2(390.0, 276.0)
+	for mask in [
+		{"pos": Vector2(90.0, 150.0), "offset": Vector2(-30.0, -90.0), "size": Vector2(60.0, 180.0)},
+		{"pos": Vector2(150.0, 150.0), "offset": Vector2(-30.0, -90.0), "size": Vector2(300.0, 180.0)},
+		{"pos": Vector2(450.0, 150.0), "offset": Vector2(-30.0, -90.0), "size": Vector2(60.0, 180.0)}
 	]:
-		var mask := ColorRect.new()
-		mask.name = "BridgeMask"
-		mask.position = _bridge_scene_position(mask_pos) - Vector2(CELL_SIZE / 2.0, CELL_SIZE / 2.0)
-		mask.size = Vector2(CELL_SIZE, CELL_SIZE)
-		mask.color = Color.BLACK
-		add_child(mask)
+		var mask_pos: Vector2 = mask["pos"]
+		var mask_offset: Vector2 = mask["offset"]
+		var mask_size: Vector2 = mask["size"]
+		var mask_rect := ColorRect.new()
+		mask_rect.name = "BridgeMask"
+		mask_rect.position = _bridge_scene_position(mask_pos) + mask_offset
+		mask_rect.size = mask_size
+		mask_rect.color = Color.BLACK
+		add_child(mask_rect)
 
 
 func _add_bridge_tiles() -> void:
@@ -207,71 +204,6 @@ func _add_falling_player() -> void:
 	sprite.text = "我"
 	sprite.position = Vector2.ZERO
 	_falling_player.add_child(sprite)
-
-
-func _create_word_block(name: String, text: String, top_left_cell: Vector2i) -> Node2D:
-	var block := Node2D.new()
-	block.name = name
-	block.position = _cell_center(top_left_cell)
-	add_child(block)
-
-	var sprite := WORD_SPRITE_SCENE.instantiate()
-	sprite.name = "WordSprite"
-	sprite.text = text
-	sprite.position = Vector2.ZERO
-	block.add_child(sprite)
-	return block
-
-
-func _create_animated_word_block(
-	name: String,
-	text: String,
-	top_left_cell: Vector2i,
-	zero := 0.725,
-	amp := 0.023,
-	freq := 23.0
-) -> Node2D:
-	var lines := text.replace("\r\n", "\n").split("\n")
-	var cols := 0
-	for line in lines:
-		cols = max(cols, line.length())
-	var rows := lines.size()
-
-	var holder := Node2D.new()
-	holder.name = name
-	add_child(holder)
-
-	var viewport := SubViewport.new()
-	viewport.name = "Viewport"
-	viewport.transparent_bg = true
-	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-	viewport.size = Vector2i(int(cols * CELL_SIZE), int(rows * CELL_SIZE))
-	holder.add_child(viewport)
-
-	var sprite_source := WORD_SPRITE_SCENE.instantiate()
-	sprite_source.name = "WordSprite"
-	sprite_source.text = text
-	sprite_source.position = Vector2(CELL_SIZE / 2.0, CELL_SIZE / 2.0)
-	viewport.add_child(sprite_source)
-
-	var display := Sprite2D.new()
-	display.name = "WaterDisplay"
-	display.centered = false
-	display.texture = viewport.get_texture()
-	display.position = _cell_center(top_left_cell) - Vector2(CELL_SIZE / 2.0, CELL_SIZE / 2.0)
-	var shader := Shader.new()
-	shader.code = WATER_WAVE_SHADER
-	var material := ShaderMaterial.new()
-	material.shader = shader
-	material.set_shader_parameter("w", float(cols))
-	material.set_shader_parameter("h", float(rows))
-	material.set_shader_parameter("zero", zero)
-	material.set_shader_parameter("amp", amp)
-	material.set_shader_parameter("f", freq)
-	display.material = material
-	holder.add_child(display)
-
-	return holder
 
 
 func _create_word_sprite(name: String, text: String, pos: Vector2) -> Node2D:

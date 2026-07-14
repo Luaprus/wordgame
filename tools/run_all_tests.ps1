@@ -1,5 +1,7 @@
 $ErrorActionPreference = "Stop"
 
+throw "AUTOMATED ACCEPTANCE PAUSED. Use recorded manual playthrough review; do not treat this script as completion evidence."
+
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot
 $ProjectCandidates = Get-ChildItem -LiteralPath $WorkspaceRoot -Directory |
     Where-Object { Test-Path -LiteralPath (Join-Path $_.FullName "project.godot") }

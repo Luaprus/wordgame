@@ -1,5 +1,7 @@
 extends RefCounted
 
+const BridgeTreeVisuals = preload("res://levels/helmet/bridge_tree_visuals.gd")
+
 const LEVEL_NAME := "四目头盔 过河第五关"
 const SCREEN_SIZE := Vector2i(32, 18)
 
@@ -342,6 +344,7 @@ static func _bridge_merge_blocked_effect() -> Dictionary:
 	spawn.append_array(_bridge_spawn())
 	return {
 		"remove_at": _river_dynamic_cells(),
+		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _bridge_cells()),
 		"replace_text": [_hint_bridge_merge_replace()],
 		"spawn": spawn
 	}
@@ -351,6 +354,7 @@ static func _bridge_merge_open_effect() -> Dictionary:
 	spawn.append_array(_bridge_spawn())
 	return {
 		"remove_at": _river_dynamic_cells(),
+		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _bridge_cells()),
 		"replace_text": [_hint_bridge_merge_replace()],
 		"spawn": spawn
 	}
@@ -368,6 +372,7 @@ static func _bridge_split_effect() -> Dictionary:
 static func _bridge_split_blocked_effect() -> Dictionary:
 	return {
 		"remove_at": _river_dynamic_cells(),
+		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _bridge_cells(), _creek_cells_for_blocked_bridge()),
 		"replace_text": [_hint_bridge_split_replace()],
 		"spawn": _creek_and_tree_spawn(false)
 	}
@@ -375,6 +380,7 @@ static func _bridge_split_blocked_effect() -> Dictionary:
 static func _bridge_split_open_effect() -> Dictionary:
 	return {
 		"remove_at": _river_dynamic_cells(),
+		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _bridge_cells(), _creek_cells_for_blocked_bridge()),
 		"replace_text": [_hint_bridge_split_replace()],
 		"spawn": _creek_and_tree_spawn(true)
 	}
