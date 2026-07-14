@@ -20,6 +20,7 @@ const GemBurstEffect = preload("res://scripts/gem_burst_effect.gd")
 const LightGlowEffect = preload("res://scripts/light_glow_effect.gd")
 const TreeSpriteScene = preload("res://scenes/animations/TreeSprite.tscn")
 const OriginalFont = preload("res://Fonts/Zpix-v3.1.6.ttf")
+const PushEffectTexture = preload("res://assets/animations/push/u_glove_S.png")
 
 const WORD_FONT_SIZE := 56
 const GEM_COLOR := Color(0.0, 0.58, 0.62, 1.0)
@@ -40,6 +41,7 @@ const BRIDGE_COLLAPSE_SHAKE_DURATION := 0.85
 const BRIDGE_COLLAPSE_FALL_DISTANCE := 72.0
 const BRIDGE_COLLAPSE_PLAYER_FALL_DISTANCE := 84.0
 const BRIDGE_COLLAPSE_MASK_PADDING := 6.0
+const PUSH_FLASH_FRAME_LOCAL_X := [-18.5, -20.0, -27.5, -38.5, -45.5, -50.0, -55.0, -58.0, -60.0, -61.0, -61.5, -62.0, -64.5, -65.0, -68.0, -68.0]
 const RIVER_DEPTH_STEP := 10
 const RIVER_PLAYER_DEPTH_OFFSET := 5
 const HIGHLIGHT_VISUAL_CONFIG_PATH := "res://assets/animations/highlight/highlight_visual_config.json"
@@ -595,6 +597,9 @@ func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> 
 		if effect_type == "player_river_exit":
 			_play_player_river_exit(request)
 			continue
+		if effect_type == "player_push_flash":
+			_play_player_push_flash(request)
+			continue
 		if effect_type == "bridge_tree_transition":
 			var context: Dictionary = visual_contexts[i] if i < visual_contexts.size() else {}
 			call_deferred("_run_bridge_tree_transition", request.duplicate(true), context, _visual_effect_generation)
@@ -1008,6 +1013,59 @@ func _play_player_river_exit(request: Dictionary) -> void:
 	player_river_tween.tween_method(_set_player_river_visual_offset, player_river_visual_offset, 0.0, rise_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	player_river_tween.tween_method(_set_player_river_visual_offset, 0.0, -jump_height, hop_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	player_river_tween.tween_method(_set_player_river_visual_offset, -jump_height, 0.0, land_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+func _play_player_push_flash(request: Dictionary) -> void:
+	if bridge_tree_effect_layer == null:
+		return
+	var direction: Vector2i = request.get("direction", Vector2i.ZERO)
+	if direction == Vector2i.ZERO:
+		return
+	var player_to: Vector2i = request.get("player_to", world.player_pos)
+	var sprite := Sprite2D.new()
+	sprite.name = "PlayerPushFlash"
+	sprite.texture = PushEffectTexture
+	sprite.hframes = 10
+	sprite.vframes = 2
+	sprite.frame = 0
+	sprite.centered = true
+	sprite.z_index = 85
+	sprite.rotation_degrees = _push_flash_rotation(direction)
+	bridge_tree_effect_layer.add_child(sprite)
+	var base_position := _grid_to_pixels(player_to)
+	_set_push_flash_progress(0.0, sprite, base_position, direction)
+	var tween := create_tween()
+	tween.tween_method(Callable(self, "_set_push_flash_progress").bind(sprite, base_position, direction), 0.0, 1.0, 0.5)
+	tween.tween_callback(Callable(sprite, "queue_free"))
+
+func _push_flash_rotation(direction: Vector2i) -> float:
+	if direction == Vector2i.RIGHT:
+		return 0.0
+	if direction == Vector2i.LEFT:
+		return 180.0
+	if direction == Vector2i.DOWN:
+		return 90.0
+	return 270.0
+
+func _set_push_flash_progress(progress: float, sprite: Sprite2D, base_position: Vector2, direction: Vector2i) -> void:
+	if sprite == null or not is_instance_valid(sprite):
+		return
+	var frame := clampi(int(round(progress * 15.0)), 0, 15)
+	sprite.frame = frame
+	sprite.position = _push_flash_position_for_frame(base_position, direction, frame, progress)
+
+func _push_flash_position_for_frame(base_position: Vector2, direction: Vector2i, frame: int, progress: float) -> Vector2:
+	var local_x := float(PUSH_FLASH_FRAME_LOCAL_X[clampi(frame, 0, PUSH_FLASH_FRAME_LOCAL_X.size() - 1)])
+	if direction == Vector2i.RIGHT:
+		var desired_center := 40.0 + progress * 4.0
+		return base_position + Vector2(desired_center - local_x, 30.0)
+	if direction == Vector2i.LEFT:
+		var desired_center := 20.0 - progress * 4.0
+		return base_position + Vector2(desired_center + local_x, 30.0)
+	if direction == Vector2i.DOWN:
+		var desired_center := 40.0 + progress * 4.0
+		return base_position + Vector2(30.0, desired_center - local_x)
+	var desired_center := 20.0 - progress * 4.0
+	return base_position + Vector2(30.0, desired_center + local_x)
 
 func _start_player_river_tween() -> void:
 	if player_river_tween and player_river_tween.is_valid():

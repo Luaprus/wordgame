@@ -2,6 +2,14 @@
 
 本次补的是第四章四目头盔过河段：玩家把“我”和“鸟”合成“鹅”后，进入“溪”组成的河流时播放入水动画，离开河流时播放出水动画。
 
+## 推字特效
+
+- 来源场景：`D:/文字游戏/Scenes/Animations/Push.tscn`
+- 来源贴图：`D:/文字游戏/Sprites/glove_push/u_glove_S.png`
+- 项目贴图：`res://assets/animations/push/u_glove_S.png`
+- 接入位置：`res://scripts/grid_world.gd` 在玩家成功推动可推字一格时发出 `player_push_flash`；`res://scripts/main.gd` 按源 `Push.tscn` 的方向偏移、旋转和 `0-15` 帧播放。
+- 验收重点：只有真正推动成功时触发；推动一格触发一次；转身、撞墙、合字、拉字不应触发。
+
 ## 来源
 
 - 源关卡：`D:/文字游戏/Scenes/Maps/第四章/15_6_新河岸幻覺_第六關.tscn`

@@ -61,10 +61,24 @@
     },
     "notes": "桥塌环节的松桥实体由 helmet_r3.gd 生成；非四角桥字带 2px 水平晃动，四角桥字不晃动。独立预览直接调用同一份 _loose_bridge_effect()，所以预览调整会同步作用到完整关卡。"
   },
+  "push_flash": {
+    "source_scene": "D:/文字游戏/Scenes/Animations/Push.tscn",
+    "source_texture": "D:/文字游戏/Sprites/glove_push/u_glove_S.png",
+    "project_texture": "res://assets/animations/push/u_glove_S.png",
+    "runtime_logic": "res://scripts/grid_world.gd",
+    "render_logic": "res://scripts/main.gd",
+    "notes": "玩家成功推动可推字一格时触发一次；按源 Push.tscn 的 0-15 帧、0.5s、四方向旋转/偏移播放。"
+  },
   "required_resources": {
-    "new_external_art": [],
+    "new_external_art": [
+      {
+        "source": "D:/文字游戏/Sprites/glove_push/u_glove_S.png",
+        "target": "res://assets/animations/push/u_glove_S.png",
+        "used_by": "player_push_flash"
+      }
+    ],
     "new_external_audio": [],
-    "notes": "本次没有新增贴图或音效；动画为复刻源场景 river_in/river_out 行为的代码偏移。"
+    "notes": "鹅入溪和桥塌动画为复刻源场景行为的代码偏移；本次新增推字特效贴图，来源为 D:/文字游戏/Sprites/glove_push/u_glove_S.png。"
   },
   "acceptance": [
     "鹅可以继续按原操作方式穿过溪。",
