@@ -14,8 +14,8 @@
 ## 当前实现
 
 - `res://levels/helmet/helmet_r6.gd` 增加 `player_water_animation`，只对“鹅”穿过“溪”生效。
-- `res://scripts/grid_world.gd` 记录 `player_submerged`，在进入/离开溪格时发出 `player_river_enter` / `player_river_exit` 视觉事件。
-- `res://scripts/main.gd` 不改变移动操作，只在现有平滑移动基础上叠加玩家字形的 Y 偏移。
+- `res://core/grid_world.gd` 记录 `player_submerged`，在进入/离开溪格时发出 `player_river_enter` / `player_river_exit` 视觉事件。
+- `res://app/main.gd` 不改变移动操作，只在现有平滑移动基础上叠加玩家字形的 Y 偏移。
 - `res://levels/helmet/helmet_river_goose_preview.tscn` 是根项目独立预览入口，打开后“鹅”位于溪左侧，按右即可测试入水。
 - `res://levels/helmet/helmet_bridge_shake_preview.tscn` 是过桥摇晃独立预览入口，实例化 `res://Scenes/Animations/BridgeRecreated.tscn` 并持续播放 `LooseLoop`。
 

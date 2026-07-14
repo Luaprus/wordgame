@@ -195,5 +195,5 @@ powershell -ExecutionPolicy Bypass -File E:\wordgame copy\tools\run_all_tests.ps
 - `Main.tscn` 现在保留头盔关默认启动流程，但已经补了一个最小桥接入口：
   - 运行主入口后按 `F9`，会切到 `res://levels/glove/glove_preview.tscn`
   - 启动参数传入 `--entry=glove` 时，主入口会直接跳到手套关试玩页
-  - 在手套试玩页里按 `Esc`，会返回 `res://Main.tscn`
+  - 在手套试玩页里按 `Esc`，会返回 `res://app/Main.tscn`
 - 这层桥接只解决“如何稳定进入/退出手套关供人工验收”，不代表手套关已经完全并回头盔主流程，也不改变本交接稿里关于 candidate / manual review 的结论。
