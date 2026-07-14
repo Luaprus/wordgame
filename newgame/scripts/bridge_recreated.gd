@@ -8,11 +8,11 @@ const FONT_PATH := "res://Fonts/Zpix-v3.1.6.ttf"
 const TOP_TILES := [
 	{"name": "Top0", "pos": Vector2(30, 30), "rot": 10.0},
 	{"name": "Top1", "pos": Vector2(90, 96), "rot": 12.0},
-	{"name": "Top2", "pos": Vector2(150, 210), "rot": -8.0},
-	{"name": "Top3", "pos": Vector2(210, 210), "rot": 16.0},
-	{"name": "Top4", "pos": Vector2(270, 210), "rot": -6.0},
-	{"name": "Top5", "pos": Vector2(330, 210), "rot": -12.0},
-	{"name": "Top6", "pos": Vector2(390, 210), "rot": 10.0},
+	{"name": "Top2", "pos": Vector2(150, 90), "rot": -8.0},
+	{"name": "Top3", "pos": Vector2(210, 90), "rot": 16.0},
+	{"name": "Top4", "pos": Vector2(270, 90), "rot": -6.0},
+	{"name": "Top5", "pos": Vector2(330, 90), "rot": -12.0},
+	{"name": "Top6", "pos": Vector2(390, 90), "rot": 10.0},
 	{"name": "Top7", "pos": Vector2(450, 96), "rot": -12.0},
 	{"name": "Top8", "pos": Vector2(510, 30), "rot": -8.0}
 ]
@@ -20,11 +20,11 @@ const TOP_TILES := [
 const BOTTOM_TILES := [
 	{"name": "Bottom0", "pos": Vector2(30, 270), "rot": 16.0},
 	{"name": "Bottom1", "pos": Vector2(90, 216), "rot": 8.0},
-	{"name": "Bottom2", "pos": Vector2(150, 330), "rot": -10.0},
-	{"name": "Bottom3", "pos": Vector2(210, 330), "rot": -6.0},
-	{"name": "Bottom4", "pos": Vector2(270, 330), "rot": 4.0},
-	{"name": "Bottom5", "pos": Vector2(330, 330), "rot": -12.0},
-	{"name": "Bottom6", "pos": Vector2(390, 330), "rot": -8.0},
+	{"name": "Bottom2", "pos": Vector2(150, 210), "rot": -10.0},
+	{"name": "Bottom3", "pos": Vector2(210, 210), "rot": -6.0},
+	{"name": "Bottom4", "pos": Vector2(270, 210), "rot": 4.0},
+	{"name": "Bottom5", "pos": Vector2(330, 210), "rot": -12.0},
+	{"name": "Bottom6", "pos": Vector2(390, 210), "rot": -8.0},
 	{"name": "Bottom7", "pos": Vector2(450, 216), "rot": 14.0},
 	{"name": "Bottom8", "pos": Vector2(510, 270), "rot": 14.0}
 ]

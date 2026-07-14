@@ -60,13 +60,14 @@
     "animation_scene": "res://Scenes/Animations/BridgeRecreated.tscn",
     "source_map": "D:/文字游戏/Scenes/Maps/第四章/15_3_新河岸幻覺_第三關.tscn",
     "source_nodes": "MainMap/橋樑/鬆鬆的橋/橋組",
+    "source_layout_scene": "D:/文字游戏/Scenes/Animations/Bridge2.tscn",
     "source_animations": ["LooseStart", "LooseLoop", "LooseDismiss", "LooseBridge"],
     "layout": {
       "origin_px": [1140, 420],
-      "main_rows_top_to_bottom": [9, 11],
-      "corner_tiles": ["Bridge01", "Bridge09", "Bridge10", "Bridge18"]
+      "local_positions_px": [[30,30], [90,96], [150,210], [210,210], [270,210], [330,210], [390,210], [450,96], [510,30], [30,270], [90,216], [150,330], [210,330], [270,330], [330,330], [390,330], [450,216], [510,270]],
+      "mask_positions_px": [[90,150], [150,270], [450,150]]
     },
-      "notes": "独立预览场景持续播放 LooseLoop 摇晃，并直接复用 Ch4RiverFlow.tscn 的逐格溪流；桥主体按从上往下第9、11行摆放，四个剩余桥字位于主体四角，整体横移到溪流上方。预览打开 32x18、60px、#080808 黑底低透明白线测试网格。"
+      "notes": "独立预览场景持续播放 LooseLoop 摇晃，并直接复用 Ch4RiverFlow.tscn 的逐格溪流；桥字直接按源关卡内嵌断桥形态摆放，整体横移到溪流上方。预览打开 32x18、60px、#080808 黑底低透明白线测试网格。"
   },
   "required_resources": {
     "new_external_art": [],

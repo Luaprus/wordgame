@@ -19,22 +19,22 @@ const BRIDGE_BREAK_TIMES := [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]
 
 const BRIDGE_TILES := [
 	{"name": "Bridge01", "pos": Vector2(30.0, 30.0), "rot": -8.0, "jitter": 0.0, "start_y": 190.0, "break_mid_y": -1.0, "break_end_y": -1.0},
-	{"name": "Bridge02", "pos": Vector2(90.0, 90.0), "rot": -14.0, "jitter": 2.0, "start_y": 190.0, "break_mid_y": -1.0, "break_end_y": -1.0},
-	{"name": "Bridge03", "pos": Vector2(150.0, 90.0), "rot": -11.0, "jitter": 3.0, "start_y": 190.0, "break_mid_y": 268.0, "break_end_y": 328.0},
-	{"name": "Bridge04", "pos": Vector2(210.0, 90.0), "rot": -7.0, "jitter": 4.0, "start_y": 190.0, "break_mid_y": 262.0, "break_end_y": 322.0},
-	{"name": "Bridge05", "pos": Vector2(270.0, 90.0), "rot": -2.0, "jitter": 5.0, "start_y": 190.0, "break_mid_y": 258.0, "break_end_y": 318.0},
-	{"name": "Bridge06", "pos": Vector2(330.0, 90.0), "rot": 4.0, "jitter": 4.0, "start_y": 190.0, "break_mid_y": 262.0, "break_end_y": 322.0},
-	{"name": "Bridge07", "pos": Vector2(390.0, 90.0), "rot": 10.0, "jitter": 3.0, "start_y": 190.0, "break_mid_y": 268.0, "break_end_y": 328.0},
-	{"name": "Bridge08", "pos": Vector2(450.0, 90.0), "rot": 14.0, "jitter": 2.0, "start_y": 190.0, "break_mid_y": -1.0, "break_end_y": -1.0},
+	{"name": "Bridge02", "pos": Vector2(90.0, 96.0), "rot": -14.0, "jitter": 2.0, "start_y": 190.0, "break_mid_y": -1.0, "break_end_y": -1.0},
+	{"name": "Bridge03", "pos": Vector2(150.0, 210.0), "rot": -11.0, "jitter": 3.0, "start_y": 190.0, "break_mid_y": 268.0, "break_end_y": 328.0},
+	{"name": "Bridge04", "pos": Vector2(210.0, 210.0), "rot": -7.0, "jitter": 4.0, "start_y": 190.0, "break_mid_y": 262.0, "break_end_y": 322.0},
+	{"name": "Bridge05", "pos": Vector2(270.0, 210.0), "rot": -2.0, "jitter": 5.0, "start_y": 190.0, "break_mid_y": 258.0, "break_end_y": 318.0},
+	{"name": "Bridge06", "pos": Vector2(330.0, 210.0), "rot": 4.0, "jitter": 4.0, "start_y": 190.0, "break_mid_y": 262.0, "break_end_y": 322.0},
+	{"name": "Bridge07", "pos": Vector2(390.0, 210.0), "rot": 10.0, "jitter": 3.0, "start_y": 190.0, "break_mid_y": 268.0, "break_end_y": 328.0},
+	{"name": "Bridge08", "pos": Vector2(450.0, 96.0), "rot": 14.0, "jitter": 2.0, "start_y": 190.0, "break_mid_y": -1.0, "break_end_y": -1.0},
 	{"name": "Bridge09", "pos": Vector2(510.0, 30.0), "rot": 8.0, "jitter": 0.0, "start_y": 190.0, "break_mid_y": -1.0, "break_end_y": -1.0},
 	{"name": "Bridge10", "pos": Vector2(30.0, 270.0), "rot": -8.0, "jitter": 0.0, "start_y": 276.0, "break_mid_y": -1.0, "break_end_y": -1.0},
-	{"name": "Bridge11", "pos": Vector2(90.0, 210.0), "rot": -14.0, "jitter": 2.0, "start_y": 276.0, "break_mid_y": -1.0, "break_end_y": -1.0},
-	{"name": "Bridge12", "pos": Vector2(150.0, 210.0), "rot": -11.0, "jitter": 3.0, "start_y": 276.0, "break_mid_y": 336.0, "break_end_y": 396.0},
-	{"name": "Bridge13", "pos": Vector2(210.0, 210.0), "rot": -7.0, "jitter": 4.0, "start_y": 276.0, "break_mid_y": 330.0, "break_end_y": 390.0},
-	{"name": "Bridge14", "pos": Vector2(270.0, 210.0), "rot": -2.0, "jitter": 5.0, "start_y": 276.0, "break_mid_y": 326.0, "break_end_y": 386.0},
-	{"name": "Bridge15", "pos": Vector2(330.0, 210.0), "rot": 4.0, "jitter": 4.0, "start_y": 276.0, "break_mid_y": 330.0, "break_end_y": 390.0},
-	{"name": "Bridge16", "pos": Vector2(390.0, 210.0), "rot": 10.0, "jitter": 3.0, "start_y": 276.0, "break_mid_y": 336.0, "break_end_y": 396.0},
-	{"name": "Bridge17", "pos": Vector2(450.0, 210.0), "rot": 14.0, "jitter": 2.0, "start_y": 276.0, "break_mid_y": -1.0, "break_end_y": -1.0},
+	{"name": "Bridge11", "pos": Vector2(90.0, 216.0), "rot": -14.0, "jitter": 2.0, "start_y": 276.0, "break_mid_y": -1.0, "break_end_y": -1.0},
+	{"name": "Bridge12", "pos": Vector2(150.0, 330.0), "rot": -11.0, "jitter": 3.0, "start_y": 276.0, "break_mid_y": 336.0, "break_end_y": 396.0},
+	{"name": "Bridge13", "pos": Vector2(210.0, 330.0), "rot": -7.0, "jitter": 4.0, "start_y": 276.0, "break_mid_y": 330.0, "break_end_y": 390.0},
+	{"name": "Bridge14", "pos": Vector2(270.0, 330.0), "rot": -2.0, "jitter": 5.0, "start_y": 276.0, "break_mid_y": 326.0, "break_end_y": 386.0},
+	{"name": "Bridge15", "pos": Vector2(330.0, 330.0), "rot": 4.0, "jitter": 4.0, "start_y": 276.0, "break_mid_y": 330.0, "break_end_y": 390.0},
+	{"name": "Bridge16", "pos": Vector2(390.0, 330.0), "rot": 10.0, "jitter": 3.0, "start_y": 276.0, "break_mid_y": 336.0, "break_end_y": 396.0},
+	{"name": "Bridge17", "pos": Vector2(450.0, 216.0), "rot": 14.0, "jitter": 2.0, "start_y": 276.0, "break_mid_y": -1.0, "break_end_y": -1.0},
 	{"name": "Bridge18", "pos": Vector2(510.0, 270.0), "rot": 8.0, "jitter": 0.0, "start_y": 276.0, "break_mid_y": -1.0, "break_end_y": -1.0}
 ]
 
@@ -173,7 +173,7 @@ func _add_player_hint() -> void:
 func _add_bridge_masks() -> void:
 	for mask in [
 		{"pos": Vector2(90.0, 150.0), "offset": Vector2(-30.0, -90.0), "size": Vector2(60.0, 180.0)},
-		{"pos": Vector2(150.0, 150.0), "offset": Vector2(-30.0, -90.0), "size": Vector2(300.0, 180.0)},
+		{"pos": Vector2(150.0, 270.0), "offset": Vector2(-30.0, -90.0), "size": Vector2(300.0, 180.0)},
 		{"pos": Vector2(450.0, 150.0), "offset": Vector2(-30.0, -90.0), "size": Vector2(60.0, 180.0)}
 	]:
 		var mask_pos: Vector2 = mask["pos"]

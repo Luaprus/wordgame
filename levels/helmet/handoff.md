@@ -27,7 +27,7 @@
 - 来源关卡：`D:/文字游戏/Scenes/Maps/第四章/15_3_新河岸幻覺_第三關.tscn`
 - 来源节点：`MainMap/橋樑/鬆鬆的橋/橋組`
 - 来源动画：`LooseStart`、`LooseLoop`、`LooseDismiss`、`LooseBridge`
-- 当前实现：独立预览将桥组放在溪流上方并向右偏移两格，显示原点为 `(1140,420)`；主体 14 个简体“桥”字落在从上往下第 9、11 行，四个剩余“桥”字 `Bridge01/09/10/18` 位于主体四角。独立场景中打开 32x18、60px、`#080808` 黑底低透明白线网格。
+- 当前实现：独立预览将桥组放在溪流上方并向右偏移两格，显示原点为 `(1140,420)`；18 个简体“桥”字按源关卡内嵌断桥形态摆放，对齐 `D:/文字游戏/Scenes/Maps/第四章/15_3_新河岸幻覺_第三關.tscn` 的 `MainMap/橋樑/鬆鬆的橋/橋組`，也就是源 `Bridge2.tscn` 的布局。独立场景中打开 32x18、60px、`#080808` 黑底低透明白线网格。
 - 河流直接实例化 `res://Scenes/Animations/Ch4RiverFlow/Ch4RiverFlow.tscn`，位置与 `res://Scenes/Test/Ch4RiverFlowDemo.tscn` 同为 `Vector2(1020, 0)`；逐格资源来自 `D:/文字游戏/Sprites/ch4_streams/streams.png`。
 - 桥字位置、遮挡区域和摇晃关键帧对照 `D:/文字游戏/Scenes/Maps/第四章/15_3_新河岸幻覺_第三關.tscn`，没有新增贴图或音效。
 

@@ -16,8 +16,10 @@
 - `res://levels/helmet/helmet_r6.gd` 增加 `player_water_animation`，只对“鹅”穿过“溪”生效。
 - `res://scripts/grid_world.gd` 记录 `player_submerged`，在进入/离开溪格时发出 `player_river_enter` / `player_river_exit` 视觉事件。
 - `res://scripts/main.gd` 不改变移动操作，只在现有平滑移动基础上叠加玩家字形的 Y 偏移。
+- `res://levels/helmet/helmet_bridge_shake_runtime_preview.tscn` 可单独打开调试桥塌环节；它直接套用 `helmet_r3.gd` 的 `_loose_bridge_effect()`，因此预览里调的松桥参数会同步作用到完整关卡。
 
 动画表现按用户截图和口述调成更明显的半格效果：入水先上跳 `30px`，再沉到 `+30px`；在水中保持 `+30px`；出水先浮回 `0px`，再上跳并落回格心。
+桥塌环节里，松桥“桥”字会做较轻的水平晃动，当前幅度为 `2px`；四个角上的“桥”字不参与水平晃动，只保留原有倾斜姿态。
 
 ## 验收重点
 

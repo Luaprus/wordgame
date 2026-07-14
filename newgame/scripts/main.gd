@@ -33,6 +33,13 @@ const PLAYER_BLOCKED_RETRY_TIME := 0.12
 const CREEK_WAVE_SPEED := TAU * 0.55
 const CREEK_WAVE_AMPLITUDE := 4.0
 const CREEK_MIN_X := 16
+const BRIDGE_SHAKE_DEFAULT_SPEED := TAU * 1.35
+const BRIDGE_COLLAPSE_SHAKE_AMPLITUDE := 12.0
+const BRIDGE_COLLAPSE_SHAKE_CYCLES := 5.0
+const BRIDGE_COLLAPSE_SHAKE_DURATION := 0.85
+const BRIDGE_COLLAPSE_FALL_DISTANCE := 72.0
+const BRIDGE_COLLAPSE_PLAYER_FALL_DISTANCE := 84.0
+const BRIDGE_COLLAPSE_MASK_PADDING := 6.0
 const RIVER_DEPTH_STEP := 10
 const RIVER_PLAYER_DEPTH_OFFSET := 5
 const HIGHLIGHT_VISUAL_CONFIG_PATH := "res://assets/animations/highlight/highlight_visual_config.json"
@@ -54,6 +61,7 @@ const LEVEL_SEQUENCE := [
 @export var startup_player_pos := Vector2i(-1, -1)
 @export var startup_player_text := ""
 @export var startup_player_facing := Vector2i.ZERO
+@export var startup_bridge_collapse_preview := false
 
 var world := GridWorld.new()
 var page_camera := PageCamera.new()
@@ -94,6 +102,7 @@ var intro_phase := "lights"
 var intro_reveal_elapsed := 0.0
 var intro_reveal_max_distance := 0.0
 var creek_wave_elapsed := 0.0
+var bridge_shake_elapsed := 0.0
 
 func _ready() -> void:
 	var startup_scene_path := resolve_startup_scene_path(OS.get_cmdline_user_args())
@@ -102,6 +111,7 @@ func _ready() -> void:
 		return
 	highlight_visual_config = load_highlight_visual_config()
 	_load_level_index(startup_level_index, _startup_level_overrides())
+	_apply_startup_preview_state()
 	page_camera.sync_to_world(world)
 	_build_scene()
 	_refresh_view()
@@ -129,6 +139,7 @@ func _process(delta: float) -> void:
 	if changed:
 		_apply_visual_positions()
 	creek_wave_elapsed = fmod(creek_wave_elapsed + delta, 10.0)
+	bridge_shake_elapsed = fmod(bridge_shake_elapsed + delta, 10.0)
 	_apply_visual_positions()
 	_update_intro_sequence(delta)
 	_update_gem_labels()
@@ -436,6 +447,8 @@ func _apply_visual_positions() -> void:
 			var entity: WordEntity = world.entities.get(id)
 			if _is_creek_visual_entity(entity):
 				visual_position.y += _creek_wave_offset(entity)
+			if _is_horizontal_shake_entity(entity):
+				visual_position.x += _horizontal_shake_offset(entity)
 			entity_labels[id].position = visual_position
 
 func _is_creek_visual_entity(entity: WordEntity) -> bool:
@@ -457,6 +470,16 @@ func _creek_wave_offset(entity: WordEntity) -> float:
 	phase += float(entity.grid_pos.x) * 0.52
 	phase += float(entity.grid_pos.y) * 0.16
 	return sin(phase) * CREEK_WAVE_AMPLITUDE
+
+func _is_horizontal_shake_entity(entity: WordEntity) -> bool:
+	return entity != null and entity.visual_horizontal_shake_amplitude > 0.0
+
+func _horizontal_shake_offset(entity: WordEntity) -> float:
+	var speed := entity.visual_horizontal_shake_speed
+	if speed <= 0.0:
+		speed = BRIDGE_SHAKE_DEFAULT_SPEED
+	var phase := bridge_shake_elapsed * speed + entity.visual_horizontal_shake_phase
+	return sin(phase) * entity.visual_horizontal_shake_amplitude
 
 func _sync_entity_label_group(group: Node2D, entity) -> void:
 	if _is_tree_animated_entity(entity):
@@ -575,6 +598,9 @@ func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> 
 		if effect_type == "bridge_tree_transition":
 			var context: Dictionary = visual_contexts[i] if i < visual_contexts.size() else {}
 			call_deferred("_run_bridge_tree_transition", request.duplicate(true), context, _visual_effect_generation)
+			continue
+		if effect_type == "bridge_collapse_sequence":
+			call_deferred("_run_bridge_collapse_sequence", request.duplicate(true), _visual_effect_generation)
 
 func _prepare_visual_effect_contexts(visual_requests: Array) -> Array:
 	var contexts: Array = []
@@ -762,6 +788,203 @@ func _run_bridge_tree_split_transition(request: Dictionary, context: Dictionary,
 		reveal_tween.tween_property(group, "modulate:a", 1.0, tree_fade_in_duration)
 	await reveal_tween.finished
 
+func _run_bridge_collapse_sequence(request: Dictionary, generation: int) -> void:
+	if generation != _visual_effect_generation or bridge_tree_effect_layer == null:
+		return
+	player_river_action_locked = true
+	world.set_input_locked(true)
+	world.set_event_locked(true)
+	var fall_cells: Array = request.get("fall_bridge_cells", [])
+	var bridge_groups: Array = _find_groups_for_cells(fall_cells)
+	var backdrop_masks: Array = _build_bridge_collapse_backdrop_masks(fall_cells)
+	for mask: ColorRect in backdrop_masks:
+		bridge_tree_effect_layer.add_child(mask)
+	var bridge_overlays: Array = _duplicate_groups_for_cells(fall_cells)
+	for overlay: Node2D in bridge_overlays:
+		overlay.z_index = 420
+		bridge_tree_effect_layer.add_child(overlay)
+	_set_groups_alpha(bridge_groups, 0.0)
+	var player_overlay := _build_player_fall_overlay()
+	if player_overlay != null:
+		bridge_tree_effect_layer.add_child(player_overlay)
+	if player_label:
+		player_label.visible = false
+
+	var base_positions: Array = []
+	for overlay: Node2D in bridge_overlays:
+		base_positions.append(overlay.position)
+	var shake_tween := create_tween()
+	shake_tween.tween_method(
+		Callable(self, "_set_bridge_collapse_overlay_offsets").bind(bridge_overlays, base_positions),
+		0.0,
+		1.0,
+		BRIDGE_COLLAPSE_SHAKE_DURATION
+	)
+	await shake_tween.finished
+	if generation != _visual_effect_generation:
+		_clear_effect_overlays(bridge_overlays)
+		_clear_effect_overlays(backdrop_masks)
+		if player_overlay:
+			player_overlay.queue_free()
+		_set_groups_alpha(bridge_groups, 1.0)
+		player_river_action_locked = false
+		return
+
+	var fall_tween := create_tween()
+	fall_tween.set_parallel(true)
+	for i in range(bridge_overlays.size()):
+		var overlay := bridge_overlays[i] as Node2D
+		if overlay == null:
+			continue
+		var base_position: Vector2 = base_positions[i]
+		fall_tween.tween_property(overlay, "position:y", base_position.y + BRIDGE_COLLAPSE_FALL_DISTANCE, 0.58).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		fall_tween.tween_property(overlay, "rotation_degrees", overlay.rotation_degrees + float((i % 3) - 1) * 8.0, 0.58)
+	await fall_tween.finished
+	for overlay: Node2D in bridge_overlays:
+		_add_half_black_mask(overlay)
+	await get_tree().create_timer(0.18).timeout
+
+	if player_overlay != null and is_instance_valid(player_overlay):
+		var player_fall_tween := create_tween()
+		player_fall_tween.set_parallel(true)
+		player_fall_tween.tween_property(player_overlay, "position:y", player_overlay.position.y + BRIDGE_COLLAPSE_PLAYER_FALL_DISTANCE, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		player_fall_tween.tween_property(player_overlay, "rotation_degrees", -12.0, 0.5)
+		await player_fall_tween.finished
+		_clip_player_overlay_to_waterline(player_overlay)
+	await get_tree().create_timer(0.12).timeout
+
+	var fade_targets: Array = []
+	fade_targets.append_array(bridge_overlays)
+	if player_overlay != null:
+		fade_targets.append(player_overlay)
+	await _tween_canvas_items_alpha(fade_targets, 0.0, 0.45)
+
+	var final_effect: Dictionary = request.get("final_effect", {})
+	if not final_effect.is_empty():
+		world.apply_preview_effect(final_effect)
+		world.update_page()
+		_refresh_view()
+		var reveal_cells: Array = fall_cells.duplicate()
+		var player_cell: Vector2i = request.get("player_cell", world.player_pos)
+		if not reveal_cells.has(player_cell):
+			reveal_cells.append(player_cell)
+		var reveal_groups: Array = _find_groups_for_cells(reveal_cells)
+		_set_groups_alpha(reveal_groups, 0.0)
+		await _crossfade_canvas_items(backdrop_masks, reveal_groups, 0.7)
+
+	_clear_effect_overlays(bridge_overlays)
+	_clear_effect_overlays(backdrop_masks)
+	if player_overlay != null and is_instance_valid(player_overlay):
+		player_overlay.queue_free()
+	player_river_action_locked = false
+
+func _build_bridge_collapse_backdrop_masks(cells: Array) -> Array:
+	var masks: Array = []
+	for cell_value in cells:
+		var cell: Vector2i = cell_value
+		var mask := ColorRect.new()
+		mask.name = "BridgeCollapseBackdropMask"
+		mask.color = Color.BLACK
+		mask.position = _grid_to_pixels(cell) - Vector2(BRIDGE_COLLAPSE_MASK_PADDING, BRIDGE_COLLAPSE_MASK_PADDING)
+		mask.size = Vector2(
+			float(world.cell_size) + BRIDGE_COLLAPSE_MASK_PADDING * 2.0,
+			BRIDGE_COLLAPSE_FALL_DISTANCE + float(world.cell_size) + BRIDGE_COLLAPSE_MASK_PADDING * 2.0
+		)
+		mask.z_index = 400
+		masks.append(mask)
+	return masks
+
+func _build_player_fall_overlay() -> Node2D:
+	if player_label == null:
+		return null
+	var overlay := Node2D.new()
+	overlay.name = "BridgeCollapsePlayerOverlay"
+	overlay.position = player_label.position
+	overlay.z_index = 700
+	var clipper := Control.new()
+	clipper.name = "PlayerClipper"
+	clipper.size = Vector2(float(world.cell_size), float(world.cell_size))
+	clipper.clip_contents = false
+	var visual := player_label.duplicate() as Control
+	if visual == null:
+		return overlay
+	visual.position = Vector2.ZERO
+	visual.visible = true
+	clipper.add_child(visual)
+	overlay.add_child(clipper)
+	return overlay
+
+func _clip_player_overlay_to_waterline(player_overlay: Node2D) -> void:
+	if player_overlay == null or not is_instance_valid(player_overlay):
+		return
+	var clipper := player_overlay.get_node_or_null("PlayerClipper") as Control
+	if clipper == null:
+		return
+	clipper.clip_contents = true
+	clipper.size = Vector2(float(world.cell_size), float(world.cell_size) * 0.5)
+
+func _set_bridge_collapse_overlay_offsets(progress: float, overlays: Array, base_positions: Array) -> void:
+	for i in range(overlays.size()):
+		var overlay := overlays[i] as Node2D
+		if overlay == null or not is_instance_valid(overlay):
+			continue
+		var base_position: Vector2 = base_positions[i]
+		var phase := progress * TAU * BRIDGE_COLLAPSE_SHAKE_CYCLES + float(i) * 0.8
+		overlay.position = base_position + Vector2(sin(phase) * BRIDGE_COLLAPSE_SHAKE_AMPLITUDE, 0.0)
+
+func _add_half_black_mask(target: Node2D) -> void:
+	if target == null or not is_instance_valid(target):
+		return
+	var mask := ColorRect.new()
+	mask.name = "HalfSubmergeMask"
+	mask.color = Color.BLACK
+	mask.position = Vector2(0.0, float(world.cell_size) * 0.5)
+	mask.size = Vector2(float(world.cell_size), float(world.cell_size) * 0.55)
+	mask.z_index = 100
+	target.add_child(mask)
+
+func _crossfade_canvas_items(fade_out_targets: Array, fade_in_targets: Array, duration: float) -> void:
+	var tween := create_tween()
+	tween.set_parallel(true)
+	var has_tween := false
+	for target in fade_out_targets:
+		if target == null or not is_instance_valid(target):
+			continue
+		var canvas_item := target as CanvasItem
+		if canvas_item == null:
+			continue
+		tween.tween_property(canvas_item, "modulate:a", 0.0, duration)
+		has_tween = true
+	for target in fade_in_targets:
+		if target == null or not is_instance_valid(target):
+			continue
+		var canvas_item := target as CanvasItem
+		if canvas_item == null:
+			continue
+		tween.tween_property(canvas_item, "modulate:a", 1.0, duration)
+		has_tween = true
+	if not has_tween:
+		tween.kill()
+		return
+	await tween.finished
+
+func _tween_canvas_items_alpha(targets: Array, alpha: float, duration: float) -> void:
+	var tween := create_tween()
+	tween.set_parallel(true)
+	var has_tween := false
+	for target in targets:
+		if target == null or not is_instance_valid(target):
+			continue
+		var canvas_item := target as CanvasItem
+		if canvas_item == null:
+			continue
+		tween.tween_property(canvas_item, "modulate:a", alpha, duration)
+		has_tween = true
+	if not has_tween:
+		tween.kill()
+		return
+	await tween.finished
+
 func _play_player_river_enter(request: Dictionary) -> void:
 	var submerge_offset := float(request.get("submerge_offset", world.cell_size * 0.5))
 	var jump_height := float(request.get("jump_height", world.cell_size * 0.5))
@@ -928,6 +1151,15 @@ func _startup_level_overrides() -> Dictionary:
 	if startup_player_facing != Vector2i.ZERO:
 		overrides["player_facing"] = startup_player_facing
 	return overrides
+
+func _apply_startup_preview_state() -> void:
+	if not startup_bridge_collapse_preview:
+		return
+	if current_level_index != 3:
+		return
+	world.apply_preview_effect(HelmetR3._loose_bridge_effect())
+	world.visual_effect_requests.clear()
+	world.update_page()
 
 func _resolve_world_event() -> void:
 	_apply_result(world.resolve_pending_timed_effect())

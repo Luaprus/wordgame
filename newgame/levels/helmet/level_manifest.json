@@ -30,6 +30,7 @@
   },
   "target": {
     "runtime_entry": "res://Main.tscn",
+    "bridge_shake_preview": "res://levels/helmet/helmet_bridge_shake_runtime_preview.tscn",
     "level_script": "res://levels/helmet/helmet_r6.gd",
     "world_script": "res://scripts/grid_world.gd",
     "render_script": "res://scripts/main.gd"
@@ -46,6 +47,19 @@
     "inside": "在溪中保持 +30px 半格下沉显示。",
     "exit": "先从 +30px 浮回正常高度，再跳起 30px 并落回格心，持续 0.3s。",
     "source_deviation": "原版 goose:position 入水只从 y=30 到 y=40；本次按用户截图和口述的半个字高度强化为 30px。"
+  },
+  "bridge_shake": {
+    "source_map": "D:/文字游戏/Scenes/Maps/第四章/15_3_新河岸幻覺_第三關.tscn",
+    "preview_scene": "res://levels/helmet/helmet_bridge_shake_runtime_preview.tscn",
+    "runtime_logic": "res://levels/helmet/helmet_r3.gd",
+    "render_logic": "res://scripts/main.gd",
+    "collapse_sequence": {
+      "source_map": "D:/文字游戏/Scenes/Maps/第四章/15_3_新河岸幻覺_第三關.tscn",
+      "source_animation": "D:/文字游戏/Scenes/Animations/Bridge2.tscn",
+      "trigger": "我移动到松桥中间格后触发",
+      "notes": "参考源 bridge_break()/Bridge2 Broken/LooseBreak：中间十个桥字先大幅水平摇晃，再落入溪中；随后我字落入溪中，桥字和我字淡出并由溪字淡入替代。"
+    },
+    "notes": "桥塌环节的松桥实体由 helmet_r3.gd 生成；非四角桥字带 2px 水平晃动，四角桥字不晃动。独立预览直接调用同一份 _loose_bridge_effect()，所以预览调整会同步作用到完整关卡。"
   },
   "required_resources": {
     "new_external_art": [],
