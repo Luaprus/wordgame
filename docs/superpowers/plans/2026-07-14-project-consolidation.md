@@ -114,7 +114,7 @@ git commit -m "docs: inventory duplicate game projects"
 - Move: `Scripts/light_glow_effect.gd` -> `gameplay/light_glow_effect.gd`
 - Move: `Scripts/player_moving/player_direction_marker.gd` -> `gameplay/player_direction_marker.gd`
 - Modify: `project.godot`
-- Modify: moved GDScript and scene references that preload the moved files
+- Modify: every root-project GDScript, scene, manifest, and test import that references the moved files; these path-only edits are required to preserve loading and do not alter gameplay or acceptance behavior
 
 - [ ] **Step 1: Add a path gate that forbids a second shared core implementation.**
 
