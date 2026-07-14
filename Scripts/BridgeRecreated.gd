@@ -13,7 +13,7 @@ const WORD_SPRITE_SCENE := preload("res://Scenes/Events/WordSprite.tscn")
 const RIVER_SCENE := preload("res://Scenes/Animations/Ch4RiverFlow/Ch4RiverFlow.tscn")
 const RIVER_POSITION := Vector2(1020.0, 0.0)
 
-const BRIDGE_GROUP_ORIGIN := Vector2(1020.0, 420.0)
+const BRIDGE_GROUP_ORIGIN := Vector2(1140.0, 420.0)
 const BRIDGE_LOOP_TIMES := [0.0, 0.5, 1.0, 1.5, 2.0]
 const BRIDGE_BREAK_TIMES := [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]
 

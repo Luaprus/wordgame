@@ -62,7 +62,7 @@
     "source_nodes": "MainMap/橋樑/鬆鬆的橋/橋組",
     "source_animations": ["LooseStart", "LooseLoop", "LooseDismiss", "LooseBridge"],
     "layout": {
-      "origin_px": [1020, 420],
+      "origin_px": [1140, 420],
       "main_rows_top_to_bottom": [9, 11],
       "corner_tiles": ["Bridge01", "Bridge09", "Bridge10", "Bridge18"]
     },
