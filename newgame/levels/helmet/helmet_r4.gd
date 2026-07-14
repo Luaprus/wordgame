@@ -321,7 +321,7 @@ static func _near_bridge_merge_effect() -> Dictionary:
 static func _near_bridge_split_effect() -> Dictionary:
 	return {
 		"remove_at": _near_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _near_bridge_cells()),
+		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _near_bridge_cells(), _creek_cells_for_bridge()),
 		"replace_text": [_hint_bridge_split_replace()],
 		"spawn": _creek_and_tree_spawn()
 	}

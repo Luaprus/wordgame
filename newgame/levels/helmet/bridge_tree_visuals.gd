@@ -15,7 +15,8 @@ static func effect(mode: String, tree_cells: Array, bridge_cells: Array) -> Dict
 static func merge_effect(tree_cells: Array, bridge_cells: Array) -> Dictionary:
 	return effect("merge", tree_cells, bridge_cells)
 
-static func split_effect(tree_cells: Array, bridge_cells: Array) -> Dictionary:
+static func split_effect(tree_cells: Array, bridge_cells: Array, delayed_water_cells: Array = []) -> Dictionary:
 	var split_visual := effect("split", tree_cells, bridge_cells)
 	split_visual["reveal_texts"] = ["溪", "树", "木"]
+	split_visual["delayed_water_cells"] = delayed_water_cells.duplicate()
 	return split_visual

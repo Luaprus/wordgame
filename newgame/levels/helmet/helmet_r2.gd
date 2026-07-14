@@ -350,7 +350,11 @@ static func _distance_solved_effect() -> Dictionary:
 static func _restore_initial_effect() -> Dictionary:
 	return {
 		"remove_at": _river_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _bridge_cells(-3) + _bridge_cells(0)),
+		"visual_effect": BridgeTreeVisuals.split_effect(
+			_tree_cells(),
+			_bridge_cells(-3) + _bridge_cells(0),
+			_creek_cells_for_bridge(-3) + _creek_cells_for_bridge(0)
+		),
 		"replace_text": [_hint_bridge_split_replace()],
 		"spawn": _creek_and_tree_spawn()
 	}

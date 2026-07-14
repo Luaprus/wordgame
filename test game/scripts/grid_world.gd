@@ -41,6 +41,8 @@ var player_merge_effects: Dictionary = {}
 var player_split_rules: Dictionary = {}
 var player_split_effects: Dictionary = {}
 var passable_text_by_player: Dictionary = {}
+var player_water_animation: Dictionary = {}
+var player_submerged := false
 var entity_move_effects: Variant = {}
 var step_effects: Array = []
 var pending_timed_effect: Dictionary = {}
@@ -51,7 +53,6 @@ var typewriter_delay := 0.2
 var pending_interact_effect: Dictionary = {}
 var fullscreen_video_finished_effect: Dictionary = {}
 var fullscreen_video_request: Dictionary = {}
-var gesture_transition_request: Dictionary = {}
 var visual_effect_requests: Array = []
 var current_level: Dictionary = {}
 var rule_engine := RuleEngine.new()
@@ -90,6 +91,8 @@ func load_level(level: Dictionary) -> void:
 	player_split_rules = level.get("player_split_rules", {})
 	player_split_effects = level.get("player_split_effects", {})
 	passable_text_by_player = level.get("passable_text_by_player", {})
+	player_water_animation = level.get("player_water_animation", {}).duplicate(true)
+	player_submerged = bool(level.get("player_submerged", false))
 	entity_move_effects = level.get("entity_move_effects", {})
 	step_effects = level.get("step_effects", [])
 	pending_interact_effect = level.get("initial_interact_effect", {}).duplicate(true)
@@ -130,6 +133,8 @@ func clear() -> void:
 	player_split_rules.clear()
 	player_split_effects.clear()
 	passable_text_by_player.clear()
+	player_water_animation.clear()
+	player_submerged = false
 	entity_move_effects.clear()
 	step_effects.clear()
 	highlight_animation_strengths.clear()
@@ -141,7 +146,6 @@ func clear() -> void:
 	pending_interact_effect.clear()
 	fullscreen_video_finished_effect.clear()
 	fullscreen_video_request.clear()
-	gesture_transition_request.clear()
 	visual_effect_requests.clear()
 	current_page_origin = Vector2i.ZERO
 	_next_id = 1
@@ -170,6 +174,7 @@ func get_player_state() -> Dictionary:
 		"moving": player_moving,
 		"visible": player_visible,
 		"text": player_text,
+		"submerged": player_submerged,
 		"move_cooldown": player_move_cooldown,
 		"input_locked": player_input_locked,
 		"event_locked": player_event_locked,
@@ -242,6 +247,7 @@ func try_move_player(direction: Vector2i) -> Dictionary:
 	if intent.should_turn:
 		return {"success": true, "turned": true, "moved": false}
 	player_moving = true
+	var old_player_pos := player_pos
 	var target := player_pos + direction
 	var bounds_result := _check_move_bounds(target)
 	if not bounds_result.success:
@@ -257,6 +263,7 @@ func try_move_player(direction: Vector2i) -> Dictionary:
 			return player_merged
 		if _can_player_pass_entity(entity):
 			player_pos = target
+			_update_player_water_animation_state(old_player_pos, player_pos, entity)
 			update_page()
 			var step_result := _trigger_step_effect_at(player_pos)
 			player_moving = false
@@ -271,6 +278,7 @@ func try_move_player(direction: Vector2i) -> Dictionary:
 			player_moving = false
 			return pushed
 	player_pos = target
+	_update_player_water_animation_state(old_player_pos, player_pos, get_entity_at(player_pos))
 	update_page()
 	check_sentence_rules()
 	var step_result := _trigger_step_effect_at(player_pos)
@@ -503,6 +511,33 @@ func _can_player_pass_entity(entity: WordEntity) -> bool:
 	var passable_texts: Array = passable_text_by_player.get(player_text, [])
 	return passable_texts.has(entity.text)
 
+func _update_player_water_animation_state(old_pos: Vector2i, new_pos: Vector2i, target_entity: WordEntity) -> void:
+	if player_water_animation.is_empty():
+		player_submerged = false
+		return
+	var required_player_text := str(player_water_animation.get("player_text", ""))
+	if not required_player_text.is_empty() and player_text != required_player_text:
+		player_submerged = false
+		return
+	var water_text := str(player_water_animation.get("water_text", ""))
+	var in_water := target_entity != null and target_entity.text == water_text
+	if not in_water:
+		var standing_entity := get_entity_at(new_pos)
+		in_water = standing_entity != null and standing_entity.text == water_text
+	if in_water and not player_submerged:
+		player_submerged = true
+		_queue_player_water_visual("enter", old_pos, new_pos)
+	elif not in_water and player_submerged:
+		player_submerged = false
+		_queue_player_water_visual("exit", old_pos, new_pos)
+
+func _queue_player_water_visual(kind: String, old_pos: Vector2i, new_pos: Vector2i) -> void:
+	var request: Dictionary = player_water_animation.duplicate(true)
+	request["type"] = "player_river_%s" % kind
+	request["from"] = old_pos
+	request["to"] = new_pos
+	visual_effect_requests.append(request)
+
 func _try_split_player() -> Dictionary:
 	if not player_split_rules.has(player_text):
 		return {"success": false, "message": "no player split rule"}
@@ -676,11 +711,6 @@ func _merge_split_positions(merged_text: String, first: WordEntity, second: Word
 	return [first.grid_pos, second.grid_pos]
 
 func _apply_map_effect(config: Dictionary) -> void:
-	if config.has("start_delete_visual"):
-		visual_effect_requests.append(config.start_delete_visual.duplicate(true))
-	if config.has("start_gesture_transition"):
-		_start_gesture_transition(config.start_gesture_transition)
-		return
 	var preserved_entities: Array[Dictionary] = []
 	for text in config.get("preserve_texts", []):
 		preserved_entities.append_array(_snapshot_entities_by_text(str(text)))
@@ -713,6 +743,7 @@ func _apply_map_effect(config: Dictionary) -> void:
 		player_visible = bool(config.set_player_visible)
 	if config.has("set_player_text"):
 		player_text = str(config.set_player_text)
+		_update_player_water_animation_state(player_pos, player_pos, get_entity_at(player_pos))
 	if config.has("set_input_locked"):
 		player_input_locked = bool(config.set_input_locked)
 	if config.has("set_event_locked"):
@@ -792,7 +823,7 @@ func _apply_map_effect(config: Dictionary) -> void:
 		entities[preserved_id] = restored
 
 func consume_visual_effects() -> Array:
-	var requests := visual_effect_requests.duplicate(true)
+	var requests: Array = visual_effect_requests.duplicate(true)
 	visual_effect_requests.clear()
 	return requests
 
@@ -887,25 +918,6 @@ func _trigger_entity_move_effect(entity: WordEntity, old_pos: Vector2i, new_pos:
 func has_pending_timed_effect() -> bool:
 	return not pending_timed_effect.is_empty()
 
-func consume_gesture_transition_request() -> Dictionary:
-	var request := gesture_transition_request.duplicate(true)
-	gesture_transition_request.clear()
-	return request
-
-func consume_visual_effect_request() -> Dictionary:
-	if visual_effect_requests.is_empty():
-		return {}
-	return visual_effect_requests.pop_front()
-
-func _start_gesture_transition(definition: Dictionary) -> void:
-	player_input_locked = true
-	pending_timed_effect = definition.get("effect", {}).duplicate(true)
-	pending_timed_delay = float(definition.get("switch_delay", 0.25))
-	gesture_transition_request = {
-		"duration": float(definition.get("duration", 0.5)),
-		"switch_delay": pending_timed_delay
-	}
-
 func has_fullscreen_video_finished_effect() -> bool:
 	return not fullscreen_video_finished_effect.is_empty()
 
@@ -932,23 +944,17 @@ func resolve_pending_timed_effect() -> Dictionary:
 
 func _start_typewriter(definition: Dictionary) -> void:
 	typewriter_queue.clear()
-	if definition.has("entries"):
-		for raw_entry in definition.entries:
-			var entry: Dictionary = raw_entry
-			if entry.has("text") and entry.has("pos"):
-				typewriter_queue.append(entry.duplicate(true))
-	else:
-		var lines: Array = definition.get("lines", [])
-		var origin: Vector2i = definition.get("pos", Vector2i.ZERO)
-		var config: Dictionary = definition.get("config", {})
-		for line_index in range(lines.size()):
-			var line := str(lines[line_index])
-			for char_index in range(line.length()):
-				typewriter_queue.append({
-					"text": line.substr(char_index, 1),
-					"pos": origin + Vector2i(char_index, line_index),
-					"config": config
-				})
+	var lines: Array = definition.get("lines", [])
+	var origin: Vector2i = definition.get("pos", Vector2i.ZERO)
+	var config: Dictionary = definition.get("config", {})
+	for line_index in range(lines.size()):
+		var line := str(lines[line_index])
+		for char_index in range(line.length()):
+			typewriter_queue.append({
+				"text": line.substr(char_index, 1),
+				"pos": origin + Vector2i(char_index, line_index),
+				"config": config
+			})
 	typewriter_after_effect = definition.get("after_effect", {}).duplicate(true)
 	typewriter_delay = float(definition.get("char_delay", 0.2))
 	_advance_typewriter()
@@ -961,8 +967,6 @@ func _advance_typewriter() -> void:
 			_apply_map_effect(after_effect)
 		return
 	var entry: Dictionary = typewriter_queue.pop_front()
-	for replace_pos in entry.get("replace_at", []):
-		_erase_entities_at(replace_pos)
 	add_entity(str(entry.text), entry.pos, _config_for_text_at(str(entry.text), entry.pos, entry.get("config", {})))
 	if typewriter_queue.is_empty():
 		if not typewriter_after_effect.is_empty():

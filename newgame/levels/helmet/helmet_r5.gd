@@ -372,7 +372,7 @@ static func _bridge_split_effect() -> Dictionary:
 static func _bridge_split_blocked_effect() -> Dictionary:
 	return {
 		"remove_at": _river_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _bridge_cells()),
+		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _bridge_cells(), _creek_cells_for_blocked_bridge()),
 		"replace_text": [_hint_bridge_split_replace()],
 		"spawn": _creek_and_tree_spawn(false)
 	}
@@ -380,7 +380,7 @@ static func _bridge_split_blocked_effect() -> Dictionary:
 static func _bridge_split_open_effect() -> Dictionary:
 	return {
 		"remove_at": _river_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _bridge_cells()),
+		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _bridge_cells(), _creek_cells_for_blocked_bridge()),
 		"replace_text": [_hint_bridge_split_replace()],
 		"spawn": _creek_and_tree_spawn(true)
 	}

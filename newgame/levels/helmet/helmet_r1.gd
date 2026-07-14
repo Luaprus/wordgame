@@ -129,7 +129,7 @@ static func _bridge_split_effect() -> Dictionary:
 	spawn.append({"text": "木", "pos": Vector2i(19, 10)})
 	return {
 		"remove_at": _river_bridge_cells(),
-		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _river_bridge_cells()),
+		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _river_bridge_cells(), _creek_replaced_cells()),
 		"replace_text": [
 			{
 				"from": "这桥看起来很结实，",

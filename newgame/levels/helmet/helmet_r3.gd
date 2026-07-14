@@ -452,7 +452,7 @@ static func _shore_split_effect() -> Dictionary:
 static func _bridge_split_effect() -> Dictionary:
 	return {
 		"remove_at": _river_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _bridge_cells()),
+		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _bridge_cells(), _creek_cells_for_bridge()),
 		"replace_text": _hint_bridge_split_replaces(),
 		"spawn": _creek_and_tree_spawn()
 	}

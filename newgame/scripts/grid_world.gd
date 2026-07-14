@@ -41,6 +41,8 @@ var player_merge_effects: Dictionary = {}
 var player_split_rules: Dictionary = {}
 var player_split_effects: Dictionary = {}
 var passable_text_by_player: Dictionary = {}
+var player_water_animation: Dictionary = {}
+var player_submerged := false
 var entity_move_effects: Variant = {}
 var step_effects: Array = []
 var pending_timed_effect: Dictionary = {}
@@ -51,6 +53,7 @@ var typewriter_delay := 0.2
 var pending_interact_effect: Dictionary = {}
 var fullscreen_video_finished_effect: Dictionary = {}
 var fullscreen_video_request: Dictionary = {}
+var visual_effect_requests: Array = []
 var current_level: Dictionary = {}
 var rule_engine := RuleEngine.new()
 var highlight_animation_strengths: Dictionary = {}
@@ -88,11 +91,18 @@ func load_level(level: Dictionary) -> void:
 	player_split_rules = level.get("player_split_rules", {})
 	player_split_effects = level.get("player_split_effects", {})
 	passable_text_by_player = level.get("passable_text_by_player", {})
+	player_water_animation = level.get("player_water_animation", {}).duplicate(true)
+	player_submerged = bool(level.get("player_submerged", false))
 	entity_move_effects = level.get("entity_move_effects", {})
 	step_effects = level.get("step_effects", [])
 	pending_interact_effect = level.get("initial_interact_effect", {}).duplicate(true)
 	pending_timed_effect = level.get("initial_timed_effect", {})
 	pending_timed_delay = float(level.get("initial_timed_delay", 0.0))
+	var initial_visual_effect: Dictionary = level.get("initial_visual_effect", {}).duplicate(true)
+	if not initial_visual_effect.is_empty():
+		visual_effect_requests.append(initial_visual_effect)
+		if bool(initial_visual_effect.get("lock_input", false)):
+			player_input_locked = true
 	_parse_rows(rows)
 	for spawn_config in level.get("initial_spawn", []):
 		var entry: Dictionary = spawn_config
@@ -123,6 +133,8 @@ func clear() -> void:
 	player_split_rules.clear()
 	player_split_effects.clear()
 	passable_text_by_player.clear()
+	player_water_animation.clear()
+	player_submerged = false
 	entity_move_effects.clear()
 	step_effects.clear()
 	highlight_animation_strengths.clear()
@@ -134,6 +146,7 @@ func clear() -> void:
 	pending_interact_effect.clear()
 	fullscreen_video_finished_effect.clear()
 	fullscreen_video_request.clear()
+	visual_effect_requests.clear()
 	current_page_origin = Vector2i.ZERO
 	_next_id = 1
 	_map_caption_ids.clear()
@@ -161,6 +174,7 @@ func get_player_state() -> Dictionary:
 		"moving": player_moving,
 		"visible": player_visible,
 		"text": player_text,
+		"submerged": player_submerged,
 		"move_cooldown": player_move_cooldown,
 		"input_locked": player_input_locked,
 		"event_locked": player_event_locked,
@@ -233,6 +247,7 @@ func try_move_player(direction: Vector2i) -> Dictionary:
 	if intent.should_turn:
 		return {"success": true, "turned": true, "moved": false}
 	player_moving = true
+	var old_player_pos := player_pos
 	var target := player_pos + direction
 	var bounds_result := _check_move_bounds(target)
 	if not bounds_result.success:
@@ -248,6 +263,7 @@ func try_move_player(direction: Vector2i) -> Dictionary:
 			return player_merged
 		if _can_player_pass_entity(entity):
 			player_pos = target
+			_update_player_water_animation_state(old_player_pos, player_pos, entity)
 			update_page()
 			var step_result := _trigger_step_effect_at(player_pos)
 			player_moving = false
@@ -262,6 +278,7 @@ func try_move_player(direction: Vector2i) -> Dictionary:
 			player_moving = false
 			return pushed
 	player_pos = target
+	_update_player_water_animation_state(old_player_pos, player_pos, get_entity_at(player_pos))
 	update_page()
 	check_sentence_rules()
 	var step_result := _trigger_step_effect_at(player_pos)
@@ -494,6 +511,33 @@ func _can_player_pass_entity(entity: WordEntity) -> bool:
 	var passable_texts: Array = passable_text_by_player.get(player_text, [])
 	return passable_texts.has(entity.text)
 
+func _update_player_water_animation_state(old_pos: Vector2i, new_pos: Vector2i, target_entity: WordEntity) -> void:
+	if player_water_animation.is_empty():
+		player_submerged = false
+		return
+	var required_player_text := str(player_water_animation.get("player_text", ""))
+	if not required_player_text.is_empty() and player_text != required_player_text:
+		player_submerged = false
+		return
+	var water_text := str(player_water_animation.get("water_text", ""))
+	var in_water := target_entity != null and target_entity.text == water_text
+	if not in_water:
+		var standing_entity := get_entity_at(new_pos)
+		in_water = standing_entity != null and standing_entity.text == water_text
+	if in_water and not player_submerged:
+		player_submerged = true
+		_queue_player_water_visual("enter", old_pos, new_pos)
+	elif not in_water and player_submerged:
+		player_submerged = false
+		_queue_player_water_visual("exit", old_pos, new_pos)
+
+func _queue_player_water_visual(kind: String, old_pos: Vector2i, new_pos: Vector2i) -> void:
+	var request: Dictionary = player_water_animation.duplicate(true)
+	request["type"] = "player_river_%s" % kind
+	request["from"] = old_pos
+	request["to"] = new_pos
+	visual_effect_requests.append(request)
+
 func _try_split_player() -> Dictionary:
 	if not player_split_rules.has(player_text):
 		return {"success": false, "message": "no player split rule"}
@@ -699,10 +743,13 @@ func _apply_map_effect(config: Dictionary) -> void:
 		player_visible = bool(config.set_player_visible)
 	if config.has("set_player_text"):
 		player_text = str(config.set_player_text)
+		_update_player_water_animation_state(player_pos, player_pos, get_entity_at(player_pos))
 	if config.has("set_input_locked"):
 		player_input_locked = bool(config.set_input_locked)
 	if config.has("set_event_locked"):
 		player_event_locked = bool(config.set_event_locked)
+	if config.has("visual_effect"):
+		visual_effect_requests.append(config.visual_effect.duplicate(true))
 	if config.has("set_pending_interact_effect"):
 		pending_interact_effect = config.set_pending_interact_effect
 	if config.has("set_pending_timed_effect"):
@@ -774,6 +821,11 @@ func _apply_map_effect(config: Dictionary) -> void:
 		restored.id = preserved_id
 		entities.erase(temp_id)
 		entities[preserved_id] = restored
+
+func consume_visual_effects() -> Array:
+	var requests: Array = visual_effect_requests.duplicate(true)
+	visual_effect_requests.clear()
+	return requests
 
 func _apply_move_player_toward(move_config: Dictionary) -> void:
 	var target: Vector2i = move_config.get("target", player_pos)

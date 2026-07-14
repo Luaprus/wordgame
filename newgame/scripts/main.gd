@@ -33,6 +33,8 @@ const PLAYER_BLOCKED_RETRY_TIME := 0.12
 const CREEK_WAVE_SPEED := TAU * 0.55
 const CREEK_WAVE_AMPLITUDE := 4.0
 const CREEK_MIN_X := 16
+const RIVER_DEPTH_STEP := 10
+const RIVER_PLAYER_DEPTH_OFFSET := 5
 const HIGHLIGHT_VISUAL_CONFIG_PATH := "res://assets/animations/highlight/highlight_visual_config.json"
 const GLOVE_PREVIEW_SCENE_PATH := "res://levels/glove/glove_preview.tscn"
 const STARTUP_ENTRY_ARG_PREFIX := "--entry="
@@ -47,6 +49,11 @@ const LEVEL_SEQUENCE := [
 	HelmetR6,
 	HelmetReturn
 ]
+
+@export var startup_level_index := 0
+@export var startup_player_pos := Vector2i(-1, -1)
+@export var startup_player_text := ""
+@export var startup_player_facing := Vector2i.ZERO
 
 var world := GridWorld.new()
 var page_camera := PageCamera.new()
@@ -77,6 +84,9 @@ var player_move_repeat_timer := 0.0
 var player_blocked_retry_timer := 0.0
 var _player_visual_ready := false
 var _last_player_visible := true
+var player_river_visual_offset := 0.0
+var player_river_tween: Tween
+var player_river_action_locked := false
 var _visual_effect_generation := 0
 var highlight_visual_config: Dictionary = {}
 var gem_labels: Array = []
@@ -91,7 +101,7 @@ func _ready() -> void:
 		call_deferred("_switch_to_scene", startup_scene_path)
 		return
 	highlight_visual_config = load_highlight_visual_config()
-	_load_level_index(0)
+	_load_level_index(startup_level_index, _startup_level_overrides())
 	page_camera.sync_to_world(world)
 	_build_scene()
 	_refresh_view()
@@ -104,7 +114,7 @@ func _process(delta: float) -> void:
 	if player_blocked_retry_timer > 0.0:
 		player_blocked_retry_timer = maxf(player_blocked_retry_timer - delta, 0.0)
 	var direction := _current_held_direction()
-	if direction != Vector2i.ZERO and player_move_repeat_timer <= 0.0 and player_blocked_retry_timer <= 0.0:
+	if not player_river_action_locked and direction != Vector2i.ZERO and player_move_repeat_timer <= 0.0 and player_blocked_retry_timer <= 0.0:
 		_apply_direction_step(direction)
 
 	var changed := false
@@ -137,10 +147,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		if key_event.echo:
 			return
 		_set_direction_held(direction, key_event.pressed)
-		if key_event.pressed and player_move_repeat_timer <= 0.0 and player_blocked_retry_timer <= 0.0:
+		if not player_river_action_locked and key_event.pressed and player_move_repeat_timer <= 0.0 and player_blocked_retry_timer <= 0.0:
 			_apply_direction_step(direction)
 		return
 	if not PrecisionMovement.should_process_key_event(key_event.pressed, key_event.echo, direction):
+		return
+	if player_river_action_locked:
 		return
 	if key_event.keycode == KEY_F5:
 		demo.start()
@@ -221,6 +233,7 @@ func _refresh_view(_message := "") -> void:
 		player_mover.move_to(player_target, move_visual_duration)
 	_last_player_visible = world.player_visible
 	_apply_visual_positions()
+	_sync_player_depth()
 	player_label.move_to_front()
 	_start_pending_world_event()
 
@@ -256,7 +269,7 @@ func _sync_entity_labels() -> void:
 		var entity_mover = entity_movers.get(entity.id)
 		entity_mover.move_to(_grid_to_pixels(entity.grid_pos), move_visual_duration)
 		group.rotation_degrees = entity.visual_rotation_degrees
-		group.z_index = 10 if entity.text == "光" and not entity.solid else 0
+		group.z_index = _entity_depth_for(entity)
 		_sync_entity_label_group(group, entity)
 		if entity.text == "光" and not entity.solid:
 			light_entries.append({
@@ -414,7 +427,8 @@ func _begin_intro_prompt() -> void:
 	_refresh_view()
 
 func _apply_visual_positions() -> void:
-	player_label.position = player_mover.current_position
+	player_label.position = player_mover.current_position + Vector2(0.0, player_river_visual_offset)
+	_sync_player_depth()
 	for id in entity_labels.keys():
 		var mover = entity_movers.get(id)
 		if mover:
@@ -426,6 +440,17 @@ func _apply_visual_positions() -> void:
 
 func _is_creek_visual_entity(entity: WordEntity) -> bool:
 	return current_level_index > 0 and entity != null and entity.text == "溪" and entity.grid_pos.x >= CREEK_MIN_X
+
+func _entity_depth_for(entity: WordEntity) -> int:
+	if _is_creek_visual_entity(entity):
+		return entity.grid_pos.y * RIVER_DEPTH_STEP
+	return 10 if entity.text == "光" and not entity.solid else 0
+
+func _sync_player_depth() -> void:
+	if world.player_submerged:
+		player_label.z_index = world.player_pos.y * RIVER_DEPTH_STEP + RIVER_PLAYER_DEPTH_OFFSET
+	else:
+		player_label.z_index = 0
 
 func _creek_wave_offset(entity: WordEntity) -> float:
 	var phase: float = creek_wave_elapsed * CREEK_WAVE_SPEED
@@ -488,8 +513,8 @@ func _apply_result(result: Dictionary) -> void:
 	if result.has("transition"):
 		_handle_transition(result)
 		return
-	var visual_requests := world.consume_visual_effects()
-	var visual_contexts := _prepare_visual_effect_contexts(visual_requests)
+	var visual_requests: Array = world.consume_visual_effects()
+	var visual_contexts: Array = _prepare_visual_effect_contexts(visual_requests)
 	_refresh_view(str(result.get("message", "")))
 	_consume_visual_effects(visual_requests, visual_contexts)
 	_consume_fullscreen_video_request()
@@ -541,6 +566,12 @@ func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> 
 				int(request.get("seed", 1947))
 			)
 			continue
+		if effect_type == "player_river_enter":
+			_play_player_river_enter(request)
+			continue
+		if effect_type == "player_river_exit":
+			_play_player_river_exit(request)
+			continue
 		if effect_type == "bridge_tree_transition":
 			var context: Dictionary = visual_contexts[i] if i < visual_contexts.size() else {}
 			call_deferred("_run_bridge_tree_transition", request.duplicate(true), context, _visual_effect_generation)
@@ -562,17 +593,22 @@ func _prepare_visual_effect_contexts(visual_requests: Array) -> Array:
 			context["tree_overlays"] = _duplicate_groups_for_cells(request_dict.get("tree_cells", []))
 		elif mode == "split":
 			context["bridge_visual_specs"] = _capture_visual_specs_for_cells(request_dict.get("bridge_cells", []))
-			context["reveal_cells"] = _capture_new_entity_cells(request_dict.get("reveal_texts", []))
+			context["reveal_cells"] = _capture_new_entity_cells(
+				request_dict.get("reveal_texts", []),
+				request_dict.get("delayed_water_cells", request_dict.get("bridge_cells", []))
+			)
 		contexts.append(context)
 	return contexts
 
-func _capture_new_entity_cells(texts: Array) -> Array:
+func _capture_new_entity_cells(texts: Array, delayed_water_cells: Array) -> Array:
 	var cells: Array = []
 	var seen_cells: Dictionary = {}
 	for entity: WordEntity in world.entities.values():
 		if entity_labels.has(entity.id) or not texts.has(entity.text):
 			continue
 		for cell in entity.cells:
+			if entity.text == "溪" and not delayed_water_cells.has(cell):
+				continue
 			if seen_cells.has(cell):
 				continue
 			seen_cells[cell] = true
@@ -726,6 +762,52 @@ func _run_bridge_tree_split_transition(request: Dictionary, context: Dictionary,
 		reveal_tween.tween_property(group, "modulate:a", 1.0, tree_fade_in_duration)
 	await reveal_tween.finished
 
+func _play_player_river_enter(request: Dictionary) -> void:
+	var submerge_offset := float(request.get("submerge_offset", world.cell_size * 0.5))
+	var jump_height := float(request.get("jump_height", world.cell_size * 0.5))
+	var duration := float(request.get("enter_duration", 0.5))
+	var hold_time := minf(duration * 0.4, 0.2)
+	var sink_time := maxf(duration - hold_time, 0.05)
+	_start_player_river_tween()
+	player_river_tween.tween_method(_set_player_river_visual_offset, player_river_visual_offset, -jump_height, hold_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	player_river_tween.tween_method(_set_player_river_visual_offset, -jump_height, submerge_offset, sink_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+func _play_player_river_exit(request: Dictionary) -> void:
+	var submerge_offset := float(request.get("submerge_offset", world.cell_size * 0.5))
+	var jump_height := float(request.get("jump_height", world.cell_size * 0.5))
+	var duration := float(request.get("exit_duration", 0.3))
+	var rise_time := maxf(duration * 0.45, 0.05)
+	var hop_time := maxf(duration * 0.25, 0.05)
+	var land_time := maxf(duration - rise_time - hop_time, 0.05)
+	if player_river_visual_offset < submerge_offset:
+		_set_player_river_visual_offset(submerge_offset)
+	_start_player_river_tween()
+	player_river_tween.tween_method(_set_player_river_visual_offset, player_river_visual_offset, 0.0, rise_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	player_river_tween.tween_method(_set_player_river_visual_offset, 0.0, -jump_height, hop_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	player_river_tween.tween_method(_set_player_river_visual_offset, -jump_height, 0.0, land_time).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+func _start_player_river_tween() -> void:
+	if player_river_tween and player_river_tween.is_valid():
+		player_river_tween.kill()
+	player_river_tween = create_tween()
+	player_river_action_locked = true
+	player_river_tween.finished.connect(_unlock_player_river_action)
+
+func _unlock_player_river_action() -> void:
+	player_river_action_locked = false
+	player_move_repeat_timer = PLAYER_MOVE_REPEAT_TIME
+
+func _set_player_river_visual_offset(value: float) -> void:
+	player_river_visual_offset = value
+	_apply_visual_positions()
+
+func _reset_player_river_visual() -> void:
+	if player_river_tween and player_river_tween.is_valid():
+		player_river_tween.kill()
+	player_river_tween = null
+	player_river_action_locked = false
+	player_river_visual_offset = 0.0
+
 func _group_effect_targets_by_x(targets: Array, descending := false) -> Dictionary:
 	var grouped := {}
 	var x_values: Array[int] = []
@@ -815,6 +897,7 @@ func _load_level_index(index: int, overrides := {}) -> void:
 		world.facing = overrides.player_facing
 	world.update_page()
 	_clear_entity_visuals()
+	_reset_player_river_visual()
 	if current_level_index == 0:
 		intro_phase = "lights"
 		intro_reveal_elapsed = 0.0
@@ -835,6 +918,16 @@ func _load_level_index(index: int, overrides := {}) -> void:
 			child.queue_free()
 	if player_sprite:
 		_set_player_idle_visual()
+
+func _startup_level_overrides() -> Dictionary:
+	var overrides := {}
+	if startup_player_pos.x >= 0 and startup_player_pos.y >= 0:
+		overrides["player_pos"] = startup_player_pos
+	if not startup_player_text.is_empty():
+		overrides["player_text"] = startup_player_text
+	if startup_player_facing != Vector2i.ZERO:
+		overrides["player_facing"] = startup_player_facing
+	return overrides
 
 func _resolve_world_event() -> void:
 	_apply_result(world.resolve_pending_timed_effect())
@@ -894,6 +987,8 @@ func _current_held_direction() -> Vector2i:
 	return held_move_directions[held_move_directions.size() - 1]
 
 func _apply_direction_step(direction: Vector2i) -> void:
+	if player_river_action_locked:
+		return
 	var result: Dictionary
 	if Input.is_key_pressed(KEY_ALT):
 		result = world.pull_front(direction)
