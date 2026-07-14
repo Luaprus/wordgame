@@ -18,14 +18,6 @@ if ($OutputPath) {
         [System.IO.Path]::GetFullPath((Join-Path (Get-Location) $OutputPath))
     }
 
-    $normalizedWorkspaceRoot = $WorkspaceRoot.TrimEnd([char[]]@('\', '/'))
-    $workspacePrefix = $normalizedWorkspaceRoot + [System.IO.Path]::DirectorySeparatorChar
-    if ($ResolvedOutputPath.StartsWith($workspacePrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
-        $outputRelativePath = $ResolvedOutputPath.Substring($workspacePrefix.Length).Replace('\', '/')
-        if ($ExcludedRootFiles -notcontains $outputRelativePath) {
-            $ExcludedRootFiles += $outputRelativePath
-        }
-    }
 }
 $Tab = [char]9
 
@@ -33,11 +25,19 @@ function Get-ProjectFiles {
     param(
         [Parameter(Mandatory = $true)]
         [string]$ProjectPath,
-        [string[]]$ExcludedTopLevelDirectories = @()
+        [string[]]$ExcludedTopLevelDirectories = @(),
+        [string]$ExcludedAbsoluteFilePath
     )
 
     $files = New-Object 'System.Collections.Generic.List[string]'
     foreach ($item in Get-ChildItem -LiteralPath $ProjectPath -Recurse -File -Force) {
+        if ($ExcludedAbsoluteFilePath -and [string]::Equals(
+                [System.IO.Path]::GetFullPath($item.FullName),
+                $ExcludedAbsoluteFilePath,
+                [System.StringComparison]::OrdinalIgnoreCase)) {
+            continue
+        }
+
         $relativePath = $item.FullName.Substring($ProjectPath.Length).TrimStart([char[]]@('\', '/')).Replace('\', '/')
         if ($relativePath -match '(^|/)\.godot(/|$)') {
             continue
@@ -130,7 +130,7 @@ foreach ($source in $Sources) {
     }
 
     $excludedDirectories = if ($source -eq 'root') { $ExcludedRootDirectories } else { @() }
-    foreach ($relativePath in Get-ProjectFiles -ProjectPath $sourcePath -ExcludedTopLevelDirectories $excludedDirectories) {
+    foreach ($relativePath in Get-ProjectFiles -ProjectPath $sourcePath -ExcludedTopLevelDirectories $excludedDirectories -ExcludedAbsoluteFilePath $ResolvedOutputPath) {
         $filePath = Join-Path $sourcePath $relativePath.Replace('/', '\')
         $hash = (Get-FileHash -LiteralPath $filePath -Algorithm SHA256).Hash
         $targetPath = Get-TargetPath -Source $source -RelativePath $relativePath
