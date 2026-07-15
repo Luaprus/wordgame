@@ -347,13 +347,13 @@ static func _toggle_sword_anchor_effect() -> Dictionary:
 			"text": "剑",
 			"then": {
 				"remove_at": [GloveLayouts.SWORD_LEFT_POS, GloveLayouts.SWORD_RIGHT_POS],
-				"spawn": [{"text": "剑", "pos": GloveLayouts.SWORD_RIGHT_POS}],
-				"last_message": "二指伸直，掌中剑换到了右边。"
+				"visual_effect": {"type": "sword_acquire", "from_grid": GloveLayouts.SWORD_LEFT_POS},
+				"last_message": "你拿到了掌中剑。"
 			},
 			"else": {
 				"remove_at": [GloveLayouts.SWORD_LEFT_POS, GloveLayouts.SWORD_RIGHT_POS],
-				"spawn": [{"text": "剑", "pos": GloveLayouts.SWORD_LEFT_POS}],
-				"last_message": "二指伸直，掌中剑换到了左边。"
+				"visual_effect": {"type": "sword_acquire", "from_grid": GloveLayouts.SWORD_RIGHT_POS},
+				"last_message": "你拿到了掌中剑。"
 			}
 		}
 	}

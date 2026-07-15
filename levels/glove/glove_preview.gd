@@ -122,7 +122,7 @@ var demo_elapsed := 0.0
 var demo_running := false
 var demo_paused := false
 var demo_delay := 0.32
-var brave_loop_prompt := GloveLoopingPrompt.new()
+var brave_loop_prompt := GloveLoopingPrompt.new("来吧")
 var brave_loop_labels: Array[Label] = []
 var like_loop_prompt := GloveLoopingPrompt.new("加油！")
 var like_loop_prefix: Label
@@ -630,21 +630,32 @@ func _apply_visual_positions() -> void:
 			entity_labels[id].position = mover.current_position
 
 func _build_brave_loop_prompt() -> void:
-	for index in range(GloveLoopingPrompt.TEXT.length()):
+	for index in range(brave_loop_prompt.text.length()):
 		var label := _make_word_label("")
 		label.name = "BraveLoopPrompt_%d" % index
-		label.position = _grid_to_pixels(Vector2i(24, 5 + index))
+		label.position = _grid_to_pixels(Vector2i(24, 6 + index))
 		map_layer.add_child(label)
 		brave_loop_labels.append(label)
 
 func _sync_brave_loop_prompt() -> void:
-	var visible := _has_fixed_brave()
+	var visible := _ensure_brave_loop_prefix()
 	var text := brave_loop_prompt.visible_text()
-	_sync_loop_prompt_entities("brave", visible, text, Vector2i(24, 5), Vector2i.DOWN)
+	_sync_loop_prompt_entities("brave", visible, text, Vector2i(24, 6), Vector2i.DOWN)
 	for index in range(brave_loop_labels.size()):
 		var label := brave_loop_labels[index]
 		label.visible = false
 		label.text = ""
+
+func _ensure_brave_loop_prefix() -> bool:
+	if not _has_fixed_brave():
+		return false
+	var colon = world.get_any_entity_at(Vector2i(24, 5))
+	if colon == null:
+		if not _make_room_for_loop_prompt(Vector2i(24, 5)):
+			return false
+		world.add_entity("：", Vector2i(24, 5), {"solid": true})
+		return true
+	return colon.text == "："
 
 func _build_like_loop_prompt() -> void:
 	like_loop_prefix = _make_word_label("勇：")
@@ -1177,6 +1188,8 @@ func _consume_visual_effect_request() -> void:
 				_play_glove_pull_particles(request)
 			"glove_acquire":
 				_start_glove_acquisition()
+			"sword_acquire":
+				_play_sword_acquire(request)
 			"delete_cut":
 				_start_delete_cut(request)
 
@@ -1202,6 +1215,19 @@ func _play_glove_pull_particles(request: Dictionary) -> void:
 		_grid_to_pixels(request.get("origin_grid", Vector2i.ZERO)),
 		float(world.cell_size)
 	)
+
+func _play_sword_acquire(request: Dictionary) -> void:
+	if map_layer == null or player_label == null:
+		return
+	var sword_word := _make_word_label("剑")
+	sword_word.name = "SwordAcquireWord"
+	sword_word.position = _grid_to_pixels(request.get("from_grid", world.player_pos))
+	sword_word.z_index = player_label.z_index - 1
+	map_layer.add_child(sword_word)
+	var tween := create_tween()
+	tween.tween_property(sword_word, "position", _grid_to_pixels(world.player_pos), move_visual_duration)
+	tween.tween_property(sword_word, "modulate:a", 0.0, 0.18)
+	tween.tween_callback(Callable(sword_word, "queue_free"))
 
 func _play_glove_pull_particles_at(request: Dictionary, particles: Node2D, origin: Vector2, cell_size: float) -> void:
 	if particles == null:
