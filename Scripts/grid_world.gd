@@ -275,10 +275,13 @@ func try_move_player(direction: Vector2i) -> Dictionary:
 		if not entity.pushable:
 			player_moving = false
 			return {"success": false, "message": "blocked"}
+		var pushed_from := entity.grid_pos
+		var pushed_text := entity.text
 		var pushed := move_entity_by(entity.id, direction)
 		if not pushed.success:
 			player_moving = false
 			return pushed
+		_queue_player_push_visual(direction, old_player_pos, target, pushed_from, entity.grid_pos, pushed_text)
 	player_pos = target
 	_update_player_water_animation_state(old_player_pos, player_pos, get_entity_at(player_pos))
 	update_page()
@@ -431,6 +434,12 @@ func pull_front(move_direction: Vector2i) -> Dictionary:
 	player_moving = true
 	player_pos = new_player_pos
 	move_entity_to(entity.id, old_player_pos)
+	visual_effect_requests.append({
+		"type": "pull_particles",
+		"origin_grid": old_player_pos,
+		"duration": 0.42,
+		"seed": old_player_pos.x * 97 + old_player_pos.y * 53
+	})
 	facing = -move_direction
 	update_page()
 	check_sentence_rules()
@@ -539,6 +548,19 @@ func _queue_player_water_visual(kind: String, old_pos: Vector2i, new_pos: Vector
 	request["from"] = old_pos
 	request["to"] = new_pos
 	visual_effect_requests.append(request)
+
+func _queue_player_push_visual(direction: Vector2i, player_from: Vector2i, player_to: Vector2i, pushed_from: Vector2i, pushed_to: Vector2i, pushed_text: String) -> void:
+	if direction == Vector2i.ZERO:
+		return
+	visual_effect_requests.append({
+		"type": "player_push_flash",
+		"direction": direction,
+		"player_from": player_from,
+		"player_to": player_to,
+		"pushed_from": pushed_from,
+		"pushed_to": pushed_to,
+		"pushed_text": pushed_text
+	})
 
 func _try_split_player() -> Dictionary:
 	if not player_split_rules.has(player_text):

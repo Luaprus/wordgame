@@ -10,7 +10,9 @@ const PageCamera = preload("res://scripts/page_camera.gd")
 const PrecisionMovement = preload("res://scripts/precision_movement.gd")
 const PlayerDirectionMarker = preload("res://scripts/player_moving/player_direction_marker.gd")
 const SmoothGridMover = preload("res://scripts/smooth_grid_mover.gd")
+const PullParticleEffect = preload("res://scripts/pull_particle_effect.gd")
 const OriginalFont = preload("res://Fonts/Zpix.tres")
+const PushEffectTexture = preload("res://assets/animations/push/u_glove_S.png")
 
 const MOVE_REPEAT_INTERVAL := 0.28
 const FAST_MOVE_REPEAT_INTERVAL := 0.12
@@ -50,6 +52,7 @@ const GESTURE_INTRO_REVEAL_DURATION := 0.7
 const GESTURE_INTRO_SWAP_INTERVAL := 0.075
 const GESTURE_INTRO_SWAP_DURATION := 0.18
 const GESTURE_INTRO_START_OFFSET_Y := -780.0
+const PUSH_FLASH_FRAME_LOCAL_X := [-18.5, -20.0, -27.5, -38.5, -45.5, -50.0, -55.0, -58.0, -60.0, -61.0, -61.5, -62.0, -64.5, -65.0, -68.0, -68.0]
 const INTRO_GRID_X_STEP := 600.0 / 11.0
 const INTRO_TEXT_ORIGIN := Vector2i(4, 8)
 const INTRO_PLAYER_START := Vector2i(4, 9)
@@ -81,6 +84,8 @@ var entity_movers: Dictionary = {}
 var entity_labels: Dictionary = {}
 var player_label: Label
 var map_layer: Node2D
+var glove_effect_layer: Node2D
+var glove_pull_particles: Node2D
 var transition_reference_overlay: Sprite2D
 var world_event_timer: Timer
 var direction_marker: Node2D
@@ -464,6 +469,15 @@ func _build_scene() -> void:
 	map_layer = Node2D.new()
 	map_layer.name = "MapLayer"
 	add_child(map_layer)
+	glove_effect_layer = Node2D.new()
+	glove_effect_layer.name = "GloveInteractionEffectLayer"
+	glove_effect_layer.z_index = 80
+	map_layer.add_child(glove_effect_layer)
+	glove_pull_particles = PullParticleEffect.new()
+	glove_pull_particles.name = "GlovePullParticles"
+	glove_pull_particles.z_index = 81
+	glove_pull_particles.visible = false
+	map_layer.add_child(glove_pull_particles)
 	_build_brave_loop_prompt()
 	_build_like_loop_prompt()
 	_build_gesture_loop_prompt()
@@ -1039,10 +1053,74 @@ func _consume_visual_effect_request() -> void:
 	for raw_request in world.consume_visual_effects():
 		var request: Dictionary = raw_request
 		match str(request.get("type", "")):
+			"player_push_flash":
+				_play_glove_push_flash(request)
+			"pull_particles":
+				_play_glove_pull_particles(request)
 			"glove_acquire":
 				_start_glove_acquisition()
 			"delete_cut":
 				_start_delete_cut(request)
+
+func _play_glove_pull_particles(request: Dictionary) -> void:
+	if glove_pull_particles == null:
+		return
+	var origin_grid: Vector2i = request.get("origin_grid", Vector2i.ZERO)
+	glove_pull_particles.play_at(
+		_grid_to_pixels(origin_grid),
+		float(world.cell_size),
+		float(request.get("duration", 0.42)),
+		int(request.get("seed", 2371))
+	)
+
+func _play_glove_push_flash(request: Dictionary) -> void:
+	if glove_effect_layer == null or PushEffectTexture == null:
+		return
+	var direction: Vector2i = request.get("direction", Vector2i.ZERO)
+	if direction == Vector2i.ZERO:
+		return
+	var player_to: Vector2i = request.get("player_to", world.player_pos)
+	var sprite := Sprite2D.new()
+	sprite.name = "PlayerPushFlash"
+	sprite.texture = PushEffectTexture
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	sprite.hframes = 10
+	sprite.vframes = 2
+	sprite.frame = 0
+	sprite.centered = true
+	sprite.rotation_degrees = _push_flash_rotation(direction)
+	glove_effect_layer.add_child(sprite)
+	var base_position := _grid_to_pixels(player_to)
+	_set_glove_push_flash_progress(0.0, sprite, base_position, direction)
+	var tween := create_tween()
+	tween.tween_method(Callable(self, "_set_glove_push_flash_progress").bind(sprite, base_position, direction), 0.0, 1.0, 0.5)
+	tween.tween_callback(Callable(sprite, "queue_free"))
+
+func _set_glove_push_flash_progress(progress: float, sprite: Sprite2D, base_position: Vector2, direction: Vector2i) -> void:
+	if sprite == null or not is_instance_valid(sprite):
+		return
+	var frame := clampi(int(round(progress * 15.0)), 0, 15)
+	sprite.frame = frame
+	sprite.position = _glove_push_flash_position(base_position, direction, frame, progress)
+
+func _glove_push_flash_position(base_position: Vector2, direction: Vector2i, frame: int, progress: float) -> Vector2:
+	var local_x := float(PUSH_FLASH_FRAME_LOCAL_X[clampi(frame, 0, PUSH_FLASH_FRAME_LOCAL_X.size() - 1)])
+	if direction == Vector2i.RIGHT:
+		return base_position + Vector2(40.0 + progress * 4.0 - local_x, 30.0)
+	if direction == Vector2i.LEFT:
+		return base_position + Vector2(20.0 - progress * 4.0 + local_x, 30.0)
+	if direction == Vector2i.DOWN:
+		return base_position + Vector2(30.0, 40.0 + progress * 4.0 - local_x)
+	return base_position + Vector2(30.0, 20.0 - progress * 4.0 + local_x)
+
+func _push_flash_rotation(direction: Vector2i) -> float:
+	if direction == Vector2i.RIGHT:
+		return 0.0
+	if direction == Vector2i.LEFT:
+		return 180.0
+	if direction == Vector2i.DOWN:
+		return 90.0
+	return 270.0
 
 func _start_glove_acquisition() -> void:
 	if glove_acquisition_active:
