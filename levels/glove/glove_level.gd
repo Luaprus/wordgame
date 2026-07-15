@@ -16,6 +16,8 @@ static func build_level() -> Dictionary:
 		"player_start": GloveLayouts.PLAYER_START,
 		"player_facing": Vector2i.RIGHT,
 		"player_text": "我",
+		"push_keeps_player_in_place": true,
+		"push_recovery_duration": 0.05,
 		"passable_text_by_player": {"我": ["线线"]},
 		"rows": GloveLayouts.build_rows(),
 		"initial_spawn": [

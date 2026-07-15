@@ -16,7 +16,7 @@ const PushEffectTexture = preload("res://assets/animations/push/u_glove_S.png")
 const PlayerIdleTexture = preload("res://assets/player/me_default.png")
 const PlayerWalkTexture = preload("res://assets/player/me_walk.png")
 
-const MOVE_REPEAT_INTERVAL := 0.28
+const MOVE_REPEAT_INTERVAL := 0.12
 const FAST_MOVE_REPEAT_INTERVAL := 0.12
 const GLOVE_GAMEPLAY_FONT_SIZE := 54
 const GLOVE_GAMEPLAY_LINE_SPACING := 0
@@ -99,6 +99,8 @@ var direction_marker: Node2D
 var direction_marker_fill: Polygon2D
 var direction_marker_outline: Line2D
 var direction_marker_timer: Timer
+var push_recovery_timer: Timer
+var push_recovery_active := false
 var direction_marker_direction := Vector2i.ZERO
 var held_move_directions: Array[Vector2i] = []
 var move_repeat_elapsed := 0.0
@@ -231,11 +233,14 @@ func initialize_preview_world() -> void:
 	move_repeat_elapsed = 0.0
 	player_move_repeat_timer = 0.0
 	player_blocked_retry_timer = 0.0
+	push_recovery_active = false
 	_player_visual_ready = false
 	_last_route_key = ""
 	_last_route_report.clear()
 	if world_event_timer:
 		world_event_timer.stop()
+	if push_recovery_timer:
+		push_recovery_timer.stop()
 	if _scene_ready:
 		page_camera.sync_to_world(world)
 		_refresh_view()
@@ -273,11 +278,12 @@ func _process(delta: float) -> void:
 	if direction == Vector2i.ZERO:
 		move_repeat_elapsed = 0.0
 	elif intro_active:
-		move_repeat_elapsed += delta
-		var intro_interval := FAST_MOVE_REPEAT_INTERVAL if Input.is_key_pressed(KEY_SHIFT) else MOVE_REPEAT_INTERVAL
-		while move_repeat_elapsed >= intro_interval:
-			move_repeat_elapsed -= intro_interval
-			_apply_intro_direction_step(direction)
+		if not push_recovery_active:
+			move_repeat_elapsed += delta
+			var intro_interval := FAST_MOVE_REPEAT_INTERVAL if Input.is_key_pressed(KEY_SHIFT) else MOVE_REPEAT_INTERVAL
+			while move_repeat_elapsed >= intro_interval:
+				move_repeat_elapsed -= intro_interval
+				_apply_intro_direction_step(direction)
 	elif hero_quote_active:
 		if not hero_quote_player_active:
 			move_repeat_elapsed = 0.0
@@ -288,7 +294,7 @@ func _process(delta: float) -> void:
 				move_repeat_elapsed -= hero_interval
 				_apply_hero_quote_direction_step(direction)
 	else:
-		if player_move_repeat_timer <= 0.0 and player_blocked_retry_timer <= 0.0:
+		if not push_recovery_active and player_move_repeat_timer <= 0.0 and player_blocked_retry_timer <= 0.0:
 			_apply_direction_step(direction)
 
 	var changed := false
@@ -335,6 +341,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if hero_quote_active:
 		_handle_hero_quote_input(key_event)
+		return
+	if push_recovery_active:
 		return
 	if key_event.pressed and not key_event.echo:
 		var shortcut_scene_path := resolve_scene_shortcut_from_keycode(key_event.keycode)
@@ -538,6 +546,10 @@ func _build_scene() -> void:
 	direction_marker_timer.one_shot = true
 	direction_marker_timer.timeout.connect(_hide_direction_marker)
 	add_child(direction_marker_timer)
+	push_recovery_timer = Timer.new()
+	push_recovery_timer.one_shot = true
+	push_recovery_timer.timeout.connect(_finish_push_recovery)
+	add_child(push_recovery_timer)
 	demo_status_label = Label.new()
 	demo_status_label.name = "DemoStatus"
 	demo_status_label.position = Vector2(24, 18)
@@ -1096,12 +1108,28 @@ func _consume_visual_effect_request() -> void:
 		match str(request.get("type", "")):
 			"player_push_flash":
 				_play_glove_push_flash(request)
+				_start_push_recovery(request)
 			"pull_particles":
 				_play_glove_pull_particles(request)
 			"glove_acquire":
 				_start_glove_acquisition()
 			"delete_cut":
 				_start_delete_cut(request)
+
+func _start_push_recovery(request: Dictionary) -> void:
+	if not bool(request.get("player_stayed", false)):
+		return
+	var recovery_duration := maxf(float(request.get("recovery_duration", 0.0)), 0.0)
+	if recovery_duration <= 0.0:
+		return
+	push_recovery_active = true
+	move_repeat_elapsed = 0.0
+	player_move_repeat_timer = 0.0
+	player_blocked_retry_timer = 0.0
+	push_recovery_timer.start(move_visual_duration + recovery_duration)
+
+func _finish_push_recovery() -> void:
+	push_recovery_active = false
 
 func _play_glove_pull_particles(request: Dictionary) -> void:
 	_play_glove_pull_particles_at(
@@ -1284,6 +1312,8 @@ func _start_intro_push_tutorial() -> void:
 		"player_start": INTRO_PLAYER_START,
 		"player_facing": Vector2i.DOWN,
 		"player_text": "我",
+		"push_keeps_player_in_place": true,
+		"push_recovery_duration": 0.05,
 		"rows": [],
 		"initial_spawn": [
 			{"text": "不", "pos": INTRO_NO_START, "config": {"solid": true, "pushable": true}},
@@ -1324,7 +1354,6 @@ func _start_intro_push_tutorial() -> void:
 	intro_player_visual_ready = false
 	intro_entity_labels.clear()
 	intro_entity_movers.clear()
-	held_move_directions.clear()
 	move_repeat_elapsed = 0.0
 	acquisition_dialogue_active = false
 	acquisition_tutorial_active = false
@@ -1337,7 +1366,7 @@ func _start_intro_push_tutorial() -> void:
 	_sync_intro_world_view()
 
 func _handle_intro_input(key_event: InputEventKey) -> void:
-	if intro_completion_pending:
+	if intro_completion_pending or push_recovery_active:
 		return
 	if key_event.pressed and not key_event.echo and key_event.keycode == KEY_SPACE:
 		if intro_quote_started and not intro_bottom_rewrite_started and not intro_world.has_pending_timed_effect():
@@ -1371,6 +1400,8 @@ func _start_intro_bottom_rewrite() -> void:
 	_sync_intro_world_view()
 
 func _apply_intro_direction_step(direction: Vector2i) -> void:
+	if push_recovery_active:
+		return
 	var result: Dictionary
 	if Input.is_key_pressed(KEY_ALT):
 		result = intro_world.pull_front(direction)
@@ -1380,7 +1411,8 @@ func _apply_intro_direction_step(direction: Vector2i) -> void:
 		return
 	_sync_intro_world_view()
 	_consume_intro_visual_effect_requests()
-	_play_player_walk_visual(intro_player_sprite)
+	if not bool(result.get("player_stayed", false)):
+		_play_player_walk_visual(intro_player_sprite)
 	if not intro_quote_started and _intro_no_reached_target():
 		intro_quote_started = true
 		acquisition_tutorial_label.visible = false
@@ -1494,6 +1526,7 @@ func _consume_intro_visual_effect_requests() -> void:
 					intro_glove_effect_layer,
 					_intro_grid_to_pixels(request.get("player_to", intro_world.player_pos))
 				)
+				_start_push_recovery(request)
 			"pull_particles":
 				_play_glove_pull_particles_at(
 					request,
@@ -1878,6 +1911,8 @@ func _is_direction_physically_held(direction: Vector2i) -> bool:
 	return false
 
 func _apply_direction_step(direction: Vector2i) -> void:
+	if push_recovery_active:
+		return
 	var result: Dictionary
 	if Input.is_key_pressed(KEY_ALT):
 		result = world.pull_front(direction)
@@ -1888,7 +1923,8 @@ func _apply_direction_step(direction: Vector2i) -> void:
 		player_blocked_retry_timer = PLAYER_BLOCKED_RETRY_TIME
 	_apply_result(result)
 	if result.get("success", false):
-		_play_player_walk_visual(player_sprite)
+		if not bool(result.get("player_stayed", false)):
+			_play_player_walk_visual(player_sprite)
 		_show_direction_marker(direction)
 
 func _attach_player_sprite(player: Label, cell_size: float) -> Sprite2D:

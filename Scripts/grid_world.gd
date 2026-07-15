@@ -281,7 +281,12 @@ func try_move_player(direction: Vector2i) -> Dictionary:
 		if not pushed.success:
 			player_moving = false
 			return pushed
-		_queue_player_push_visual(direction, old_player_pos, target, pushed_from, entity.grid_pos, pushed_text)
+		var push_keeps_player_in_place := bool(current_level.get("push_keeps_player_in_place", false))
+		_queue_player_push_visual(direction, old_player_pos, target, pushed_from, entity.grid_pos, pushed_text, push_keeps_player_in_place)
+		if push_keeps_player_in_place:
+			check_sentence_rules()
+			player_moving = false
+			return {"success": true, "pushed": true, "player_stayed": true}
 	player_pos = target
 	_update_player_water_animation_state(old_player_pos, player_pos, get_entity_at(player_pos))
 	update_page()
@@ -549,17 +554,19 @@ func _queue_player_water_visual(kind: String, old_pos: Vector2i, new_pos: Vector
 	request["to"] = new_pos
 	visual_effect_requests.append(request)
 
-func _queue_player_push_visual(direction: Vector2i, player_from: Vector2i, player_to: Vector2i, pushed_from: Vector2i, pushed_to: Vector2i, pushed_text: String) -> void:
+func _queue_player_push_visual(direction: Vector2i, player_from: Vector2i, player_to: Vector2i, pushed_from: Vector2i, pushed_to: Vector2i, pushed_text: String, player_stays := false) -> void:
 	if direction == Vector2i.ZERO:
 		return
 	visual_effect_requests.append({
 		"type": "player_push_flash",
 		"direction": direction,
 		"player_from": player_from,
-		"player_to": player_to,
+		"player_to": player_from if player_stays else player_to,
 		"pushed_from": pushed_from,
 		"pushed_to": pushed_to,
-		"pushed_text": pushed_text
+		"pushed_text": pushed_text,
+		"player_stayed": player_stays,
+		"recovery_duration": float(current_level.get("push_recovery_duration", 0.0)) if player_stays else 0.0
 	})
 
 func _try_split_player() -> Dictionary:
