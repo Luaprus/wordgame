@@ -297,7 +297,7 @@ static func _switch_hand_effect(state_name: String, message: String, animate := 
 static func _hand_layout_effect(state_name: String, message: String) -> Dictionary:
 	var effect := {
 		"remove_at": GloveLayouts.all_hand_cells(),
-		"remove_texts": [DIALOGUE_INITIAL, DIALOGUE_OPENING, DIALOGUE_LIKE, "：改变手势，扭转守势！", "怜爱之深，", "责任之切，", "勇者之情。", "逼退", "手的生命线", "线", "线线"],
+		"remove_texts": [DIALOGUE_INITIAL, DIALOGUE_OPENING, DIALOGUE_LIKE, "勇：", "：改变手势，扭转守势！", "怜爱之深，", "责任之切，", "勇者之情。", "逼退", "手的生命线", "线", "线线"],
 		"preserve_texts": ["赢", "不", "二", "赞", "一", "零", "好", "爱", "剑"],
 		"spawn_text": GloveLayouts.hand_spawn_text(state_name),
 		"last_message": message
@@ -305,7 +305,7 @@ static func _hand_layout_effect(state_name: String, message: String) -> Dictiona
 	effect["spawn"] = effect.get("spawn", [])
 	if state_name == "like" or state_name == "release":
 		if state_name == "like":
-			effect["spawn"].append({"text": DIALOGUE_LIKE, "pos": DIALOGUE_POS, "config": {"solid": false}})
+			effect["spawn"].append({"text": "勇：", "pos": DIALOGUE_POS, "config": {"solid": true}})
 		else:
 			effect["spawn"].append({"text": "：改变手势，扭转守势！", "pos": Vector2i(2, 16), "config": {"solid": false}})
 		effect["spawn"].append({"text": "逼退", "pos": Vector2i(8, 13), "config": {"solid": true}})

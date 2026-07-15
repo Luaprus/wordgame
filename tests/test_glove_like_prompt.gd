@@ -17,21 +17,22 @@ func _verify() -> void:
 		"spawn": [{"text": DIALOGUE_LIKE, "pos": DIALOGUE_POS, "config": {"solid": false}}]
 	})
 	preview._refresh_view()
-	var dialogue = preview.world.get_any_entity_at(DIALOGUE_POS)
-	var entity_group: Node2D = preview.entity_labels.get(dialogue.id)
-	if not preview.like_loop_prefix.visible or preview.like_loop_labels[0].text != "加" or preview.like_loop_labels[1].visible or entity_group.visible:
-		printerr("the fixed brave prefix and the first 加 character replace the ordinary 加油 dialogue text")
+	var prefix = preview.world.get_entity_at(DIALOGUE_POS)
+	var first_loop_word = preview.world.get_entity_at(Vector2i(3, 8))
+	if prefix == null or prefix.text != "勇：" or first_loop_word == null or first_loop_word.text != "加":
+		printerr("the fixed brave prefix and the first 加 character must occupy real grid cells")
 		preview.queue_free()
 		quit(1)
 		return
 	preview._process(0.2)
-	if preview.like_loop_labels[1].text != "油" or not preview.like_loop_labels[1].visible:
+	var second_loop_word = preview.world.get_entity_at(Vector2i(4, 8))
+	if second_loop_word == null or second_loop_word.text != "油":
 		printerr("the brave encouragement types its second character after the shared 0.2-second interval")
 		preview.queue_free()
 		quit(1)
 		return
 	preview._process(0.4)
-	if preview.like_loop_labels[0].visible or preview.like_loop_labels[1].visible or preview.like_loop_labels[2].visible:
+	if preview.world.get_entity_at(Vector2i(3, 8)) != null or preview.world.get_entity_at(Vector2i(4, 8)) != null or preview.world.get_entity_at(Vector2i(5, 8)) != null:
 		printerr("the completed 加油 prompt clears before its next typewriter loop")
 		preview.queue_free()
 		quit(1)

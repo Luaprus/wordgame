@@ -127,6 +127,8 @@ var brave_loop_labels: Array[Label] = []
 var like_loop_prompt := GloveLoopingPrompt.new("加油！")
 var like_loop_prefix: Label
 var like_loop_labels: Array[Label] = []
+var loop_prompt_entity_ids := {}
+var loop_prompt_states := {}
 var gesture_loop_prompt := GloveLoopingPrompt.new("改变手势，扭转守势！")
 var gesture_loop_prefix: Label
 var gesture_loop_labels: Array[Label] = []
@@ -579,9 +581,9 @@ func _build_scene() -> void:
 func _refresh_view(_message := "") -> void:
 	if not _scene_ready:
 		return
-	_sync_entity_labels()
 	_sync_brave_loop_prompt()
 	_sync_like_loop_prompt()
+	_sync_entity_labels()
 	_sync_gesture_loop_prompt()
 	_sync_direction_marker()
 	player_label.text = world.player_text
@@ -613,7 +615,7 @@ func _sync_entity_labels() -> void:
 		var entity_mover = entity_movers.get(entity.id)
 		entity_mover.move_to(_grid_to_pixels(entity.grid_pos), move_visual_duration)
 		_sync_entity_label_group(group, entity)
-		group.visible = not _is_looping_like_dialogue(entity)
+		group.visible = true
 	for id in entity_labels.keys():
 		if not alive.has(id):
 			entity_labels[id].queue_free()
@@ -636,14 +638,13 @@ func _build_brave_loop_prompt() -> void:
 		brave_loop_labels.append(label)
 
 func _sync_brave_loop_prompt() -> void:
-	if brave_loop_labels.is_empty():
-		return
 	var visible := _has_fixed_brave()
 	var text := brave_loop_prompt.visible_text()
+	_sync_loop_prompt_entities("brave", visible, text, Vector2i(24, 5), Vector2i.DOWN)
 	for index in range(brave_loop_labels.size()):
 		var label := brave_loop_labels[index]
-		label.visible = visible and index < text.length()
-		label.text = text.substr(index, 1) if index < text.length() else ""
+		label.visible = false
+		label.text = ""
 
 func _build_like_loop_prompt() -> void:
 	like_loop_prefix = _make_word_label("勇：")
@@ -660,22 +661,85 @@ func _build_like_loop_prompt() -> void:
 		like_loop_labels.append(label)
 
 func _sync_like_loop_prompt() -> void:
-	if like_loop_prefix == null:
-		return
-	var visible := _has_like_dialogue()
-	like_loop_prefix.visible = visible
+	var visible := _ensure_like_loop_prefix()
 	var text := like_loop_prompt.visible_text()
+	_sync_loop_prompt_entities("like", visible, text, Vector2i(3, 8), Vector2i.RIGHT)
+	if like_loop_prefix:
+		like_loop_prefix.visible = false
 	for index in range(like_loop_labels.size()):
 		var label := like_loop_labels[index]
-		label.visible = visible and index < text.length()
-		label.text = text.substr(index, 1) if index < text.length() else ""
+		label.visible = false
+		label.text = ""
 
-func _has_like_dialogue() -> bool:
+func _ensure_like_loop_prefix() -> bool:
 	var dialogue = world.get_any_entity_at(Vector2i(1, 8))
-	return dialogue != null and dialogue.text == GloveEffects.DIALOGUE_LIKE
+	if dialogue == null:
+		return false
+	if dialogue.text == "勇：":
+		return true
+	if dialogue.text != GloveEffects.DIALOGUE_LIKE:
+		return false
+	world.entities.erase(dialogue.id)
+	for pos in [Vector2i(1, 8), Vector2i(2, 8)]:
+		if not _make_room_for_loop_prompt(pos):
+			return false
+	world.add_entity("勇：", Vector2i(1, 8), {"solid": true})
+	return true
 
-func _is_looping_like_dialogue(entity) -> bool:
-	return entity.grid_pos == Vector2i(1, 8) and entity.text == GloveEffects.DIALOGUE_LIKE
+func _sync_loop_prompt_entities(key: String, visible: bool, text: String, start: Vector2i, step: Vector2i) -> void:
+	if _loop_prompt_matches(key, visible, text, start, step):
+		return
+	_remove_loop_prompt_entities(key)
+	loop_prompt_states[key] = {"visible": visible, "text": text}
+	if not visible:
+		return
+	var ids: Array[String] = []
+	for index in range(text.length()):
+		var pos := start + step * index
+		if not _make_room_for_loop_prompt(pos):
+			continue
+		var entity = world.add_entity(text.substr(index, 1), pos, {"solid": true})
+		ids.append(entity.id)
+	loop_prompt_entity_ids[key] = ids
+
+func _loop_prompt_matches(key: String, visible: bool, text: String, start: Vector2i, step: Vector2i) -> bool:
+	var state: Dictionary = loop_prompt_states.get(key, {})
+	if bool(state.get("visible", false)) != visible or str(state.get("text", "")) != text:
+		return false
+	var ids: Array = loop_prompt_entity_ids.get(key, [])
+	var expected_count := text.length() if visible else 0
+	if ids.size() != expected_count:
+		return false
+	for index in range(ids.size()):
+		var entity = world.entities.get(ids[index])
+		if entity == null or entity.text != text.substr(index, 1) or entity.grid_pos != start + step * index:
+			return false
+	return true
+
+func _remove_loop_prompt_entities(key: String) -> void:
+	for id in loop_prompt_entity_ids.get(key, []):
+		world.entities.erase(id)
+	loop_prompt_entity_ids[key] = []
+
+func _make_room_for_loop_prompt(pos: Vector2i) -> bool:
+	if world.player_pos != pos:
+		return world.get_any_entity_at(pos) == null
+	var up := pos + Vector2i.UP
+	if _can_displace_loop_prompt_player(up):
+		world.player_pos = up
+		world.update_page()
+		return true
+	var down := pos + Vector2i.DOWN
+	if _can_displace_loop_prompt_player(down):
+		world.player_pos = down
+		world.update_page()
+		return true
+	return false
+
+func _can_displace_loop_prompt_player(pos: Vector2i) -> bool:
+	if world.bounded and (pos.x < 0 or pos.y < 0 or pos.x >= world.screen_size.x or pos.y >= world.screen_size.y):
+		return false
+	return world.get_any_entity_at(pos) == null
 
 func _build_gesture_loop_prompt() -> void:
 	gesture_loop_prefix = _make_word_label("勇：")
