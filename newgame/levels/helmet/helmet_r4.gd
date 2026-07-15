@@ -314,7 +314,7 @@ static func _near_bridge_merge_effect() -> Dictionary:
 	spawn.append_array(_near_bridge_spawn())
 	return {
 		"remove_at": _near_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _near_bridge_cells()),
+		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _near_bridge_cells(), {}, _creek_cells_for_bridge()),
 		"replace_text": [_hint_bridge_merge_replace()],
 		"spawn": spawn
 	}

@@ -558,7 +558,6 @@ func _apply_result(result: Dictionary) -> void:
 	var visual_requests: Array = world.consume_visual_effects()
 	var visual_contexts: Array = _prepare_visual_effect_contexts(visual_requests)
 	_refresh_view(str(result.get("message", "")))
-	_hide_bridge_merge_targets_before_render(visual_requests)
 	_consume_visual_effects(visual_requests, visual_contexts)
 	_consume_fullscreen_video_request()
 	if current_level_index == 0 and intro_phase == "lights" and result.get("success", false) and not world.has_pending_timed_effect():
@@ -568,16 +567,6 @@ func _apply_result(result: Dictionary) -> void:
 			world_event_timer.start(float(result.pending_delay))
 	elif world.has_pending_timed_effect() and world_event_timer.is_stopped():
 		world_event_timer.start(world.pending_timed_delay)
-
-func _hide_bridge_merge_targets_before_render(visual_requests: Array) -> void:
-	for request_value in visual_requests:
-		var request: Dictionary = request_value
-		if str(request.get("type", "")) != "bridge_tree_transition":
-			continue
-		if str(request.get("mode", "")) != "merge":
-			continue
-		var bridge_groups: Array = _find_groups_for_cells(request.get("bridge_cells", []))
-		_set_groups_alpha(bridge_groups, 0.0)
 
 func _handle_transition(result: Dictionary) -> void:
 	if result.get("transition", "") != "next_level":
@@ -935,11 +924,33 @@ func _find_groups_for_cells(cells: Array) -> Array:
 		groups.append(group)
 	return groups
 
+func _find_groups_for_text_cells(cells: Array, text: String) -> Array:
+	var groups: Array = []
+	var seen_ids: Dictionary = {}
+	for entity: WordEntity in world.entities.values():
+		if entity.text != text or not entity_labels.has(entity.id):
+			continue
+		var matches_cell := false
+		for cell in entity.cells:
+			if cells.has(cell):
+				matches_cell = true
+				break
+		if not matches_cell:
+			continue
+		var group: Node2D = entity_labels[entity.id]
+		var instance_id: int = group.get_instance_id()
+		if seen_ids.has(instance_id):
+			continue
+		seen_ids[instance_id] = true
+		groups.append(group)
+	return groups
+
 func _run_bridge_tree_transition(request: Dictionary, context: Dictionary, generation: int) -> void:
 	if generation != _visual_effect_generation or bridge_tree_effect_layer == null:
 		return
 	var mode := str(request.get("mode", ""))
 	var tree_fade_duration := float(request.get("tree_fade_duration", 0.42))
+	var creek_fade_duration := float(request.get("creek_fade_duration", 0.5))
 	var tree_fade_in_duration := float(request.get("tree_fade_in_duration", 0.3))
 	var bridge_step_delay := float(request.get("bridge_step_delay", 0.055))
 	var bridge_fade_duration := float(request.get("bridge_fade_duration", 0.12))
@@ -949,8 +960,6 @@ func _run_bridge_tree_transition(request: Dictionary, context: Dictionary, gener
 			if bridge_tree_effect_layer:
 				bridge_tree_effect_layer.add_child(overlay)
 				overlay.modulate.a = 1.0
-		var bridge_groups: Array = _find_groups_for_cells(request.get("bridge_cells", []))
-		_set_groups_alpha(bridge_groups, 0.0)
 		var before_effect: Dictionary = request.get("before_effect", {})
 		if not before_effect.is_empty() and not key_info_emphasis_played:
 			key_info_emphasis_played = true
@@ -959,13 +968,22 @@ func _run_bridge_tree_transition(request: Dictionary, context: Dictionary, gener
 			key_info_sequence_pending = false
 			if generation != _visual_effect_generation:
 				_clear_effect_overlays(merge_overlays)
-				_set_groups_alpha(bridge_groups, 1.0)
 				return
-		_run_bridge_tree_merge_transition(request, context, generation, tree_fade_duration, bridge_step_delay, bridge_fade_duration)
+		_prepare_deferred_bridge_merge_entities(request, generation)
+		await _run_bridge_tree_merge_transition(request, context, generation, tree_fade_duration, creek_fade_duration, bridge_step_delay, bridge_fade_duration)
 	elif mode == "split":
-		_run_bridge_tree_split_transition(request, context, generation, tree_fade_in_duration, bridge_step_delay, bridge_fade_duration)
+		await _run_bridge_tree_split_transition(request, context, generation, tree_fade_in_duration, bridge_step_delay, bridge_fade_duration)
 
-func _run_bridge_tree_merge_transition(request: Dictionary, context: Dictionary, generation: int, tree_fade_duration: float, bridge_step_delay: float, bridge_fade_duration: float) -> void:
+func _prepare_deferred_bridge_merge_entities(request: Dictionary, generation: int) -> void:
+	if generation != _visual_effect_generation:
+		return
+	var deferred_tree_remove_at: Array = request.get("deferred_tree_remove_at", [])
+	if deferred_tree_remove_at.is_empty():
+		return
+	world.remove_entities_at(deferred_tree_remove_at)
+	_refresh_view()
+
+func _run_bridge_tree_merge_transition(request: Dictionary, context: Dictionary, generation: int, tree_fade_duration: float, creek_fade_duration: float, bridge_step_delay: float, bridge_fade_duration: float) -> void:
 	var overlays: Array = context.get("tree_overlays", [])
 	var tree_tween: Tween = null
 	if not overlays.is_empty():
@@ -974,17 +992,32 @@ func _run_bridge_tree_merge_transition(request: Dictionary, context: Dictionary,
 		for overlay: Node2D in overlays:
 			overlay.modulate.a = 1.0
 			tree_tween.tween_property(overlay, "modulate:a", 0.0, tree_fade_duration)
-	var bridge_groups: Array = _find_groups_for_cells(request.get("bridge_cells", []))
-	var bridge_columns: Dictionary = _group_effect_targets_by_x(bridge_groups)
-	for x in bridge_columns.keys():
-		if generation != _visual_effect_generation:
-			_clear_effect_overlays(overlays)
-			return
-		_tween_groups_alpha(bridge_columns[x], 1.0, bridge_fade_duration)
-		await get_tree().create_timer(bridge_step_delay).timeout
 	if tree_tween != null:
 		await tree_tween.finished
 	_clear_effect_overlays(overlays)
+	var deferred_remove_at: Array = request.get("deferred_remove_at", [])
+	var deferred_spawn: Array = request.get("deferred_spawn", [])
+	var creek_fade_cells: Array = request.get("creek_fade_cells", deferred_remove_at)
+	var creek_groups: Array = _find_groups_for_text_cells(creek_fade_cells, "溪")
+	if not creek_groups.is_empty():
+		var creek_tween := create_tween()
+		creek_tween.set_parallel(true)
+		for group: Node2D in creek_groups:
+			creek_tween.tween_property(group, "modulate:a", 0.0, creek_fade_duration)
+		await creek_tween.finished
+		if generation != _visual_effect_generation:
+			return
+	world.remove_entities_at(deferred_remove_at)
+	world.spawn_entities(deferred_spawn)
+	_refresh_view()
+	var bridge_groups: Array = _find_groups_for_cells(request.get("bridge_cells", []))
+	_set_groups_alpha(bridge_groups, 0.0)
+	var bridge_columns: Dictionary = _group_effect_targets_by_x(bridge_groups, not bool(request.get("reverse_split", false)))
+	for x in bridge_columns.keys():
+		if generation != _visual_effect_generation:
+			return
+		_tween_groups_alpha(bridge_columns[x], 1.0, bridge_fade_duration)
+		await get_tree().create_timer(bridge_step_delay).timeout
 
 func _run_key_info_emphasis(request: Dictionary, generation: int) -> void:
 	if generation != _visual_effect_generation or bridge_tree_effect_layer == null:
@@ -1043,6 +1076,7 @@ func _run_bridge_tree_split_transition(request: Dictionary, context: Dictionary,
 	for overlay: Node2D in overlays:
 		if bridge_tree_effect_layer:
 			bridge_tree_effect_layer.add_child(overlay)
+	_prepare_deferred_bridge_split_entities(request, context, generation)
 	var reveal_groups: Array = _find_groups_for_cells(context.get("reveal_cells", []))
 	_set_groups_alpha(reveal_groups, 0.0)
 	var bridge_columns: Dictionary = _group_effect_targets_by_x(overlays, true)
@@ -1059,6 +1093,36 @@ func _run_bridge_tree_split_transition(request: Dictionary, context: Dictionary,
 	for group in reveal_groups:
 		reveal_tween.tween_property(group, "modulate:a", 1.0, tree_fade_in_duration)
 	await reveal_tween.finished
+
+func _prepare_deferred_bridge_split_entities(request: Dictionary, context: Dictionary, generation: int) -> void:
+	if generation != _visual_effect_generation:
+		return
+	var deferred_remove_at: Array = request.get("deferred_split_remove_at", [])
+	var deferred_spawn: Array = request.get("deferred_split_spawn", [])
+	if deferred_remove_at.is_empty() and deferred_spawn.is_empty():
+		return
+	world.remove_entities_at(deferred_remove_at)
+	world.spawn_entities(deferred_spawn)
+	_refresh_view()
+	var reveal_cells: Array = context.get("reveal_cells", []).duplicate()
+	var reveal_target_cells: Array = request.get("tree_cells", []).duplicate()
+	for cell_value in request.get("delayed_water_cells", request.get("bridge_cells", [])):
+		if not reveal_target_cells.has(cell_value):
+			reveal_target_cells.append(cell_value)
+	var reveal_texts: Array = request.get("reveal_texts", [])
+	for entry_value in deferred_spawn:
+		if not entry_value is Dictionary:
+			continue
+		var entry: Dictionary = entry_value
+		var text := str(entry.get("text", ""))
+		if not entry.has("pos") or not reveal_texts.has(text):
+			continue
+		var pos: Vector2i = entry.pos
+		for i in range(text.length()):
+			var cell := pos + Vector2i(i, 0)
+			if reveal_target_cells.has(cell) and not reveal_cells.has(cell):
+				reveal_cells.append(cell)
+	context["reveal_cells"] = reveal_cells
 
 func _clear_key_info_emphasis() -> void:
 	if bridge_tree_effect_layer == null:

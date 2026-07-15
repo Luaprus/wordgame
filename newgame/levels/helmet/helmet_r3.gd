@@ -421,7 +421,7 @@ static func _loose_bridge_effect() -> Dictionary:
 	spawn.append_array(loose_bridge)
 	return {
 		"remove_at": _river_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _bridge_cells()),
+		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _bridge_cells(), {}, _creek_cells_for_bridge()),
 		"replace_text": _hint_bridge_merge_replaces(),
 		"spawn": spawn
 	}
@@ -431,7 +431,7 @@ static func _stable_bridge_effect() -> Dictionary:
 	spawn.append_array(_straight_bridge_spawn())
 	return {
 		"remove_at": _river_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _bridge_cells()),
+		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _bridge_cells(), {}, _creek_cells_for_bridge()),
 		"replace_text": _hint_bridge_merge_replaces(),
 		"spawn": spawn
 	}

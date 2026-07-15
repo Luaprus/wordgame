@@ -24,6 +24,7 @@ var player_abilities: PackedStringArray = PackedStringArray()
 var current_page_origin := Vector2i.ZERO
 var bounded := false
 var allow_edge_transition := true
+var edge_transition_rows: Array = []
 var entities: Dictionary = {}
 var highlighted_cells: Array[Vector2i] = []
 var last_message := ""
@@ -62,6 +63,8 @@ var highlight_animation_duration := 0.8
 
 var _next_id := 1
 var _map_caption_ids: Dictionary = {}
+var _sentence_caption_ids: Dictionary = {}
+var _active_sentence_matches: Dictionary = {}
 
 func load_level(level: Dictionary) -> void:
 	clear()
@@ -69,6 +72,7 @@ func load_level(level: Dictionary) -> void:
 	screen_size = level.get("screen_size", screen_size)
 	bounded = bool(level.get("bounded", false))
 	allow_edge_transition = bool(level.get("allow_edge_transition", true))
+	edge_transition_rows = level.get("edge_transition_rows", []).duplicate()
 	rows = level.get("rows", [])
 	player_pos = level.get("player_start", player_pos)
 	facing = level.get("player_facing", Vector2i(1, 0))
@@ -124,6 +128,7 @@ func clear() -> void:
 	player_text = "我"
 	bounded = false
 	allow_edge_transition = true
+	edge_transition_rows.clear()
 	player_abilities = PackedStringArray()
 	ignored_row_texts = PackedStringArray(["我"])
 	entity_configs.clear()
@@ -153,6 +158,8 @@ func clear() -> void:
 	current_page_origin = Vector2i.ZERO
 	_next_id = 1
 	_map_caption_ids.clear()
+	_sentence_caption_ids.clear()
+	_active_sentence_matches.clear()
 	rule_engine.reset()
 
 func try_player_action(action: String, direction := Vector2i.ZERO) -> Dictionary:
@@ -305,7 +312,7 @@ func _check_move_bounds(target: Vector2i) -> Dictionary:
 		return {"success": true}
 	if target.x < 0 or target.y < 0 or target.y >= screen_size.y:
 		return {"success": false, "message": "boundary"}
-	if target.x >= screen_size.x and allow_edge_transition:
+	if target.x >= screen_size.x and allow_edge_transition and (edge_transition_rows.is_empty() or edge_transition_rows.has(target.y)):
 		return {
 			"success": true,
 			"transition": "next_level",
@@ -396,7 +403,12 @@ func split_front() -> Dictionary:
 	var split_positions := _split_positions_for(entity)
 	if split_positions.size() != 2:
 		return {"success": false, "message": "split rule needs two positions"}
-	var split_effect := _effect_for_target(split_effects.get(entity.text, {}), entity.grid_pos)
+	var split_effect: Dictionary = _decorate_split_effect(
+		_effect_for_target(split_effects.get(entity.text, {}), entity.grid_pos),
+		entity,
+		parts,
+		split_positions
+	)
 	var space_result := _make_room_for_split(entity, split_positions, split_effect.get("remove_at", []))
 	if not space_result.success:
 		return space_result
@@ -602,7 +614,9 @@ func try_merge_entities(from_pos: Vector2i, to_pos: Vector2i) -> Dictionary:
 	var second_text := str(second.text)
 	var first_pos := first.grid_pos
 	var second_pos := second.grid_pos
-	var split_positions := _merge_split_positions(merged_text, first, second)
+	var split_positions: Array[Vector2i] = []
+	if bool(current_level.get("preserve_merge_split_positions", true)):
+		split_positions = _merge_split_positions(merged_text, first, second)
 	entities.erase(first.id)
 	entities.erase(second.id)
 	var merged := add_entity(merged_text, to_pos, _config_for_text_at(merged_text, to_pos, {
@@ -669,21 +683,53 @@ func check_sentence_rules() -> Dictionary:
 		entity.highlighted = false
 	var result := {}
 	var evaluation: Dictionary = rule_engine.evaluate(entities, sentence_rules, Callable(self, "get_entity_at"))
-	for cell in evaluation.get("highlighted_cells", []):
-		highlighted_cells.append(cell)
-		highlight_animation_strengths[_cell_key(cell)] = 1.0
-		var entity := get_entity_at(cell)
-		if entity:
-			entity.highlighted = true
 	var matches: Dictionary = evaluation.get("matches", {})
+	var active_matches: Dictionary = {}
 	for sentence in matches.keys():
 		var match: Dictionary = matches[sentence]
 		var config: Dictionary = match.get("config", {})
 		var found_cells: Array[Vector2i] = match.get("cells", [])
+		if not _sentence_player_condition_matches(config, found_cells):
+			continue
+		active_matches[sentence] = match
+	for sentence_key in sentence_rules.keys():
+		var rule_sentence := str(sentence_key)
+		var rule_config: Dictionary = sentence_rules[sentence_key]
+		if bool(rule_config.get("remove_caption_on_miss", false)) and not active_matches.has(rule_sentence):
+			_remove_sentence_caption(rule_sentence)
+	for sentence in active_matches.keys():
+		var match: Dictionary = active_matches[sentence]
+		var config: Dictionary = match.get("config", {})
+		var found_cells: Array[Vector2i] = match.get("cells", [])
+		for cell in found_cells:
+			highlighted_cells.append(cell)
+			highlight_animation_strengths[_cell_key(cell)] = 1.0
+			var entity := get_entity_at(cell)
+			if entity:
+				entity.highlighted = true
 		last_message = str(match.get("message", ""))
+		if not _active_sentence_matches.has(sentence) and config.has("on_match_effect"):
+			_apply_map_effect(config.on_match_effect)
 		_spawn_sentence_caption(str(sentence), config, found_cells)
 		result[sentence] = {"message": last_message, "cells": found_cells}
+	_active_sentence_matches = {}
+	for sentence in active_matches.keys():
+		_active_sentence_matches[sentence] = true
 	return result
+
+func _sentence_player_condition_matches(config: Dictionary, cells: Array[Vector2i]) -> bool:
+	if not config.has("required_player_at"):
+		return true
+	var requirement: Dictionary = config.required_player_at
+	if not str(requirement.get("text", "")).is_empty() and player_text != str(requirement.text):
+		return false
+	if cells.is_empty():
+		return false
+	var anchor := cells[0]
+	if str(requirement.get("anchor", "first")) == "last":
+		anchor = cells[cells.size() - 1]
+	var offset: Vector2i = requirement.get("offset", Vector2i.ZERO)
+	return player_pos == anchor + offset
 
 func update_page() -> void:
 	current_page_origin = Vector2i(
@@ -743,7 +789,19 @@ func _spawn_sentence_caption(sentence: String, config: Dictionary, cells: Array[
 	var caption_text := str(config.get("message", ""))
 	if caption_text.is_empty():
 		return
-	spawn_map_caption(caption_text, cells[0] + Vector2i(0, 1), config)
+	var caption := spawn_map_caption(caption_text, cells[0] + Vector2i(0, 1), config)
+	if caption:
+		_sentence_caption_ids[sentence] = caption.id
+
+func _remove_sentence_caption(sentence: String) -> void:
+	if not _sentence_caption_ids.has(sentence):
+		return
+	var caption_id := str(_sentence_caption_ids[sentence])
+	var caption: WordEntity = entities.get(caption_id)
+	if caption and _map_caption_ids.get(caption.text, "") == caption.id:
+		_map_caption_ids.erase(caption.text)
+	entities.erase(caption_id)
+	_sentence_caption_ids.erase(sentence)
 
 func _spawn_interaction_caption(entity: WordEntity) -> void:
 	if entity.interact_caption_lines.is_empty():
@@ -760,7 +818,17 @@ func _spawn_interaction_caption(entity: WordEntity) -> void:
 func _split_positions_for(entity: WordEntity) -> Array[Vector2i]:
 	if not entity.split_positions.is_empty():
 		return entity.split_positions.duplicate()
-	return [entity.grid_pos, entity.grid_pos + facing]
+	var forward_pos := entity.grid_pos + facing
+	if _can_use_default_split_cell(entity, forward_pos):
+		return [entity.grid_pos, forward_pos]
+	# The forward cell is blocked: split toward the player and make room behind them.
+	return [entity.grid_pos, entity.grid_pos - facing]
+
+func _can_use_default_split_cell(entity: WordEntity, pos: Vector2i) -> bool:
+	if not _check_entity_bounds(pos).success:
+		return false
+	var blocker := get_entity_at(pos)
+	return blocker == null or blocker.id == entity.id
 
 func _make_room_for_split(entity: WordEntity, split_positions: Array[Vector2i], removable_positions: Array = []) -> Dictionary:
 	var split_direction := Vector2i.RIGHT
@@ -773,13 +841,29 @@ func _make_room_for_split(entity: WordEntity, split_positions: Array[Vector2i], 
 			if i == 0:
 				push_direction = -split_direction
 			var pushed_pos := player_pos + push_direction
-			if get_entity_at(pushed_pos):
-				return {"success": false, "message": "player split target blocked"}
+			if not _is_valid_split_escape(pushed_pos, split_positions):
+				var side_escape := _find_split_side_escape(split_positions)
+				if side_escape == Vector2i.ZERO:
+					return {"success": false, "message": "player split target blocked"}
+				pushed_pos = side_escape
 			player_pos = pushed_pos
 		var blocker := get_entity_at(pos)
 		if blocker and blocker.id != entity.id and not removable_positions.has(pos):
 			return {"success": false, "message": "split target blocked"}
 	return {"success": true}
+
+func _is_valid_split_escape(pos: Vector2i, split_positions: Array[Vector2i]) -> bool:
+	if not _check_entity_bounds(pos).success or split_positions.has(pos):
+		return false
+	return get_entity_at(pos) == null
+
+func _find_split_side_escape(split_positions: Array[Vector2i]) -> Vector2i:
+	var side_directions := [Vector2i(-facing.y, facing.x), Vector2i(facing.y, -facing.x)]
+	for side in side_directions:
+		var candidate: Vector2i = player_pos + side
+		if _is_valid_split_escape(candidate, split_positions):
+			return candidate
+	return Vector2i.ZERO
 
 func _merge_split_positions(merged_text: String, first: WordEntity, second: WordEntity) -> Array[Vector2i]:
 	var parts: Array = split_rules.get(merged_text, [])
@@ -805,8 +889,32 @@ func _merge_split_positions(merged_text: String, first: WordEntity, second: Word
 
 func _apply_map_effect(config: Dictionary) -> void:
 	var preserved_entities: Array[Dictionary] = []
+	var deferred_bridge_cells: Array[Vector2i] = _get_deferred_bridge_merge_cells(config)
+	var deferred_bridge_removals: Array[Vector2i] = _get_deferred_bridge_merge_removals(config)
+	var deferred_tree_removals: Array[Vector2i] = _get_deferred_bridge_merge_tree_removals(config)
+	var deferred_split_cells: Array[Vector2i] = _get_deferred_bridge_split_cells(config)
+	var split_part_cells: Array = config.get("split_part_cells", [])
+	var deferred_split_removals: Array[Vector2i] = []
+	var deferred_split_spawns: Array[Dictionary] = []
+	var deferred_bridge_spawns: Array[Dictionary] = []
+	for spawn_config_value in config.get("spawn", []):
+		if not spawn_config_value is Dictionary:
+			continue
+		var deferred_spawn_config: Dictionary = spawn_config_value
+		if not deferred_spawn_config.has("pos"):
+			continue
+		if not deferred_bridge_cells.is_empty():
+			deferred_bridge_spawns.append(deferred_spawn_config.duplicate(true))
+		if not deferred_split_cells.is_empty():
+			deferred_split_spawns.append(deferred_spawn_config.duplicate(true))
+	for pos_value in config.get("remove_at", []):
+		var remove_pos: Vector2i = pos_value
+		if not deferred_split_cells.is_empty() and not split_part_cells.has(remove_pos) and not deferred_split_removals.has(remove_pos):
+			deferred_split_removals.append(remove_pos)
 	for text in config.get("preserve_texts", []):
 		preserved_entities.append_array(_snapshot_entities_by_text(str(text)))
+	if bool(config.get("preserve_persistent_entities", false)):
+		preserved_entities.append_array(_snapshot_persistent_entities())
 	if bool(config.get("reset_level", false)):
 		var reset_player_pos = config.get("reset_player_pos", current_level.get("player_start", player_pos))
 		load_level(current_level.duplicate(true))
@@ -832,6 +940,8 @@ func _apply_map_effect(config: Dictionary) -> void:
 	if config.has("set_player_pos"):
 		player_pos = config.set_player_pos
 		update_page()
+	if config.has("swap_player_with_entities"):
+		_swap_player_with_entities(config.swap_player_with_entities)
 	if config.has("set_player_visible"):
 		player_visible = bool(config.set_player_visible)
 	if config.has("set_player_text"):
@@ -842,7 +952,33 @@ func _apply_map_effect(config: Dictionary) -> void:
 	if config.has("set_event_locked"):
 		player_event_locked = bool(config.set_event_locked)
 	if config.has("visual_effect"):
-		visual_effect_requests.append(config.visual_effect.duplicate(true))
+		var visual_effect_dict: Dictionary = config.visual_effect.duplicate(true)
+		if not deferred_bridge_removals.is_empty():
+			visual_effect_dict["deferred_remove_at"] = deferred_bridge_removals.duplicate()
+		if not deferred_bridge_spawns.is_empty():
+			visual_effect_dict["deferred_spawn"] = deferred_bridge_spawns.duplicate(true)
+		if not deferred_tree_removals.is_empty():
+			visual_effect_dict["deferred_tree_remove_at"] = deferred_tree_removals.duplicate()
+		if not deferred_split_removals.is_empty():
+			visual_effect_dict["deferred_split_remove_at"] = deferred_split_removals.duplicate()
+		if not deferred_split_spawns.is_empty():
+			visual_effect_dict["deferred_split_spawn"] = deferred_split_spawns.duplicate(true)
+		visual_effect_requests.append(visual_effect_dict)
+	if config.has("visual_effects"):
+		for visual_effect_value in config.visual_effects:
+			if visual_effect_value is Dictionary:
+				var visual_request: Dictionary = visual_effect_value.duplicate(true)
+				if not deferred_bridge_removals.is_empty() and str(visual_request.get("type", "")) == "bridge_tree_transition" and str(visual_request.get("mode", "")) == "merge":
+					visual_request["deferred_remove_at"] = deferred_bridge_removals.duplicate()
+				if not deferred_bridge_spawns.is_empty() and str(visual_request.get("type", "")) == "bridge_tree_transition" and str(visual_request.get("mode", "")) == "merge":
+					visual_request["deferred_spawn"] = deferred_bridge_spawns.duplicate(true)
+				if not deferred_tree_removals.is_empty() and str(visual_request.get("type", "")) == "bridge_tree_transition" and str(visual_request.get("mode", "")) == "merge":
+					visual_request["deferred_tree_remove_at"] = deferred_tree_removals.duplicate()
+				if not deferred_split_removals.is_empty() and str(visual_request.get("type", "")) == "bridge_tree_transition" and str(visual_request.get("mode", "")) == "split":
+					visual_request["deferred_split_remove_at"] = deferred_split_removals.duplicate()
+				if not deferred_split_spawns.is_empty() and str(visual_request.get("type", "")) == "bridge_tree_transition" and str(visual_request.get("mode", "")) == "split":
+					visual_request["deferred_split_spawn"] = deferred_split_spawns.duplicate(true)
+				visual_effect_requests.append(visual_request)
 	if config.has("set_pending_interact_effect"):
 		pending_interact_effect = config.set_pending_interact_effect
 	if config.has("set_pending_timed_effect"):
@@ -853,7 +989,11 @@ func _apply_map_effect(config: Dictionary) -> void:
 	for text in config.get("remove_texts", []):
 		_erase_entities_by_text(str(text))
 	for pos in config.get("remove_at", []):
+		if deferred_bridge_removals.has(pos) or deferred_tree_removals.has(pos) or deferred_split_removals.has(pos):
+			continue
 		_erase_entities_at(pos)
+	if not deferred_bridge_cells.is_empty():
+		remove_entities_at(deferred_bridge_cells, "桥")
 	for remove_config in config.get("remove_matching", []):
 		_erase_matching_entities(remove_config)
 	for matching_config in config.get("set_matching_config", []):
@@ -876,6 +1016,8 @@ func _apply_map_effect(config: Dictionary) -> void:
 		if text.is_empty() or not entry.has("pos"):
 			continue
 		var pos: Vector2i = entry.pos
+		if not deferred_bridge_cells.is_empty() or not deferred_split_cells.is_empty():
+			continue
 		var overrides: Dictionary = entry.get("config", {})
 		add_entity(text, pos, _config_for_text_at(text, pos, overrides))
 	for behind_config in config.get("spawn_behind_player", []):
@@ -919,6 +1061,76 @@ func consume_visual_effects() -> Array:
 	var requests: Array = visual_effect_requests.duplicate(true)
 	visual_effect_requests.clear()
 	return requests
+
+func _get_deferred_bridge_merge_removals(config: Dictionary) -> Array[Vector2i]:
+	var bridge_cells := _get_deferred_bridge_merge_cells(config)
+	if bridge_cells.is_empty():
+		return []
+	var deferred: Array[Vector2i] = []
+	for pos_value in config.get("remove_at", []):
+		var pos: Vector2i = pos_value
+		if not deferred.has(pos):
+			deferred.append(pos)
+	return deferred
+
+func _get_deferred_bridge_merge_cells(config: Dictionary) -> Array[Vector2i]:
+	var bridge_cells: Array[Vector2i] = []
+	var visual_effects: Array = []
+	if config.has("visual_effect"):
+		visual_effects.append(config.visual_effect)
+	visual_effects.append_array(config.get("visual_effects", []))
+	for visual_effect_value in visual_effects:
+		if not visual_effect_value is Dictionary:
+			continue
+		var visual_effect: Dictionary = visual_effect_value
+		if str(visual_effect.get("type", "")) != "bridge_tree_transition" or str(visual_effect.get("mode", "")) != "merge":
+			continue
+		for cell_value in visual_effect.get("bridge_cells", []):
+			var cell: Vector2i = cell_value
+			if not bridge_cells.has(cell):
+				bridge_cells.append(cell)
+	return bridge_cells
+
+func _get_deferred_bridge_merge_tree_removals(config: Dictionary) -> Array[Vector2i]:
+	var tree_cells: Array[Vector2i] = []
+	var visual_effects: Array = []
+	if config.has("visual_effect"):
+		visual_effects.append(config.visual_effect)
+	visual_effects.append_array(config.get("visual_effects", []))
+	for visual_effect_value in visual_effects:
+		if not visual_effect_value is Dictionary:
+			continue
+		var visual_effect: Dictionary = visual_effect_value
+		if str(visual_effect.get("type", "")) != "bridge_tree_transition" or str(visual_effect.get("mode", "")) != "merge":
+			continue
+		for cell_value in visual_effect.get("tree_cells", []):
+			var cell: Vector2i = cell_value
+			if not tree_cells.has(cell):
+				tree_cells.append(cell)
+	var deferred: Array[Vector2i] = []
+	for pos_value in config.get("remove_at", []):
+		var pos: Vector2i = pos_value
+		if tree_cells.has(pos) and not deferred.has(pos):
+			deferred.append(pos)
+	return deferred
+
+func _get_deferred_bridge_split_cells(config: Dictionary) -> Array[Vector2i]:
+	var bridge_cells: Array[Vector2i] = []
+	var visual_effects: Array = []
+	if config.has("visual_effect"):
+		visual_effects.append(config.visual_effect)
+	visual_effects.append_array(config.get("visual_effects", []))
+	for visual_effect_value in visual_effects:
+		if not visual_effect_value is Dictionary:
+			continue
+		var visual_effect: Dictionary = visual_effect_value
+		if str(visual_effect.get("type", "")) != "bridge_tree_transition" or str(visual_effect.get("mode", "")) != "split":
+			continue
+		for cell_value in visual_effect.get("bridge_cells", []):
+			var cell: Vector2i = cell_value
+			if not bridge_cells.has(cell):
+				bridge_cells.append(cell)
+	return bridge_cells
 
 func _apply_move_player_toward(move_config: Dictionary) -> void:
 	var target: Vector2i = move_config.get("target", player_pos)
@@ -995,6 +1207,39 @@ func _effect_for_target(effect_config, target_pos: Vector2i) -> Dictionary:
 		if entry.get("pos", Vector2i.ZERO) == target_pos:
 			return entry.get("effect", {})
 	return config.get("default", {})
+
+func _decorate_split_effect(effect_config, entity: WordEntity, parts: Array, split_positions: Array[Vector2i]) -> Dictionary:
+	if not effect_config is Dictionary:
+		return {}
+	var config: Dictionary = effect_config.duplicate(true)
+	config["split_part_cells"] = split_positions.duplicate()
+	if config.has("visual_effect"):
+		config["visual_effect"] = _decorate_split_visual_request(config.visual_effect, entity, parts, split_positions)
+	if config.has("visual_effects"):
+		var decorated_effects: Array = []
+		for visual_effect in config.visual_effects:
+			decorated_effects.append(_decorate_split_visual_request(visual_effect, entity, parts, split_positions))
+		config["visual_effects"] = decorated_effects
+	if config.has("condition"):
+		var condition: Dictionary = config.condition.duplicate(true)
+		if condition.has("then"):
+			condition["then"] = _decorate_split_effect(condition.then, entity, parts, split_positions)
+		if condition.has("else"):
+			condition["else"] = _decorate_split_effect(condition.else, entity, parts, split_positions)
+		config["condition"] = condition
+	return config
+
+func _decorate_split_visual_request(request_config, entity: WordEntity, parts: Array, split_positions: Array[Vector2i]) -> Dictionary:
+	if not request_config is Dictionary:
+		return {}
+	var request: Dictionary = request_config.duplicate(true)
+	if str(request.get("type", "")) != "word_split_transition":
+		return request
+	request["source_text"] = str(request.get("source_text", entity.text))
+	request["source_cell"] = entity.grid_pos
+	request["part_texts"] = parts.duplicate()
+	request["part_cells"] = split_positions.duplicate()
+	return request
 
 func _trigger_entity_move_effect(entity: WordEntity, old_pos: Vector2i, new_pos: Vector2i, direction: Vector2i) -> void:
 	if not entity_move_effects.has(entity.text):
@@ -1117,6 +1362,34 @@ func _erase_entities_at(pos: Vector2i) -> void:
 			_map_caption_ids.erase(entity.text)
 		entities.erase(id)
 
+func remove_entities_at(positions: Array, text_filter := "") -> void:
+	for pos_value in positions:
+		var pos: Vector2i = pos_value
+		if text_filter.is_empty():
+			_erase_entities_at(pos)
+			continue
+		var erased_ids: Array[String] = []
+		for entity in entities.values():
+			if entity.text == text_filter and entity.cells.has(pos) and not erased_ids.has(entity.id):
+				erased_ids.append(entity.id)
+		for id in erased_ids:
+			var entity: WordEntity = entities.get(id)
+			if entity and _map_caption_ids.get(entity.text, "") == id:
+				_map_caption_ids.erase(entity.text)
+			entities.erase(id)
+
+func spawn_entities(entries: Array) -> void:
+	for entry_value in entries:
+		if not entry_value is Dictionary:
+			continue
+		var entry: Dictionary = entry_value
+		var text := str(entry.get("text", ""))
+		if text.is_empty() or not entry.has("pos"):
+			continue
+		var pos: Vector2i = entry.pos
+		var overrides: Dictionary = entry.get("config", {})
+		add_entity(text, pos, _config_for_text_at(text, pos, overrides))
+
 func _erase_entities_by_text(text: String) -> void:
 	var erased_ids: Array[String] = []
 	for entity in entities.values():
@@ -1132,11 +1405,14 @@ func _erase_matching_entities(remove_config: Dictionary) -> void:
 	var positions: Array = remove_config.get("positions", [])
 	var texts: Array = remove_config.get("texts", [])
 	var require_solid = remove_config.get("solid", null)
+	var require_temporary_description = remove_config.get("temporary_description", null)
 	var erased_ids: Array[String] = []
 	for entity in entities.values():
 		if not texts.is_empty() and not texts.has(entity.text):
 			continue
 		if require_solid != null and entity.solid != bool(require_solid):
+			continue
+		if require_temporary_description != null and entity.temporary_description != bool(require_temporary_description):
 			continue
 		var matches_position := positions.is_empty()
 		for pos in positions:
@@ -1165,6 +1441,10 @@ func _snapshot_entities_by_text(text: String) -> Array[Dictionary]:
 				"pushable": entity.pushable,
 				"deletable": entity.deletable,
 				"splittable": entity.splittable,
+				"temporary_description": entity.temporary_description,
+				"persistent": entity.persistent,
+				"visual_rotation_degrees": entity.visual_rotation_degrees,
+				"visual_color": entity.visual_color,
 				"interact_text": entity.interact_text,
 				"interact_effect": entity.interact_effect.duplicate(true),
 				"interact_caption_lines": entity.interact_caption_lines.duplicate(),
@@ -1175,6 +1455,57 @@ func _snapshot_entities_by_text(text: String) -> Array[Dictionary]:
 			}
 		})
 	return snapshots
+
+func _snapshot_persistent_entities() -> Array[Dictionary]:
+	var snapshots: Array[Dictionary] = []
+	for entity in entities.values():
+		if not entity.persistent:
+			continue
+		snapshots.append({
+			"id": entity.id,
+			"text": entity.text,
+			"pos": entity.grid_pos,
+			"config": {
+				"solid": entity.solid,
+				"pushable": entity.pushable,
+				"deletable": entity.deletable,
+				"splittable": entity.splittable,
+				"temporary_description": entity.temporary_description,
+				"persistent": entity.persistent,
+				"visual_rotation_degrees": entity.visual_rotation_degrees,
+				"visual_color": entity.visual_color,
+				"interact_text": entity.interact_text,
+				"interact_effect": entity.interact_effect.duplicate(true),
+				"interact_caption_lines": entity.interact_caption_lines.duplicate(),
+				"interact_caption_solid": entity.interact_caption_solid,
+				"interact_caption_pos": entity.interact_caption_pos,
+				"has_interact_caption_pos": entity.has_interact_caption_pos,
+				"split_positions": entity.split_positions.duplicate()
+			}
+		})
+	return snapshots
+
+func _swap_player_with_entities(swap_config: Dictionary) -> void:
+	var source_positions: Array = swap_config.get("positions", [])
+	if source_positions.is_empty():
+		return
+	var source_origin: Vector2i = source_positions[0]
+	var player_origin := player_pos
+	var target_offsets: Array = swap_config.get("target_offsets", [])
+	var moved_entities: Array[WordEntity] = []
+	for source_pos in source_positions:
+		var entity := get_any_entity_at(source_pos)
+		if entity and not moved_entities.has(entity):
+			moved_entities.append(entity)
+	for index in range(moved_entities.size()):
+		var entity := moved_entities[index]
+		var offset := entity.grid_pos - source_origin
+		if index < target_offsets.size():
+			offset = target_offsets[index]
+		move_entity_to(entity.id, player_origin + offset)
+		entity.set_from_config(swap_config.get("config", {}))
+	player_pos = swap_config.get("player_target", source_origin)
+	update_page()
 
 func _set_matching_entity_config(matching_config: Dictionary) -> void:
 	var positions: Array = matching_config.get("positions", [])

@@ -9,15 +9,19 @@ static func effect(mode: String, tree_cells: Array, bridge_cells: Array) -> Dict
 		"tree_cells": tree_cells.duplicate(),
 		"bridge_cells": bridge_cells.duplicate(),
 		"tree_fade_duration": 0.7,
+		"creek_fade_duration": 0.5,
 		"tree_fade_in_duration": 0.8,
 		"bridge_step_delay": 0.16,
 		"bridge_fade_duration": 0.32
 	}
 
-static func merge_effect(tree_cells: Array, bridge_cells: Array, before_effect: Dictionary = {}) -> Dictionary:
+static func merge_effect(tree_cells: Array, bridge_cells: Array, before_effect: Dictionary = {}, creek_fade_cells: Array = []) -> Dictionary:
 	var merge_visual := effect("merge", tree_cells, bridge_cells)
+	merge_visual["reverse_split"] = true
 	if not before_effect.is_empty():
 		merge_visual["before_effect"] = before_effect.duplicate(true)
+	if not creek_fade_cells.is_empty():
+		merge_visual["creek_fade_cells"] = creek_fade_cells.duplicate()
 	return merge_visual
 
 static func key_info_emphasis(cells: Array) -> Dictionary:

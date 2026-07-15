@@ -125,7 +125,8 @@ static func _bridge_merge_effect() -> Dictionary:
 		"visual_effect": BridgeTreeVisuals.merge_effect(
 			_tree_cells(),
 			_river_bridge_cells(),
-			BridgeTreeVisuals.key_info_emphasis(key_info_cells)
+			BridgeTreeVisuals.key_info_emphasis(key_info_cells),
+			_creek_replaced_cells()
 		),
 		"replace_text": [
 			{

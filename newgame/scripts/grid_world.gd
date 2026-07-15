@@ -889,6 +889,28 @@ func _merge_split_positions(merged_text: String, first: WordEntity, second: Word
 
 func _apply_map_effect(config: Dictionary) -> void:
 	var preserved_entities: Array[Dictionary] = []
+	var deferred_bridge_cells: Array[Vector2i] = _get_deferred_bridge_merge_cells(config)
+	var deferred_bridge_removals: Array[Vector2i] = _get_deferred_bridge_merge_removals(config)
+	var deferred_tree_removals: Array[Vector2i] = _get_deferred_bridge_merge_tree_removals(config)
+	var deferred_split_cells: Array[Vector2i] = _get_deferred_bridge_split_cells(config)
+	var split_part_cells: Array = config.get("split_part_cells", [])
+	var deferred_split_removals: Array[Vector2i] = []
+	var deferred_split_spawns: Array[Dictionary] = []
+	var deferred_bridge_spawns: Array[Dictionary] = []
+	for spawn_config_value in config.get("spawn", []):
+		if not spawn_config_value is Dictionary:
+			continue
+		var deferred_spawn_config: Dictionary = spawn_config_value
+		if not deferred_spawn_config.has("pos"):
+			continue
+		if not deferred_bridge_cells.is_empty():
+			deferred_bridge_spawns.append(deferred_spawn_config.duplicate(true))
+		if not deferred_split_cells.is_empty():
+			deferred_split_spawns.append(deferred_spawn_config.duplicate(true))
+	for pos_value in config.get("remove_at", []):
+		var remove_pos: Vector2i = pos_value
+		if not deferred_split_cells.is_empty() and not split_part_cells.has(remove_pos) and not deferred_split_removals.has(remove_pos):
+			deferred_split_removals.append(remove_pos)
 	for text in config.get("preserve_texts", []):
 		preserved_entities.append_array(_snapshot_entities_by_text(str(text)))
 	if bool(config.get("preserve_persistent_entities", false)):
@@ -930,11 +952,33 @@ func _apply_map_effect(config: Dictionary) -> void:
 	if config.has("set_event_locked"):
 		player_event_locked = bool(config.set_event_locked)
 	if config.has("visual_effect"):
-		visual_effect_requests.append(config.visual_effect.duplicate(true))
+		var visual_effect_dict: Dictionary = config.visual_effect.duplicate(true)
+		if not deferred_bridge_removals.is_empty():
+			visual_effect_dict["deferred_remove_at"] = deferred_bridge_removals.duplicate()
+		if not deferred_bridge_spawns.is_empty():
+			visual_effect_dict["deferred_spawn"] = deferred_bridge_spawns.duplicate(true)
+		if not deferred_tree_removals.is_empty():
+			visual_effect_dict["deferred_tree_remove_at"] = deferred_tree_removals.duplicate()
+		if not deferred_split_removals.is_empty():
+			visual_effect_dict["deferred_split_remove_at"] = deferred_split_removals.duplicate()
+		if not deferred_split_spawns.is_empty():
+			visual_effect_dict["deferred_split_spawn"] = deferred_split_spawns.duplicate(true)
+		visual_effect_requests.append(visual_effect_dict)
 	if config.has("visual_effects"):
-		for visual_effect in config.visual_effects:
-			if visual_effect is Dictionary:
-				visual_effect_requests.append(visual_effect.duplicate(true))
+		for visual_effect_value in config.visual_effects:
+			if visual_effect_value is Dictionary:
+				var visual_request: Dictionary = visual_effect_value.duplicate(true)
+				if not deferred_bridge_removals.is_empty() and str(visual_request.get("type", "")) == "bridge_tree_transition" and str(visual_request.get("mode", "")) == "merge":
+					visual_request["deferred_remove_at"] = deferred_bridge_removals.duplicate()
+				if not deferred_bridge_spawns.is_empty() and str(visual_request.get("type", "")) == "bridge_tree_transition" and str(visual_request.get("mode", "")) == "merge":
+					visual_request["deferred_spawn"] = deferred_bridge_spawns.duplicate(true)
+				if not deferred_tree_removals.is_empty() and str(visual_request.get("type", "")) == "bridge_tree_transition" and str(visual_request.get("mode", "")) == "merge":
+					visual_request["deferred_tree_remove_at"] = deferred_tree_removals.duplicate()
+				if not deferred_split_removals.is_empty() and str(visual_request.get("type", "")) == "bridge_tree_transition" and str(visual_request.get("mode", "")) == "split":
+					visual_request["deferred_split_remove_at"] = deferred_split_removals.duplicate()
+				if not deferred_split_spawns.is_empty() and str(visual_request.get("type", "")) == "bridge_tree_transition" and str(visual_request.get("mode", "")) == "split":
+					visual_request["deferred_split_spawn"] = deferred_split_spawns.duplicate(true)
+				visual_effect_requests.append(visual_request)
 	if config.has("set_pending_interact_effect"):
 		pending_interact_effect = config.set_pending_interact_effect
 	if config.has("set_pending_timed_effect"):
@@ -945,7 +989,11 @@ func _apply_map_effect(config: Dictionary) -> void:
 	for text in config.get("remove_texts", []):
 		_erase_entities_by_text(str(text))
 	for pos in config.get("remove_at", []):
+		if deferred_bridge_removals.has(pos) or deferred_tree_removals.has(pos) or deferred_split_removals.has(pos):
+			continue
 		_erase_entities_at(pos)
+	if not deferred_bridge_cells.is_empty():
+		remove_entities_at(deferred_bridge_cells, "桥")
 	for remove_config in config.get("remove_matching", []):
 		_erase_matching_entities(remove_config)
 	for matching_config in config.get("set_matching_config", []):
@@ -968,6 +1016,8 @@ func _apply_map_effect(config: Dictionary) -> void:
 		if text.is_empty() or not entry.has("pos"):
 			continue
 		var pos: Vector2i = entry.pos
+		if not deferred_bridge_cells.is_empty() or not deferred_split_cells.is_empty():
+			continue
 		var overrides: Dictionary = entry.get("config", {})
 		add_entity(text, pos, _config_for_text_at(text, pos, overrides))
 	for behind_config in config.get("spawn_behind_player", []):
@@ -1011,6 +1061,76 @@ func consume_visual_effects() -> Array:
 	var requests: Array = visual_effect_requests.duplicate(true)
 	visual_effect_requests.clear()
 	return requests
+
+func _get_deferred_bridge_merge_removals(config: Dictionary) -> Array[Vector2i]:
+	var bridge_cells := _get_deferred_bridge_merge_cells(config)
+	if bridge_cells.is_empty():
+		return []
+	var deferred: Array[Vector2i] = []
+	for pos_value in config.get("remove_at", []):
+		var pos: Vector2i = pos_value
+		if not deferred.has(pos):
+			deferred.append(pos)
+	return deferred
+
+func _get_deferred_bridge_merge_cells(config: Dictionary) -> Array[Vector2i]:
+	var bridge_cells: Array[Vector2i] = []
+	var visual_effects: Array = []
+	if config.has("visual_effect"):
+		visual_effects.append(config.visual_effect)
+	visual_effects.append_array(config.get("visual_effects", []))
+	for visual_effect_value in visual_effects:
+		if not visual_effect_value is Dictionary:
+			continue
+		var visual_effect: Dictionary = visual_effect_value
+		if str(visual_effect.get("type", "")) != "bridge_tree_transition" or str(visual_effect.get("mode", "")) != "merge":
+			continue
+		for cell_value in visual_effect.get("bridge_cells", []):
+			var cell: Vector2i = cell_value
+			if not bridge_cells.has(cell):
+				bridge_cells.append(cell)
+	return bridge_cells
+
+func _get_deferred_bridge_merge_tree_removals(config: Dictionary) -> Array[Vector2i]:
+	var tree_cells: Array[Vector2i] = []
+	var visual_effects: Array = []
+	if config.has("visual_effect"):
+		visual_effects.append(config.visual_effect)
+	visual_effects.append_array(config.get("visual_effects", []))
+	for visual_effect_value in visual_effects:
+		if not visual_effect_value is Dictionary:
+			continue
+		var visual_effect: Dictionary = visual_effect_value
+		if str(visual_effect.get("type", "")) != "bridge_tree_transition" or str(visual_effect.get("mode", "")) != "merge":
+			continue
+		for cell_value in visual_effect.get("tree_cells", []):
+			var cell: Vector2i = cell_value
+			if not tree_cells.has(cell):
+				tree_cells.append(cell)
+	var deferred: Array[Vector2i] = []
+	for pos_value in config.get("remove_at", []):
+		var pos: Vector2i = pos_value
+		if tree_cells.has(pos) and not deferred.has(pos):
+			deferred.append(pos)
+	return deferred
+
+func _get_deferred_bridge_split_cells(config: Dictionary) -> Array[Vector2i]:
+	var bridge_cells: Array[Vector2i] = []
+	var visual_effects: Array = []
+	if config.has("visual_effect"):
+		visual_effects.append(config.visual_effect)
+	visual_effects.append_array(config.get("visual_effects", []))
+	for visual_effect_value in visual_effects:
+		if not visual_effect_value is Dictionary:
+			continue
+		var visual_effect: Dictionary = visual_effect_value
+		if str(visual_effect.get("type", "")) != "bridge_tree_transition" or str(visual_effect.get("mode", "")) != "split":
+			continue
+		for cell_value in visual_effect.get("bridge_cells", []):
+			var cell: Vector2i = cell_value
+			if not bridge_cells.has(cell):
+				bridge_cells.append(cell)
+	return bridge_cells
 
 func _apply_move_player_toward(move_config: Dictionary) -> void:
 	var target: Vector2i = move_config.get("target", player_pos)
@@ -1092,6 +1212,7 @@ func _decorate_split_effect(effect_config, entity: WordEntity, parts: Array, spl
 	if not effect_config is Dictionary:
 		return {}
 	var config: Dictionary = effect_config.duplicate(true)
+	config["split_part_cells"] = split_positions.duplicate()
 	if config.has("visual_effect"):
 		config["visual_effect"] = _decorate_split_visual_request(config.visual_effect, entity, parts, split_positions)
 	if config.has("visual_effects"):
@@ -1240,6 +1361,34 @@ func _erase_entities_at(pos: Vector2i) -> void:
 		if entity and _map_caption_ids.get(entity.text, "") == id:
 			_map_caption_ids.erase(entity.text)
 		entities.erase(id)
+
+func remove_entities_at(positions: Array, text_filter := "") -> void:
+	for pos_value in positions:
+		var pos: Vector2i = pos_value
+		if text_filter.is_empty():
+			_erase_entities_at(pos)
+			continue
+		var erased_ids: Array[String] = []
+		for entity in entities.values():
+			if entity.text == text_filter and entity.cells.has(pos) and not erased_ids.has(entity.id):
+				erased_ids.append(entity.id)
+		for id in erased_ids:
+			var entity: WordEntity = entities.get(id)
+			if entity and _map_caption_ids.get(entity.text, "") == id:
+				_map_caption_ids.erase(entity.text)
+			entities.erase(id)
+
+func spawn_entities(entries: Array) -> void:
+	for entry_value in entries:
+		if not entry_value is Dictionary:
+			continue
+		var entry: Dictionary = entry_value
+		var text := str(entry.get("text", ""))
+		if text.is_empty() or not entry.has("pos"):
+			continue
+		var pos: Vector2i = entry.pos
+		var overrides: Dictionary = entry.get("config", {})
+		add_entity(text, pos, _config_for_text_at(text, pos, overrides))
 
 func _erase_entities_by_text(text: String) -> void:
 	var erased_ids: Array[String] = []

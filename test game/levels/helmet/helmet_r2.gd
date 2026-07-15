@@ -315,7 +315,7 @@ static func _bridge_phase_one_effect() -> Dictionary:
 	spawn.append_array(_phase_one_bridge_spawn())
 	return {
 		"remove_at": _river_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _bridge_cells(-3)),
+		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _bridge_cells(-3), {}, _creek_cells_for_bridge(-3)),
 		"replace_text": [_hint_bridge_merge_replace()],
 		"spawn": spawn
 	}
@@ -325,7 +325,7 @@ static func _bridge_phase_two_remerge_effect() -> Dictionary:
 	spawn.append_array(_bridge_spawn(0))
 	return {
 		"remove_at": _river_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _bridge_cells(0)),
+		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _bridge_cells(0), {}, _creek_cells_for_bridge(0)),
 		"replace_text": [_hint_bridge_merge_replace()],
 		"spawn": spawn
 	}
@@ -356,12 +356,22 @@ static func _distance_solved_effect() -> Dictionary:
 
 static func _restore_initial_effect() -> Dictionary:
 	return {
+		"condition": {
+			"pos": Vector2i(8, 7),
+			"text": "三",
+			"then": _restore_initial_effect_at(0),
+			"else": _restore_initial_effect_at(-3)
+		}
+	}
+
+static func _restore_initial_effect_at(offset: int) -> Dictionary:
+	return {
 		"remove_at": _river_dynamic_cells(),
 		"visual_effects": [
 			BridgeTreeVisuals.split_effect(
 				_tree_cells(),
-				_bridge_cells(-3) + _bridge_cells(0),
-				_creek_cells_for_bridge(-3) + _creek_cells_for_bridge(0)
+				_bridge_cells(offset),
+				_creek_cells_for_bridge(offset)
 			),
 			WordSplitVisuals.effect("桥", ["乔", "木"])
 		],

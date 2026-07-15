@@ -345,7 +345,7 @@ static func _bridge_merge_blocked_effect() -> Dictionary:
 	spawn.append_array(_bridge_spawn())
 	return {
 		"remove_at": _river_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _bridge_cells()),
+		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _bridge_cells(), {}, _creek_cells_for_blocked_bridge()),
 		"replace_text": [_hint_bridge_merge_replace()],
 		"spawn": spawn
 	}
@@ -355,7 +355,7 @@ static func _bridge_merge_open_effect() -> Dictionary:
 	spawn.append_array(_bridge_spawn())
 	return {
 		"remove_at": _river_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _bridge_cells()),
+		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _bridge_cells(), {}, _creek_cells_for_blocked_bridge()),
 		"replace_text": [_hint_bridge_merge_replace()],
 		"spawn": spawn
 	}
