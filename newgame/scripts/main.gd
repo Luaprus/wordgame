@@ -3,6 +3,10 @@ extends Node2D
 const GridWorld = preload("res://scripts/grid_world.gd")
 const WordEntity = preload("res://scripts/word_entity.gd")
 const LevelLoader = preload("res://scripts/level_loader.gd")
+const PoetOpening = preload("res://levels/prologue/poet_opening.gd")
+const ArtifactHall = preload("res://levels/hall/artifact_hall.gd")
+const PrincessCage = preload("res://levels/princess/princess_cage.gd")
+const PrincessRescueTransition = preload("res://levels/princess/princess_rescue_transition.gd")
 const HelmetTutorial = preload("res://levels/helmet/helmet_tutorial.gd")
 const HelmetR1 = preload("res://levels/helmet/helmet_r1.gd")
 const HelmetR2 = preload("res://levels/helmet/helmet_r2.gd")
@@ -55,17 +59,13 @@ const GLOVE_PREVIEW_SCENE_PATH := "res://levels/glove/glove_preview.tscn"
 const STARTUP_ENTRY_ARG_PREFIX := "--entry="
 const GLOVE_SCENE_SHORTCUT_KEY := KEY_F9
 const LEVEL_SEQUENCE := [
-	HelmetTutorial,
-	HelmetR1,
-	HelmetR2,
-	HelmetR3,
-	HelmetR4,
-	HelmetR5,
-	HelmetR6,
-	HelmetReturn
+	PoetOpening,
+	ArtifactHall,
+	PrincessCage,
+	PrincessRescueTransition
 ]
 
-@export var startup_level_index := 0
+@export var startup_level_index := 2
 @export var startup_player_pos := Vector2i(-1, -1)
 @export var startup_player_text := ""
 @export var startup_player_facing := Vector2i.ZERO
@@ -89,6 +89,7 @@ var direction_marker_fill: Polygon2D
 var direction_marker_outline: Line2D
 var direction_marker_timer: Timer
 var fullscreen_video_player: VideoStreamPlayer
+var black_screen_overlay: ColorRect
 var gem_burst_effect
 var light_glow_effect
 var pull_particle_effect
@@ -240,6 +241,13 @@ func _build_ui() -> void:
 	fullscreen_video_player.set_anchors_preset(Control.PRESET_FULL_RECT)
 	fullscreen_video_player.finished.connect(_on_fullscreen_video_finished)
 	canvas.add_child(fullscreen_video_player)
+	black_screen_overlay = ColorRect.new()
+	black_screen_overlay.name = "BlackScreenOverlay"
+	black_screen_overlay.color = Color.BLACK
+	black_screen_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	black_screen_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	black_screen_overlay.visible = false
+	canvas.add_child(black_screen_overlay)
 
 func _refresh_view(_message := "") -> void:
 	_sync_entity_labels()
@@ -409,7 +417,7 @@ func _update_intro_sequence(delta: float) -> void:
 	_play_gem_burst_preview()
 
 func _begin_gem_reveal() -> void:
-	if current_level_index != 0 or intro_phase != "prompt":
+	if not _is_helmet_tutorial_level() or intro_phase != "prompt":
 		return
 	var light_cells := _current_light_cells()
 	world._apply_map_effect({
@@ -443,7 +451,7 @@ func _restore_gems_without_light_overlap() -> Array:
 	return restored
 
 func _begin_intro_prompt() -> void:
-	if current_level_index != 0 or intro_phase != "lights":
+	if not _is_helmet_tutorial_level() or intro_phase != "lights":
 		return
 	world.set_input_locked(true)
 	world.set_event_locked(true)
@@ -555,7 +563,7 @@ func _apply_result(result: Dictionary) -> void:
 	_refresh_view(str(result.get("message", "")))
 	_consume_visual_effects(visual_requests, visual_contexts)
 	_consume_fullscreen_video_request()
-	if current_level_index == 0 and intro_phase == "lights" and result.get("success", false) and not world.has_pending_timed_effect():
+	if _is_helmet_tutorial_level() and intro_phase == "lights" and result.get("success", false) and not world.has_pending_timed_effect():
 		_begin_intro_prompt()
 	if result.has("pending_delay"):
 		if world_event_timer.is_stopped():
@@ -625,6 +633,9 @@ func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> 
 			continue
 		if effect_type == "word_merge_flash" or effect_type == "bridge_word_merge_flash":
 			call_deferred("_run_word_merge_flash", request.duplicate(true), _visual_effect_generation)
+			continue
+		if effect_type == "black_screen_transition":
+			call_deferred("_run_black_screen_transition", request.duplicate(true))
 			continue
 		if effect_type == "bridge_tree_transition":
 			var context: Dictionary = visual_contexts[i] if i < visual_contexts.size() else {}
@@ -1555,7 +1566,7 @@ func _clear_effect_overlays(overlays: Array) -> void:
 				node.queue_free()
 
 func _play_gem_burst_preview() -> void:
-	if current_level_index != 0 or gem_burst_effect == null:
+	if not _is_helmet_tutorial_level() or gem_burst_effect == null:
 		return
 	gem_burst_effect.play_at(
 		_grid_to_pixels_float(GEM_ORIGIN_GRID),
@@ -1582,6 +1593,16 @@ func _on_fullscreen_video_finished() -> void:
 	if world.has_fullscreen_video_finished_effect():
 		_apply_result(world.resolve_fullscreen_video_finished_effect())
 
+func _run_black_screen_transition(request: Dictionary) -> void:
+	if black_screen_overlay == null:
+		return
+	black_screen_overlay.visible = true
+	await get_tree().create_timer(float(request.get("duration", 1.0))).timeout
+	var target_index := int(request.get("target_level_index", current_level_index))
+	_load_level_index(target_index)
+	_refresh_view()
+	black_screen_overlay.visible = false
+
 func _load_level_index(index: int, overrides := {}) -> void:
 	current_level_index = clampi(index, 0, LEVEL_SEQUENCE.size() - 1)
 	_visual_effect_generation += 1
@@ -1596,7 +1617,7 @@ func _load_level_index(index: int, overrides := {}) -> void:
 	world.update_page()
 	_clear_entity_visuals()
 	_reset_player_river_visual()
-	if current_level_index == 0:
+	if _is_helmet_tutorial_level():
 		intro_phase = "lights"
 		intro_reveal_elapsed = 0.0
 		intro_reveal_max_distance = 0.0
@@ -1616,6 +1637,9 @@ func _load_level_index(index: int, overrides := {}) -> void:
 			child.queue_free()
 	if player_sprite:
 		_set_player_idle_visual()
+
+func _is_helmet_tutorial_level() -> bool:
+	return current_level_index >= 0 and current_level_index < LEVEL_SEQUENCE.size() and LEVEL_SEQUENCE[current_level_index] == HelmetTutorial
 
 func _startup_level_overrides() -> Dictionary:
 	var overrides := {}
