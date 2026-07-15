@@ -13,6 +13,8 @@ const SmoothGridMover = preload("res://scripts/smooth_grid_mover.gd")
 const PullParticleEffect = preload("res://scripts/pull_particle_effect.gd")
 const OriginalFont = preload("res://Fonts/Zpix.tres")
 const PushEffectTexture = preload("res://assets/animations/push/u_glove_S.png")
+const PlayerIdleTexture = preload("res://assets/player/me_default.png")
+const PlayerWalkTexture = preload("res://assets/player/me_walk.png")
 
 const MOVE_REPEAT_INTERVAL := 0.28
 const FAST_MOVE_REPEAT_INTERVAL := 0.12
@@ -53,6 +55,8 @@ const GESTURE_INTRO_SWAP_INTERVAL := 0.075
 const GESTURE_INTRO_SWAP_DURATION := 0.18
 const GESTURE_INTRO_START_OFFSET_Y := -780.0
 const PUSH_FLASH_FRAME_LOCAL_X := [-18.5, -20.0, -27.5, -38.5, -45.5, -50.0, -55.0, -58.0, -60.0, -61.0, -61.5, -62.0, -64.5, -65.0, -68.0, -68.0]
+const PLAYER_WALK_FRAME_SECONDS := 0.055
+const PLAYER_WALK_VISUAL_SECONDS := 0.12
 const INTRO_GRID_X_STEP := 600.0 / 11.0
 const INTRO_TEXT_ORIGIN := Vector2i(4, 8)
 const INTRO_PLAYER_START := Vector2i(4, 9)
@@ -83,6 +87,7 @@ var player_mover := SmoothGridMover.new()
 var entity_movers: Dictionary = {}
 var entity_labels: Dictionary = {}
 var player_label: Label
+var player_sprite: Sprite2D
 var map_layer: Node2D
 var glove_effect_layer: Node2D
 var glove_pull_particles: Node2D
@@ -153,10 +158,12 @@ var intro_player_mover := SmoothGridMover.new()
 var intro_player_visual_ready := false
 var intro_entity_labels: Dictionary = {}
 var intro_entity_movers: Dictionary = {}
+var intro_player_sprite: Sprite2D
 var intro_glove_effect_layer: Node2D
 var intro_glove_pull_particles: Node2D
 var hero_quote_label: Label
 var hero_quote_player: Label
+var hero_quote_player_sprite: Sprite2D
 var hero_quote_characters: Node2D
 var hero_quote_player_mover := SmoothGridMover.new()
 var hero_quote_active := false
@@ -511,6 +518,7 @@ func _build_scene() -> void:
 	player_label = _make_word_label("我", Color(0.92, 0.92, 0.92), Color(0.05, 0.05, 0.05))
 	player_label.name = "Player"
 	map_layer.add_child(player_label)
+	player_sprite = _attach_player_sprite(player_label, float(world.cell_size))
 	_build_direction_marker()
 	world_event_timer = Timer.new()
 	world_event_timer.one_shot = true
@@ -807,6 +815,7 @@ func _build_acquisition_overlay() -> void:
 	intro_player.position = _intro_grid_to_pixels(INTRO_PLAYER_START)
 	intro_player.visible = false
 	intro_layer.add_child(intro_player)
+	intro_player_sprite = _attach_player_sprite(intro_player, 60.0)
 	hero_quote_label = Label.new()
 	hero_quote_label.name = "HeroQuoteLabel"
 	hero_quote_label.position = HERO_QUOTE_GRID_ORIGIN
@@ -846,6 +855,7 @@ func _build_acquisition_overlay() -> void:
 	hero_quote_player.add_theme_color_override("font_color", Color(0.92, 0.92, 0.92))
 	hero_quote_player.visible = false
 	acquisition_layer.add_child(hero_quote_player)
+	hero_quote_player_sprite = _attach_player_sprite(hero_quote_player, HERO_QUOTE_STEP)
 	hero_exit_arrow = Label.new()
 	hero_exit_arrow.name = "HeroQuoteExitArrow"
 	hero_exit_arrow.text = "->"
@@ -1352,6 +1362,7 @@ func _start_intro_bottom_rewrite() -> void:
 	_sync_intro_world_view()
 
 func _apply_intro_direction_step(direction: Vector2i) -> void:
+	var previous_player_pos := intro_world.player_pos
 	var result: Dictionary
 	if Input.is_key_pressed(KEY_ALT):
 		result = intro_world.pull_front(direction)
@@ -1361,6 +1372,8 @@ func _apply_intro_direction_step(direction: Vector2i) -> void:
 		return
 	_sync_intro_world_view()
 	_consume_intro_visual_effect_requests()
+	if intro_world.player_pos != previous_player_pos:
+		_play_player_walk_visual(intro_player_sprite)
 	if not intro_quote_started and _intro_no_reached_target():
 		intro_quote_started = true
 		acquisition_tutorial_label.visible = false
@@ -1686,11 +1699,14 @@ func _handle_hero_quote_input(key_event: InputEventKey) -> void:
 
 func _apply_hero_quote_direction_step(direction: Vector2i) -> void:
 	if hero_quote_world_active:
+		var previous_player_pos := hero_quote_world.player_pos
 		var result := hero_quote_world.try_move_player(direction)
 		if not bool(result.get("success", false)):
 			return
 		_sync_hero_quote_world_view()
 		_consume_hero_quote_visual_effect_requests()
+		if hero_quote_world.player_pos != previous_player_pos:
+			_play_player_walk_visual(hero_quote_player_sprite)
 		if hero_quote_world.player_pos.x >= hero_quote_world.screen_size.x - 1:
 			_start_hero_exit_transition()
 		return
@@ -1857,6 +1873,7 @@ func _is_direction_physically_held(direction: Vector2i) -> bool:
 	return false
 
 func _apply_direction_step(direction: Vector2i) -> void:
+	var previous_player_pos := world.player_pos
 	var result: Dictionary
 	if Input.is_key_pressed(KEY_ALT):
 		result = world.pull_front(direction)
@@ -1864,7 +1881,50 @@ func _apply_direction_step(direction: Vector2i) -> void:
 		result = world.try_move_player(direction)
 	_apply_result(result)
 	if result.get("success", false):
+		if world.player_pos != previous_player_pos:
+			_play_player_walk_visual(player_sprite)
 		_show_direction_marker(direction)
+
+func _attach_player_sprite(player: Label, cell_size: float) -> Sprite2D:
+	player.text = ""
+	var sprite := Sprite2D.new()
+	sprite.name = "PlayerVisual"
+	sprite.position = Vector2.ONE * cell_size * 0.5
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	player.add_child(sprite)
+	_set_player_idle_visual(sprite)
+	return sprite
+
+func _play_player_walk_visual(sprite: Sprite2D) -> void:
+	if sprite == null:
+		return
+	var generation := int(sprite.get_meta("walk_generation", 0)) + 1
+	sprite.set_meta("walk_generation", generation)
+	sprite.texture = PlayerWalkTexture
+	sprite.hframes = 2
+	sprite.vframes = 1
+	sprite.frame = 0
+	var tween := create_tween()
+	tween.tween_interval(PLAYER_WALK_FRAME_SECONDS)
+	tween.tween_callback(Callable(self, "_set_player_walk_frame").bind(sprite, generation, 1))
+	tween.tween_interval(PLAYER_WALK_VISUAL_SECONDS - PLAYER_WALK_FRAME_SECONDS)
+	tween.tween_callback(Callable(self, "_set_player_idle_if_current").bind(sprite, generation))
+
+func _set_player_walk_frame(sprite: Sprite2D, generation: int, frame: int) -> void:
+	if sprite != null and int(sprite.get_meta("walk_generation", -1)) == generation:
+		sprite.frame = frame
+
+func _set_player_idle_if_current(sprite: Sprite2D, generation: int) -> void:
+	if sprite != null and int(sprite.get_meta("walk_generation", -1)) == generation:
+		_set_player_idle_visual(sprite)
+
+func _set_player_idle_visual(sprite: Sprite2D) -> void:
+	if sprite == null:
+		return
+	sprite.texture = PlayerIdleTexture
+	sprite.hframes = 1
+	sprite.vframes = 1
+	sprite.frame = 0
 
 func apply_startup_route_args(args: PackedStringArray) -> void:
 	var route_path := resolve_route_path_from_args(args)

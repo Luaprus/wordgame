@@ -9,6 +9,11 @@ func _verify() -> void:
 	var preview = GlovePreviewScene.instantiate()
 	root.add_child(preview)
 	await process_frame
+	if preview.player_sprite == null or preview.intro_player_sprite == null or preview.hero_quote_player_sprite == null:
+		printerr("every controllable glove-level player must use the shared walk visual")
+		preview.queue_free()
+		quit(1)
+		return
 	if not preview.has_method("_play_glove_push_flash") or not preview.has_method("_play_glove_pull_particles"):
 		printerr("the glove preview must render both push frames and pull particles")
 		preview.queue_free()
@@ -38,6 +43,11 @@ func _verify() -> void:
 	preview._apply_intro_direction_step(Vector2i.RIGHT)
 	if preview.intro_glove_effect_layer.get_child_count() == 0:
 		printerr("a tutorial push must render the glove animation above the tutorial text")
+		preview.queue_free()
+		quit(1)
+		return
+	if preview.intro_player_sprite == null or preview.intro_player_sprite.texture.resource_path != "res://assets/player/me_walk.png":
+		printerr("a tutorial player move must play the existing two-frame walk visual")
 		preview.queue_free()
 		quit(1)
 		return
