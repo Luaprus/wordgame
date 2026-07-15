@@ -207,15 +207,23 @@ static func _transition_dialogue_page_two() -> Dictionary:
 static func _transition_dialogue_page_three() -> Dictionary:
 	return {
 		"clear_entities": true,
-		"set_pending_interact_effect": {
-			"last_message": "进入第三章/16_添譜來堂_尾聲"
-		},
+		"set_pending_interact_effect": _transition_to_hero_encroachment(),
 		"last_message": "尾声对白第三页",
 		"spawn_text": _transition_role_text() + [
 			{"text": "「四三九七號勇者！」", "pos": Vector2i(1, 3), "as_chars": true, "config": {"solid": true}},
 			{"text": "「請無畏地上前吧！」", "pos": Vector2i(1, 4), "as_chars": true, "config": {"solid": true}},
 			{"text": "▽", "pos": Vector2i(11, 4), "config": {"solid": true}}
 		]
+	}
+
+static func _transition_to_hero_encroachment() -> Dictionary:
+	return {
+		"clear_entities": true,
+		"set_player_visible": false,
+		"set_input_locked": true,
+		"set_event_locked": true,
+		"visual_effect": {"type": "hero_encroach"},
+		"last_message": "勇者们从三面围了上来。"
 	}
 
 static func _transition_role_text() -> Array[Dictionary]:

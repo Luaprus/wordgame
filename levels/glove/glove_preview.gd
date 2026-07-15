@@ -49,6 +49,17 @@ const HERO_QUOTE_STEP := 60.0
 const HERO_QUOTE_GRID_ORIGIN := Vector2(300, 300)
 const HERO_QUOTE_GRID_ORIGIN_CELL := Vector2i(5, 5)
 const HERO_EXIT_FLASH_DURATION := 1.0
+const HERO_ENCROACH_APPEAR_DELAY := 0.28
+const HERO_ENCROACH_MOVE_DURATION := 0.28
+const HERO_ENCROACH_FILL_INTERVAL := 0.025
+const HERO_ENCROACH_FINAL_DEPTH := 5
+# Retained only while the uncommitted source-study helpers below are removed.
+const HERO_ENCROACH_SOURCE_STEP_DURATION := 0.3
+const HERO_ENCROACH_SOURCE_STEP_GAP := 0.05
+const HERO_ENCROACH_SOURCE_STAGE_TWO_TIME := 1.1
+const HERO_ENCROACH_SOURCE_STAGE_THREE_TIME := 2.6
+const HERO_ENCROACH_SOURCE_STAGE_FOUR_TIME := 3.7
+const HERO_ENCROACH_SOURCE_FINISH_TIME := 5.5
 const GESTURE_INTRO_FALL_DURATION := 0.9
 const GESTURE_INTRO_REVEAL_DURATION := 0.7
 const GESTURE_INTRO_SWAP_INTERVAL := 0.075
@@ -191,6 +202,17 @@ var hero_exit_arrow: Label
 var hero_exit_flash: ColorRect
 var hero_exit_transition_active := false
 var hero_exit_transition_elapsed := 0.0
+var hero_encroach_root: Node2D
+var hero_encroach_active := false
+var hero_encroach_units: Array[Dictionary] = []
+var hero_encroach_motion: Array[Dictionary] = []
+var hero_encroach_phase := 0
+var hero_encroach_phase_elapsed := 0.0
+var hero_encroach_fill_cells: Array[Vector2i] = []
+var hero_encroach_fill_index := 0
+var hero_encroach_fill_elapsed := 0.0
+var hero_encroach_completed := false
+var hero_encroach_debug_wait_for_input := false
 var gesture_intro_world := GridWorld.new()
 var gesture_intro_layer: CanvasLayer
 var gesture_intro_hand_root: Node2D
@@ -264,6 +286,7 @@ func _process(delta: float) -> void:
 	_advance_intro_completion_transition(delta)
 	_advance_hero_quote(delta)
 	_advance_hero_exit_transition(delta)
+	_advance_hero_encroach(delta)
 	_advance_gesture_intro(delta)
 	if brave_loop_prompt.advance(delta):
 		_sync_brave_loop_prompt()
@@ -335,6 +358,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not event is InputEventKey:
 		return
 	var key_event := event as InputEventKey
+	if hero_encroach_debug_wait_for_input:
+		if key_event.pressed and not key_event.echo and (key_event.keycode == KEY_SPACE or key_event.keycode == KEY_ENTER):
+			_start_hero_encroach_transition()
+		return
 	if acquisition_dialogue_active or acquisition_tutorial_active:
 		_handle_acquisition_dialogue_input(key_event)
 		return
@@ -971,6 +998,10 @@ func _build_acquisition_overlay() -> void:
 	hero_exit_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hero_exit_flash.visible = false
 	acquisition_layer.add_child(hero_exit_flash)
+	hero_encroach_root = Node2D.new()
+	hero_encroach_root.name = "HeroEncroachLayer"
+	hero_encroach_root.visible = false
+	acquisition_layer.add_child(hero_encroach_root)
 	acquisition_dialogue_indicator = Label.new()
 	acquisition_dialogue_indicator.name = "AcquireDialogueContinue"
 	acquisition_dialogue_indicator.text = "▽"
@@ -1192,6 +1223,8 @@ func _consume_visual_effect_request() -> void:
 				_play_sword_acquire(request)
 			"delete_cut":
 				_start_delete_cut(request)
+			"hero_encroach":
+				_start_hero_encroach_transition()
 
 func _start_push_recovery(request: Dictionary) -> void:
 	if not bool(request.get("player_stayed", false)):
@@ -1663,7 +1696,6 @@ func _start_hero_quote() -> void:
 	hero_quote_player_active = false
 	hero_quote_world_active = false
 	hero_exit_transition_active = false
-	hero_exit_transition_elapsed = 0.0
 	acquisition_dialogue_label.visible = false
 	acquisition_tutorial_label.visible = false
 	acquisition_dialogue_indicator.visible = false
@@ -1889,6 +1921,341 @@ func _advance_hero_exit_transition(delta: float) -> void:
 	hero_exit_flash.visible = false
 	_enter_glove_gesture_level()
 
+func _start_hero_encroach_transition() -> void:
+	if hero_encroach_active:
+		return
+	hero_encroach_debug_wait_for_input = false
+	_clear_hero_encroach_screen()
+	_clear_hero_encroach_units()
+	hero_encroach_active = true
+	hero_encroach_completed = false
+	hero_encroach_phase = 0
+	hero_encroach_phase_elapsed = 0.0
+	hero_encroach_fill_cells.clear()
+	hero_encroach_fill_index = 0
+	hero_encroach_fill_elapsed = 0.0
+	hero_encroach_root.visible = true
+	_spawn_hero_encroach_wave(0)
+
+func _prepare_hero_encroach_debug() -> void:
+	hero_encroach_debug_wait_for_input = true
+	_clear_hero_encroach_screen()
+	hero_encroach_root.visible = false
+
+func _clear_hero_encroach_screen() -> void:
+	glove_acquisition_active = false
+	acquisition_dialogue_active = false
+	acquisition_tutorial_active = false
+	acquisition_video.stop()
+	acquisition_video.visible = false
+	acquisition_put_on_sound.stop()
+	acquisition_melody_sound.stop()
+	acquisition_dialogue_label.visible = false
+	acquisition_tutorial_label.visible = false
+	acquisition_dialogue_indicator.visible = false
+	intro_active = false
+	intro_layer.visible = false
+	gesture_intro_active = false
+	gesture_intro_layer.visible = false
+	map_layer.visible = false
+	acquisition_layer.visible = true
+	world.player_input_locked = true
+	world.player_event_locked = true
+	hero_exit_arrow.visible = false
+	hero_quote_label.visible = false
+	hero_quote_player.visible = false
+	hero_quote_characters.visible = false
+	hero_quote_entities.visible = false
+
+func _advance_hero_encroach(delta: float) -> void:
+	if not hero_encroach_active:
+		return
+	if not hero_encroach_motion.is_empty():
+		_advance_hero_encroach_motion(delta)
+		return
+	if hero_encroach_phase == 7:
+		_advance_hero_encroach_final_fill(delta)
+		return
+	hero_encroach_phase_elapsed += maxf(delta, 0.0)
+	if hero_encroach_phase_elapsed < HERO_ENCROACH_APPEAR_DELAY:
+		return
+	hero_encroach_phase_elapsed = 0.0
+	match hero_encroach_phase:
+		0:
+			_start_hero_encroach_motion([0], 1)
+			hero_encroach_phase = 1
+		1:
+			_spawn_hero_encroach_wave(1)
+			hero_encroach_phase = 2
+		2:
+			_start_hero_encroach_motion([0, 1], 1)
+			hero_encroach_phase = 3
+		3:
+			_spawn_hero_encroach_wave(0)
+			hero_encroach_phase = 4
+		4:
+			_start_hero_encroach_motion([0, 1, 2], 1)
+			hero_encroach_phase = 5
+		5:
+			_start_hero_encroach_motion([0, 1, 2], 2)
+			hero_encroach_phase = 6
+		6:
+			_begin_hero_encroach_final_fill()
+			hero_encroach_phase = 7
+
+func _spawn_hero_encroach_wave(parity: int) -> void:
+	var wave_index := _hero_encroach_wave_count()
+	for descriptor in _hero_encroach_outer_descriptors(parity):
+		_add_hero_encroach_word(descriptor.cell, descriptor.direction, wave_index)
+
+func _hero_encroach_outer_descriptors(parity: int) -> Array[Dictionary]:
+	var descriptors: Array[Dictionary] = []
+	for x in range(32):
+		if x % 2 == parity:
+			descriptors.append({"cell": Vector2i(x, 0), "direction": Vector2i.DOWN})
+	for y in range(1, 18):
+		if y % 2 != parity:
+			continue
+		descriptors.append({"cell": Vector2i(0, y), "direction": Vector2i.RIGHT})
+		descriptors.append({"cell": Vector2i(31, y), "direction": Vector2i.LEFT})
+	return descriptors
+
+func _add_hero_encroach_word(cell: Vector2i, direction: Vector2i, wave_index: int) -> void:
+	var label := _make_word_label("勇")
+	label.name = "HeroEncroach_%03d" % (hero_encroach_units.size() + 1)
+	label.position = _grid_to_pixels(cell)
+	hero_encroach_root.add_child(label)
+	hero_encroach_units.append({"label": label, "cell": cell, "direction": direction, "wave": wave_index})
+
+func _hero_encroach_wave_count() -> int:
+	var waves := {}
+	for unit in hero_encroach_units:
+		waves[int(unit.wave)] = true
+	return waves.size()
+
+func _start_hero_encroach_motion(waves: Array[int], steps: int) -> void:
+	hero_encroach_motion.clear()
+	for index in range(hero_encroach_units.size()):
+		var unit: Dictionary = hero_encroach_units[index]
+		if not waves.has(int(unit.wave)):
+			continue
+		var start_cell: Vector2i = unit.cell
+		var target_cell := start_cell + Vector2i(unit.direction) * steps
+		hero_encroach_motion.append({"unit_index": index, "start": start_cell, "target": target_cell, "elapsed": 0.0})
+
+func _advance_hero_encroach_motion(delta: float) -> void:
+	var remaining: Array[Dictionary] = []
+	for motion in hero_encroach_motion:
+		var updated: Dictionary = motion
+		updated.elapsed = float(updated.elapsed) + maxf(delta, 0.0)
+		var progress := clampf(float(updated.elapsed) / HERO_ENCROACH_MOVE_DURATION, 0.0, 1.0)
+		var unit_index := int(updated.unit_index)
+		var unit: Dictionary = hero_encroach_units[unit_index]
+		var label: Label = unit.label
+		label.position = _grid_to_pixels(updated.start).lerp(_grid_to_pixels(updated.target), progress)
+		if progress < 1.0:
+			remaining.append(updated)
+			continue
+		unit.cell = updated.target
+		hero_encroach_units[unit_index] = unit
+	hero_encroach_motion = remaining
+
+func _begin_hero_encroach_final_fill() -> void:
+	_deduplicate_hero_encroach_units()
+	var occupied := {}
+	for unit in hero_encroach_units:
+		occupied[unit.cell] = true
+	for cell in _hero_encroach_final_wall_cells():
+		if not occupied.has(cell):
+			hero_encroach_fill_cells.append(cell)
+
+func _deduplicate_hero_encroach_units() -> void:
+	var occupied := {}
+	for index in range(hero_encroach_units.size() - 1, -1, -1):
+		var unit: Dictionary = hero_encroach_units[index]
+		var cell: Vector2i = unit.cell
+		if not occupied.has(cell):
+			occupied[cell] = true
+			continue
+		var label: Label = unit.label
+		if is_instance_valid(label):
+			label.queue_free()
+		hero_encroach_units.remove_at(index)
+
+func _advance_hero_encroach_final_fill(delta: float) -> void:
+	hero_encroach_fill_elapsed += maxf(delta, 0.0)
+	while hero_encroach_fill_elapsed >= HERO_ENCROACH_FILL_INTERVAL and hero_encroach_fill_index < hero_encroach_fill_cells.size():
+		hero_encroach_fill_elapsed -= HERO_ENCROACH_FILL_INTERVAL
+		_add_hero_encroach_word(hero_encroach_fill_cells[hero_encroach_fill_index], Vector2i.ZERO, 3)
+		hero_encroach_fill_index += 1
+	if hero_encroach_fill_index < hero_encroach_fill_cells.size():
+		return
+	hero_encroach_active = false
+	hero_encroach_completed = true
+
+func _hero_encroach_final_wall_cells() -> Array[Vector2i]:
+	var cells: Array[Vector2i] = []
+	for depth in range(1, HERO_ENCROACH_FINAL_DEPTH + 1):
+		for x in range(32):
+			cells.append(Vector2i(x, depth))
+		for y in range(HERO_ENCROACH_FINAL_DEPTH + 1, 18):
+			cells.append(Vector2i(depth, y))
+			cells.append(Vector2i(31 - depth, y))
+	return cells
+
+func _spawn_hero_encroach_source_stage_one() -> void:
+	for x in [2, 4, 6, 8, 10, 12, 19, 21, 23, 25, 27, 29]:
+		_add_hero_encroach_source_word(Vector2i(x, -1), ["up1"], _hero_encroach_repeat_route(Vector2i.DOWN, 2))
+	for y in [2, 4, 6, 10, 12, 14]:
+		_add_hero_encroach_source_word(Vector2i(-1, y), ["left1"], _hero_encroach_repeat_route(Vector2i.RIGHT, 2), y == 2)
+	for y in [2, 4, 8, 10, 12, 14, 16]:
+		_add_hero_encroach_source_word(Vector2i(32, y), ["right1"], _hero_encroach_repeat_route(Vector2i.LEFT, 2), y == 2)
+	_add_hero_encroach_source_word(Vector2i(1, 8), ["left1"], [], false, 0.0)
+	_add_hero_encroach_source_word(Vector2i(1, 16), ["left1"], [], false, 0.0)
+	_add_hero_encroach_source_word(Vector2i(30, 6), ["right1"], [], false, 0.0)
+
+func _spawn_hero_encroach_source_stage_two() -> void:
+	for x in [0, 31]:
+		_add_hero_encroach_source_word(Vector2i(x, -1), ["up1"], _hero_encroach_repeat_route(Vector2i.DOWN, 2))
+	for x in [1, 3, 5, 7, 9, 11, 13, 18, 20, 22, 24, 26, 28, 30]:
+		if x != 1 and x != 30:
+			_add_hero_encroach_source_word(Vector2i(x, -1), ["up2"], _hero_encroach_repeat_route(Vector2i.DOWN, 3))
+		_add_hero_encroach_source_word(Vector2i(x, -3), ["up3"], _hero_encroach_repeat_route(Vector2i.DOWN, 3))
+	for y in [3, 5, 7, 9, 11, 13, 15, 17]:
+		_add_hero_encroach_source_word(Vector2i(-1, y), ["left2"], _hero_encroach_repeat_route(Vector2i.RIGHT, 3))
+		_add_hero_encroach_source_word(Vector2i(32, y), ["right2"], _hero_encroach_repeat_route(Vector2i.LEFT, 3))
+		_add_hero_encroach_source_word(Vector2i(-3, y), ["left3"], _hero_encroach_repeat_route(Vector2i.RIGHT, 3))
+		_add_hero_encroach_source_word(Vector2i(34, y), ["right3"], _hero_encroach_repeat_route(Vector2i.LEFT, 3))
+
+func _spawn_hero_encroach_source_stage_three() -> void:
+	_remove_hero_encroach_source_stage_two_markers()
+	_add_hero_encroach_source_word(Vector2i(1, 2), ["up2"], [], false, 0.0)
+	_add_hero_encroach_source_word(Vector2i(30, 2), ["up2"], [], false, 0.0)
+	_start_hero_encroach_source_group_route("left1", _hero_encroach_repeat_route(Vector2i.RIGHT, 2))
+	_start_hero_encroach_source_group_route("left2", _hero_encroach_repeat_route(Vector2i.RIGHT, 2))
+	_start_hero_encroach_source_group_route("left3", _hero_encroach_repeat_route(Vector2i.RIGHT, 2))
+	_start_hero_encroach_source_group_route("right1", _hero_encroach_repeat_route(Vector2i.LEFT, 2))
+	_start_hero_encroach_source_group_route("right2", _hero_encroach_repeat_route(Vector2i.LEFT, 2))
+	_start_hero_encroach_source_group_route("right3", _hero_encroach_repeat_route(Vector2i.LEFT, 2))
+	for y in [3, 5, 7, 9, 11, 13, 15, 17]:
+		_add_hero_encroach_source_word(Vector2i(-2, y), ["left5"], _hero_encroach_repeat_route(Vector2i.RIGHT, 2))
+		_add_hero_encroach_source_word(Vector2i(33, y), ["right5"], _hero_encroach_repeat_route(Vector2i.LEFT, 2))
+		if y != 17:
+			_add_hero_encroach_source_word(Vector2i(-1, y + 1), ["left4"], _hero_encroach_repeat_route(Vector2i.RIGHT, 2))
+			_add_hero_encroach_source_word(Vector2i(32, y + 1), ["right4"], _hero_encroach_repeat_route(Vector2i.LEFT, 2))
+
+func _spawn_hero_encroach_source_stage_four() -> void:
+	_start_hero_encroach_source_group_route("up1", _hero_encroach_repeat_route(Vector2i.DOWN, 1))
+	_start_hero_encroach_source_group_route("up3", _hero_encroach_repeat_route(Vector2i.DOWN, 1))
+	for group_name in ["left1", "left2", "left3", "left4", "left5"]:
+		_start_hero_encroach_source_group_route(group_name, _hero_encroach_repeat_route(Vector2i.RIGHT, 2))
+	for group_name in ["right1", "right2", "right3", "right4", "right5"]:
+		_start_hero_encroach_source_group_route(group_name, _hero_encroach_repeat_route(Vector2i.LEFT, 2))
+	for x in [0, 2, 4, 6, 8, 10, 12, 19, 21, 23, 25, 27, 29, 31]:
+		_add_hero_encroach_source_word(Vector2i(x, -1), ["up4"], _hero_encroach_repeat_route(Vector2i.DOWN, 2))
+	for x in range(32):
+		if x in [14, 15, 16, 17]:
+			continue
+		_add_hero_encroach_source_word(Vector2i(x, -2), ["up5"], _hero_encroach_repeat_route(Vector2i.DOWN, 2), false, _hero_encroach_source_delay() + 0.3)
+	for y in [4, 6, 8, 10, 12, 14, 16]:
+		_add_hero_encroach_source_word(Vector2i(-1, y), ["left6"], _hero_encroach_repeat_route(Vector2i.RIGHT, 3))
+		_add_hero_encroach_source_word(Vector2i(32, y), ["right6"], _hero_encroach_repeat_route(Vector2i.LEFT, 3))
+	for y in range(3, 18):
+		_add_hero_encroach_source_word(Vector2i(-2, y), ["left7"], _hero_encroach_repeat_route(Vector2i.RIGHT, 3), false, randf() * 0.2 + 0.3)
+		_add_hero_encroach_source_word(Vector2i(-3, y), ["left8"], _hero_encroach_repeat_route(Vector2i.RIGHT, 3), false, randf() * 0.2 + 0.3)
+		_add_hero_encroach_source_word(Vector2i(33, y), ["right7"], _hero_encroach_repeat_route(Vector2i.LEFT, 3), false, randf() * 0.2 + 0.5)
+		_add_hero_encroach_source_word(Vector2i(34, y), ["right8"], _hero_encroach_repeat_route(Vector2i.LEFT, 3), false, randf() * 0.2 + 0.5)
+
+func _add_hero_encroach_source_word(cell: Vector2i, groups: Array[String], route: Array[Vector2i], remove_at_stage_three := false, delay := -1.0) -> void:
+	var label := _make_word_label("勇")
+	label.name = "HeroEncroach_%03d" % (hero_encroach_units.size() + 1)
+	label.position = _grid_to_pixels(cell)
+	hero_encroach_root.add_child(label)
+	hero_encroach_units.append({
+		"label": label,
+		"cell": cell,
+		"groups": groups,
+		"route": route,
+		"route_index": 0,
+		"route_elapsed": 0.0,
+		"route_pause": 0.0,
+		"route_delay": _hero_encroach_source_delay() if delay < 0.0 else delay,
+		"remove_at_stage_three": remove_at_stage_three
+	})
+
+func _hero_encroach_source_delay() -> float:
+	return randf() * 0.5
+
+func _hero_encroach_repeat_route(direction: Vector2i, count: int) -> Array[Vector2i]:
+	var route: Array[Vector2i] = []
+	for _index in range(count):
+		route.append(direction)
+	return route
+
+func _remove_hero_encroach_source_stage_two_markers() -> void:
+	for index in range(hero_encroach_units.size() - 1, -1, -1):
+		var unit: Dictionary = hero_encroach_units[index]
+		if not bool(unit.get("remove_at_stage_three", false)):
+			continue
+		var label: Label = unit.label
+		if is_instance_valid(label):
+			label.queue_free()
+		hero_encroach_units.remove_at(index)
+
+func _start_hero_encroach_source_group_route(group_name: String, route: Array[Vector2i]) -> void:
+	for index in range(hero_encroach_units.size()):
+		var unit: Dictionary = hero_encroach_units[index]
+		var groups: Array = unit.groups
+		if not groups.has(group_name):
+			continue
+		unit.route = route.duplicate()
+		unit.route_index = 0
+		unit.route_elapsed = 0.0
+		unit.route_pause = 0.0
+		unit.route_delay = _hero_encroach_source_delay()
+		hero_encroach_units[index] = unit
+
+func _advance_hero_encroach_source_routes(delta: float) -> void:
+	for index in range(hero_encroach_units.size()):
+		var unit: Dictionary = hero_encroach_units[index]
+		var label: Label = unit.label
+		if not is_instance_valid(label):
+			continue
+		var remaining := delta
+		var delay := float(unit.route_delay)
+		if delay > 0.0:
+			unit.route_delay = maxf(delay - remaining, 0.0)
+			hero_encroach_units[index] = unit
+			continue
+		var pause := float(unit.route_pause)
+		if pause > 0.0:
+			unit.route_pause = maxf(pause - remaining, 0.0)
+			hero_encroach_units[index] = unit
+			continue
+		var route: Array = unit.route
+		var route_index := int(unit.route_index)
+		if route_index >= route.size():
+			continue
+		var start_cell: Vector2i = unit.cell
+		var direction: Vector2i = route[route_index]
+		var target_cell := start_cell + direction
+		unit.route_elapsed = float(unit.route_elapsed) + remaining
+		var progress := clampf(float(unit.route_elapsed) / HERO_ENCROACH_SOURCE_STEP_DURATION, 0.0, 1.0)
+		label.position = _grid_to_pixels(start_cell).lerp(_grid_to_pixels(target_cell), progress)
+		if progress >= 1.0:
+			unit.cell = target_cell
+			unit.route_index = route_index + 1
+			unit.route_elapsed = 0.0
+			unit.route_pause = HERO_ENCROACH_SOURCE_STEP_GAP if route_index + 1 < route.size() else 0.0
+		hero_encroach_units[index] = unit
+
+func _clear_hero_encroach_units() -> void:
+	if hero_encroach_root != null:
+		for child in hero_encroach_root.get_children():
+			child.queue_free()
+	hero_encroach_units.clear()
+	hero_encroach_motion.clear()
+
 func _enter_glove_gesture_level() -> void:
 	hero_quote_active = false
 	hero_quote_player_active = false
@@ -2102,6 +2469,8 @@ func apply_startup_debug_args(args: PackedStringArray) -> void:
 				world.apply_preview_effect(GloveEffects.release_preview_effect())
 				world.facing = Vector2i.UP
 				_refresh_view()
+			STARTUP_DEBUG_ARG_PREFIX + "hero_encroach":
+				call_deferred("_prepare_hero_encroach_debug")
 			STARTUP_DEBUG_ARG_PREFIX + "gesture_intro":
 				call_deferred("_start_gesture_level_intro")
 
