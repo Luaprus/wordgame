@@ -2,6 +2,11 @@ extends RefCounted
 
 const LEVEL_NAME := "四目头盔 过河第三关"
 const BridgeTreeVisuals = preload("res://levels/helmet/bridge_tree_visuals.gd")
+const WordSplitVisuals = preload("res://scripts/word_split_visuals.gd")
+const LOOSE_BRIDGE_SHAKE_AMPLITUDE := 1.5
+const LOOSE_BRIDGE_SHAKE_SPEED := TAU * 1.35
+const LOOSE_BRIDGE_CORNER_INDICES := [0, 1, 16, 17]
+const BRIDGE_COLLAPSE_PLAYER_CELL := Vector2i(23, 9)
 
 static func build_level() -> Dictionary:
 	return {
@@ -75,11 +80,11 @@ static func build_level() -> Dictionary:
 		},
 		"step_effects": [
 			{
-				"pos": Vector2i(23, 9),
+				"pos": BRIDGE_COLLAPSE_PLAYER_CELL,
 				"condition": {"absent_text_at": {"pos": Vector2i(10, 10), "text": "滩"}},
-				"delay_seconds": 2.0,
+				"delay_seconds": 0.35,
 				"lock_input": true,
-				"effect": _fall_prompt_effect()
+				"effect": _bridge_collapse_effect()
 			}
 		]
 	}
@@ -128,6 +133,13 @@ static func _bridge_cells() -> Array[Vector2i]:
 			cells.append(Vector2i(x, y))
 	cells.append(Vector2i(19, 11))
 	cells.append(Vector2i(27, 11))
+	return cells
+
+static func _bridge_collapse_cells() -> Array[Vector2i]:
+	var cells: Array[Vector2i] = []
+	for y in [8, 10]:
+		for x in range(21, 26):
+			cells.append(Vector2i(x, y))
 	return cells
 
 static func _river_dynamic_cells() -> Array[Vector2i]:
@@ -250,6 +262,10 @@ static func _bridge_spawn(loose := false) -> Array[Dictionary]:
 		var config := {"solid": true, "pushable": false, "splittable": false}
 		if loose:
 			config["visual_rotation_degrees"] = rotations[index % rotations.size()]
+			if not LOOSE_BRIDGE_CORNER_INDICES.has(index):
+				config["visual_horizontal_shake_amplitude"] = LOOSE_BRIDGE_SHAKE_AMPLITUDE
+				config["visual_horizontal_shake_speed"] = LOOSE_BRIDGE_SHAKE_SPEED
+				config["visual_horizontal_shake_phase"] = float(index % 4) * PI * 0.5
 		spawn.append({"text": "桥", "pos": cell, "config": config})
 		index += 1
 	return spawn
@@ -427,6 +443,12 @@ static func _shore_merge_effect() -> Dictionary:
 	remove_at.append_array(_creek_hint_cells_except_shore())
 	return {
 		"remove_at": remove_at,
+		"visual_effect": BridgeTreeVisuals.key_info_emphasis([
+			Vector2i(7, 10),
+			Vector2i(8, 10),
+			Vector2i(9, 10),
+			Vector2i(10, 10)
+		]),
 		"replace_text": _hint_bridge_merge_replaces(),
 		"spawn": spawn,
 		"spawn_text": _creek_hint_text_without_water_parts()
@@ -452,7 +474,10 @@ static func _shore_split_effect() -> Dictionary:
 static func _bridge_split_effect() -> Dictionary:
 	return {
 		"remove_at": _river_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _bridge_cells()),
+		"visual_effects": [
+			BridgeTreeVisuals.split_effect(_tree_cells(), _bridge_cells(), _creek_cells_for_bridge()),
+			WordSplitVisuals.effect("桥", ["乔", "木"])
+		],
 		"replace_text": _hint_bridge_split_replaces(),
 		"spawn": _creek_and_tree_spawn()
 	}
@@ -464,6 +489,29 @@ static func _fall_prompt_effect() -> Dictionary:
 		"spawn_text": _fall_prompt_text(),
 		"set_player_visible": false,
 		"set_input_locked": false,
+		"set_pending_interact_effect": _death_screen_effect()
+	}
+
+static func _bridge_collapse_effect() -> Dictionary:
+	return {
+		"set_input_locked": true,
+		"set_event_locked": true,
+		"visual_effect": {
+			"type": "bridge_collapse_sequence",
+			"fall_bridge_cells": _bridge_collapse_cells(),
+			"player_cell": BRIDGE_COLLAPSE_PLAYER_CELL,
+			"final_effect": _bridge_collapse_final_effect()
+		}
+	}
+
+static func _bridge_collapse_final_effect() -> Dictionary:
+	return {
+		"remove_at": _all_dynamic_cells(),
+		"spawn": _creek_spawn(),
+		"spawn_text": _fall_prompt_text(),
+		"set_player_visible": false,
+		"set_input_locked": false,
+		"set_event_locked": false,
 		"set_pending_interact_effect": _death_screen_effect()
 	}
 
