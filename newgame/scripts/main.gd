@@ -47,6 +47,7 @@ const BRIDGE_COLLAPSE_MASK_PADDING := 6.0
 const PUSH_FLASH_FRAME_LOCAL_X := [-18.5, -20.0, -27.5, -38.5, -45.5, -50.0, -55.0, -58.0, -60.0, -61.0, -61.5, -62.0, -64.5, -65.0, -68.0, -68.0]
 const BRIDGE_MERGE_YELLOW := Color(1.0, 0.92, 0.22, 0.58)
 const BRIDGE_MERGE_YELLOW_SOFT := Color(1.0, 0.92, 0.22, 0.16)
+const KEY_INFO_EMPHASIS := "key_info_emphasis"
 const RIVER_DEPTH_STEP := 10
 const RIVER_PLAYER_DEPTH_OFFSET := 5
 const HIGHLIGHT_VISUAL_CONFIG_PATH := "res://assets/animations/highlight/highlight_visual_config.json"
@@ -104,6 +105,7 @@ var player_river_visual_offset := 0.0
 var player_river_tween: Tween
 var player_river_action_locked := false
 var _visual_effect_generation := 0
+var key_info_emphasis_played := false
 var highlight_visual_config: Dictionary = {}
 var gem_labels: Array = []
 var intro_phase := "lights"
@@ -775,15 +777,27 @@ func _run_bridge_tree_transition(request: Dictionary, context: Dictionary, gener
 	var bridge_step_delay := float(request.get("bridge_step_delay", 0.055))
 	var bridge_fade_duration := float(request.get("bridge_fade_duration", 0.12))
 	if mode == "merge":
+		var merge_overlays: Array = context.get("tree_overlays", [])
+		for overlay: Node2D in merge_overlays:
+			if bridge_tree_effect_layer:
+				bridge_tree_effect_layer.add_child(overlay)
+				overlay.modulate.a = 1.0
+		var bridge_groups: Array = _find_groups_for_cells(request.get("bridge_cells", []))
+		_set_groups_alpha(bridge_groups, 0.0)
+		var before_effect: Dictionary = request.get("before_effect", {})
+		if not before_effect.is_empty() and not key_info_emphasis_played:
+			key_info_emphasis_played = true
+			await _run_key_info_emphasis(before_effect, generation)
+			if generation != _visual_effect_generation:
+				_clear_effect_overlays(merge_overlays)
+				_set_groups_alpha(bridge_groups, 1.0)
+				return
 		_run_bridge_tree_merge_transition(request, context, generation, tree_fade_duration, bridge_step_delay, bridge_fade_duration)
 	elif mode == "split":
 		_run_bridge_tree_split_transition(request, context, generation, tree_fade_in_duration, bridge_step_delay, bridge_fade_duration)
 
 func _run_bridge_tree_merge_transition(request: Dictionary, context: Dictionary, generation: int, tree_fade_duration: float, bridge_step_delay: float, bridge_fade_duration: float) -> void:
 	var overlays: Array = context.get("tree_overlays", [])
-	for overlay: Node2D in overlays:
-		if bridge_tree_effect_layer:
-			bridge_tree_effect_layer.add_child(overlay)
 	var tree_tween: Tween = null
 	if not overlays.is_empty():
 		tree_tween = create_tween()
@@ -792,7 +806,6 @@ func _run_bridge_tree_merge_transition(request: Dictionary, context: Dictionary,
 			overlay.modulate.a = 1.0
 			tree_tween.tween_property(overlay, "modulate:a", 0.0, tree_fade_duration)
 	var bridge_groups: Array = _find_groups_for_cells(request.get("bridge_cells", []))
-	_set_groups_alpha(bridge_groups, 0.0)
 	var bridge_columns: Dictionary = _group_effect_targets_by_x(bridge_groups)
 	for x in bridge_columns.keys():
 		if generation != _visual_effect_generation:
@@ -803,8 +816,55 @@ func _run_bridge_tree_merge_transition(request: Dictionary, context: Dictionary,
 	if tree_tween != null:
 		await tree_tween.finished
 	_clear_effect_overlays(overlays)
+func _run_key_info_emphasis(request: Dictionary, generation: int) -> void:
+	if generation != _visual_effect_generation or bridge_tree_effect_layer == null:
+		return
+	var cells: Array = request.get("cells", [])
+	if cells.is_empty():
+		return
+	var first_cell: Vector2i = cells[0]
+	var cell_count: int = maxi(cells.size(), 1)
+	var overlay := Node2D.new()
+	overlay.name = "KeyInfoEmphasis"
+	overlay.position = _grid_to_pixels(first_cell)
+	overlay.z_index = 90
+	var cell_width := float(world.cell_size)
+	var box_width := cell_width * float(cell_count) + 8.0
+	var box_height := float(world.cell_size) + 8.0
+	var fill := ColorRect.new()
+	fill.name = "KeyInfoFill"
+	fill.position = Vector2(-4.0, -4.0)
+	fill.size = Vector2(box_width, box_height)
+	fill.color = Color(1.0, 1.0, 1.0, 0.14)
+	overlay.add_child(fill)
+	_add_key_info_strip(overlay, Vector2(-4.0, -4.0), Vector2(box_width, 2.0), "KeyInfoTop")
+	_add_key_info_strip(overlay, Vector2(-4.0, box_height - 2.0), Vector2(box_width, 2.0), "KeyInfoBottom")
+	_add_key_info_strip(overlay, Vector2(-4.0, -4.0), Vector2(2.0, box_height), "KeyInfoLeft")
+	_add_key_info_strip(overlay, Vector2(box_width - 2.0, -4.0), Vector2(2.0, box_height), "KeyInfoRight")
+	_add_key_info_strip(overlay, Vector2(-2.0, float(world.cell_size) + 5.0), Vector2(cell_width * float(cell_count) + 4.0, 3.0), "KeyInfoUnderline")
+	bridge_tree_effect_layer.add_child(overlay)
+	overlay.modulate.a = 0.0
+	var fade_in_duration := float(request.get("fade_in_duration", 0.24))
+	var display_duration := float(request.get("duration", 1.0))
+	var intro_tween := create_tween()
+	intro_tween.tween_property(overlay, "modulate:a", 1.0, fade_in_duration)
+	intro_tween.tween_interval(display_duration)
+	intro_tween.tween_property(overlay, "modulate:a", 0.0, 0.12)
+	await intro_tween.finished
+	if generation != _visual_effect_generation or not is_instance_valid(overlay):
+		return
+	_clear_effect_overlays([overlay])
+
+func _add_key_info_strip(parent: Node2D, position: Vector2, size: Vector2, strip_name: String) -> void:
+	var strip := ColorRect.new()
+	strip.name = strip_name
+	strip.position = position
+	strip.size = size
+	strip.color = Color(1.0, 1.0, 1.0, 0.78)
+	parent.add_child(strip)
 
 func _run_bridge_tree_split_transition(request: Dictionary, context: Dictionary, generation: int, tree_fade_in_duration: float, bridge_step_delay: float, bridge_fade_duration: float) -> void:
+	_clear_key_info_emphasis()
 	var overlays: Array = _build_visual_overlays(context.get("bridge_visual_specs", []))
 	for overlay: Node2D in overlays:
 		if bridge_tree_effect_layer:
@@ -825,6 +885,13 @@ func _run_bridge_tree_split_transition(request: Dictionary, context: Dictionary,
 	for group in reveal_groups:
 		reveal_tween.tween_property(group, "modulate:a", 1.0, tree_fade_in_duration)
 	await reveal_tween.finished
+
+func _clear_key_info_emphasis() -> void:
+	if bridge_tree_effect_layer == null:
+		return
+	for child in bridge_tree_effect_layer.get_children():
+		if child.name == "KeyInfoEmphasis":
+			child.queue_free()
 
 func _run_bridge_collapse_sequence(request: Dictionary, generation: int) -> void:
 	if generation != _visual_effect_generation or bridge_tree_effect_layer == null:
@@ -1518,6 +1585,7 @@ func _on_fullscreen_video_finished() -> void:
 func _load_level_index(index: int, overrides := {}) -> void:
 	current_level_index = clampi(index, 0, LEVEL_SEQUENCE.size() - 1)
 	_visual_effect_generation += 1
+	key_info_emphasis_played = false
 	world.load_level(LEVEL_SEQUENCE[current_level_index].build_level())
 	if overrides.has("player_pos"):
 		world.player_pos = overrides.player_pos
