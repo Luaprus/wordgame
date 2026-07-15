@@ -329,6 +329,18 @@ func test_he_splits_first_then_context_text_spawns_later() -> void:
 	_finish_intro(world)
 	var result := world.split_front()
 	assert_true(result.success, "tab splits 他")
+	var requests := world.consume_visual_effects()
+	var found_split_visual := false
+	for request_value in requests:
+		var request: Dictionary = request_value
+		if str(request.get("type", "")) != "word_split_transition":
+			continue
+		found_split_visual = true
+		assert_equal(request.get("source_cell", Vector2i.ZERO), HelmetTutorial.HE_POS, "他 split visual anchors at 他")
+		assert_equal(request.get("source_text", ""), "他", "他 split visual keeps source text")
+		assert_equal(request.get("part_texts", []), ["人", "也"], "他 split visual records split texts")
+		assert_equal(request.get("part_cells", []), [HelmetTutorial.HE_POS, HelmetTutorial.HE_POS + Vector2i.DOWN], "他 split visual records target cells")
+	assert_true(found_split_visual, "他 split emits a word_split_transition visual request")
 	assert_any_text(world, HelmetTutorial.HE_POS, "人", "人 appears where 他 was")
 	assert_any_text(world, HelmetTutorial.HE_POS + Vector2i.DOWN, "也", "也 appears one row below 人")
 	assert_no_text_at(world, HelmetTutorial.WATCH_TEXT_POS + Vector2i(23, 1), "呢", "stale watch-page tail is removed as soon as 他 splits")

@@ -59,7 +59,7 @@ static func build_level() -> Dictionary:
 		},
 		"split_effects": {
 			"桥": _bridge_split_effect(),
-			"植": {},
+			"植": _plant_split_effect(),
 			"枯": _restore_water_effect()
 		}
 	}
@@ -390,6 +390,13 @@ static func _bridge_split_open_effect() -> Dictionary:
 		],
 		"replace_text": [_hint_bridge_split_replace()],
 		"spawn": _creek_and_tree_spawn(true)
+	}
+
+static func _plant_split_effect() -> Dictionary:
+	return {
+		"visual_effect": WordSplitVisuals.effect("植", ["木", "直"], {
+			"part_jump_heights": [0.0, 30.0]
+		})
 	}
 
 static func _dry_river_effect() -> Dictionary:

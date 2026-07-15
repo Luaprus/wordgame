@@ -23,6 +23,7 @@ var visual_color := Color.WHITE
 var visual_horizontal_shake_amplitude := 0.0
 var visual_horizontal_shake_speed := 0.0
 var visual_horizontal_shake_phase := 0.0
+var visual_style := ""
 
 func _init(entity_id := "", entity_text := "", pos := Vector2i.ZERO, occupied_cells: Array[Vector2i] = []) -> void:
 	id = entity_id
@@ -56,6 +57,7 @@ func set_from_config(config: Dictionary) -> void:
 	visual_horizontal_shake_amplitude = float(config.get("visual_horizontal_shake_amplitude", visual_horizontal_shake_amplitude))
 	visual_horizontal_shake_speed = float(config.get("visual_horizontal_shake_speed", visual_horizontal_shake_speed))
 	visual_horizontal_shake_phase = float(config.get("visual_horizontal_shake_phase", visual_horizontal_shake_phase))
+	visual_style = str(config.get("visual_style", visual_style))
 
 func move_by(delta: Vector2i) -> void:
 	grid_pos += delta

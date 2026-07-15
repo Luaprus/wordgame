@@ -1,0 +1,81 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/animations/hall_door/door_open.png" id="1_door"]
+[ext_resource type="AudioStream" path="res://assets/audio/hall_door/door_open_idle.wav" id="2_idle"]
+[ext_resource type="AudioStream" path="res://assets/audio/hall_door/SE_1_3_door_open.wav" id="3_open"]
+[ext_resource type="AudioStream" path="res://assets/audio/hall_door/SE_1_4_door_close.wav" id="4_close"]
+
+[sub_resource type="Animation" id="Animation_close"]
+resource_name = "close"
+length = 1.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("DoorSprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [29, 0]
+}
+tracks/1/type = "audio"
+tracks/1/path = NodePath("AudioStreamPlayer")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("4_close")
+}],
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_open"]
+resource_name = "open"
+length = 1.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("DoorSprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0, 29]
+}
+tracks/1/type = "audio"
+tracks/1/path = NodePath("AudioStreamPlayer")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("3_open")
+}],
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_hall_door"]
+_data = {
+"close": SubResource("Animation_close"),
+"open": SubResource("Animation_open")
+}
+
+[node name="HallDoorOpenSource" type="Node2D"]
+
+[node name="DoorSprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_door")
+centered = false
+hframes = 10
+vframes = 3
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_hall_door")
+}
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_idle")
+bus = &"SE"

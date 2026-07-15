@@ -2,6 +2,7 @@ extends RefCounted
 
 const LEVEL_NAME := "四目头盔 教学"
 const SCREEN_SIZE := Vector2i(32, 18)
+const WordSplitVisuals = preload("res://scripts/word_split_visuals.gd")
 
 const HE_POS := Vector2i(17, 14)
 const SPLIT_HUMAN_POS := HE_POS
@@ -593,6 +594,7 @@ static func _initial_tutorial_text() -> Array:
 static func _split_he_effect() -> Dictionary:
 	return {
 		"remove_at": _post_helmet_scene_cells() + _initial_text_cells(),
+		"visual_effect": WordSplitVisuals.effect("他", ["人", "也"]),
 		"set_pending_timed_effect": {
 			"spawn_text": _split_flash_text(),
 			"set_pending_interact_effect": _show_rebuild_prompt_effect()

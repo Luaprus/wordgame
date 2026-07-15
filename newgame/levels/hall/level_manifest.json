@@ -1,0 +1,73 @@
+{
+  "level_id": "artifact_hall",
+  "display_name": "神器大厅",
+  "owner": "codex",
+  "status": "in_progress",
+  "source": {
+    "external_root": "D:/文字游戏",
+    "source_maps": [
+      {
+        "source_map": "D:/文字游戏/Scenes/Maps/第一章/01_開頭.tscn",
+        "event": "door_interact_open",
+        "notes": "第一章最早的门交互，按交互后播放开门表现。"
+      },
+      {
+        "source_map": "D:/文字游戏/Scenes/Maps/第一章/02_長廊.tscn",
+        "event": "corridor_door_open_close",
+        "notes": "第一章长廊里的门开合表现与交互节奏参考。"
+      },
+      {
+        "source_map": "D:/文字游戏/Scenes/Maps/第一章/03_房間.tscn",
+        "event": "room_exit_door_open",
+        "notes": "第一章房间出口门的交互表现参考。"
+      }
+    ],
+    "source_data": [
+      {
+        "path": "D:/文字游戏/Datas/TSCharacters.txt",
+        "notes": "用于追溯 門 / 门 的繁简字形关系。"
+      }
+    ]
+  },
+  "target": {
+    "runtime_entry": "res://Main.tscn",
+    "level_script": "res://levels/hall/artifact_hall.gd",
+    "preview_scene": "res://levels/hall/artifact_hall_preview.tscn",
+    "world_script": "res://scripts/grid_world.gd",
+    "render_script": "res://scripts/main.gd",
+    "entity_script": "res://scripts/word_entity.gd"
+  },
+  "animation": {
+    "trigger": "玩家面对大厅里已开启的门并按交互键",
+    "sequence": [
+      "显示繁体 門",
+      "上半部两个 日 向左右旋开",
+      "落成同格常驻的 丨 / 亅 开门状态"
+    ],
+    "resource_policy": "未新增外部贴图或音效；按第一章门交互内容和用户截图，用运行时文字动画复刻。"
+  },
+  "required_resources": {
+    "new_external_art": [
+      "D:/文字游戏/Sprites/door/door_open.png"
+    ],
+    "new_external_audio": [
+      "D:/文字游戏/Sounds/se/door_open_1.wav",
+      "D:/文字游戏/Sounds/se/第一章 音效/SE_1_3_door_open.wav",
+      "D:/文字游戏/Sounds/se/第一章 音效/SE_1_4_door_close.wav"
+    ],
+    "imported_source_scene": "D:/文字游戏/Scenes/Animations/door_open.tscn",
+    "target_scene": "res://scenes/animations/hall_door_open.tscn",
+    "notes": "大厅门视觉播放直接使用源项目 door_open.tscn 的 10x3 帧动画与源音轨；大厅事件逻辑和最终文字布局保持不变。"
+  },
+  "acceptance": [
+    "大厅里的门字可按交互键触发开门动画",
+    "动画后门保持开门视觉状态",
+    "门的逻辑格与路线触发不变",
+    "Main 默认启动进入大厅时无脚本报错",
+    "--entry=hall 与大厅预览场景可正常打开"
+  ],
+  "known_risks": [
+    "当前已做脚本加载和大厅测试，未做 GUI 逐帧人工验视",
+    "开门过程为文字运行时复刻，不是直接播放第一章贴图序列"
+  ]
+}

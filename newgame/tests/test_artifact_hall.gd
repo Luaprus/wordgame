@@ -25,6 +25,33 @@ func _init() -> void:
 	if world.get_any_entity_at(Vector2i(14, 3)) != null or world.get_any_entity_at(Vector2i(13, 4)) != null:
 		failures.append("hand pattern removes the two marked cells")
 
+	world.player_pos = ArtifactHall.SWORD_GATE_POS + Vector2i.LEFT
+	world.facing = Vector2i.RIGHT
+	var sword_gate_open := world.interact_front()
+	if not sword_gate_open.success:
+		failures.append("interacting with an opened hall gate triggers the door animation")
+	var sword_gate = world.get_any_entity_at(ArtifactHall.SWORD_GATE_POS)
+	if sword_gate == null or sword_gate.visual_style != "hall_door_open":
+		failures.append("interacting with the sword gate keeps the opened door visual state")
+	var sword_gate_block := world.try_move_player(Vector2i.RIGHT)
+	if sword_gate_block.success:
+		failures.append("opened hall gate still blocks the player like the source door interaction")
+	var found_door_visual := false
+	for request in world.consume_visual_effects():
+		if str(request.get("type", "")) != "hall_door_open":
+			continue
+		if request.get("cell", Vector2i(-1, -1)) != ArtifactHall.SWORD_GATE_POS:
+			continue
+		found_door_visual = true
+	if not found_door_visual:
+		failures.append("interacting with the sword gate emits a hall_door_open visual request")
+	var sword_transport := world.interact_front()
+	if not sword_transport.success:
+		failures.append("interacting with the opened sword gate remains available")
+	if world.pending_scene_path != ArtifactHall.SWORD_SCENE_PATH:
+		failures.append("opened sword gate interaction requests the Becks-Bess sword scene")
+	world.pending_scene_path = ""
+
 	world.player_pos = ArtifactHall.HAND_GATE_POS + Vector2i.LEFT
 	world.facing = Vector2i.RIGHT
 	world.interact_front()
@@ -70,7 +97,13 @@ func _init() -> void:
 	_assert_char(world, ArtifactHall.HELMET_GATE_POS, "门", "moving 盔 to the 手 position opens the helmet gate", failures)
 	world.player_pos = ArtifactHall.HELMET_GATE_POS + Vector2i.LEFT
 	world.facing = Vector2i.RIGHT
-	world.try_move_player(Vector2i.RIGHT)
+	var helmet_gate_open := world.interact_front()
+	if not helmet_gate_open.success:
+		failures.append("interacting with the opened helmet gate triggers the gate event")
+	if not world.has_pending_timed_effect():
+		failures.append("opened helmet gate schedules the hall return event")
+	else:
+		world.resolve_pending_timed_effect()
 	if world.get_any_entity_at(ArtifactHall.HAND_DESC_POS) != null or world.get_any_entity_at(ArtifactHall.HELMET_DESC_POS) != null:
 		failures.append("entering the helmet door clears both door descriptions")
 	if world.get_any_entity_at(Vector2i(5, 15)) != null:
