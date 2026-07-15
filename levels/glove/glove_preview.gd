@@ -153,6 +153,8 @@ var intro_player_mover := SmoothGridMover.new()
 var intro_player_visual_ready := false
 var intro_entity_labels: Dictionary = {}
 var intro_entity_movers: Dictionary = {}
+var intro_glove_effect_layer: Node2D
+var intro_glove_pull_particles: Node2D
 var hero_quote_label: Label
 var hero_quote_player: Label
 var hero_quote_characters: Node2D
@@ -166,6 +168,8 @@ var hero_quote_world_active := false
 var hero_quote_entities: Node2D
 var hero_quote_entity_labels: Dictionary = {}
 var hero_quote_entity_movers: Dictionary = {}
+var hero_quote_glove_effect_layer: Node2D
+var hero_quote_glove_pull_particles: Node2D
 var hero_exit_arrow: Label
 var hero_exit_flash: ColorRect
 var hero_exit_transition_active := false
@@ -781,6 +785,15 @@ func _build_acquisition_overlay() -> void:
 	intro_layer = Node2D.new()
 	intro_layer.name = "GlovePushTutorialLayer"
 	acquisition_layer.add_child(intro_layer)
+	intro_glove_effect_layer = Node2D.new()
+	intro_glove_effect_layer.name = "GlovePushTutorialEffectLayer"
+	intro_glove_effect_layer.z_index = 80
+	intro_layer.add_child(intro_glove_effect_layer)
+	intro_glove_pull_particles = PullParticleEffect.new()
+	intro_glove_pull_particles.name = "GlovePushTutorialPullParticles"
+	intro_glove_pull_particles.z_index = 81
+	intro_glove_pull_particles.visible = false
+	intro_layer.add_child(intro_glove_pull_particles)
 	intro_top_remainder = _make_intro_word_label(INTRO_TOP_REMAINDER)
 	intro_top_remainder.position = _intro_grid_to_pixels(INTRO_NO_START + Vector2i.RIGHT)
 	intro_top_remainder.visible = false
@@ -812,6 +825,15 @@ func _build_acquisition_overlay() -> void:
 	hero_quote_entities = Node2D.new()
 	hero_quote_entities.name = "HeroQuoteEntities"
 	acquisition_layer.add_child(hero_quote_entities)
+	hero_quote_glove_effect_layer = Node2D.new()
+	hero_quote_glove_effect_layer.name = "HeroQuoteEffectLayer"
+	hero_quote_glove_effect_layer.z_index = 80
+	acquisition_layer.add_child(hero_quote_glove_effect_layer)
+	hero_quote_glove_pull_particles = PullParticleEffect.new()
+	hero_quote_glove_pull_particles.name = "HeroQuotePullParticles"
+	hero_quote_glove_pull_particles.z_index = 81
+	hero_quote_glove_pull_particles.visible = false
+	acquisition_layer.add_child(hero_quote_glove_pull_particles)
 	hero_quote_player = Label.new()
 	hero_quote_player.name = "HeroQuotePlayer"
 	hero_quote_player.text = "我"
@@ -1063,23 +1085,36 @@ func _consume_visual_effect_request() -> void:
 				_start_delete_cut(request)
 
 func _play_glove_pull_particles(request: Dictionary) -> void:
-	if glove_pull_particles == null:
+	_play_glove_pull_particles_at(
+		request,
+		glove_pull_particles,
+		_grid_to_pixels(request.get("origin_grid", Vector2i.ZERO)),
+		float(world.cell_size)
+	)
+
+func _play_glove_pull_particles_at(request: Dictionary, particles: Node2D, origin: Vector2, cell_size: float) -> void:
+	if particles == null:
 		return
-	var origin_grid: Vector2i = request.get("origin_grid", Vector2i.ZERO)
-	glove_pull_particles.play_at(
-		_grid_to_pixels(origin_grid),
-		float(world.cell_size),
+	particles.play_at(
+		origin,
+		cell_size,
 		float(request.get("duration", 0.42)),
 		int(request.get("seed", 2371))
 	)
 
 func _play_glove_push_flash(request: Dictionary) -> void:
-	if glove_effect_layer == null or PushEffectTexture == null:
+	_play_glove_push_flash_at(
+		request,
+		glove_effect_layer,
+		_grid_to_pixels(request.get("player_to", world.player_pos))
+	)
+
+func _play_glove_push_flash_at(request: Dictionary, effect_layer: Node2D, base_position: Vector2) -> void:
+	if effect_layer == null or PushEffectTexture == null:
 		return
 	var direction: Vector2i = request.get("direction", Vector2i.ZERO)
 	if direction == Vector2i.ZERO:
 		return
-	var player_to: Vector2i = request.get("player_to", world.player_pos)
 	var sprite := Sprite2D.new()
 	sprite.name = "PlayerPushFlash"
 	sprite.texture = PushEffectTexture
@@ -1089,8 +1124,7 @@ func _play_glove_push_flash(request: Dictionary) -> void:
 	sprite.frame = 0
 	sprite.centered = true
 	sprite.rotation_degrees = _push_flash_rotation(direction)
-	glove_effect_layer.add_child(sprite)
-	var base_position := _grid_to_pixels(player_to)
+	effect_layer.add_child(sprite)
 	_set_glove_push_flash_progress(0.0, sprite, base_position, direction)
 	var tween := create_tween()
 	tween.tween_method(Callable(self, "_set_glove_push_flash_progress").bind(sprite, base_position, direction), 0.0, 1.0, 0.5)
@@ -1326,6 +1360,7 @@ func _apply_intro_direction_step(direction: Vector2i) -> void:
 	if not bool(result.get("success", false)):
 		return
 	_sync_intro_world_view()
+	_consume_intro_visual_effect_requests()
 	if not intro_quote_started and _intro_no_reached_target():
 		intro_quote_started = true
 		acquisition_tutorial_label.visible = false
@@ -1428,6 +1463,24 @@ func _sync_intro_world_view() -> void:
 		intro_entity_labels.erase(entity_id)
 		intro_entity_movers.erase(entity_id)
 	_apply_intro_visual_positions()
+
+func _consume_intro_visual_effect_requests() -> void:
+	for raw_request in intro_world.consume_visual_effects():
+		var request: Dictionary = raw_request
+		match str(request.get("type", "")):
+			"player_push_flash":
+				_play_glove_push_flash_at(
+					request,
+					intro_glove_effect_layer,
+					_intro_grid_to_pixels(request.get("player_to", intro_world.player_pos))
+				)
+			"pull_particles":
+				_play_glove_pull_particles_at(
+					request,
+					intro_glove_pull_particles,
+					_intro_grid_to_pixels(request.get("origin_grid", intro_world.player_pos)),
+					60.0
+				)
 
 func _apply_intro_visual_positions() -> void:
 	if not intro_active:
@@ -1637,6 +1690,7 @@ func _apply_hero_quote_direction_step(direction: Vector2i) -> void:
 		if not bool(result.get("success", false)):
 			return
 		_sync_hero_quote_world_view()
+		_consume_hero_quote_visual_effect_requests()
 		if hero_quote_world.player_pos.x >= hero_quote_world.screen_size.x - 1:
 			_start_hero_exit_transition()
 		return
@@ -1644,6 +1698,24 @@ func _apply_hero_quote_direction_step(direction: Vector2i) -> void:
 	if next_position.x < 0.0 or next_position.x > 1860.0 or next_position.y < 0.0 or next_position.y > 1020.0:
 		return
 	hero_quote_player_mover.move_to(next_position, move_visual_duration)
+
+func _consume_hero_quote_visual_effect_requests() -> void:
+	for raw_request in hero_quote_world.consume_visual_effects():
+		var request: Dictionary = raw_request
+		match str(request.get("type", "")):
+			"player_push_flash":
+				_play_glove_push_flash_at(
+					request,
+					hero_quote_glove_effect_layer,
+					_hero_quote_grid_to_pixels(request.get("player_to", hero_quote_world.player_pos))
+				)
+			"pull_particles":
+				_play_glove_pull_particles_at(
+					request,
+					hero_quote_glove_pull_particles,
+					_hero_quote_grid_to_pixels(request.get("origin_grid", hero_quote_world.player_pos)),
+					HERO_QUOTE_STEP
+				)
 
 func _start_hero_exit_transition() -> void:
 	if hero_exit_transition_active:

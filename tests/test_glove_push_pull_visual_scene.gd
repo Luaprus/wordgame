@@ -26,6 +26,32 @@ func _verify() -> void:
 		preview.queue_free()
 		quit(1)
 		return
+	preview.intro_world.load_level({
+		"screen_size": Vector2i(6, 4),
+		"bounded": true,
+		"player_start": Vector2i(1, 1),
+		"player_facing": Vector2i.RIGHT,
+		"player_text": "我",
+		"rows": [],
+		"initial_spawn": [{"text": "字", "pos": Vector2i(2, 1), "config": {"solid": true, "pushable": true}}]
+	})
+	preview._apply_intro_direction_step(Vector2i.RIGHT)
+	if preview.intro_glove_effect_layer.get_child_count() == 0:
+		printerr("a tutorial push must render the glove animation above the tutorial text")
+		preview.queue_free()
+		quit(1)
+		return
+	if not preview.intro_world.pull_front(Vector2i.LEFT).success:
+		printerr("the tutorial setup must allow a pull after pushing the word")
+		preview.queue_free()
+		quit(1)
+		return
+	preview._consume_intro_visual_effect_requests()
+	if not preview.intro_glove_pull_particles.visible:
+		printerr("a tutorial pull must render particles above the tutorial text")
+		preview.queue_free()
+		quit(1)
+		return
 	preview.queue_free()
 	print("glove push and pull visual scene tests passed")
 	quit(0)
