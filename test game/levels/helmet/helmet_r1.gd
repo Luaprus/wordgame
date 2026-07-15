@@ -101,12 +101,31 @@ static func _bridge_merge_effect() -> Dictionary:
 	remove_at.append_array(_tree_cells())
 	remove_at.append_array(_creek_replaced_cells())
 	remove_at.append_array(_river_bridge_cells())
+	remove_at.append(Vector2i(14, 3))
+	remove_at.append(Vector2i(15, 3))
 	var spawn := []
 	for cell in _river_bridge_cells():
 		spawn.append({"text": "桥", "pos": cell, "config": {"solid": true, "pushable": false, "splittable": false}})
+	spawn.append({
+		"text": "桥",
+		"pos": Vector2i(14, 3),
+		"config": {
+			"solid": true,
+			"pushable": true,
+			"splittable": true,
+			"split_positions": [Vector2i(14, 3), Vector2i(15, 3)]
+		}
+	})
+	var key_info_cells: Array[Vector2i] = []
+	for x in range(11, 15):
+		key_info_cells.append(Vector2i(x, 3))
 	return {
 		"remove_at": remove_at,
-		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _river_bridge_cells()),
+		"visual_effect": BridgeTreeVisuals.merge_effect(
+			_tree_cells(),
+			_river_bridge_cells(),
+			BridgeTreeVisuals.key_info_emphasis(key_info_cells)
+		),
 		"replace_text": [
 			{
 				"from": "这乔木看起来很结实，",
@@ -127,9 +146,12 @@ static func _bridge_split_effect() -> Dictionary:
 	spawn.append({"text": "树", "pos": Vector2i(19, 9)})
 	spawn.append({"text": "树", "pos": Vector2i(20, 9)})
 	spawn.append({"text": "木", "pos": Vector2i(19, 10)})
+	var remove_at: Array[Vector2i] = _river_bridge_cells()
+	remove_at.append(Vector2i(14, 3))
+	remove_at.append(Vector2i(15, 3))
 	return {
-		"remove_at": _river_bridge_cells(),
-		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _river_bridge_cells()),
+		"remove_at": remove_at,
+		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _river_bridge_cells(), _creek_replaced_cells()),
 		"replace_text": [
 			{
 				"from": "这桥看起来很结实，",
