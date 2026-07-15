@@ -12,6 +12,7 @@ func _init() -> void:
 	test_facing_gate_requires_target_in_front()
 	test_interact_delete_push_pull()
 	test_split_merge_and_sentence_rule()
+	test_default_split_makes_room_behind_player()
 	test_sentence_rules_support_vertical_matches_and_revert_state()
 	test_sentence_rules_can_keep_state_after_match_breaks()
 	test_sentence_match_starts_highlight_animation_state()
@@ -237,6 +238,35 @@ func test_split_merge_and_sentence_rule() -> void:
 	assert_equal(result["天气"].message, "已识别", "sentence rule emits configured caption")
 	assert_true(world.highlighted_cells.has(sentence_start), "sentence start cell highlighted")
 	assert_true(world.highlighted_cells.has(air.grid_pos), "sentence second cell highlighted")
+
+func test_default_split_makes_room_behind_player() -> void:
+	var fallback_world := _make_default_split_fixture(false)
+	assert_true(fallback_world.split_front().success, "blocked forward split falls back behind the player")
+	assert_equal(fallback_world.get_entity_at(Vector2i(3, 2)).text, "甲", "first split part stays at the original cell")
+	assert_equal(fallback_world.get_entity_at(Vector2i(2, 2)).text, "乙", "second split part uses the cell behind the original word")
+	assert_equal(fallback_world.player_pos, Vector2i(1, 2), "fallback split pushes the player one cell backward")
+
+	var side_world := _make_default_split_fixture(true)
+	assert_true(side_world.split_front().success, "blocked forward and back split pushes the player sideways")
+	assert_equal(side_world.get_entity_at(Vector2i(3, 2)).text, "甲", "sideways fallback keeps first part at original cell")
+	assert_equal(side_world.get_entity_at(Vector2i(2, 2)).text, "乙", "sideways fallback uses the former player cell")
+	assert_equal(side_world.player_pos, Vector2i(2, 3), "sideways fallback moves the player to a free side cell")
+
+func _make_default_split_fixture(block_back: bool) -> RefCounted:
+	var world := GridWorld.new()
+	world.load_level({
+		"screen_size": Vector2i(8, 6),
+		"bounded": true,
+		"rows": ["        ", "        ", "        ", "        ", "        ", "        "],
+		"split_rules": {"拆": ["甲", "乙"]}
+	})
+	world.add_entity("拆", Vector2i(3, 2), {"solid": true, "pushable": true, "splittable": true})
+	world.add_entity("挡", Vector2i(4, 2), {"solid": true, "pushable": false})
+	if block_back:
+		world.add_entity("墙", Vector2i(1, 2), {"solid": true, "pushable": false})
+	world.player_pos = Vector2i(2, 2)
+	world.facing = Vector2i.RIGHT
+	return world
 
 func test_sentence_rules_support_vertical_matches_and_revert_state() -> void:
 	var world = GridWorld.new()
