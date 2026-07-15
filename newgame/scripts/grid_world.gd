@@ -53,6 +53,7 @@ var typewriter_queue: Array[Dictionary] = []
 var typewriter_after_effect: Dictionary = {}
 var typewriter_delay := 0.2
 var pending_interact_effect: Dictionary = {}
+var pending_scene_path := ""
 var fullscreen_video_finished_effect: Dictionary = {}
 var fullscreen_video_request: Dictionary = {}
 var visual_effect_requests: Array = []
@@ -152,6 +153,7 @@ func clear() -> void:
 	typewriter_after_effect.clear()
 	typewriter_delay = 0.2
 	pending_interact_effect.clear()
+	pending_scene_path = ""
 	fullscreen_video_finished_effect.clear()
 	fullscreen_video_request.clear()
 	visual_effect_requests.clear()
@@ -324,7 +326,7 @@ func _check_move_bounds(target: Vector2i) -> Dictionary:
 	return {"success": true}
 
 func _get_front_target() -> Dictionary:
-	var entity := get_entity_at(player_pos + facing)
+	var entity := get_any_entity_at(player_pos + facing)
 	if not entity:
 		return {"success": false, "message": "target not in front"}
 	return {"success": true, "entity": entity}
@@ -951,6 +953,8 @@ func _apply_map_effect(config: Dictionary) -> void:
 		player_input_locked = bool(config.set_input_locked)
 	if config.has("set_event_locked"):
 		player_event_locked = bool(config.set_event_locked)
+	if config.has("scene_path"):
+		pending_scene_path = str(config.scene_path)
 	if config.has("visual_effect"):
 		var visual_effect_dict: Dictionary = config.visual_effect.duplicate(true)
 		if not deferred_bridge_removals.is_empty():
@@ -1445,6 +1449,7 @@ func _snapshot_entities_by_text(text: String) -> Array[Dictionary]:
 				"persistent": entity.persistent,
 				"visual_rotation_degrees": entity.visual_rotation_degrees,
 				"visual_color": entity.visual_color,
+				"visual_style": entity.visual_style,
 				"interact_text": entity.interact_text,
 				"interact_effect": entity.interact_effect.duplicate(true),
 				"interact_caption_lines": entity.interact_caption_lines.duplicate(),
@@ -1474,6 +1479,7 @@ func _snapshot_persistent_entities() -> Array[Dictionary]:
 				"persistent": entity.persistent,
 				"visual_rotation_degrees": entity.visual_rotation_degrees,
 				"visual_color": entity.visual_color,
+				"visual_style": entity.visual_style,
 				"interact_text": entity.interact_text,
 				"interact_effect": entity.interact_effect.duplicate(true),
 				"interact_caption_lines": entity.interact_caption_lines.duplicate(),

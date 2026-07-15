@@ -79,9 +79,23 @@ func test_r5_hint_split_and_dry_water_are_reversible() -> void:
 	world.facing = Vector2i.RIGHT
 	assert_true(world.interact_front().success, "setup creek hint")
 
+	world.consume_visual_effects()
 	world.player_pos = Vector2i(1, 11)
 	world.facing = Vector2i.RIGHT
 	assert_true(world.split_front().success, "植 splits into 木 and 直")
+	var plant_requests := world.consume_visual_effects()
+	var found_plant_split_visual := false
+	for request_value in plant_requests:
+		var request: Dictionary = request_value
+		if str(request.get("type", "")) != "word_split_transition":
+			continue
+		found_plant_split_visual = true
+		assert_equal(request.get("source_cell", Vector2i.ZERO), Vector2i(2, 11), "植 split visual anchors at 植")
+		assert_equal(request.get("source_text", ""), "植", "植 split visual keeps source text")
+		assert_equal(request.get("part_texts", []), ["木", "直"], "植 split visual records split texts")
+		assert_equal(request.get("part_cells", []), [Vector2i(1, 11), Vector2i(2, 11)], "植 split visual records target cells")
+		assert_equal(request.get("part_jump_heights", []), [0.0, 30.0], "植 split keeps 直 as the jumping in-place part")
+	assert_true(found_plant_split_visual, "植 split emits a word_split_transition visual request")
 	assert_any_text(world, Vector2i(1, 11), "木", "植 split creates 木 on the left")
 	assert_any_text(world, Vector2i(2, 11), "直", "植 split creates 直")
 	assert_any_text(world, Vector2i(7, 12), "古", "古 remains available for the merge")

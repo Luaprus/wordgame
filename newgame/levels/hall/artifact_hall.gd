@@ -9,6 +9,7 @@ const HELMET_GATE_POS := Vector2i(26, 12)
 const HAND_DESC_POS := Vector2i(13, 15)
 const HAND_NOT_POS := HAND_DESC_POS + Vector2i(3, 0)
 const HELMET_DESC_POS := Vector2i(23, 15)
+const SWORD_SCENE_PATH := "res://scenes/Maps/第二章/05_聖劍寶庫_復刻.tscn"
 const RETURN_POET_START := Vector2i(0, 15)
 const RETURN_POET_POS := Vector2i(2, 15)
 const RETURN_SPEAKER_POS := RETURN_POET_POS + Vector2i.RIGHT
@@ -29,11 +30,11 @@ static func build_level() -> Dictionary:
 		"edge_transition_rows": [15, 16],
 		"player_start": ENTRY_POS,
 		"player_facing": Vector2i.RIGHT,
-		"passable_text_by_player": {"我": ["门"]},
+		"passable_text_by_player": {},
 		"rows": _hall_rows(),
 		"entities": {
 		"闩": {"solid": true, "pushable": false, "splittable": false},
-		"门": {"solid": false, "pushable": false, "splittable": false},
+		"门": {"solid": true, "pushable": false, "splittable": false},
 		"盔": {"solid": true, "pushable": false, "splittable": false},
 		"头": {"solid": true, "pushable": false, "splittable": false},
 			"塔": {"solid": true, "pushable": false, "splittable": false},
@@ -68,13 +69,14 @@ static func build_level() -> Dictionary:
 					"present_text_at": {"pos": HELMET_GATE_POS, "text": "门"},
 					"absent_text_at": {"pos": RETURN_POET_POS, "text": "诗"}
 				},
-				"effect": _begin_return_to_hall_effect()
+				"effect": {}
 			}
 		]
 	}
 
 static func _cell_configs() -> Dictionary:
 	return {
+		SWORD_GATE_POS: _open_gate_cell_config(SWORD_GATE_POS),
 		HAND_GATE_POS: {
 			"solid": true,
 			"interact_text": "手之门不会开",
@@ -99,6 +101,50 @@ static func _cell_configs() -> Dictionary:
 		Vector2i(25, 3): {"visual_color": RED},
 		Vector2i(27, 3): {"visual_color": RED}
 	}
+
+static func _open_gate_cell_config(gate_pos: Vector2i) -> Dictionary:
+	return {
+		"solid": true,
+		"pushable": false,
+		"splittable": false,
+		"interact_text": " ",
+		"interact_effect": _open_gate_visual_effect(gate_pos)
+	}
+
+static func _open_gate_visual_effect(gate_pos: Vector2i) -> Dictionary:
+	var after_open_interact_text := ""
+	var after_open_interact_effect: Dictionary = {}
+	if gate_pos == SWORD_GATE_POS:
+		after_open_interact_text = " "
+		after_open_interact_effect = {"scene_path": SWORD_SCENE_PATH}
+	var effect := {
+		"set_matching_config": [
+			{
+				"positions": [gate_pos],
+				"texts": ["门"],
+				"config": {
+					"solid": true,
+					"pushable": false,
+					"splittable": false,
+					"visual_style": "hall_door_open",
+					"interact_text": after_open_interact_text,
+					"interact_effect": after_open_interact_effect
+				}
+			}
+		],
+		"visual_effect": {
+			"type": "hall_door_open",
+			"cell": gate_pos,
+			"source_text": "门",
+			"traditional_text": "門"
+		}
+	}
+	if gate_pos == HELMET_GATE_POS:
+		effect["set_input_locked"] = true
+		effect["set_event_locked"] = true
+		effect["set_pending_timed_effect"] = _begin_return_to_hall_effect()
+		effect["pending_timed_delay"] = 0.42
+	return effect
 
 static func _show_hand_description_effect() -> Dictionary:
 	return {
@@ -148,14 +194,14 @@ static func _show_helmet_description_effect() -> Dictionary:
 static func _open_hand_gate_effect() -> Dictionary:
 	return {
 		"remove_matching": [{"positions": [HAND_GATE_POS], "texts": ["闩"]}],
-		"spawn": [{"text": "门", "pos": HAND_GATE_POS, "config": {"solid": false, "pushable": false, "splittable": false}}],
+		"spawn": [{"text": "门", "pos": HAND_GATE_POS, "config": _open_gate_cell_config(HAND_GATE_POS)}],
 		"last_message": "手之门会开。"
 	}
 
 static func _open_helmet_gate_effect() -> Dictionary:
 	return {
 		"remove_matching": [{"positions": [HELMET_GATE_POS], "texts": ["闩"]}],
-		"spawn": [{"text": "门", "pos": HELMET_GATE_POS, "config": {"solid": false, "pushable": false, "splittable": false}}],
+		"spawn": [{"text": "门", "pos": HELMET_GATE_POS, "config": _open_gate_cell_config(HELMET_GATE_POS)}],
 		"last_message": "盔之门会开。"
 	}
 

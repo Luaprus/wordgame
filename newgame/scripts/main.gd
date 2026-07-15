@@ -24,6 +24,7 @@ const SplitBaseTexture = preload("res://assets/animations/split/base_white.png")
 const SplitParticleTexture = preload("res://assets/animations/split/unzip_split.png")
 const OriginalFont = preload("res://Fonts/Zpix-v3.1.6.ttf")
 const PushEffectTexture = preload("res://assets/animations/push/u_glove_S.png")
+const HallDoorOpenScene = preload("res://scenes/animations/hall_door_open.tscn")
 
 const WORD_FONT_SIZE := 56
 const GEM_COLOR := Color(0.0, 0.58, 0.62, 1.0)
@@ -50,11 +51,21 @@ const BRIDGE_MERGE_YELLOW_SOFT := Color(1.0, 0.92, 0.22, 0.16)
 const KEY_INFO_EMPHASIS := "key_info_emphasis"
 const RIVER_DEPTH_STEP := 10
 const RIVER_PLAYER_DEPTH_OFFSET := 5
+const HALL_DOOR_OPEN_DEPTH := 20
+const HALL_DOOR_LEFT_X := -14.0
+const HALL_DOOR_RIGHT_X := 34.0
+const HALL_DOOR_FRAGMENT_WIDTH := 14.0
+const HALL_DOOR_FINAL_SHIFT_X := -13.0
 const HIGHLIGHT_VISUAL_CONFIG_PATH := "res://assets/animations/highlight/highlight_visual_config.json"
 const GLOVE_PREVIEW_SCENE_PATH := "res://levels/glove/glove_preview.tscn"
+const HALL_PREVIEW_SCENE_PATH := "res://levels/hall/artifact_hall_preview.tscn"
+const SWORD_FLOW_SCENE_PATH := "res://scenes/Maps/第二章/05_聖劍寶庫_復刻.tscn"
 const STARTUP_ENTRY_ARG_PREFIX := "--entry="
+const SWORD_SCENE_SHORTCUT_KEY := KEY_F8
 const GLOVE_SCENE_SHORTCUT_KEY := KEY_F9
+const HALL_SCENE_SHORTCUT_KEY := KEY_F10
 const LEVEL_SEQUENCE := [
+	ArtifactHall,
 	HelmetTutorial,
 	HelmetR1,
 	HelmetR2,
@@ -474,6 +485,8 @@ func _is_creek_visual_entity(entity: WordEntity) -> bool:
 	return current_level_index > 0 and entity != null and entity.text == "溪" and entity.grid_pos.x >= CREEK_MIN_X
 
 func _entity_depth_for(entity: WordEntity) -> int:
+	if _is_hall_door_open_entity(entity):
+		return HALL_DOOR_OPEN_DEPTH
 	if _is_creek_visual_entity(entity):
 		return entity.grid_pos.y * RIVER_DEPTH_STEP
 	return 10 if entity.text == "光" and not entity.solid else 0
@@ -504,6 +517,9 @@ func _sync_entity_label_group(group: Node2D, entity) -> void:
 	if _is_tree_animated_entity(entity):
 		_sync_tree_sprite_group(group)
 		return
+	if _is_hall_door_open_entity(entity):
+		_sync_hall_door_open_group(group, entity)
+		return
 
 	var text := str(entity.text)
 	for child in group.get_children():
@@ -533,6 +549,45 @@ func _sync_entity_label_group(group: Node2D, entity) -> void:
 		var pulse_scale := 1.0 + (highlight_strength * maxf(pulse_scale_max - 1.0, 0.0))
 		label.scale = Vector2.ONE * pulse_scale
 
+func _is_hall_door_open_entity(entity: WordEntity) -> bool:
+	return entity != null and entity.text == "门" and entity.visual_style == "hall_door_open"
+
+func _sync_hall_door_open_group(group: Node2D, entity: WordEntity) -> void:
+	var left_label := group.get_node_or_null("HallDoorLeft") as Label
+	var right_label := group.get_node_or_null("HallDoorRight") as Label
+	if left_label == null or right_label == null or group.get_child_count() != 2:
+		_clear_group_children(group)
+		left_label = _make_half_cell_word_label("丨", HALL_DOOR_LEFT_X + HALL_DOOR_FINAL_SHIFT_X, "HallDoorLeft")
+		right_label = _make_half_cell_word_label("亅", HALL_DOOR_RIGHT_X + HALL_DOOR_FINAL_SHIFT_X, "HallDoorRight")
+		group.add_child(left_label)
+		group.add_child(right_label)
+	var highlight_strength := world.get_highlight_animation_strength(entity.grid_pos)
+	var base_color: Color = entity.visual_color
+	if entity.highlighted:
+		base_color = _highlight_config_color("matched_color", Color(1.0, 0.95, 0.32))
+	var animated_color: Color = base_color.lerp(_highlight_config_color("accent_color", Color(1.0, 0.78, 0.18)), highlight_strength)
+	var pulse_scale_max := float(highlight_visual_config.get("pulse_scale_max", 1.14))
+	var pulse_scale := 1.0 + (highlight_strength * maxf(pulse_scale_max - 1.0, 0.0))
+	for label in [left_label, right_label]:
+		if label == null:
+			continue
+		label.add_theme_color_override("font_color", animated_color)
+		label.scale = Vector2.ONE * pulse_scale
+
+func _make_half_cell_word_label(text: String, x_offset: float, node_name: String) -> Label:
+	var label := _make_word_label(text)
+	label.name = node_name
+	label.position = Vector2(x_offset, -2.0)
+	label.size = Vector2(HALL_DOOR_FRAGMENT_WIDTH, world.cell_size + 4.0)
+	label.pivot_offset = label.size * 0.5
+	label.add_theme_font_size_override("font_size", WORD_FONT_SIZE - 2)
+	return label
+
+func _clear_group_children(group: Node2D) -> void:
+	for child in group.get_children():
+		group.remove_child(child)
+		child.queue_free()
+
 func _is_tree_animated_entity(entity: WordEntity) -> bool:
 	return entity != null and entity.text == "树"
 
@@ -560,7 +615,12 @@ func _apply_result(result: Dictionary) -> void:
 	_refresh_view(str(result.get("message", "")))
 	_consume_visual_effects(visual_requests, visual_contexts)
 	_consume_fullscreen_video_request()
-	if current_level_index == 0 and intro_phase == "lights" and result.get("success", false) and not world.has_pending_timed_effect():
+	if not world.pending_scene_path.is_empty():
+		var scene_path := world.pending_scene_path
+		world.pending_scene_path = ""
+		call_deferred("_switch_to_scene", scene_path)
+		return
+	if _is_helmet_tutorial_level() and intro_phase == "lights" and result.get("success", false) and not world.has_pending_timed_effect():
 		_begin_intro_prompt()
 	if result.has("pending_delay"):
 		if world_event_timer.is_stopped():
@@ -656,6 +716,12 @@ func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> 
 			continue
 		if effect_type == "word_merge_flash" or effect_type == "bridge_word_merge_flash":
 			call_deferred("_run_word_merge_flash", request.duplicate(true), _visual_effect_generation)
+			continue
+		if effect_type == "hall_door_open":
+			call_deferred("_run_hall_door_open_source_effect", request.duplicate(true), _visual_effect_generation)
+			continue
+		if effect_type == "black_screen_transition":
+			call_deferred("_run_black_screen_transition", request.duplicate(true))
 			continue
 		if effect_type == KEY_INFO_EMPHASIS:
 			if not key_info_emphasis_played:
@@ -1503,6 +1569,34 @@ func _play_player_push_flash(request: Dictionary) -> void:
 	tween.tween_callback(Callable(sprite, "queue_free"))
 	await tween.finished
 
+func _run_hall_door_open_source_effect(request: Dictionary, generation: int) -> void:
+	if generation != _visual_effect_generation or bridge_tree_effect_layer == null:
+		return
+	var cell: Vector2i = request.get("cell", Vector2i.ZERO)
+	var opened_groups: Array = _find_groups_for_cells([cell])
+	_set_groups_alpha(opened_groups, 0.0)
+	var door_instance: Node2D = HallDoorOpenScene.instantiate() as Node2D
+	if door_instance == null:
+		_set_groups_alpha(opened_groups, 1.0)
+		return
+	door_instance.name = "HallDoorOpenSource"
+	door_instance.position = _grid_to_pixels(cell)
+	door_instance.z_index = 640
+	bridge_tree_effect_layer.add_child(door_instance)
+	var animation_player: AnimationPlayer = door_instance.get_node_or_null("AnimationPlayer") as AnimationPlayer
+	if animation_player == null:
+		_set_groups_alpha(opened_groups, 1.0)
+		_clear_effect_overlays([door_instance])
+		return
+	animation_player.play("open")
+	await animation_player.animation_finished
+	if generation != _visual_effect_generation:
+		_set_groups_alpha(opened_groups, 1.0)
+		_clear_effect_overlays([door_instance])
+		return
+	_set_groups_alpha(opened_groups, 1.0)
+	_clear_effect_overlays([door_instance])
+
 func _run_word_merge_flash(request: Dictionary, generation: int) -> void:
 	if generation != _visual_effect_generation or bridge_tree_effect_layer == null:
 		return
@@ -2065,14 +2159,22 @@ func resolve_startup_scene_path(args: PackedStringArray) -> String:
 	return ""
 
 func resolve_scene_shortcut_from_keycode(keycode: Key) -> String:
+	if keycode == SWORD_SCENE_SHORTCUT_KEY:
+		return SWORD_FLOW_SCENE_PATH
 	if keycode == GLOVE_SCENE_SHORTCUT_KEY:
 		return GLOVE_PREVIEW_SCENE_PATH
+	if keycode == HALL_SCENE_SHORTCUT_KEY:
+		return HALL_PREVIEW_SCENE_PATH
 	return ""
 
 func _entry_scene_path_for_key(entry_key: String) -> String:
 	match entry_key:
+		"sword":
+			return SWORD_FLOW_SCENE_PATH
 		"glove":
 			return GLOVE_PREVIEW_SCENE_PATH
+		"hall":
+			return HALL_PREVIEW_SCENE_PATH
 		_:
 			return ""
 

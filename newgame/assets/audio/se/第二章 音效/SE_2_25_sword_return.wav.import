@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://di5mas04cc03c"
+path="res://.godot/imported/SE_2_25_sword_return.wav-1ec582148ccc008f63d9e5d481d8c211.sample"
+
+[deps]
+
+source_file="res://assets/audio/se/第二章 音效/SE_2_25_sword_return.wav"
+dest_files=["res://.godot/imported/SE_2_25_sword_return.wav-1ec582148ccc008f63d9e5d481d8c211.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2
