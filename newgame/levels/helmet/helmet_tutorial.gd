@@ -103,6 +103,7 @@ static func build_level() -> Dictionary:
 		"entity_move_effects": {
 			"镜": _mirror_move_effects()
 		},
+		"pullable_texts": ["镜"],
 		"step_effects": [
 			{
 				"pos": STACKED_HUMAN_POS + Vector2i.DOWN,

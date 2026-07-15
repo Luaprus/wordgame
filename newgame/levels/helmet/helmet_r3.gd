@@ -2,6 +2,7 @@ extends RefCounted
 
 const LEVEL_NAME := "四目头盔 过河第三关"
 const BridgeTreeVisuals = preload("res://levels/helmet/bridge_tree_visuals.gd")
+const WordSplitVisuals = preload("res://scripts/word_split_visuals.gd")
 const LOOSE_BRIDGE_SHAKE_AMPLITUDE := 1.5
 const LOOSE_BRIDGE_SHAKE_SPEED := TAU * 1.35
 const LOOSE_BRIDGE_CORNER_INDICES := [0, 1, 16, 17]
@@ -467,7 +468,10 @@ static func _shore_split_effect() -> Dictionary:
 static func _bridge_split_effect() -> Dictionary:
 	return {
 		"remove_at": _river_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _bridge_cells(), _creek_cells_for_bridge()),
+		"visual_effects": [
+			BridgeTreeVisuals.split_effect(_tree_cells(), _bridge_cells(), _creek_cells_for_bridge()),
+			WordSplitVisuals.effect("桥", ["乔", "木"])
+		],
 		"replace_text": _hint_bridge_split_replaces(),
 		"spawn": _creek_and_tree_spawn()
 	}

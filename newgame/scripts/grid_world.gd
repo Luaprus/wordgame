@@ -41,6 +41,7 @@ var player_merge_effects: Dictionary = {}
 var player_split_rules: Dictionary = {}
 var player_split_effects: Dictionary = {}
 var passable_text_by_player: Dictionary = {}
+var pullable_texts: PackedStringArray = PackedStringArray()
 var player_water_animation: Dictionary = {}
 var player_submerged := false
 var entity_move_effects: Variant = {}
@@ -91,6 +92,7 @@ func load_level(level: Dictionary) -> void:
 	player_split_rules = level.get("player_split_rules", {})
 	player_split_effects = level.get("player_split_effects", {})
 	passable_text_by_player = level.get("passable_text_by_player", {})
+	set_pullable_texts(level.get("pullable_texts", []))
 	player_water_animation = level.get("player_water_animation", {}).duplicate(true)
 	player_submerged = bool(level.get("player_submerged", false))
 	entity_move_effects = level.get("entity_move_effects", {})
@@ -133,6 +135,7 @@ func clear() -> void:
 	player_split_rules.clear()
 	player_split_effects.clear()
 	passable_text_by_player.clear()
+	pullable_texts = PackedStringArray()
 	player_water_animation.clear()
 	player_submerged = false
 	entity_move_effects.clear()
@@ -216,6 +219,14 @@ func set_ignored_row_texts(texts: Array) -> void:
 			normalized.append(value)
 	ignored_row_texts = normalized
 
+func set_pullable_texts(texts: Array) -> void:
+	var normalized := PackedStringArray()
+	for text in texts:
+		var value := str(text)
+		if not normalized.has(value):
+			normalized.append(value)
+	pullable_texts = normalized
+
 func get_rule_state() -> Dictionary:
 	return rule_engine.get_state()
 
@@ -273,10 +284,12 @@ func try_move_player(direction: Vector2i) -> Dictionary:
 		if not entity.pushable:
 			player_moving = false
 			return {"success": false, "message": "blocked"}
+		var pushed_from := entity.grid_pos
 		var pushed := move_entity_by(entity.id, direction)
 		if not pushed.success:
 			player_moving = false
 			return pushed
+		_queue_player_push_visual(direction, old_player_pos, target, pushed_from, entity.grid_pos, entity.text)
 	player_pos = target
 	_update_player_water_animation_state(old_player_pos, player_pos, get_entity_at(player_pos))
 	update_page()
@@ -383,7 +396,12 @@ func split_front() -> Dictionary:
 	var split_positions := _split_positions_for(entity)
 	if split_positions.size() != 2:
 		return {"success": false, "message": "split rule needs two positions"}
-	var split_effect := _effect_for_target(split_effects.get(entity.text, {}), entity.grid_pos)
+	var split_effect: Dictionary = _decorate_split_effect(
+		_effect_for_target(split_effects.get(entity.text, {}), entity.grid_pos),
+		entity,
+		parts,
+		split_positions
+	)
 	var space_result := _make_room_for_split(entity, split_positions, split_effect.get("remove_at", []))
 	if not space_result.success:
 		return space_result
@@ -417,6 +435,8 @@ func pull_front(move_direction: Vector2i) -> Dictionary:
 	var entity: WordEntity = front_target.entity
 	if not entity.pushable:
 		return {"success": false, "message": "nothing pullable"}
+	if not pullable_texts.is_empty() and not pullable_texts.has(entity.text):
+		return {"success": false, "message": "nothing pullable"}
 	if move_direction != -facing:
 		return {"success": false, "message": "pull direction locked"}
 	var old_player_pos := player_pos
@@ -429,6 +449,13 @@ func pull_front(move_direction: Vector2i) -> Dictionary:
 	player_moving = true
 	player_pos = new_player_pos
 	move_entity_to(entity.id, old_player_pos)
+	if entity.text == "镜":
+		visual_effect_requests.append({
+			"type": "pull_particles",
+			"origin_grid": old_player_pos,
+			"duration": 0.42,
+			"seed": old_player_pos.x * 97 + old_player_pos.y * 53
+		})
 	facing = -move_direction
 	update_page()
 	check_sentence_rules()
@@ -497,10 +524,16 @@ func _try_merge_player_with_entity(entity: WordEntity) -> Dictionary:
 	for key in keys:
 		if not player_merge_rules.has(key):
 			continue
+		var first_text := player_text
+		var second_text := str(entity.text)
+		var first_pos := player_pos
+		var second_pos := entity.grid_pos
+		var merged_text := str(player_merge_rules[key])
 		entities.erase(entity.id)
-		player_text = str(player_merge_rules[key])
+		player_text = merged_text
 		player_pos = entity.grid_pos
 		_apply_map_effect(player_merge_effects.get(key, {}))
+		_queue_word_merge_visual(first_text, second_text, first_pos, second_pos, player_pos, merged_text, true)
 		update_page()
 		check_sentence_rules()
 		player_moving = false
@@ -538,6 +571,19 @@ func _queue_player_water_visual(kind: String, old_pos: Vector2i, new_pos: Vector
 	request["to"] = new_pos
 	visual_effect_requests.append(request)
 
+func _queue_player_push_visual(direction: Vector2i, player_from: Vector2i, player_to: Vector2i, pushed_from: Vector2i, pushed_to: Vector2i, pushed_text: String) -> void:
+	if direction == Vector2i.ZERO:
+		return
+	visual_effect_requests.append({
+		"type": "player_push_flash",
+		"direction": direction,
+		"player_from": player_from,
+		"player_to": player_to,
+		"pushed_from": pushed_from,
+		"pushed_to": pushed_to,
+		"pushed_text": pushed_text
+	})
+
 func _try_split_player() -> Dictionary:
 	if not player_split_rules.has(player_text):
 		return {"success": false, "message": "no player split rule"}
@@ -557,6 +603,10 @@ func try_merge_entities(from_pos: Vector2i, to_pos: Vector2i) -> Dictionary:
 	if not merge_rules.has(key):
 		return {"success": false, "message": "no merge rule"}
 	var merged_text := str(merge_rules[key])
+	var first_text := str(first.text)
+	var second_text := str(second.text)
+	var first_pos := first.grid_pos
+	var second_pos := second.grid_pos
 	var split_positions := _merge_split_positions(merged_text, first, second)
 	entities.erase(first.id)
 	entities.erase(second.id)
@@ -567,8 +617,56 @@ func try_merge_entities(from_pos: Vector2i, to_pos: Vector2i) -> Dictionary:
 	}))
 	merged.split_positions = split_positions
 	_apply_map_effect(_effect_for_target(merge_effects.get(key, {}), to_pos))
+	_queue_word_merge_visual(first_text, second_text, first_pos, second_pos, to_pos, merged_text)
 	check_sentence_rules()
 	return {"success": true}
+
+func _queue_word_merge_visual(first_text: String, second_text: String, first_pos: Vector2i, second_pos: Vector2i, merged_pos: Vector2i, merged_text: String, is_player_merge := false) -> void:
+	var visual_pair := _word_merge_visual_pair(first_text, second_text, merged_text)
+	if visual_pair.is_empty():
+		return
+	var visual_order := _word_merge_visual_order(first_text, second_text, first_pos, second_pos, visual_pair)
+	visual_effect_requests.append({
+		"type": "word_merge_flash",
+		"first_text": first_text,
+		"second_text": second_text,
+		"left_text": visual_order[0],
+		"right_text": visual_order[1],
+		"pair_layout": visual_order[2],
+		"first_pos": first_pos,
+		"second_pos": second_pos,
+		"merged_pos": merged_pos,
+		"merged_text": merged_text,
+		"is_player_merge": is_player_merge
+	})
+
+func _word_merge_visual_pair(first_text: String, second_text: String, merged_text: String) -> Array:
+	var texts := [first_text, second_text]
+	if merged_text == "桥" and texts.has("乔") and texts.has("木"):
+		return ["乔", "木"]
+	if merged_text == "枯" and texts.has("木") and texts.has("古"):
+		return ["木", "古"]
+	if merged_text == "滩" and texts.has("水") and texts.has("难"):
+		return ["水", "难"]
+	if merged_text == "三" and texts.has("一") and texts.has("二"):
+		return ["一", "二"]
+	if merged_text == "鹅" and texts.has("我") and texts.has("鸟"):
+		return ["鸟", "我"]
+	if merged_text == "他" and texts.has("人") and texts.has("也"):
+		return ["人", "也"]
+	return []
+
+func _word_merge_visual_order(first_text: String, second_text: String, first_pos: Vector2i, second_pos: Vector2i, fallback_pair: Array) -> Array:
+	var delta := second_pos - first_pos
+	if abs(delta.x) >= abs(delta.y) and delta.x != 0:
+		if first_pos.x <= second_pos.x:
+			return [first_text, second_text, "horizontal"]
+		return [second_text, first_text, "horizontal"]
+	if delta.y != 0:
+		if first_pos.y <= second_pos.y:
+			return [first_text, second_text, "vertical"]
+		return [second_text, first_text, "vertical"]
+	return [fallback_pair[0], fallback_pair[1], "horizontal"]
 
 func check_sentence_rules() -> Dictionary:
 	highlighted_cells.clear()
@@ -750,6 +848,10 @@ func _apply_map_effect(config: Dictionary) -> void:
 		player_event_locked = bool(config.set_event_locked)
 	if config.has("visual_effect"):
 		visual_effect_requests.append(config.visual_effect.duplicate(true))
+	if config.has("visual_effects"):
+		for visual_effect in config.visual_effects:
+			if visual_effect is Dictionary:
+				visual_effect_requests.append(visual_effect.duplicate(true))
 	if config.has("set_pending_interact_effect"):
 		pending_interact_effect = config.set_pending_interact_effect
 	if config.has("set_pending_timed_effect"):
@@ -902,6 +1004,38 @@ func _effect_for_target(effect_config, target_pos: Vector2i) -> Dictionary:
 		if entry.get("pos", Vector2i.ZERO) == target_pos:
 			return entry.get("effect", {})
 	return config.get("default", {})
+
+func _decorate_split_effect(effect_config, entity: WordEntity, parts: Array, split_positions: Array[Vector2i]) -> Dictionary:
+	if not effect_config is Dictionary:
+		return {}
+	var config: Dictionary = effect_config.duplicate(true)
+	if config.has("visual_effect"):
+		config["visual_effect"] = _decorate_split_visual_request(config.visual_effect, entity, parts, split_positions)
+	if config.has("visual_effects"):
+		var decorated_effects: Array = []
+		for visual_effect in config.visual_effects:
+			decorated_effects.append(_decorate_split_visual_request(visual_effect, entity, parts, split_positions))
+		config["visual_effects"] = decorated_effects
+	if config.has("condition"):
+		var condition: Dictionary = config.condition.duplicate(true)
+		if condition.has("then"):
+			condition["then"] = _decorate_split_effect(condition.then, entity, parts, split_positions)
+		if condition.has("else"):
+			condition["else"] = _decorate_split_effect(condition.else, entity, parts, split_positions)
+		config["condition"] = condition
+	return config
+
+func _decorate_split_visual_request(request_config, entity: WordEntity, parts: Array, split_positions: Array[Vector2i]) -> Dictionary:
+	if not request_config is Dictionary:
+		return {}
+	var request: Dictionary = request_config.duplicate(true)
+	if str(request.get("type", "")) != "word_split_transition":
+		return request
+	request["source_text"] = str(request.get("source_text", entity.text))
+	request["source_cell"] = entity.grid_pos
+	request["part_texts"] = parts.duplicate()
+	request["part_cells"] = split_positions.duplicate()
+	return request
 
 func _trigger_entity_move_effect(entity: WordEntity, old_pos: Vector2i, new_pos: Vector2i, direction: Vector2i) -> void:
 	if not entity_move_effects.has(entity.text):

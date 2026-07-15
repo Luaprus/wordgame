@@ -1,6 +1,7 @@
 extends RefCounted
 
 const BridgeTreeVisuals = preload("res://levels/helmet/bridge_tree_visuals.gd")
+const WordSplitVisuals = preload("res://scripts/word_split_visuals.gd")
 
 const LEVEL_NAME := "四目头盔 过河第四关"
 const SCREEN_SIZE := Vector2i(32, 18)
@@ -321,7 +322,10 @@ static func _near_bridge_merge_effect() -> Dictionary:
 static func _near_bridge_split_effect() -> Dictionary:
 	return {
 		"remove_at": _near_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _near_bridge_cells(), _creek_cells_for_bridge()),
+		"visual_effects": [
+			BridgeTreeVisuals.split_effect(_tree_cells(), _near_bridge_cells(), _creek_cells_for_bridge()),
+			WordSplitVisuals.effect("桥", ["乔", "木"])
+		],
 		"replace_text": [_hint_bridge_split_replace()],
 		"spawn": _creek_and_tree_spawn()
 	}
@@ -329,7 +333,10 @@ static func _near_bridge_split_effect() -> Dictionary:
 static func _far_bridge_split_effect() -> Dictionary:
 	return {
 		"remove_at": _far_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.split_effect(_far_tree_cells(), _far_bridge_cells()),
+		"visual_effects": [
+			BridgeTreeVisuals.split_effect(_far_tree_cells(), _far_bridge_cells()),
+			WordSplitVisuals.effect("桥", ["乔", "木"])
+		],
 		"spawn": _far_tree_spawn()
 	}
 

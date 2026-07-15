@@ -1,0 +1,6 @@
+interface:
+  display_name: "Wordgame Merge Animation"
+  short_description: "Add source-traced word merge effects"
+  default_prompt: "Use $wordgame-merge-animation to add a source-traceable word-composition animation to the Godot wordgame project."
+policy:
+  allow_implicit_invocation: true
