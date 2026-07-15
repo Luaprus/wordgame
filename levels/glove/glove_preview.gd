@@ -55,8 +55,10 @@ const GESTURE_INTRO_SWAP_INTERVAL := 0.075
 const GESTURE_INTRO_SWAP_DURATION := 0.18
 const GESTURE_INTRO_START_OFFSET_Y := -780.0
 const PUSH_FLASH_FRAME_LOCAL_X := [-18.5, -20.0, -27.5, -38.5, -45.5, -50.0, -55.0, -58.0, -60.0, -61.0, -61.5, -62.0, -64.5, -65.0, -68.0, -68.0]
-const PLAYER_WALK_FRAME_SECONDS := 0.055
-const PLAYER_WALK_VISUAL_SECONDS := 0.12
+const PLAYER_WALK_FRAME_TIME := 0.055
+const PLAYER_WALK_VISUAL_TIME := 0.12
+const PLAYER_MOVE_REPEAT_TIME := 0.12
+const PLAYER_BLOCKED_RETRY_TIME := 0.12
 const INTRO_GRID_X_STEP := 600.0 / 11.0
 const INTRO_TEXT_ORIGIN := Vector2i(4, 8)
 const INTRO_PLAYER_START := Vector2i(4, 9)
@@ -101,6 +103,10 @@ var direction_marker_direction := Vector2i.ZERO
 var held_move_directions: Array[Vector2i] = []
 var move_repeat_elapsed := 0.0
 var move_visual_duration := 0.12
+var player_walk_visual_timers: Dictionary = {}
+var player_walk_frame_timers: Dictionary = {}
+var player_move_repeat_timer := 0.0
+var player_blocked_retry_timer := 0.0
 var _player_visual_ready := false
 var _scene_ready := false
 var _last_route_key := ""
@@ -223,6 +229,8 @@ func initialize_preview_world() -> void:
 	demo_paused = false
 	held_move_directions.clear()
 	move_repeat_elapsed = 0.0
+	player_move_repeat_timer = 0.0
+	player_blocked_retry_timer = 0.0
 	_player_visual_ready = false
 	_last_route_key = ""
 	_last_route_report.clear()
@@ -235,6 +243,11 @@ func initialize_preview_world() -> void:
 
 func _process(delta: float) -> void:
 	world.advance_highlight_animation(delta)
+	_update_player_visual_animations(delta)
+	if player_move_repeat_timer > 0.0:
+		player_move_repeat_timer = maxf(player_move_repeat_timer - delta, 0.0)
+	if player_blocked_retry_timer > 0.0:
+		player_blocked_retry_timer = maxf(player_blocked_retry_timer - delta, 0.0)
 	if intro_active:
 		intro_world.advance_highlight_animation(delta)
 	_advance_gesture_transition(delta)
@@ -275,10 +288,7 @@ func _process(delta: float) -> void:
 				move_repeat_elapsed -= hero_interval
 				_apply_hero_quote_direction_step(direction)
 	else:
-		move_repeat_elapsed += delta
-		var interval := FAST_MOVE_REPEAT_INTERVAL if Input.is_key_pressed(KEY_SHIFT) else MOVE_REPEAT_INTERVAL
-		while move_repeat_elapsed >= interval:
-			move_repeat_elapsed -= interval
+		if player_move_repeat_timer <= 0.0 and player_blocked_retry_timer <= 0.0:
 			_apply_direction_step(direction)
 
 	var changed := false
@@ -336,8 +346,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if key_event.echo:
 			return
 		_set_direction_held(direction, key_event.pressed)
-		if key_event.pressed:
-			move_repeat_elapsed = 0.0
+		if key_event.pressed and player_move_repeat_timer <= 0.0 and player_blocked_retry_timer <= 0.0:
 			_apply_direction_step(direction)
 		return
 	if not PrecisionMovement.should_process_key_event(key_event.pressed, key_event.echo, direction):
@@ -1362,7 +1371,6 @@ func _start_intro_bottom_rewrite() -> void:
 	_sync_intro_world_view()
 
 func _apply_intro_direction_step(direction: Vector2i) -> void:
-	var previous_player_pos := intro_world.player_pos
 	var result: Dictionary
 	if Input.is_key_pressed(KEY_ALT):
 		result = intro_world.pull_front(direction)
@@ -1372,8 +1380,7 @@ func _apply_intro_direction_step(direction: Vector2i) -> void:
 		return
 	_sync_intro_world_view()
 	_consume_intro_visual_effect_requests()
-	if intro_world.player_pos != previous_player_pos:
-		_play_player_walk_visual(intro_player_sprite)
+	_play_player_walk_visual(intro_player_sprite)
 	if not intro_quote_started and _intro_no_reached_target():
 		intro_quote_started = true
 		acquisition_tutorial_label.visible = false
@@ -1699,14 +1706,12 @@ func _handle_hero_quote_input(key_event: InputEventKey) -> void:
 
 func _apply_hero_quote_direction_step(direction: Vector2i) -> void:
 	if hero_quote_world_active:
-		var previous_player_pos := hero_quote_world.player_pos
 		var result := hero_quote_world.try_move_player(direction)
 		if not bool(result.get("success", false)):
 			return
 		_sync_hero_quote_world_view()
 		_consume_hero_quote_visual_effect_requests()
-		if hero_quote_world.player_pos != previous_player_pos:
-			_play_player_walk_visual(hero_quote_player_sprite)
+		_play_player_walk_visual(hero_quote_player_sprite)
 		if hero_quote_world.player_pos.x >= hero_quote_world.screen_size.x - 1:
 			_start_hero_exit_transition()
 		return
@@ -1873,16 +1878,17 @@ func _is_direction_physically_held(direction: Vector2i) -> bool:
 	return false
 
 func _apply_direction_step(direction: Vector2i) -> void:
-	var previous_player_pos := world.player_pos
 	var result: Dictionary
 	if Input.is_key_pressed(KEY_ALT):
 		result = world.pull_front(direction)
 	else:
 		result = world.try_move_player(direction)
+	player_move_repeat_timer = PLAYER_MOVE_REPEAT_TIME
+	if not result.get("success", false):
+		player_blocked_retry_timer = PLAYER_BLOCKED_RETRY_TIME
 	_apply_result(result)
 	if result.get("success", false):
-		if world.player_pos != previous_player_pos:
-			_play_player_walk_visual(player_sprite)
+		_play_player_walk_visual(player_sprite)
 		_show_direction_marker(direction)
 
 func _attach_player_sprite(player: Label, cell_size: float) -> Sprite2D:
@@ -1898,33 +1904,50 @@ func _attach_player_sprite(player: Label, cell_size: float) -> Sprite2D:
 func _play_player_walk_visual(sprite: Sprite2D) -> void:
 	if sprite == null:
 		return
-	var generation := int(sprite.get_meta("walk_generation", 0)) + 1
-	sprite.set_meta("walk_generation", generation)
+	var sprite_id := sprite.get_instance_id()
 	sprite.texture = PlayerWalkTexture
 	sprite.hframes = 2
 	sprite.vframes = 1
 	sprite.frame = 0
-	var tween := create_tween()
-	tween.tween_interval(PLAYER_WALK_FRAME_SECONDS)
-	tween.tween_callback(Callable(self, "_set_player_walk_frame").bind(sprite, generation, 1))
-	tween.tween_interval(PLAYER_WALK_VISUAL_SECONDS - PLAYER_WALK_FRAME_SECONDS)
-	tween.tween_callback(Callable(self, "_set_player_idle_if_current").bind(sprite, generation))
+	sprite.centered = true
+	sprite.scale = Vector2.ONE
+	sprite.modulate = Color.WHITE
+	sprite.rotation = 0.0
+	player_walk_visual_timers[sprite_id] = PLAYER_WALK_VISUAL_TIME
+	player_walk_frame_timers[sprite_id] = 0.0
 
-func _set_player_walk_frame(sprite: Sprite2D, generation: int, frame: int) -> void:
-	if sprite != null and int(sprite.get_meta("walk_generation", -1)) == generation:
-		sprite.frame = frame
-
-func _set_player_idle_if_current(sprite: Sprite2D, generation: int) -> void:
-	if sprite != null and int(sprite.get_meta("walk_generation", -1)) == generation:
-		_set_player_idle_visual(sprite)
+func _update_player_visual_animations(delta: float) -> void:
+	for sprite_id_value in player_walk_visual_timers.keys():
+		var sprite_id := int(sprite_id_value)
+		var sprite := instance_from_id(sprite_id) as Sprite2D
+		if sprite == null or not is_instance_valid(sprite):
+			player_walk_visual_timers.erase(sprite_id)
+			player_walk_frame_timers.erase(sprite_id)
+			continue
+		var remaining := maxf(float(player_walk_visual_timers[sprite_id]) - delta, 0.0)
+		var frame_elapsed := float(player_walk_frame_timers.get(sprite_id, 0.0)) + delta
+		if frame_elapsed >= PLAYER_WALK_FRAME_TIME:
+			frame_elapsed = 0.0
+			sprite.frame = 1 - sprite.frame
+		player_walk_visual_timers[sprite_id] = remaining
+		player_walk_frame_timers[sprite_id] = frame_elapsed
+		if remaining <= 0.0:
+			_set_player_idle_visual(sprite)
 
 func _set_player_idle_visual(sprite: Sprite2D) -> void:
 	if sprite == null:
 		return
+	var sprite_id := sprite.get_instance_id()
+	player_walk_visual_timers.erase(sprite_id)
+	player_walk_frame_timers.erase(sprite_id)
 	sprite.texture = PlayerIdleTexture
 	sprite.hframes = 1
 	sprite.vframes = 1
 	sprite.frame = 0
+	sprite.centered = true
+	sprite.scale = Vector2.ONE
+	sprite.modulate = Color.WHITE
+	sprite.rotation = 0.0
 
 func apply_startup_route_args(args: PackedStringArray) -> void:
 	var route_path := resolve_route_path_from_args(args)

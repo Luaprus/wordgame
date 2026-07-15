@@ -14,6 +14,23 @@ func _verify() -> void:
 		preview.queue_free()
 		quit(1)
 		return
+	preview.world.load_level({
+		"screen_size": Vector2i(6, 4),
+		"bounded": true,
+		"player_start": Vector2i(1, 1),
+		"player_facing": Vector2i.RIGHT,
+		"player_text": "我",
+		"rows": []
+	})
+	preview._player_visual_ready = false
+	preview._refresh_view()
+	preview._apply_direction_step(Vector2i.RIGHT)
+	var movement_cooldown = preview.get("player_move_repeat_timer")
+	if movement_cooldown == null or not is_equal_approx(float(movement_cooldown), 0.12):
+		printerr("the glove player must use the sword-level 0.12 second movement cooldown")
+		preview.queue_free()
+		quit(1)
+		return
 	if not preview.has_method("_play_glove_push_flash") or not preview.has_method("_play_glove_pull_particles"):
 		printerr("the glove preview must render both push frames and pull particles")
 		preview.queue_free()
