@@ -115,18 +115,17 @@ const SNAKE_TWIST_SPEED := 2.0
 const SNAKE_TWIST_INTERVAL := 0.3
 const SNAKE_TWIST_DISTANCE := 7.0
 const SNAKE_FOLLOW_DURATION := 0.8
-const SNAKE_SECOND_TALK_DELAY := 4.0
-const SNAKE_SECOND_TALK_INTERVAL := 12.0
+const SNAKE_SECOND_TALK_DELAY := 1.0
+const SNAKE_SECOND_TALK_INTERVAL := 15.0
 const SNAKE_RAY_INTERVAL := 5.0
 const SNAKE_RAY_WARNING_TIME := 0.45
 const SNAKE_RAY_HOLD_TIME := 0.55
 const SNAKE_RAY_MOVE_TIME := 1.5
 const SNAKE_RAY_DISTANCE := 780.0
-const SNAKE_SECOND_REACTION_DELAY := 0.35
 const SNAKE_SECOND_REACTION_HOLD_TIME := 1.0
 const SNAKE_SECOND_REACTION_FADE_TIME := 1.0
 const SNAKE_SECOND_REACTION_RESUME_DELAY := 0.8
-const SNAKE_SECOND_POST_REVERSE_DELAY := 4.0
+const SNAKE_SECOND_POST_REVERSE_DELAY := 1.0
 const SNAKE_OBJECT_RESULT_HOLD_TIME := 0.9
 const SNAKE_LOOP_SOURCE_ROWS := [
 	"＿＿＿＿＿壁＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿箱＿＿＿＿＿",
@@ -365,6 +364,8 @@ var snake_labels: Array[Label] = []
 var snake_used_keywords: Dictionary = {}
 var snake_success_count := 0
 var snake_reverse_count := 0
+var snake_reverse_current_index := -1
+var snake_reverse_completed: Dictionary = {}
 var snake_current_keyword := ""
 var snake_stone_mode := false
 var snake_body_base_cells: Array[Vector2i] = []
@@ -1317,6 +1318,8 @@ func _prepare_snake_boss_state() -> void:
 	_clear_fissure_overlay()
 	snake_success_count = 0
 	snake_reverse_count = 0
+	snake_reverse_current_index = -1
+	snake_reverse_completed.clear()
 	snake_current_keyword = ""
 	snake_stone_mode = false
 	snake_scroll_active = false
@@ -1693,8 +1696,7 @@ func _shatter_snake_sentence() -> void:
 	if phase == Phase.SNAKE_OBJECT_SENTENCE:
 		_unlock_snake_boss()
 	elif phase == Phase.SNAKE_SECOND:
-		snake_second_talk_timer = maxf(snake_second_talk_timer, 3.0)
-		_unlock_snake_second_phase()
+		_unlock_snake_second_phase(SNAKE_SECOND_TALK_DELAY)
 	var tween := create_tween()
 	tween.set_parallel(true)
 	for i in range(labels.size()):
@@ -2136,6 +2138,8 @@ func _start_snake_second_phase() -> void:
 	_clear_sentence()
 	_clear_snake_rays()
 	snake_current_keyword = ""
+	snake_reverse_current_index = -1
+	snake_reverse_completed.clear()
 	snake_scroll_active = false
 	snake_stone_mode = true
 	snake_second_talk_timer = SNAKE_SECOND_TALK_DELAY
@@ -2157,21 +2161,51 @@ func _unlock_snake_second_phase(delay: float = SNAKE_SECOND_TALK_DELAY) -> void:
 	phase = Phase.SNAKE_SECOND
 	input_locked = false
 	snake_current_keyword = ""
-	snake_second_talk_timer = maxf(snake_second_talk_timer, delay)
-	snake_ray_timer = maxf(snake_ray_timer, SNAKE_RAY_INTERVAL)
+	snake_second_talk_timer = maxf(delay, 0.0)
+	snake_ray_timer = SNAKE_RAY_INTERVAL
 	snake_scroll_active = current_map == MAP_SNAKE and snake_stone_mode
 	_set_hint("")
+
+
+func _snake_reverse_key(index: int) -> String:
+	return str(index)
+
+
+func _is_snake_reverse_completed(index: int) -> bool:
+	return snake_reverse_completed.has(_snake_reverse_key(index))
+
+
+func _mark_snake_reverse_completed(index: int) -> void:
+	snake_reverse_completed[_snake_reverse_key(index)] = true
+
+
+func _pick_snake_reverse_index() -> int:
+	var choices: Array[int] = []
+	for index in range(3):
+		if not _is_snake_reverse_completed(index):
+			choices.append(index)
+	if choices.is_empty():
+		return -1
+	return choices[rng.randi_range(0, choices.size() - 1)]
 
 
 func _show_snake_reverse_sentence() -> void:
 	if snake_reverse_count >= 3:
 		_start_snake_defeat_sequence()
 		return
+	if sentence_active or input_locked:
+		return
 	phase = Phase.SNAKE_SECOND
 	snake_scroll_active = current_map == MAP_SNAKE and snake_stone_mode
 	_clear_dialogue()
 	_clear_snake_rays()
-	var data: Dictionary = _get_snake_reverse_data(snake_reverse_count)
+	var reverse_index := _pick_snake_reverse_index()
+	if reverse_index == -1:
+		_start_snake_defeat_sequence()
+		return
+	snake_reverse_current_index = reverse_index
+	snake_second_talk_timer = SNAKE_SECOND_TALK_INTERVAL
+	var data: Dictionary = _get_snake_reverse_data(reverse_index)
 	var line: String = String(data["line"])
 	var text_lines: Array = [line]
 	if data.has("lines"):
@@ -2323,26 +2357,27 @@ func _show_snake_speech_text(text: String) -> void:
 
 
 func _snake_reverse_deleted() -> void:
-	var data: Dictionary = _get_snake_reverse_data(snake_reverse_count)
-	var result: String = String(data["right"])
+	var reverse_index := snake_reverse_current_index
+	if reverse_index == -1:
+		return
+	var data: Dictionary = _get_snake_reverse_data(reverse_index)
 	var after_text := ""
 	if data.has("after"):
 		after_text = String(data["after"])
-	snake_reverse_count += 1
+	snake_reverse_current_index = -1
+	phase = Phase.SNAKE_SECOND_INTRO
+	input_locked = true
+	snake_scroll_active = false
 	_clear_sentence()
-	_apply_snake_reverse_effect(snake_reverse_count)
+	_clear_dialogue()
+	_clear_snake_rays()
+	var count_before := snake_reverse_count
+	_mark_snake_reverse_completed(reverse_index)
+	snake_reverse_count += 1
+	_apply_snake_reverse_effect(reverse_index, count_before, snake_reverse_count)
 	await _trim_snake_body_after_reverse()
 	snake_reverse_after_text = after_text
 	snake_reverse_after_final = snake_reverse_count >= 3
-	_start_dialogue(MAP_SNAKE, [_snake_dialogue_page(result)], Callable(self, "_continue_snake_reverse_reaction"))
-
-
-func _continue_snake_reverse_reaction() -> void:
-	input_locked = true
-	snake_scroll_active = false
-	_clear_dialogue()
-	_clear_snake_rays()
-	await get_tree().create_timer(SNAKE_SECOND_REACTION_DELAY).timeout
 	if not snake_reverse_after_text.is_empty():
 		_start_dialogue(MAP_SNAKE, [_snake_dialogue_page(snake_reverse_after_text)], Callable(self, "_finish_snake_reverse_reaction"))
 		return
@@ -2361,8 +2396,6 @@ func _finish_snake_reverse_reaction() -> void:
 		return
 	snake_reverse_after_text = ""
 	snake_reverse_after_final = false
-	snake_second_talk_timer = maxf(snake_second_talk_timer, SNAKE_SECOND_POST_REVERSE_DELAY)
-	snake_ray_timer = maxf(snake_ray_timer, SNAKE_RAY_INTERVAL)
 	_unlock_snake_second_phase(SNAKE_SECOND_POST_REVERSE_DELAY)
 
 
@@ -2370,17 +2403,20 @@ func _snake_reverse_failed() -> void:
 	_snake_failure("蛇妖趁着破绽反击。", "我被蛇妖吞没了。")
 
 
-func _apply_snake_reverse_effect(count: int) -> void:
-	match count:
-		1:
+func _apply_snake_reverse_effect(reverse_index: int, count_before: int, count_after: int) -> void:
+	if count_before == 2:
+		_play_bgm(BGM_SNAKE_FIGHT)
+	match reverse_index:
+		0:
 			snake_ray_disabled = true
 			snake_big_attack_disabled = true
 			_clear_snake_rays()
-		2:
-			snake_second_talk_timer = SNAKE_SECOND_TALK_INTERVAL + 3.0
-			snake_ray_timer = SNAKE_RAY_INTERVAL + 2.0
-		3:
+		1:
 			snake_scroll_active = false
+		2:
+			snake_scroll_active = false
+	if count_after >= 3 and count_before != 2:
+		_play_bgm(BGM_SNAKE_FIGHT)
 
 
 func _trim_snake_body_after_reverse() -> void:
@@ -2560,6 +2596,8 @@ func _capture_death_checkpoint() -> void:
 		"sentence_map_index": sentence_map_index,
 		"snake_success_count": snake_success_count,
 		"snake_reverse_count": snake_reverse_count,
+		"snake_reverse_current_index": snake_reverse_current_index,
+		"snake_reverse_completed": snake_reverse_completed.duplicate(),
 		"snake_current_keyword": snake_current_keyword,
 		"snake_stone_mode": snake_stone_mode,
 		"snake_used_keywords": snake_used_keywords.duplicate(),
@@ -2623,6 +2661,14 @@ func _restore_death_checkpoint() -> void:
 
 	snake_success_count = int(death_checkpoint.get("snake_success_count", 0))
 	snake_reverse_count = int(death_checkpoint.get("snake_reverse_count", 0))
+	snake_reverse_current_index = int(death_checkpoint.get("snake_reverse_current_index", -1))
+	snake_reverse_completed.clear()
+	if death_checkpoint.has("snake_reverse_completed"):
+		var restored_reverse_completed: Dictionary = death_checkpoint["snake_reverse_completed"]
+		snake_reverse_completed = restored_reverse_completed.duplicate()
+	else:
+		for index in range(snake_reverse_count):
+			_mark_snake_reverse_completed(index)
 	snake_current_keyword = String(death_checkpoint.get("snake_current_keyword", ""))
 	snake_stone_mode = bool(death_checkpoint.get("snake_stone_mode", false))
 	snake_scroll_active = bool(death_checkpoint.get("snake_scroll_active", false))
@@ -3370,6 +3416,8 @@ func _make_legal_line(pos: Vector2, size: Vector2, color: Color) -> ColorRect:
 
 
 func _clear_sentence() -> void:
+	if sentence_map_index == MAP_SNAKE and phase == Phase.SNAKE_SECOND:
+		snake_reverse_current_index = -1
 	for label in active_sentence_labels:
 		label.queue_free()
 	active_sentence_labels.clear()
