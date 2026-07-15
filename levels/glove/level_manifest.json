@@ -141,5 +141,15 @@
     "删“不”后放开动画的实际缓动、镜头震动观感与截图落帧",
     "尾声三段对白的逐帧打字速度、停顿与镜头构图"
   ],
-  "notes": "当前 handoff 以“可运行真值 + candidate 标记”区分自动证据与人工复查，不把候选锚点伪装成原版真值。"
+  "notes": "当前 handoff 以“可运行真值 + candidate 标记”区分自动证据与人工复查，不把候选锚点伪装成原版真值。",
+  "animation_ports": [
+    {
+      "id": "GLOVE-ANIM-HERO-ENCROACH",
+      "source_scene": "E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/11_添譜來堂_開場.tscn",
+      "source_method": "文字勇者围拢表现参考；用户 2026-07-15 明确覆盖原 hero_walk 的四面随机规则。",
+      "behavior": "手势关终点的 4397 号勇者页面确认后清屏；上、左、右三面按隔格三波出现并内移，前两波再前进两格，最后补满顶部五行和左右五列，画面停住。",
+      "target_method": "_start_hero_encroach_transition / _advance_hero_encroach",
+      "verification": "res://tests/test_glove_hero_encroach.gd"
+    }
+  ]
 }

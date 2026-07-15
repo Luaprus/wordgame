@@ -109,14 +109,20 @@ static func gesture_slot_move_effects() -> Array[Dictionary]:
 	return effects
 
 static func delete_word_effects() -> Array[Dictionary]:
+	var effect := _switch_hand_effect("release", "巨大手掌已经放开。")
+	effect["start_delete_visual"] = {
+		"type": "delete_cut",
+		"text": "不",
+		"pos": DELETE_NO_POS
+	}
 	return [{
 		"text": "不",
 		"pos": DELETE_NO_POS,
-		"effect": _switch_hand_effect("release", "巨大手掌已经放开。")
+		"effect": effect
 	}]
 
 static func release_preview_effect() -> Dictionary:
-	var effect := _switch_hand_effect("release", "人工验收：五指张开")
+	var effect := _switch_hand_effect("release", "人工验收：五指张开", false)
 	effect["remove_at"] = effect.get("remove_at", []) + [
 		Vector2i(12, 13), Vector2i(13, 13), Vector2i(14, 13), Vector2i(15, 13),
 		Vector2i(16, 13), Vector2i(17, 13), Vector2i(18, 13), Vector2i(19, 13)
@@ -201,15 +207,23 @@ static func _transition_dialogue_page_two() -> Dictionary:
 static func _transition_dialogue_page_three() -> Dictionary:
 	return {
 		"clear_entities": true,
-		"set_pending_interact_effect": {
-			"last_message": "进入第三章/16_添譜來堂_尾聲"
-		},
+		"set_pending_interact_effect": _transition_to_hero_encroachment(),
 		"last_message": "尾声对白第三页",
 		"spawn_text": _transition_role_text() + [
 			{"text": "「四三九七號勇者！」", "pos": Vector2i(1, 3), "as_chars": true, "config": {"solid": true}},
 			{"text": "「請無畏地上前吧！」", "pos": Vector2i(1, 4), "as_chars": true, "config": {"solid": true}},
 			{"text": "▽", "pos": Vector2i(11, 4), "config": {"solid": true}}
 		]
+	}
+
+static func _transition_to_hero_encroachment() -> Dictionary:
+	return {
+		"clear_entities": true,
+		"set_player_visible": false,
+		"set_input_locked": true,
+		"set_event_locked": true,
+		"visual_effect": {"type": "hero_encroach"},
+		"last_message": "勇者们从三面围了上来。"
 	}
 
 static func _transition_role_text() -> Array[Dictionary]:
@@ -275,10 +289,23 @@ static func _lifeline_open_condition(index: int) -> Dictionary:
 		}
 	}
 
-static func _switch_hand_effect(state_name: String, message: String) -> Dictionary:
+static func _switch_hand_effect(state_name: String, message: String, animate := true) -> Dictionary:
+	var hand_effect := _hand_layout_effect(state_name, message)
+	if not animate:
+		return hand_effect
+	hand_effect["set_input_locked"] = false
+	return {
+		"start_gesture_transition": {
+			"switch_delay": 0.5,
+			"duration": 1.0,
+			"effect": hand_effect
+		}
+	}
+
+static func _hand_layout_effect(state_name: String, message: String) -> Dictionary:
 	var effect := {
 		"remove_at": GloveLayouts.all_hand_cells(),
-		"remove_texts": [DIALOGUE_INITIAL, DIALOGUE_OPENING, DIALOGUE_LIKE, "：改变手势，扭转守势！", "怜爱之深，", "责任之切，", "勇者之情。", "逼退", "手的生命线", "线", "线线"],
+		"remove_texts": [DIALOGUE_INITIAL, DIALOGUE_OPENING, DIALOGUE_LIKE, "勇：", "：改变手势，扭转守势！", "怜爱之深，", "责任之切，", "勇者之情。", "逼退", "手的生命线", "线", "线线"],
 		"preserve_texts": ["赢", "不", "二", "赞", "一", "零", "好", "爱", "剑"],
 		"spawn_text": GloveLayouts.hand_spawn_text(state_name),
 		"last_message": message
@@ -286,7 +313,7 @@ static func _switch_hand_effect(state_name: String, message: String) -> Dictiona
 	effect["spawn"] = effect.get("spawn", [])
 	if state_name == "like" or state_name == "release":
 		if state_name == "like":
-			effect["spawn"].append({"text": DIALOGUE_LIKE, "pos": DIALOGUE_POS, "config": {"solid": false}})
+			effect["spawn"].append({"text": "勇：", "pos": DIALOGUE_POS, "config": {"solid": true}})
 		else:
 			effect["spawn"].append({"text": "：改变手势，扭转守势！", "pos": Vector2i(2, 16), "config": {"solid": false}})
 		effect["spawn"].append({"text": "逼退", "pos": Vector2i(8, 13), "config": {"solid": true}})
@@ -328,13 +355,13 @@ static func _toggle_sword_anchor_effect() -> Dictionary:
 			"text": "剑",
 			"then": {
 				"remove_at": [GloveLayouts.SWORD_LEFT_POS, GloveLayouts.SWORD_RIGHT_POS],
-				"spawn": [{"text": "剑", "pos": GloveLayouts.SWORD_RIGHT_POS}],
-				"last_message": "二指伸直，掌中剑换到了右边。"
+				"visual_effect": {"type": "sword_acquire", "from_grid": GloveLayouts.SWORD_LEFT_POS},
+				"last_message": "你拿到了掌中剑。"
 			},
 			"else": {
 				"remove_at": [GloveLayouts.SWORD_LEFT_POS, GloveLayouts.SWORD_RIGHT_POS],
-				"spawn": [{"text": "剑", "pos": GloveLayouts.SWORD_LEFT_POS}],
-				"last_message": "二指伸直，掌中剑换到了左边。"
+				"visual_effect": {"type": "sword_acquire", "from_grid": GloveLayouts.SWORD_RIGHT_POS},
+				"last_message": "你拿到了掌中剑。"
 			}
 		}
 	}

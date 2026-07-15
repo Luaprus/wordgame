@@ -1074,6 +1074,8 @@
         "newgame/tests/test_glove_level.gd",
         "newgame/scripts/main.gd",
         "newgame/tests/test_gameplay_core.gd",
+        "levels/glove/*",
+        "tests/test_glove_*.gd",
         "harness/demo_routes/glove/*",
         "harness/reports/demo/glove/*",
         "harness/contracts.md",
