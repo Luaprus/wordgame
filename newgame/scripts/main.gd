@@ -3,10 +3,6 @@ extends Node2D
 const GridWorld = preload("res://scripts/grid_world.gd")
 const WordEntity = preload("res://scripts/word_entity.gd")
 const LevelLoader = preload("res://scripts/level_loader.gd")
-const PoetOpening = preload("res://levels/prologue/poet_opening.gd")
-const ArtifactHall = preload("res://levels/hall/artifact_hall.gd")
-const PrincessCage = preload("res://levels/princess/princess_cage.gd")
-const PrincessRescueTransition = preload("res://levels/princess/princess_rescue_transition.gd")
 const HelmetTutorial = preload("res://levels/helmet/helmet_tutorial.gd")
 const HelmetR1 = preload("res://levels/helmet/helmet_r1.gd")
 const HelmetR2 = preload("res://levels/helmet/helmet_r2.gd")
@@ -104,7 +100,6 @@ var direction_marker_fill: Polygon2D
 var direction_marker_outline: Line2D
 var direction_marker_timer: Timer
 var fullscreen_video_player: VideoStreamPlayer
-var black_screen_overlay: ColorRect
 var gem_burst_effect
 var light_glow_effect
 var pull_particle_effect
@@ -122,6 +117,11 @@ var player_river_tween: Tween
 var player_river_action_locked := false
 var _visual_effect_generation := 0
 var key_info_emphasis_played := false
+var key_info_effect_active := false
+var key_info_sequence_pending := false
+var visual_sequence_has_key_info := false
+var pre_key_visual_effects_active := 0
+var pre_merge_push_effects_active := 0
 var highlight_visual_config: Dictionary = {}
 var gem_labels: Array = []
 var intro_phase := "lights"
@@ -256,13 +256,6 @@ func _build_ui() -> void:
 	fullscreen_video_player.set_anchors_preset(Control.PRESET_FULL_RECT)
 	fullscreen_video_player.finished.connect(_on_fullscreen_video_finished)
 	canvas.add_child(fullscreen_video_player)
-	black_screen_overlay = ColorRect.new()
-	black_screen_overlay.name = "BlackScreenOverlay"
-	black_screen_overlay.color = Color.BLACK
-	black_screen_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	black_screen_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
-	black_screen_overlay.visible = false
-	canvas.add_child(black_screen_overlay)
 
 func _refresh_view(_message := "") -> void:
 	_sync_entity_labels()
@@ -432,7 +425,7 @@ func _update_intro_sequence(delta: float) -> void:
 	_play_gem_burst_preview()
 
 func _begin_gem_reveal() -> void:
-	if not _is_helmet_tutorial_level() or intro_phase != "prompt":
+	if current_level_index != 0 or intro_phase != "prompt":
 		return
 	var light_cells := _current_light_cells()
 	world._apply_map_effect({
@@ -466,7 +459,7 @@ func _restore_gems_without_light_overlap() -> Array:
 	return restored
 
 func _begin_intro_prompt() -> void:
-	if not _is_helmet_tutorial_level() or intro_phase != "lights":
+	if current_level_index != 0 or intro_phase != "lights":
 		return
 	world.set_input_locked(true)
 	world.set_event_locked(true)
@@ -620,6 +613,7 @@ func _apply_result(result: Dictionary) -> void:
 	var visual_requests: Array = world.consume_visual_effects()
 	var visual_contexts: Array = _prepare_visual_effect_contexts(visual_requests)
 	_refresh_view(str(result.get("message", "")))
+	_hide_bridge_merge_targets_before_render(visual_requests)
 	_consume_visual_effects(visual_requests, visual_contexts)
 	_consume_fullscreen_video_request()
 	if not world.pending_scene_path.is_empty():
@@ -634,6 +628,16 @@ func _apply_result(result: Dictionary) -> void:
 			world_event_timer.start(float(result.pending_delay))
 	elif world.has_pending_timed_effect() and world_event_timer.is_stopped():
 		world_event_timer.start(world.pending_timed_delay)
+
+func _hide_bridge_merge_targets_before_render(visual_requests: Array) -> void:
+	for request_value in visual_requests:
+		var request: Dictionary = request_value
+		if str(request.get("type", "")) != "bridge_tree_transition":
+			continue
+		if str(request.get("mode", "")) != "merge":
+			continue
+		var bridge_groups: Array = _find_groups_for_cells(request.get("bridge_cells", []))
+		_set_groups_alpha(bridge_groups, 0.0)
 
 func _handle_transition(result: Dictionary) -> void:
 	if result.get("transition", "") != "next_level":
@@ -661,9 +665,35 @@ func _consume_fullscreen_video_request() -> void:
 	_play_fullscreen_video(str(request.get("path", "")))
 
 func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> void:
+	var key_info_will_play := _visual_requests_include_key_info(visual_requests)
+	var pre_key_effect_count := _count_pre_key_visual_effects(visual_requests)
+	var pre_merge_push_count := _count_pre_merge_push_effects(visual_requests, pre_key_effect_count)
+	var visual_sequence_will_run := key_info_will_play or pre_key_effect_count > 0 or pre_merge_push_count > 0
+	if visual_sequence_will_run:
+		key_info_sequence_pending = true
+		visual_sequence_has_key_info = key_info_will_play
+		pre_key_visual_effects_active = pre_key_effect_count
+		pre_merge_push_effects_active = pre_merge_push_count
 	for i in range(visual_requests.size()):
 		var request: Dictionary = visual_requests[i]
 		var effect_type := str(request.get("type", ""))
+		var visual_context: Dictionary = visual_contexts[i] if i < visual_contexts.size() else {}
+		if visual_sequence_will_run:
+			if effect_type == "player_push_flash" and pre_merge_push_count > 0:
+				call_deferred("_run_pre_merge_push_effect", request.duplicate(true), _visual_effect_generation)
+				continue
+			if effect_type == "word_merge_flash" or effect_type == "bridge_word_merge_flash" or effect_type == "word_split_transition":
+				call_deferred("_run_pre_key_visual_effect", request.duplicate(true), visual_context, _visual_effect_generation)
+				continue
+			if effect_type == KEY_INFO_EMPHASIS:
+				if key_info_will_play:
+					call_deferred("_run_key_info_after_pre_effects", request.duplicate(true), _visual_effect_generation)
+				continue
+			if _is_key_info_driver(request):
+				call_deferred("_run_bridge_tree_transition_after_pre_effects", request.duplicate(true), visual_context, _visual_effect_generation)
+				continue
+			call_deferred("_run_visual_effect_after_key_info", request.duplicate(true), visual_context, _visual_effect_generation)
+			continue
 		if effect_type == "gem_burst":
 			if gem_burst_effect == null:
 				continue
@@ -704,15 +734,140 @@ func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> 
 		if effect_type == "black_screen_transition":
 			call_deferred("_run_black_screen_transition", request.duplicate(true))
 			continue
+		if effect_type == KEY_INFO_EMPHASIS:
+			if not key_info_emphasis_played:
+				key_info_emphasis_played = true
+				call_deferred("_run_key_info_emphasis", request.duplicate(true), _visual_effect_generation)
+			continue
 		if effect_type == "bridge_tree_transition":
-			var context: Dictionary = visual_contexts[i] if i < visual_contexts.size() else {}
-			call_deferred("_run_bridge_tree_transition", request.duplicate(true), context, _visual_effect_generation)
+			call_deferred("_run_bridge_tree_transition", request.duplicate(true), visual_context, _visual_effect_generation)
 			continue
 		if effect_type == "bridge_collapse_sequence":
 			call_deferred("_run_bridge_collapse_sequence", request.duplicate(true), _visual_effect_generation)
 		if effect_type == "word_split_transition":
-			var split_context: Dictionary = visual_contexts[i] if i < visual_contexts.size() else {}
-			call_deferred("_run_word_split_transition", request.duplicate(true), split_context, _visual_effect_generation)
+			call_deferred("_run_word_split_transition", request.duplicate(true), visual_context, _visual_effect_generation)
+
+func _visual_requests_include_key_info(visual_requests: Array) -> bool:
+	if key_info_emphasis_played:
+		return false
+	for request_value in visual_requests:
+		var request: Dictionary = request_value
+		var effect_type := str(request.get("type", ""))
+		if effect_type == KEY_INFO_EMPHASIS:
+			return true
+		if _is_key_info_driver(request):
+			return true
+	return false
+
+func _is_key_info_driver(request: Dictionary) -> bool:
+	if str(request.get("type", "")) != "bridge_tree_transition":
+		return false
+	if str(request.get("mode", "")) != "merge" or key_info_emphasis_played:
+		return false
+	var before_effect: Dictionary = request.get("before_effect", {})
+	return not before_effect.is_empty()
+
+func _count_pre_key_visual_effects(visual_requests: Array) -> int:
+	var count := 0
+	for request_value in visual_requests:
+		var request: Dictionary = request_value
+		var effect_type := str(request.get("type", ""))
+		if effect_type == "word_merge_flash" or effect_type == "bridge_word_merge_flash" or effect_type == "word_split_transition":
+			count += 1
+	return count
+
+func _count_pre_merge_push_effects(visual_requests: Array, merge_split_count: int) -> int:
+	if merge_split_count <= 0:
+		return 0
+	var count := 0
+	for request_value in visual_requests:
+		var request: Dictionary = request_value
+		if str(request.get("type", "")) == "player_push_flash":
+			count += 1
+	return count
+
+func _run_pre_merge_push_effect(request: Dictionary, generation: int) -> void:
+	if generation == _visual_effect_generation:
+		await _play_player_push_flash(request)
+	pre_merge_push_effects_active = maxi(pre_merge_push_effects_active - 1, 0)
+
+func _run_pre_key_visual_effect(request: Dictionary, context: Dictionary, generation: int) -> void:
+	var effect_type := str(request.get("type", ""))
+	while pre_merge_push_effects_active > 0 and generation == _visual_effect_generation:
+		await get_tree().process_frame
+	if generation == _visual_effect_generation:
+		if effect_type == "word_merge_flash" or effect_type == "bridge_word_merge_flash":
+			await _run_word_merge_flash(request, generation)
+		elif effect_type == "word_split_transition":
+			await _run_word_split_transition(request, context, generation)
+	pre_key_visual_effects_active = maxi(pre_key_visual_effects_active - 1, 0)
+	if pre_key_visual_effects_active == 0 and not visual_sequence_has_key_info:
+		key_info_sequence_pending = false
+
+func _run_key_info_after_pre_effects(request: Dictionary, generation: int) -> void:
+	while pre_key_visual_effects_active > 0 and generation == _visual_effect_generation:
+		await get_tree().process_frame
+	if generation != _visual_effect_generation:
+		key_info_sequence_pending = false
+		visual_sequence_has_key_info = false
+		return
+	key_info_emphasis_played = true
+	key_info_effect_active = true
+	await _run_key_info_emphasis(request, generation)
+	key_info_sequence_pending = false
+	visual_sequence_has_key_info = false
+
+func _run_bridge_tree_transition_after_pre_effects(request: Dictionary, context: Dictionary, generation: int) -> void:
+	while pre_key_visual_effects_active > 0 and generation == _visual_effect_generation:
+		await get_tree().process_frame
+	if generation != _visual_effect_generation:
+		key_info_sequence_pending = false
+		visual_sequence_has_key_info = false
+		return
+	_run_bridge_tree_transition(request, context, generation)
+
+func _run_visual_effect_after_key_info(request: Dictionary, context: Dictionary, generation: int) -> void:
+	while key_info_sequence_pending or key_info_effect_active:
+		if generation != _visual_effect_generation:
+			return
+		await get_tree().process_frame
+	if generation != _visual_effect_generation:
+		return
+	var effect_type := str(request.get("type", ""))
+	if effect_type == "gem_burst":
+		if gem_burst_effect == null:
+			return
+		var origin_grid: Vector2 = request.get("origin_grid", GEM_ORIGIN_GRID)
+		gem_burst_effect.play_at(
+			_grid_to_pixels_float(origin_grid),
+			world.cell_size,
+			float(request.get("duration", 0.78)),
+			int(request.get("seed", 1947))
+		)
+	elif effect_type == "pull_particles":
+		if pull_particle_effect == null:
+			return
+		var origin_grid: Vector2 = request.get("origin_grid", Vector2.ZERO)
+		pull_particle_effect.play_at(
+			_grid_to_pixels_float(origin_grid),
+			float(world.cell_size),
+			float(request.get("duration", 0.42)),
+			int(request.get("seed", 2371))
+		)
+	elif effect_type == "player_river_enter":
+		_play_player_river_enter(request)
+	elif effect_type == "player_river_exit":
+		_play_player_river_exit(request)
+	elif effect_type == "player_push_flash":
+		_play_player_push_flash(request)
+	elif effect_type == "word_merge_flash" or effect_type == "bridge_word_merge_flash":
+		call_deferred("_run_word_merge_flash", request.duplicate(true), generation)
+	elif effect_type == "bridge_tree_transition":
+		call_deferred("_run_bridge_tree_transition", request.duplicate(true), context, generation)
+	elif effect_type == "bridge_collapse_sequence":
+		call_deferred("_run_bridge_collapse_sequence", request.duplicate(true), generation)
+	elif effect_type == "word_split_transition":
+		call_deferred("_run_word_split_transition", request.duplicate(true), context, generation)
 
 func _prepare_visual_effect_contexts(visual_requests: Array) -> Array:
 	var contexts: Array = []
@@ -865,7 +1020,9 @@ func _run_bridge_tree_transition(request: Dictionary, context: Dictionary, gener
 		var before_effect: Dictionary = request.get("before_effect", {})
 		if not before_effect.is_empty() and not key_info_emphasis_played:
 			key_info_emphasis_played = true
+			key_info_effect_active = true
 			await _run_key_info_emphasis(before_effect, generation)
+			key_info_sequence_pending = false
 			if generation != _visual_effect_generation:
 				_clear_effect_overlays(merge_overlays)
 				_set_groups_alpha(bridge_groups, 1.0)
@@ -894,11 +1051,14 @@ func _run_bridge_tree_merge_transition(request: Dictionary, context: Dictionary,
 	if tree_tween != null:
 		await tree_tween.finished
 	_clear_effect_overlays(overlays)
+
 func _run_key_info_emphasis(request: Dictionary, generation: int) -> void:
 	if generation != _visual_effect_generation or bridge_tree_effect_layer == null:
+		key_info_effect_active = false
 		return
 	var cells: Array = request.get("cells", [])
 	if cells.is_empty():
+		key_info_effect_active = false
 		return
 	var first_cell: Vector2i = cells[0]
 	var cell_count: int = maxi(cells.size(), 1)
@@ -930,8 +1090,10 @@ func _run_key_info_emphasis(request: Dictionary, generation: int) -> void:
 	intro_tween.tween_property(overlay, "modulate:a", 0.0, 0.12)
 	await intro_tween.finished
 	if generation != _visual_effect_generation or not is_instance_valid(overlay):
+		key_info_effect_active = false
 		return
 	_clear_effect_overlays([overlay])
+	key_info_effect_active = false
 
 func _add_key_info_strip(parent: Node2D, position: Vector2, size: Vector2, strip_name: String) -> void:
 	var strip := ColorRect.new()
@@ -1341,6 +1503,7 @@ func _play_player_push_flash(request: Dictionary) -> void:
 	var tween := create_tween()
 	tween.tween_method(Callable(self, "_set_push_flash_progress").bind(sprite, base_position, direction), 0.0, 1.0, 0.5)
 	tween.tween_callback(Callable(sprite, "queue_free"))
+	await tween.finished
 
 func _run_hall_door_open_source_effect(request: Dictionary, generation: int) -> void:
 	if generation != _visual_effect_generation or bridge_tree_effect_layer == null:
@@ -1661,7 +1824,7 @@ func _clear_effect_overlays(overlays: Array) -> void:
 				node.queue_free()
 
 func _play_gem_burst_preview() -> void:
-	if not _is_helmet_tutorial_level() or gem_burst_effect == null:
+	if current_level_index != 0 or gem_burst_effect == null:
 		return
 	gem_burst_effect.play_at(
 		_grid_to_pixels_float(GEM_ORIGIN_GRID),
@@ -1688,20 +1851,15 @@ func _on_fullscreen_video_finished() -> void:
 	if world.has_fullscreen_video_finished_effect():
 		_apply_result(world.resolve_fullscreen_video_finished_effect())
 
-func _run_black_screen_transition(request: Dictionary) -> void:
-	if black_screen_overlay == null:
-		return
-	black_screen_overlay.visible = true
-	await get_tree().create_timer(float(request.get("duration", 1.0))).timeout
-	var target_index := int(request.get("target_level_index", current_level_index))
-	_load_level_index(target_index)
-	_refresh_view()
-	black_screen_overlay.visible = false
-
 func _load_level_index(index: int, overrides := {}) -> void:
 	current_level_index = clampi(index, 0, LEVEL_SEQUENCE.size() - 1)
 	_visual_effect_generation += 1
 	key_info_emphasis_played = false
+	key_info_effect_active = false
+	key_info_sequence_pending = false
+	visual_sequence_has_key_info = false
+	pre_key_visual_effects_active = 0
+	pre_merge_push_effects_active = 0
 	world.load_level(LEVEL_SEQUENCE[current_level_index].build_level())
 	if overrides.has("player_pos"):
 		world.player_pos = overrides.player_pos
@@ -1712,7 +1870,7 @@ func _load_level_index(index: int, overrides := {}) -> void:
 	world.update_page()
 	_clear_entity_visuals()
 	_reset_player_river_visual()
-	if _is_helmet_tutorial_level():
+	if current_level_index == 0:
 		intro_phase = "lights"
 		intro_reveal_elapsed = 0.0
 		intro_reveal_max_distance = 0.0
@@ -1732,9 +1890,6 @@ func _load_level_index(index: int, overrides := {}) -> void:
 			child.queue_free()
 	if player_sprite:
 		_set_player_idle_visual()
-
-func _is_helmet_tutorial_level() -> bool:
-	return current_level_index >= 0 and current_level_index < LEVEL_SEQUENCE.size() and LEVEL_SEQUENCE[current_level_index] == HelmetTutorial
 
 func _startup_level_overrides() -> Dictionary:
 	var overrides := {}

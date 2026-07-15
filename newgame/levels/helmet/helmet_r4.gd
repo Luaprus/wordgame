@@ -335,7 +335,14 @@ static func _far_bridge_split_effect() -> Dictionary:
 		"remove_at": _far_dynamic_cells(),
 		"visual_effects": [
 			BridgeTreeVisuals.split_effect(_far_tree_cells(), _far_bridge_cells()),
-			WordSplitVisuals.effect("桥", ["乔", "木"])
+			WordSplitVisuals.effect("桥", ["乔", "木"]),
+			BridgeTreeVisuals.key_info_emphasis([
+				Vector2i(11, 4),
+				Vector2i(12, 4),
+				Vector2i(13, 4),
+				Vector2i(14, 4),
+				Vector2i(15, 4)
+			])
 		],
 		"spawn": _far_tree_spawn()
 	}

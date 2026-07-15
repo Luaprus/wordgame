@@ -20,6 +20,8 @@ const GemBurstEffect = preload("res://scripts/gem_burst_effect.gd")
 const LightGlowEffect = preload("res://scripts/light_glow_effect.gd")
 const PullParticleEffect = preload("res://scripts/pull_particle_effect.gd")
 const TreeSpriteScene = preload("res://scenes/animations/TreeSprite.tscn")
+const SplitBaseTexture = preload("res://assets/animations/split/base_white.png")
+const SplitParticleTexture = preload("res://assets/animations/split/unzip_split.png")
 const OriginalFont = preload("res://Fonts/Zpix-v3.1.6.ttf")
 const PushEffectTexture = preload("res://assets/animations/push/u_glove_S.png")
 
@@ -104,6 +106,11 @@ var player_river_tween: Tween
 var player_river_action_locked := false
 var _visual_effect_generation := 0
 var key_info_emphasis_played := false
+var key_info_effect_active := false
+var key_info_sequence_pending := false
+var visual_sequence_has_key_info := false
+var pre_key_visual_effects_active := 0
+var pre_merge_push_effects_active := 0
 var highlight_visual_config: Dictionary = {}
 var gem_labels: Array = []
 var intro_phase := "lights"
@@ -551,6 +558,7 @@ func _apply_result(result: Dictionary) -> void:
 	var visual_requests: Array = world.consume_visual_effects()
 	var visual_contexts: Array = _prepare_visual_effect_contexts(visual_requests)
 	_refresh_view(str(result.get("message", "")))
+	_hide_bridge_merge_targets_before_render(visual_requests)
 	_consume_visual_effects(visual_requests, visual_contexts)
 	_consume_fullscreen_video_request()
 	if current_level_index == 0 and intro_phase == "lights" and result.get("success", false) and not world.has_pending_timed_effect():
@@ -560,6 +568,16 @@ func _apply_result(result: Dictionary) -> void:
 			world_event_timer.start(float(result.pending_delay))
 	elif world.has_pending_timed_effect() and world_event_timer.is_stopped():
 		world_event_timer.start(world.pending_timed_delay)
+
+func _hide_bridge_merge_targets_before_render(visual_requests: Array) -> void:
+	for request_value in visual_requests:
+		var request: Dictionary = request_value
+		if str(request.get("type", "")) != "bridge_tree_transition":
+			continue
+		if str(request.get("mode", "")) != "merge":
+			continue
+		var bridge_groups: Array = _find_groups_for_cells(request.get("bridge_cells", []))
+		_set_groups_alpha(bridge_groups, 0.0)
 
 func _handle_transition(result: Dictionary) -> void:
 	if result.get("transition", "") != "next_level":
@@ -587,9 +605,35 @@ func _consume_fullscreen_video_request() -> void:
 	_play_fullscreen_video(str(request.get("path", "")))
 
 func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> void:
+	var key_info_will_play := _visual_requests_include_key_info(visual_requests)
+	var pre_key_effect_count := _count_pre_key_visual_effects(visual_requests)
+	var pre_merge_push_count := _count_pre_merge_push_effects(visual_requests, pre_key_effect_count)
+	var visual_sequence_will_run := key_info_will_play or pre_key_effect_count > 0 or pre_merge_push_count > 0
+	if visual_sequence_will_run:
+		key_info_sequence_pending = true
+		visual_sequence_has_key_info = key_info_will_play
+		pre_key_visual_effects_active = pre_key_effect_count
+		pre_merge_push_effects_active = pre_merge_push_count
 	for i in range(visual_requests.size()):
 		var request: Dictionary = visual_requests[i]
 		var effect_type := str(request.get("type", ""))
+		var visual_context: Dictionary = visual_contexts[i] if i < visual_contexts.size() else {}
+		if visual_sequence_will_run:
+			if effect_type == "player_push_flash" and pre_merge_push_count > 0:
+				call_deferred("_run_pre_merge_push_effect", request.duplicate(true), _visual_effect_generation)
+				continue
+			if effect_type == "word_merge_flash" or effect_type == "bridge_word_merge_flash" or effect_type == "word_split_transition":
+				call_deferred("_run_pre_key_visual_effect", request.duplicate(true), visual_context, _visual_effect_generation)
+				continue
+			if effect_type == KEY_INFO_EMPHASIS:
+				if key_info_will_play:
+					call_deferred("_run_key_info_after_pre_effects", request.duplicate(true), _visual_effect_generation)
+				continue
+			if _is_key_info_driver(request):
+				call_deferred("_run_bridge_tree_transition_after_pre_effects", request.duplicate(true), visual_context, _visual_effect_generation)
+				continue
+			call_deferred("_run_visual_effect_after_key_info", request.duplicate(true), visual_context, _visual_effect_generation)
+			continue
 		if effect_type == "gem_burst":
 			if gem_burst_effect == null:
 				continue
@@ -624,12 +668,140 @@ func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> 
 		if effect_type == "word_merge_flash" or effect_type == "bridge_word_merge_flash":
 			call_deferred("_run_word_merge_flash", request.duplicate(true), _visual_effect_generation)
 			continue
+		if effect_type == KEY_INFO_EMPHASIS:
+			if not key_info_emphasis_played:
+				key_info_emphasis_played = true
+				call_deferred("_run_key_info_emphasis", request.duplicate(true), _visual_effect_generation)
+			continue
 		if effect_type == "bridge_tree_transition":
-			var context: Dictionary = visual_contexts[i] if i < visual_contexts.size() else {}
-			call_deferred("_run_bridge_tree_transition", request.duplicate(true), context, _visual_effect_generation)
+			call_deferred("_run_bridge_tree_transition", request.duplicate(true), visual_context, _visual_effect_generation)
 			continue
 		if effect_type == "bridge_collapse_sequence":
 			call_deferred("_run_bridge_collapse_sequence", request.duplicate(true), _visual_effect_generation)
+		if effect_type == "word_split_transition":
+			call_deferred("_run_word_split_transition", request.duplicate(true), visual_context, _visual_effect_generation)
+
+func _visual_requests_include_key_info(visual_requests: Array) -> bool:
+	if key_info_emphasis_played:
+		return false
+	for request_value in visual_requests:
+		var request: Dictionary = request_value
+		var effect_type := str(request.get("type", ""))
+		if effect_type == KEY_INFO_EMPHASIS:
+			return true
+		if _is_key_info_driver(request):
+			return true
+	return false
+
+func _is_key_info_driver(request: Dictionary) -> bool:
+	if str(request.get("type", "")) != "bridge_tree_transition":
+		return false
+	if str(request.get("mode", "")) != "merge" or key_info_emphasis_played:
+		return false
+	var before_effect: Dictionary = request.get("before_effect", {})
+	return not before_effect.is_empty()
+
+func _count_pre_key_visual_effects(visual_requests: Array) -> int:
+	var count := 0
+	for request_value in visual_requests:
+		var request: Dictionary = request_value
+		var effect_type := str(request.get("type", ""))
+		if effect_type == "word_merge_flash" or effect_type == "bridge_word_merge_flash" or effect_type == "word_split_transition":
+			count += 1
+	return count
+
+func _count_pre_merge_push_effects(visual_requests: Array, merge_split_count: int) -> int:
+	if merge_split_count <= 0:
+		return 0
+	var count := 0
+	for request_value in visual_requests:
+		var request: Dictionary = request_value
+		if str(request.get("type", "")) == "player_push_flash":
+			count += 1
+	return count
+
+func _run_pre_merge_push_effect(request: Dictionary, generation: int) -> void:
+	if generation == _visual_effect_generation:
+		await _play_player_push_flash(request)
+	pre_merge_push_effects_active = maxi(pre_merge_push_effects_active - 1, 0)
+
+func _run_pre_key_visual_effect(request: Dictionary, context: Dictionary, generation: int) -> void:
+	var effect_type := str(request.get("type", ""))
+	while pre_merge_push_effects_active > 0 and generation == _visual_effect_generation:
+		await get_tree().process_frame
+	if generation == _visual_effect_generation:
+		if effect_type == "word_merge_flash" or effect_type == "bridge_word_merge_flash":
+			await _run_word_merge_flash(request, generation)
+		elif effect_type == "word_split_transition":
+			await _run_word_split_transition(request, context, generation)
+	pre_key_visual_effects_active = maxi(pre_key_visual_effects_active - 1, 0)
+	if pre_key_visual_effects_active == 0 and not visual_sequence_has_key_info:
+		key_info_sequence_pending = false
+
+func _run_key_info_after_pre_effects(request: Dictionary, generation: int) -> void:
+	while pre_key_visual_effects_active > 0 and generation == _visual_effect_generation:
+		await get_tree().process_frame
+	if generation != _visual_effect_generation:
+		key_info_sequence_pending = false
+		visual_sequence_has_key_info = false
+		return
+	key_info_emphasis_played = true
+	key_info_effect_active = true
+	await _run_key_info_emphasis(request, generation)
+	key_info_sequence_pending = false
+	visual_sequence_has_key_info = false
+
+func _run_bridge_tree_transition_after_pre_effects(request: Dictionary, context: Dictionary, generation: int) -> void:
+	while pre_key_visual_effects_active > 0 and generation == _visual_effect_generation:
+		await get_tree().process_frame
+	if generation != _visual_effect_generation:
+		key_info_sequence_pending = false
+		visual_sequence_has_key_info = false
+		return
+	_run_bridge_tree_transition(request, context, generation)
+
+func _run_visual_effect_after_key_info(request: Dictionary, context: Dictionary, generation: int) -> void:
+	while key_info_sequence_pending or key_info_effect_active:
+		if generation != _visual_effect_generation:
+			return
+		await get_tree().process_frame
+	if generation != _visual_effect_generation:
+		return
+	var effect_type := str(request.get("type", ""))
+	if effect_type == "gem_burst":
+		if gem_burst_effect == null:
+			return
+		var origin_grid: Vector2 = request.get("origin_grid", GEM_ORIGIN_GRID)
+		gem_burst_effect.play_at(
+			_grid_to_pixels_float(origin_grid),
+			world.cell_size,
+			float(request.get("duration", 0.78)),
+			int(request.get("seed", 1947))
+		)
+	elif effect_type == "pull_particles":
+		if pull_particle_effect == null:
+			return
+		var origin_grid: Vector2 = request.get("origin_grid", Vector2.ZERO)
+		pull_particle_effect.play_at(
+			_grid_to_pixels_float(origin_grid),
+			float(world.cell_size),
+			float(request.get("duration", 0.42)),
+			int(request.get("seed", 2371))
+		)
+	elif effect_type == "player_river_enter":
+		_play_player_river_enter(request)
+	elif effect_type == "player_river_exit":
+		_play_player_river_exit(request)
+	elif effect_type == "player_push_flash":
+		_play_player_push_flash(request)
+	elif effect_type == "word_merge_flash" or effect_type == "bridge_word_merge_flash":
+		call_deferred("_run_word_merge_flash", request.duplicate(true), generation)
+	elif effect_type == "bridge_tree_transition":
+		call_deferred("_run_bridge_tree_transition", request.duplicate(true), context, generation)
+	elif effect_type == "bridge_collapse_sequence":
+		call_deferred("_run_bridge_collapse_sequence", request.duplicate(true), generation)
+	elif effect_type == "word_split_transition":
+		call_deferred("_run_word_split_transition", request.duplicate(true), context, generation)
 
 func _prepare_visual_effect_contexts(visual_requests: Array) -> Array:
 	var contexts: Array = []
@@ -637,7 +809,13 @@ func _prepare_visual_effect_contexts(visual_requests: Array) -> Array:
 		var request_dict: Dictionary = request
 		var effect_type := str(request_dict.get("type", ""))
 		if effect_type != "bridge_tree_transition":
-			contexts.append({})
+			if effect_type == "word_split_transition":
+				contexts.append({
+					"part_specs": _capture_visual_specs_for_cells(request_dict.get("part_cells", [])),
+					"part_groups": _find_groups_for_cells(request_dict.get("part_cells", []))
+				})
+			else:
+				contexts.append({})
 			continue
 		var context := {
 			"tree_overlays": [],
@@ -776,7 +954,9 @@ func _run_bridge_tree_transition(request: Dictionary, context: Dictionary, gener
 		var before_effect: Dictionary = request.get("before_effect", {})
 		if not before_effect.is_empty() and not key_info_emphasis_played:
 			key_info_emphasis_played = true
+			key_info_effect_active = true
 			await _run_key_info_emphasis(before_effect, generation)
+			key_info_sequence_pending = false
 			if generation != _visual_effect_generation:
 				_clear_effect_overlays(merge_overlays)
 				_set_groups_alpha(bridge_groups, 1.0)
@@ -805,11 +985,14 @@ func _run_bridge_tree_merge_transition(request: Dictionary, context: Dictionary,
 	if tree_tween != null:
 		await tree_tween.finished
 	_clear_effect_overlays(overlays)
+
 func _run_key_info_emphasis(request: Dictionary, generation: int) -> void:
 	if generation != _visual_effect_generation or bridge_tree_effect_layer == null:
+		key_info_effect_active = false
 		return
 	var cells: Array = request.get("cells", [])
 	if cells.is_empty():
+		key_info_effect_active = false
 		return
 	var first_cell: Vector2i = cells[0]
 	var cell_count: int = maxi(cells.size(), 1)
@@ -841,8 +1024,10 @@ func _run_key_info_emphasis(request: Dictionary, generation: int) -> void:
 	intro_tween.tween_property(overlay, "modulate:a", 0.0, 0.12)
 	await intro_tween.finished
 	if generation != _visual_effect_generation or not is_instance_valid(overlay):
+		key_info_effect_active = false
 		return
 	_clear_effect_overlays([overlay])
+	key_info_effect_active = false
 
 func _add_key_info_strip(parent: Node2D, position: Vector2, size: Vector2, strip_name: String) -> void:
 	var strip := ColorRect.new()
@@ -1079,6 +1264,133 @@ func _tween_canvas_items_alpha(targets: Array, alpha: float, duration: float) ->
 		return
 	await tween.finished
 
+func _run_word_split_transition(request: Dictionary, context: Dictionary, generation: int) -> void:
+	if generation != _visual_effect_generation or bridge_tree_effect_layer == null:
+		return
+	var part_specs: Array = context.get("part_specs", [])
+	var part_groups: Array = context.get("part_groups", [])
+	var part_cells: Array = request.get("part_cells", [])
+	if part_specs.size() < 2 or part_cells.size() < 2:
+		return
+	var source_cell: Vector2i = request.get("source_cell", Vector2i.ZERO)
+	var source_position := _grid_to_pixels(source_cell)
+	var move_duration := float(request.get("move_duration", 0.5))
+	var settle_duration := float(request.get("settle_duration", 0.18))
+	var jump_height := float(request.get("jump_height", 30.0))
+	var square_alpha := float(request.get("square_alpha", 0.5))
+	var square_color: Color = request.get("square_color", Color(0.96, 0.92, 0.62, 1.0))
+	var part_jump_heights: Array = request.get("part_jump_heights", [jump_height, 0.0])
+	var source_fade_duration := float(request.get("source_fade_duration", 0.08))
+	var part_fade_in_duration := float(request.get("part_fade_in_duration", 0.06))
+	var particle_duration := float(request.get("particle_duration", 0.4))
+	var particle_frame_count := int(request.get("particle_frame_count", 15))
+	var source_overlay := _build_split_source_overlay(str(request.get("source_text", "")), source_position, square_color, square_alpha)
+	var part_overlays := _build_split_part_overlays(part_specs, source_position, square_color, square_alpha)
+	var particle := _build_split_particle_overlay(source_position)
+	if source_overlay:
+		bridge_tree_effect_layer.add_child(source_overlay)
+	for overlay: Node2D in part_overlays:
+		bridge_tree_effect_layer.add_child(overlay)
+	if particle:
+		bridge_tree_effect_layer.add_child(particle)
+	_set_groups_alpha(part_groups, 0.0)
+	var tween := create_tween()
+	tween.set_parallel(true)
+	if source_overlay:
+		tween.tween_property(source_overlay, "modulate:a", 0.0, source_fade_duration).set_delay(part_fade_in_duration)
+	for overlay: Node2D in part_overlays:
+		tween.tween_property(overlay, "modulate:a", 1.0, part_fade_in_duration)
+	for i in range(part_overlays.size()):
+		var overlay: Node2D = part_overlays[i]
+		if i >= part_cells.size():
+			continue
+		var target_position := _grid_to_pixels(part_cells[i])
+		var part_jump_height := 0.0
+		if i < part_jump_heights.size():
+			part_jump_height = float(part_jump_heights[i])
+		tween.tween_method(
+			Callable(self, "_set_word_split_overlay_progress").bind(overlay, source_position, target_position, part_jump_height),
+			0.0,
+			1.0,
+			move_duration
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	if particle:
+		tween.tween_property(particle, "modulate:a", 0.0, particle_duration)
+		tween.tween_property(particle, "frame", maxi(0, particle_frame_count - 1), particle_duration).from(0)
+	await tween.finished
+	if generation != _visual_effect_generation:
+		_clear_split_transition_nodes(source_overlay, part_overlays, particle)
+		return
+	var settle_tween := create_tween()
+	settle_tween.set_parallel(true)
+	if source_overlay:
+		settle_tween.tween_property(source_overlay, "modulate:a", 0.0, settle_duration)
+	for overlay: Node2D in part_overlays:
+		settle_tween.tween_property(overlay, "modulate:a", 0.0, settle_duration)
+	for group in part_groups:
+		if group == null or not is_instance_valid(group):
+			continue
+		var canvas_item := group as CanvasItem
+		if canvas_item == null:
+			continue
+		settle_tween.tween_property(canvas_item, "modulate:a", 1.0, settle_duration)
+	await settle_tween.finished
+	_clear_split_transition_nodes(source_overlay, part_overlays, particle)
+
+func _build_split_source_overlay(source_text: String, source_position: Vector2, square_color: Color, square_alpha: float) -> Node2D:
+	if source_text.is_empty():
+		return null
+	var overlay := Node2D.new()
+	overlay.position = source_position
+	overlay.z_index = 40
+	var square := Sprite2D.new()
+	square.texture = SplitBaseTexture
+	square.position = Vector2(world.cell_size, world.cell_size) * 0.5
+	square.modulate = Color(square_color.r, square_color.g, square_color.b, square_alpha)
+	overlay.add_child(square)
+	var label := _make_word_label(source_text)
+	label.position = Vector2(0, -2)
+	overlay.add_child(label)
+	return overlay
+
+func _build_split_part_overlays(part_specs: Array, source_position: Vector2, square_color: Color, square_alpha: float) -> Array:
+	var overlays: Array = []
+	for spec_value in part_specs:
+		var spec: Dictionary = spec_value
+		var overlay := Node2D.new()
+		overlay.position = source_position
+		overlay.z_index = 41
+		overlay.modulate.a = 0.0
+		var label := _make_word_label(str(spec.get("text", "")), spec.get("color", Color.WHITE))
+		label.position = Vector2(0, -2)
+		overlay.add_child(label)
+		overlays.append(overlay)
+	return overlays
+
+func _build_split_particle_overlay(source_position: Vector2) -> Sprite2D:
+	var particle := Sprite2D.new()
+	particle.texture = SplitParticleTexture
+	particle.hframes = 5
+	particle.vframes = 3
+	particle.frame = 0
+	particle.position = source_position + Vector2(world.cell_size, world.cell_size) * 0.5
+	particle.z_index = 42
+	return particle
+
+func _set_word_split_overlay_progress(progress: float, overlay: Node2D, start: Vector2, finish: Vector2, jump_height: float) -> void:
+	if overlay == null or not is_instance_valid(overlay):
+		return
+	var position := start.lerp(finish, progress)
+	position.y -= sin(progress * PI) * jump_height
+	overlay.position = position
+
+func _clear_split_transition_nodes(source_overlay: Node2D, part_overlays: Array, particle: Sprite2D) -> void:
+	if source_overlay != null and is_instance_valid(source_overlay):
+		source_overlay.queue_free()
+	_clear_effect_overlays(part_overlays)
+	if particle != null and is_instance_valid(particle):
+		particle.queue_free()
+
 func _play_player_river_enter(request: Dictionary) -> void:
 	var submerge_offset := float(request.get("submerge_offset", world.cell_size * 0.5))
 	var jump_height := float(request.get("jump_height", world.cell_size * 0.5))
@@ -1125,6 +1437,7 @@ func _play_player_push_flash(request: Dictionary) -> void:
 	var tween := create_tween()
 	tween.tween_method(Callable(self, "_set_push_flash_progress").bind(sprite, base_position, direction), 0.0, 1.0, 0.5)
 	tween.tween_callback(Callable(sprite, "queue_free"))
+	await tween.finished
 
 func _run_word_merge_flash(request: Dictionary, generation: int) -> void:
 	if generation != _visual_effect_generation or bridge_tree_effect_layer == null:
@@ -1448,6 +1761,11 @@ func _load_level_index(index: int, overrides := {}) -> void:
 	current_level_index = clampi(index, 0, LEVEL_SEQUENCE.size() - 1)
 	_visual_effect_generation += 1
 	key_info_emphasis_played = false
+	key_info_effect_active = false
+	key_info_sequence_pending = false
+	visual_sequence_has_key_info = false
+	pre_key_visual_effects_active = 0
+	pre_merge_push_effects_active = 0
 	world.load_level(LEVEL_SEQUENCE[current_level_index].build_level())
 	if overrides.has("player_pos"):
 		world.player_pos = overrides.player_pos

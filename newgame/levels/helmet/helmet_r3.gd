@@ -443,6 +443,12 @@ static func _shore_merge_effect() -> Dictionary:
 	remove_at.append_array(_creek_hint_cells_except_shore())
 	return {
 		"remove_at": remove_at,
+		"visual_effect": BridgeTreeVisuals.key_info_emphasis([
+			Vector2i(7, 10),
+			Vector2i(8, 10),
+			Vector2i(9, 10),
+			Vector2i(10, 10)
+		]),
 		"replace_text": _hint_bridge_merge_replaces(),
 		"spawn": spawn,
 		"spawn_text": _creek_hint_text_without_water_parts()

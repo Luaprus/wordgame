@@ -416,6 +416,11 @@ static func _dry_with_bridge_effect() -> Dictionary:
 	remove_at.append_array(_creek_hint_cells())
 	return {
 		"remove_at": remove_at,
+		"visual_effect": BridgeTreeVisuals.key_info_emphasis([
+			Vector2i(7, 12),
+			Vector2i(8, 12),
+			Vector2i(9, 12)
+		]),
 		"spawn": spawn,
 		"spawn_text": _dry_creek_hint_text()
 	}
@@ -425,6 +430,11 @@ static func _dry_without_bridge_effect() -> Dictionary:
 	remove_at.append_array(_creek_hint_cells())
 	return {
 		"remove_at": remove_at,
+		"visual_effect": BridgeTreeVisuals.key_info_emphasis([
+			Vector2i(7, 12),
+			Vector2i(8, 12),
+			Vector2i(9, 12)
+		]),
 		"spawn": _creek_and_tree_spawn(true),
 		"spawn_text": _dry_creek_hint_text()
 	}
