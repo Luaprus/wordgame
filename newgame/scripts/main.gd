@@ -626,6 +626,11 @@ func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> 
 		if effect_type == "word_merge_flash" or effect_type == "bridge_word_merge_flash":
 			call_deferred("_run_word_merge_flash", request.duplicate(true), _visual_effect_generation)
 			continue
+		if effect_type == KEY_INFO_EMPHASIS:
+			if not key_info_emphasis_played:
+				key_info_emphasis_played = true
+				call_deferred("_run_key_info_emphasis", request.duplicate(true), _visual_effect_generation)
+			continue
 		if effect_type == "bridge_tree_transition":
 			var context: Dictionary = visual_contexts[i] if i < visual_contexts.size() else {}
 			call_deferred("_run_bridge_tree_transition", request.duplicate(true), context, _visual_effect_generation)
