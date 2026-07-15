@@ -2,22 +2,6 @@
 
 本次补的是第四章四目头盔过河段：玩家把“我”和“鸟”合成“鹅”后，进入“溪”组成的河流时播放入水动画，离开河流时播放出水动画。
 
-## 推字特效
-
-- 来源场景：`D:/文字游戏/Scenes/Animations/Push.tscn`
-- 来源贴图：`D:/文字游戏/Sprites/glove_push/u_glove_S.png`
-- 项目贴图：`res://assets/animations/push/u_glove_S.png`
-- 接入位置：`res://scripts/grid_world.gd` 在玩家成功推动可推字一格时发出 `player_push_flash`；`res://scripts/main.gd` 按源 `Push.tscn` 的方向偏移、旋转和 `0-15` 帧播放。
-- 验收重点：只有真正推动成功时触发；推动一格触发一次；转身、撞墙、合字、拉字不应触发。
-
-## 字组合成特效
-
-- 来源关卡：`D:/文字游戏/Scenes/Maps/測試用/t10.tscn`、`D:/文字游戏/Scenes/Maps/第四章/15_3_新河岸幻覺_第三關.tscn`、`D:/文字游戏/Scenes/Maps/第四章/15_5_新河岸幻覺_第五關.tscn`、`D:/文字游戏/Scenes/Maps/第四章/15_2_新河岸幻覺_第二關.tscn`、`D:/文字游戏/Scenes/Maps/第四章/15_6_新河岸幻覺_第六關.tscn`
-- 来源动画参考：`D:/文字游戏/Scenes/Animations/merge_new_event_animation.tscn`
-- 接入位置：`res://scripts/grid_world.gd` 在实体 `人+也` / `也+人` 合成 `他`、`乔+木` / `木+乔` 合成 `桥`、`木+古` / `古+木` 合成 `枯`、`水+难` / `难+水` 合成 `滩`、`一+二` / `二+一` 合成 `三` 成功后发出 `word_merge_flash`；玩家 `我+鸟` / `鸟+我` 合成 `鹅` 也发出同一视觉事件，并在结果字弹出期间临时隐藏真实玩家字，避免叠字。`res://scripts/main.gd` 负责绘制半宽双字、浅黄色矩形框、跳出的结果字和四个浅黄色圆点。
-- 方向规则：合成特效会按两个字合成前的格子相对位置自动排布；同行时按左到右画并横向压缩，同列时按上到下画并纵向压缩，例如“我”在下、“鸟”在上合成“鹅”时显示为上“鸟”、下“我”。如果坐标异常重叠，才退回该组合的固定兜底顺序。以后同类效果如果用户指定左右/上下顺序，必须按用户顺序画，不按推动顺序或合成规则自行调换。
-- 资源说明：本段没有新增贴图/音效；黄色框和圆点是按源四目头盔桥解谜画面行为用运行时代码绘制。
-
 ## 来源
 
 - 源关卡：`D:/文字游戏/Scenes/Maps/第四章/15_6_新河岸幻覺_第六關.tscn`
@@ -32,10 +16,8 @@
 - `res://levels/helmet/helmet_r6.gd` 增加 `player_water_animation`，只对“鹅”穿过“溪”生效。
 - `res://scripts/grid_world.gd` 记录 `player_submerged`，在进入/离开溪格时发出 `player_river_enter` / `player_river_exit` 视觉事件。
 - `res://scripts/main.gd` 不改变移动操作，只在现有平滑移动基础上叠加玩家字形的 Y 偏移。
-- `res://levels/helmet/helmet_bridge_shake_runtime_preview.tscn` 可单独打开调试桥塌环节；它直接套用 `helmet_r3.gd` 的 `_loose_bridge_effect()`，因此预览里调的松桥参数会同步作用到完整关卡。
 
 动画表现按用户截图和口述调成更明显的半格效果：入水先上跳 `30px`，再沉到 `+30px`；在水中保持 `+30px`；出水先浮回 `0px`，再上跳并落回格心。
-桥塌环节里，松桥“桥”字会做较轻的水平晃动，当前幅度为 `2px`；四个角上的“桥”字不参与水平晃动，只保留原有倾斜姿态。
 
 ## 验收重点
 
@@ -47,3 +29,31 @@
 
 - 本次未用 Godot 运行时逐帧预览，只做了静态检查。
 - 原版入水下沉值是 `10px`，这次按截图/口述强化为半格 `30px`；如果后续你觉得太沉，可以只调 `helmet_r6.gd` 里的 `submerge_offset`。
+
+## 2026-07-15 桥字拆字动画
+
+- 参考源资源：`D:/文字游戏/Scenes/Animations/split_animation.tscn`
+- 参考粒子：`D:/文字游戏/Scenes/Animations/split_particle.tscn`
+- 参考贴图：
+  - `D:/文字游戏/Sprites/unzip/base_white.png`
+  - `D:/文字游戏/Sprites/unzip/unzip_split.png`
+- 当前实现：`res://scripts/word_split_visuals.gd` 提供表驱动拆字动画配置；`res://scripts/grid_world.gd` 会在拆字时自动补齐 `source_cell`、`part_cells`、`part_texts`；`res://scripts/main.gd` 负责播放黄色方块、上跳/横移、黄圈散开和落位后的淡出。
+- 当前已接入到头盔过河各关里 `桥 -> 乔 + 木` 的 `split_effects`，后续新增拆字动画时，优先在关卡表里追加 `visual_effects` 配置，不要把逻辑散写到关卡脚本外。
+
+## 2026-07-15 推字 / 合并字 / 拉字特效触发链
+
+- 播放器都在 `res://scripts/main.gd`：
+  - `player_push_flash`
+  - `word_merge_flash`
+  - `pull_particles`
+- 真正的触发源都在 `res://scripts/grid_world.gd`：
+  - `try_move_player()` 推动实体成功后调用 `_queue_player_push_visual()`
+  - `try_merge_entities()` 和 `_try_merge_player_with_entity()` 成功后调用 `_queue_word_merge_visual()`
+  - `pull_front()` 里对镜字成功拉动后发出 `pull_particles`
+- 关卡层负责提供规则，不要在关卡脚本里直接改播放器：
+  - `merge_rules / player_merge_rules`
+  - `entity_move_effects`
+  - `split_effects / merge_effects`
+- 为避免之后合并冲突把“触发源”删掉但“播放器”还留着，新增测试：
+  - `res://tests/test_interaction_visual_effect_requests.gd`
+  只要推字、合字、拉字请求断链，这条测试就会失败。

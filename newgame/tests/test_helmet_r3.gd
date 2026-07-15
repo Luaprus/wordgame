@@ -60,6 +60,7 @@ func test_r3_loose_bridge_death_flow() -> void:
 	assert_any_text(world, Vector2i(10, 10), "水", "creek hint exposes 水")
 	assert_any_text(world, Vector2i(11, 10), "难", "creek hint exposes 难")
 
+	world.consume_visual_effects()
 	world.player_pos = Vector2i(22, 9)
 	world.facing = Vector2i.RIGHT
 	var death_trigger := world.try_move_player(Vector2i.RIGHT)
@@ -70,6 +71,14 @@ func test_r3_loose_bridge_death_flow() -> void:
 
 	var fall := world.resolve_pending_timed_effect()
 	assert_true(fall.success, "fall event resolves")
+	var visual_requests := world.consume_visual_effects()
+	assert_equal(visual_requests.size(), 1, "fall event queues one bridge collapse visual")
+	var collapse_request: Dictionary = visual_requests[0]
+	assert_equal(collapse_request.get("type", ""), "bridge_collapse_sequence", "fall event queues bridge collapse animation")
+	assert_equal(collapse_request.get("player_cell", Vector2i.ZERO), Vector2i(23, 9), "bridge collapse targets the player cell")
+	assert_true(collapse_request.get("fall_bridge_cells", []).has(Vector2i(21, 8)), "bridge collapse includes central bridge glyphs")
+	assert_true(collapse_request.has("final_effect"), "bridge collapse carries final map effect")
+	world.apply_preview_effect(collapse_request.get("final_effect", {}))
 	assert_true(not world.player_visible, "player disappears after falling")
 	assert_true(not world.player_input_locked, "player can press space after fall prompt")
 	assert_any_text(world, Vector2i(2, 13), "我", "fall prompt appears in lower left")

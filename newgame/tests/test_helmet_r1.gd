@@ -9,6 +9,7 @@ func _init() -> void:
 	test_map_size_and_sentence_player_glyph()
 	test_fixed_interaction_captions()
 	test_bridge_merge_and_split_effects()
+	test_bridge_split_requests_visual_effect()
 
 	if failures.is_empty():
 		print("helmet_r1 tests passed")
@@ -104,6 +105,28 @@ func test_bridge_merge_and_split_effects() -> void:
 	assert_true(world.find_first_entity_by_text("这桥看起来很结实，") == null, "tree prompt switches away from 桥")
 	var tree_prompt := world.find_first_entity_by_text("这乔木看起来很结实，")
 	assert_true(tree_prompt != null and tree_prompt.grid_pos == Vector2i(2, 6), "tree prompt switches back to 乔木")
+
+func test_bridge_split_requests_visual_effect() -> void:
+	var world := GridWorld.new()
+	world.load_level(HelmetR1.build_level())
+	world.try_merge_entities(Vector2i(15, 3), Vector2i(14, 3))
+	world.consume_visual_effects()
+	world.player_pos = Vector2i(15, 3)
+	world.facing = Vector2i.LEFT
+	var split := world.split_front()
+	assert_true(split.success, "bridge split succeeds before visual effect request check")
+	var requests := world.consume_visual_effects()
+	var found := false
+	for request_value in requests:
+		var request: Dictionary = request_value
+		if str(request.get("type", "")) != "word_split_transition":
+			continue
+		found = true
+		assert_equal(request.get("source_cell", Vector2i.ZERO), Vector2i(14, 3), "split visual anchors at the source cell")
+		assert_equal(request.get("source_text", ""), "桥", "split visual keeps source text")
+		assert_equal(request.get("part_texts", []), ["乔", "木"], "split visual records split texts")
+		assert_equal(request.get("part_cells", []), [Vector2i(14, 3), Vector2i(15, 3)], "split visual records target cells")
+	assert_true(found, "bridge split emits a word_split_transition visual request")
 
 func assert_equal(actual, expected, message: String) -> void:
 	if actual != expected:

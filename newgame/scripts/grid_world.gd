@@ -396,7 +396,12 @@ func split_front() -> Dictionary:
 	var split_positions := _split_positions_for(entity)
 	if split_positions.size() != 2:
 		return {"success": false, "message": "split rule needs two positions"}
-	var split_effect := _effect_for_target(split_effects.get(entity.text, {}), entity.grid_pos)
+	var split_effect: Dictionary = _decorate_split_effect(
+		_effect_for_target(split_effects.get(entity.text, {}), entity.grid_pos),
+		entity,
+		parts,
+		split_positions
+	)
 	var space_result := _make_room_for_split(entity, split_positions, split_effect.get("remove_at", []))
 	if not space_result.success:
 		return space_result
@@ -843,6 +848,10 @@ func _apply_map_effect(config: Dictionary) -> void:
 		player_event_locked = bool(config.set_event_locked)
 	if config.has("visual_effect"):
 		visual_effect_requests.append(config.visual_effect.duplicate(true))
+	if config.has("visual_effects"):
+		for visual_effect in config.visual_effects:
+			if visual_effect is Dictionary:
+				visual_effect_requests.append(visual_effect.duplicate(true))
 	if config.has("set_pending_interact_effect"):
 		pending_interact_effect = config.set_pending_interact_effect
 	if config.has("set_pending_timed_effect"):
@@ -995,6 +1004,38 @@ func _effect_for_target(effect_config, target_pos: Vector2i) -> Dictionary:
 		if entry.get("pos", Vector2i.ZERO) == target_pos:
 			return entry.get("effect", {})
 	return config.get("default", {})
+
+func _decorate_split_effect(effect_config, entity: WordEntity, parts: Array, split_positions: Array[Vector2i]) -> Dictionary:
+	if not effect_config is Dictionary:
+		return {}
+	var config: Dictionary = effect_config.duplicate(true)
+	if config.has("visual_effect"):
+		config["visual_effect"] = _decorate_split_visual_request(config.visual_effect, entity, parts, split_positions)
+	if config.has("visual_effects"):
+		var decorated_effects: Array = []
+		for visual_effect in config.visual_effects:
+			decorated_effects.append(_decorate_split_visual_request(visual_effect, entity, parts, split_positions))
+		config["visual_effects"] = decorated_effects
+	if config.has("condition"):
+		var condition: Dictionary = config.condition.duplicate(true)
+		if condition.has("then"):
+			condition["then"] = _decorate_split_effect(condition.then, entity, parts, split_positions)
+		if condition.has("else"):
+			condition["else"] = _decorate_split_effect(condition.else, entity, parts, split_positions)
+		config["condition"] = condition
+	return config
+
+func _decorate_split_visual_request(request_config, entity: WordEntity, parts: Array, split_positions: Array[Vector2i]) -> Dictionary:
+	if not request_config is Dictionary:
+		return {}
+	var request: Dictionary = request_config.duplicate(true)
+	if str(request.get("type", "")) != "word_split_transition":
+		return request
+	request["source_text"] = str(request.get("source_text", entity.text))
+	request["source_cell"] = entity.grid_pos
+	request["part_texts"] = parts.duplicate()
+	request["part_cells"] = split_positions.duplicate()
+	return request
 
 func _trigger_entity_move_effect(entity: WordEntity, old_pos: Vector2i, new_pos: Vector2i, direction: Vector2i) -> void:
 	if not entity_move_effects.has(entity.text):

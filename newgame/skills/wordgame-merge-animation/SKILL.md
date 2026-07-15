@@ -24,6 +24,7 @@ The existing project pattern is `word_merge_flash`: two source characters compre
 For this project, the merge animation usually touches:
 
 - `scripts/grid_world.gd`: queues `word_merge_flash` after a successful merge.
+- `scripts/grid_world.gd`: also queues `player_push_flash` after a successful push and `pull_particles` after configured pull actions such as pulling `镜`.
 - `scripts/main.gd`: renders the yellow frame, compressed source words, result pop, and dots.
 - `levels/helmet/*.gd`: contains level-specific `merge_rules`, `player_merge_rules`, `split_rules`, and source positions.
 - `levels/helmet/level_manifest.json`: source/resource traceability.
@@ -96,6 +97,18 @@ If `rg` fails with access errors on `D:/文字游戏`, use `Get-ChildItem | Sele
    const BRIDGE_MERGE_YELLOW := Color(1.0, 0.92, 0.22, 0.58)
    const BRIDGE_MERGE_YELLOW_SOFT := Color(1.0, 0.92, 0.22, 0.16)
    ```
+
+7. Keep trigger and renderer together during merges.
+
+   A common regression is preserving the renderer in `scripts/main.gd` while accidentally deleting the trigger in `scripts/grid_world.gd`.
+
+   Always verify all three links still exist:
+
+   - push success -> `_queue_player_push_visual()`
+   - merge success -> `_queue_word_merge_visual()`
+   - configured pull success -> `pull_particles`
+
+   If only the renderer survives, the effect will appear "deleted" to users even though the playback code still exists.
 
 ## Source Traceability Notes
 
