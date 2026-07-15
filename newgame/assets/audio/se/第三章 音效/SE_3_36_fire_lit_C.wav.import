@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://b0yqhlyb2t5du"
+path="res://.godot/imported/SE_3_36_fire_lit_C.wav-08edcd55ea49235fbb2a6dd7edfe328c.sample"
+
+[deps]
+
+source_file="res://assets/audio/se/第三章 音效/SE_3_36_fire_lit_C.wav"
+dest_files=["res://.godot/imported/SE_3_36_fire_lit_C.wav-08edcd55ea49235fbb2a6dd7edfe328c.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

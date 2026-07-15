@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cvhmk6g2mcb21"
+path="res://.godot/imported/SE_2_23_sword_big_swing_B.wav-c1b5591c64df4f3ee8dcd377e4863a8f.sample"
+
+[deps]
+
+source_file="res://assets/audio/se/第二章 音效/SE_2_23_sword_big_swing_B.wav"
+dest_files=["res://.godot/imported/SE_2_23_sword_big_swing_B.wav-c1b5591c64df4f3ee8dcd377e4863a8f.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

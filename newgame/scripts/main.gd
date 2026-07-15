@@ -56,7 +56,9 @@ const RIVER_DEPTH_STEP := 10
 const RIVER_PLAYER_DEPTH_OFFSET := 5
 const HIGHLIGHT_VISUAL_CONFIG_PATH := "res://assets/animations/highlight/highlight_visual_config.json"
 const GLOVE_PREVIEW_SCENE_PATH := "res://levels/glove/glove_preview.tscn"
+const SWORD_FLOW_SCENE_PATH := "res://scenes/Maps/第二章/05_聖劍寶庫_復刻.tscn"
 const STARTUP_ENTRY_ARG_PREFIX := "--entry="
+const SWORD_SCENE_SHORTCUT_KEY := KEY_F8
 const GLOVE_SCENE_SHORTCUT_KEY := KEY_F9
 const LEVEL_SEQUENCE := [
 	PoetOpening,
@@ -1845,12 +1847,16 @@ func resolve_startup_scene_path(args: PackedStringArray) -> String:
 	return ""
 
 func resolve_scene_shortcut_from_keycode(keycode: Key) -> String:
+	if keycode == SWORD_SCENE_SHORTCUT_KEY:
+		return SWORD_FLOW_SCENE_PATH
 	if keycode == GLOVE_SCENE_SHORTCUT_KEY:
 		return GLOVE_PREVIEW_SCENE_PATH
 	return ""
 
 func _entry_scene_path_for_key(entry_key: String) -> String:
 	match entry_key:
+		"sword":
+			return SWORD_FLOW_SCENE_PATH
 		"glove":
 			return GLOVE_PREVIEW_SCENE_PATH
 		_:

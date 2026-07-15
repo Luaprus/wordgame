@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bsfgdui1ylj6n"
+path="res://.godot/imported/SE_2_26_wind_fill_C.wav-1201b60a6ac240f9697cca0dbadfcbd8.sample"
+
+[deps]
+
+source_file="res://assets/audio/se/第二章 音效/SE_2_26_wind_fill_C.wav"
+dest_files=["res://.godot/imported/SE_2_26_wind_fill_C.wav-1201b60a6ac240f9697cca0dbadfcbd8.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2
