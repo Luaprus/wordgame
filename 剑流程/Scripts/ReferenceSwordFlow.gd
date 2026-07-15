@@ -70,7 +70,11 @@ const PLAYER_MOVE_TIME := 0.12
 const PLAYER_MOVE_REPEAT_TIME := 0.12
 const PLAYER_BLOCKED_RETRY_TIME := 0.12
 const SLIME_REINFORCEMENT_INTERVAL := 4.0
-const SLIME_MOVE_ANIMATION_LENGTH := 0.35
+const SLIME_RANDOM_WAIT_MIN := 2.0
+const SLIME_RANDOM_WAIT_MAX := 3.0
+const SLIME_CHASE_WAIT_MIN := 1.0
+const SLIME_CHASE_WAIT_MAX := 2.0
+const SLIME_MOVE_TIME := 0.35
 const SLIME_MOVE_CYCLE_LENGTH := 0.70
 const SLIME_MOVE_KEY_TIMES := [0.0, 0.01, 0.2, 0.34, 0.35]
 const SLIME_MOVE_KEY_SCALES := [
@@ -108,18 +112,17 @@ const SNAKE_TWIST_SPEED := 2.0
 const SNAKE_TWIST_INTERVAL := 0.3
 const SNAKE_TWIST_DISTANCE := 7.0
 const SNAKE_FOLLOW_DURATION := 0.8
-const SNAKE_SECOND_TALK_DELAY := 4.0
-const SNAKE_SECOND_TALK_INTERVAL := 12.0
+const SNAKE_SECOND_TALK_DELAY := 1.0
+const SNAKE_SECOND_TALK_INTERVAL := 15.0
 const SNAKE_RAY_INTERVAL := 5.0
 const SNAKE_RAY_WARNING_TIME := 0.45
 const SNAKE_RAY_HOLD_TIME := 0.55
 const SNAKE_RAY_MOVE_TIME := 1.5
 const SNAKE_RAY_DISTANCE := 780.0
-const SNAKE_SECOND_REACTION_DELAY := 0.35
 const SNAKE_SECOND_REACTION_HOLD_TIME := 1.0
 const SNAKE_SECOND_REACTION_FADE_TIME := 1.0
 const SNAKE_SECOND_REACTION_RESUME_DELAY := 0.8
-const SNAKE_SECOND_POST_REVERSE_DELAY := 4.0
+const SNAKE_SECOND_POST_REVERSE_DELAY := 1.0
 const SNAKE_OBJECT_RESULT_HOLD_TIME := 0.9
 const SNAKE_LOOP_SOURCE_ROWS := [
 	"＿＿＿＿＿壁＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿箱＿＿＿＿＿",
@@ -342,9 +345,13 @@ var fissure_labels: Array[Label] = []
 var fissure_open := false
 var slime_labels: Array[Label] = []
 var slime_visible: Array[bool] = []
+var slime_cells: Array[Vector2i] = []
+var slime_waits: Array[float] = []
+var slime_moving: Array[bool] = []
 var slime_reinforcement_timer := 0.0
 var slime_reinforcement_cursor := 0
 var slime_move_animation_time := 0.0
+var treasure_tutorial_labels: Array[Label] = []
 var pending_death_sentence := ""
 var death_checkpoint: Dictionary = {}
 var death_checkpoint_valid := false
@@ -352,6 +359,8 @@ var snake_labels: Array[Label] = []
 var snake_used_keywords: Dictionary = {}
 var snake_success_count := 0
 var snake_reverse_count := 0
+var snake_reverse_current_index := -1
+var snake_reverse_completed: Dictionary = {}
 var snake_current_keyword := ""
 var snake_stone_mode := false
 var snake_body_base_cells: Array[Vector2i] = []
@@ -397,7 +406,6 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	_update_player_visual_animation(delta)
 	_update_continuous_player_movement(delta)
-	_update_slime_visual_animation(delta)
 	if phase == Phase.FIND_SWORD:
 		_update_sword(delta)
 	if opportunity_active:
@@ -407,6 +415,9 @@ func _process(delta: float) -> void:
 		sword_label.modulate = Color(1.0, 1.0, 1.0, 0.72 + sin(sword_pulse) * 0.28)
 	if phase == Phase.SLIME_STAGE1:
 		_update_slime_reinforcements(delta)
+	if current_map == MAP_SLIME_RIGHT:
+		_update_slime_movement(delta)
+		_update_slime_visual_animation(delta)
 	if current_map == MAP_SNAKE:
 		_update_snake_battle_motion(delta)
 
@@ -911,64 +922,100 @@ func _start_explanation_sequence() -> void:
 
 func _start_lamp_problem() -> void:
 	phase = Phase.LAMP_WAIT
+	_show_treasure_tutorial_text([
+		"「找出不该存在的字，举起圣剑，然后对它按下",
+		"『删除键』便是。」诗人对我说完，耸了耸肩。"
+	], 13)
 	var tween := create_tween()
 	tween.tween_property(dark_overlay, "color:a", 0.78, 0.8)
 	await tween.finished
-	_start_dialogue(MAP_TREASURE, [
-		["「勇者，」诗人扬起法杖，说：", "「灯不亮了。」"]
-	], Callable(self, "_show_lamp_sentence"))
+	_show_lamp_sentence()
 
 
 func _show_lamp_sentence() -> void:
 	_set_hint("")
-	_start_delete_sentence(["灯", "不", "亮", "了", "。"], 1, Callable(self, "_lamp_deleted"))
+	player_cell = Vector2i(int(GRID_W * 0.5), int(GRID_H * 0.5))
+	last_direction = Vector2i.UP
+	_update_player_position()
+	_start_treasure_delete_text(
+		["「勇者，」诗人扬起法杖，说：「灯不亮了。」"],
+		0,
+		"不",
+		Callable(self, "_lamp_deleted"),
+		5
+	)
 
 
 func _lamp_deleted() -> void:
 	_clear_sentence()
+	_clear_treasure_tutorial_text()
 	_play_se(SE_FIRE)
 	var tween := create_tween()
 	tween.tween_property(dark_overlay, "color:a", 0.0, 0.7)
 	await tween.finished
-	_start_air_problem()
+	_start_dialogue(MAP_TREASURE, [
+		["「谢啦，勇者。」", "法杖前端重新亮起了火光。"]
+	], Callable(self, "_start_air_problem"))
 
 
 func _start_air_problem() -> void:
 	phase = Phase.AIR_WAIT
 	var tween := create_tween()
 	tween.tween_property(blur_overlay, "color:a", 0.36, 0.45)
-	_start_dialogue(MAP_TREASURE, [
-		["这密闭的洞窟，眼看就快要没有空气……"]
-	], Callable(self, "_show_air_sentence"))
+	_show_air_sentence()
 
 
 func _show_air_sentence() -> void:
 	_set_hint("")
-	_start_delete_sentence(["没", "有", "空", "气"], 0, Callable(self, "_air_deleted"))
+	player_cell = Vector2i(int(GRID_W * 0.5), int(GRID_H * 0.5))
+	last_direction = Vector2i.UP
+	_update_player_position()
+	_start_treasure_delete_text(
+		[
+			"正想说句不客气，却感到一阵呼吸困难，",
+			"这密闭的洞窟，眼看就快要没有空气……"
+		],
+		1,
+		"没",
+		Callable(self, "_air_deleted"),
+		5
+	)
 
 
 func _air_deleted() -> void:
 	_play_se(SE_WIND)
 	_clear_sentence()
+	_clear_treasure_tutorial_text()
 	var tween := create_tween()
 	tween.tween_property(blur_overlay, "color:a", 0.0, 0.85)
 	await tween.finished
 	_start_dialogue(MAP_TREASURE, [
-		["一阵凉风拂过脸庞，伴随着清新的滋味。"],
-		["刚才拔剑时引发的震动，", "落下碎石封住了入口。"],
-		["前、后、左、右都被堵死，上方是坚硬石壁，", "看样子，只有忘掉下去这一条路了……"]
+		["一阵凉风拂过脸庞，伴随着清新的滋味。", "啊，能够大口深呼吸的感觉真好。"],
+		["这把贝克思贝斯之剑的威力果然不同凡响。", "有了圣剑，应该就不用再害怕蛇妖了吧？"],
+		["「勇者，」诗人举起法杖，照亮刚才走来的路。", "「先别管蛇妖，咱们好像出不去了……」"],
+		["刚才拔剑时引发的震动，", "落下碎石封住了入口。"]
 	], Callable(self, "_show_fall_sentence"))
 
 
 func _show_fall_sentence() -> void:
 	phase = Phase.FALL_WAIT
 	_set_hint("")
-	_start_delete_sentence(["只", "有", "忘", "掉", "下", "去", "这", "一", "条", "路", "了", "…", "…"], 2, Callable(self, "_fall_deleted"))
+	_start_treasure_delete_text(
+		[
+			"前、后、左、右都被堵死，上方是坚硬石壁，",
+			"看样子，只有忘掉下去这一条路了……"
+		],
+		1,
+		"忘",
+		Callable(self, "_fall_deleted"),
+		5
+	)
 
 
 func _fall_deleted() -> void:
 	_play_se(SE_ROCK)
 	_clear_sentence()
+	_clear_treasure_tutorial_text()
 	phase = Phase.FALLING
 	_start_dialogue(MAP_TREASURE, [
 		["低头一看，", "等待在脚底下的，", "是岩窟的无底深渊，"],
@@ -996,10 +1043,56 @@ func _start_fall_sequence() -> void:
 	player_label.visible = true
 	_update_player_position()
 	_show_fissure_overlay()
-	var wake_tween := create_tween()
-	wake_tween.tween_property(dark_overlay, "color:a", 0.0, 0.9)
-	await wake_tween.finished
+	await _play_slime_eye_blink()
 	_start_slime_left_intro()
+
+
+func _play_slime_eye_blink() -> void:
+	var blink_layer := Control.new()
+	blink_layer.name = "SlimeEyeBlink"
+	blink_layer.size = VIEWPORT_SIZE
+	blink_layer.z_index = 70
+	blink_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fx_layer.add_child(blink_layer)
+
+	var top_lid := ColorRect.new()
+	top_lid.color = Color.BLACK
+	top_lid.position = Vector2.ZERO
+	top_lid.size = Vector2(VIEWPORT_SIZE.x, VIEWPORT_SIZE.y * 0.5)
+	top_lid.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	blink_layer.add_child(top_lid)
+
+	var bottom_lid := ColorRect.new()
+	bottom_lid.color = Color.BLACK
+	bottom_lid.position = Vector2(0, VIEWPORT_SIZE.y * 0.5)
+	bottom_lid.size = Vector2(VIEWPORT_SIZE.x, VIEWPORT_SIZE.y * 0.5)
+	bottom_lid.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	blink_layer.add_child(bottom_lid)
+
+	dark_overlay.color.a = 0.0
+	var openings: Array[float] = [CELL * 1.1, CELL * 3.0, CELL * 1.5, VIEWPORT_SIZE.y * 0.62, VIEWPORT_SIZE.y]
+	for i in range(openings.size()):
+		var opening: float = openings[i]
+		var half_gap: float = opening * 0.5
+		var top_target_h: float = maxf(0.0, VIEWPORT_SIZE.y * 0.5 - half_gap)
+		var bottom_target_y: float = minf(VIEWPORT_SIZE.y, VIEWPORT_SIZE.y * 0.5 + half_gap)
+		var open_tween := create_tween()
+		open_tween.set_parallel(true)
+		open_tween.tween_property(top_lid, "size:y", top_target_h, 0.16).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		open_tween.tween_property(bottom_lid, "position:y", bottom_target_y, 0.16).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		open_tween.tween_property(bottom_lid, "size:y", VIEWPORT_SIZE.y - bottom_target_y, 0.16).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		await open_tween.finished
+		await get_tree().create_timer(0.08 if i < openings.size() - 1 else 0.18).timeout
+		if i >= openings.size() - 1:
+			break
+		var close_tween := create_tween()
+		close_tween.set_parallel(true)
+		close_tween.tween_property(top_lid, "size:y", VIEWPORT_SIZE.y * 0.5, 0.13).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		close_tween.tween_property(bottom_lid, "position:y", VIEWPORT_SIZE.y * 0.5, 0.13).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		close_tween.tween_property(bottom_lid, "size:y", VIEWPORT_SIZE.y * 0.5, 0.13).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		await close_tween.finished
+		await get_tree().create_timer(0.06).timeout
+	blink_layer.queue_free()
 
 
 func _play_falling_interlude() -> void:
@@ -1302,6 +1395,8 @@ func _prepare_snake_boss_state() -> void:
 	_clear_fissure_overlay()
 	snake_success_count = 0
 	snake_reverse_count = 0
+	snake_reverse_current_index = -1
+	snake_reverse_completed.clear()
 	snake_current_keyword = ""
 	snake_stone_mode = false
 	snake_scroll_active = false
@@ -1666,8 +1761,7 @@ func _shatter_snake_sentence() -> void:
 	if phase == Phase.SNAKE_OBJECT_SENTENCE:
 		_unlock_snake_boss()
 	elif phase == Phase.SNAKE_SECOND:
-		snake_second_talk_timer = maxf(snake_second_talk_timer, 3.0)
-		_unlock_snake_second_phase()
+		_unlock_snake_second_phase(SNAKE_SECOND_TALK_DELAY)
 	var tween := create_tween()
 	tween.set_parallel(true)
 	for i in range(labels.size()):
@@ -2103,6 +2197,8 @@ func _start_snake_second_phase() -> void:
 	_clear_sentence()
 	_clear_snake_rays()
 	snake_current_keyword = ""
+	snake_reverse_current_index = -1
+	snake_reverse_completed.clear()
 	snake_scroll_active = false
 	snake_stone_mode = true
 	snake_second_talk_timer = SNAKE_SECOND_TALK_DELAY
@@ -2124,21 +2220,51 @@ func _unlock_snake_second_phase(delay: float = SNAKE_SECOND_TALK_DELAY) -> void:
 	phase = Phase.SNAKE_SECOND
 	input_locked = false
 	snake_current_keyword = ""
-	snake_second_talk_timer = maxf(snake_second_talk_timer, delay)
-	snake_ray_timer = maxf(snake_ray_timer, SNAKE_RAY_INTERVAL)
+	snake_second_talk_timer = maxf(delay, 0.0)
+	snake_ray_timer = SNAKE_RAY_INTERVAL
 	snake_scroll_active = current_map == MAP_SNAKE and snake_stone_mode
 	_set_hint("")
+
+
+func _snake_reverse_key(index: int) -> String:
+	return str(index)
+
+
+func _is_snake_reverse_completed(index: int) -> bool:
+	return snake_reverse_completed.has(_snake_reverse_key(index))
+
+
+func _mark_snake_reverse_completed(index: int) -> void:
+	snake_reverse_completed[_snake_reverse_key(index)] = true
+
+
+func _pick_snake_reverse_index() -> int:
+	var choices: Array[int] = []
+	for index in range(3):
+		if not _is_snake_reverse_completed(index):
+			choices.append(index)
+	if choices.is_empty():
+		return -1
+	return choices[rng.randi_range(0, choices.size() - 1)]
 
 
 func _show_snake_reverse_sentence() -> void:
 	if snake_reverse_count >= 3:
 		_start_snake_defeat_sequence()
 		return
+	if sentence_active or input_locked:
+		return
 	phase = Phase.SNAKE_SECOND
 	snake_scroll_active = current_map == MAP_SNAKE and snake_stone_mode
 	_clear_dialogue()
 	_clear_snake_rays()
-	var data: Dictionary = _get_snake_reverse_data(snake_reverse_count)
+	var reverse_index := _pick_snake_reverse_index()
+	if reverse_index == -1:
+		_start_snake_defeat_sequence()
+		return
+	snake_reverse_current_index = reverse_index
+	snake_second_talk_timer = SNAKE_SECOND_TALK_INTERVAL
+	var data: Dictionary = _get_snake_reverse_data(reverse_index)
 	var line: String = String(data["line"])
 	var text_lines: Array = [line]
 	if data.has("lines"):
@@ -2290,26 +2416,27 @@ func _show_snake_speech_text(text: String) -> void:
 
 
 func _snake_reverse_deleted() -> void:
-	var data: Dictionary = _get_snake_reverse_data(snake_reverse_count)
-	var result: String = String(data["right"])
+	var reverse_index := snake_reverse_current_index
+	if reverse_index == -1:
+		return
+	var data: Dictionary = _get_snake_reverse_data(reverse_index)
 	var after_text := ""
 	if data.has("after"):
 		after_text = String(data["after"])
-	snake_reverse_count += 1
+	snake_reverse_current_index = -1
+	phase = Phase.SNAKE_SECOND_INTRO
+	input_locked = true
+	snake_scroll_active = false
 	_clear_sentence()
-	_apply_snake_reverse_effect(snake_reverse_count)
+	_clear_dialogue()
+	_clear_snake_rays()
+	var count_before := snake_reverse_count
+	_mark_snake_reverse_completed(reverse_index)
+	snake_reverse_count += 1
+	_apply_snake_reverse_effect(reverse_index, count_before, snake_reverse_count)
 	await _trim_snake_body_after_reverse()
 	snake_reverse_after_text = after_text
 	snake_reverse_after_final = snake_reverse_count >= 3
-	_start_dialogue(MAP_SNAKE, [_snake_dialogue_page(result)], Callable(self, "_continue_snake_reverse_reaction"))
-
-
-func _continue_snake_reverse_reaction() -> void:
-	input_locked = true
-	snake_scroll_active = false
-	_clear_dialogue()
-	_clear_snake_rays()
-	await get_tree().create_timer(SNAKE_SECOND_REACTION_DELAY).timeout
 	if not snake_reverse_after_text.is_empty():
 		_start_dialogue(MAP_SNAKE, [_snake_dialogue_page(snake_reverse_after_text)], Callable(self, "_finish_snake_reverse_reaction"))
 		return
@@ -2328,8 +2455,6 @@ func _finish_snake_reverse_reaction() -> void:
 		return
 	snake_reverse_after_text = ""
 	snake_reverse_after_final = false
-	snake_second_talk_timer = maxf(snake_second_talk_timer, SNAKE_SECOND_POST_REVERSE_DELAY)
-	snake_ray_timer = maxf(snake_ray_timer, SNAKE_RAY_INTERVAL)
 	_unlock_snake_second_phase(SNAKE_SECOND_POST_REVERSE_DELAY)
 
 
@@ -2337,17 +2462,20 @@ func _snake_reverse_failed() -> void:
 	_snake_failure("蛇妖趁着破绽反击。", "我被蛇妖吞没了。")
 
 
-func _apply_snake_reverse_effect(count: int) -> void:
-	match count:
-		1:
+func _apply_snake_reverse_effect(reverse_index: int, count_before: int, count_after: int) -> void:
+	if count_before == 2:
+		_play_bgm(BGM_SNAKE_FIGHT)
+	match reverse_index:
+		0:
 			snake_ray_disabled = true
 			snake_big_attack_disabled = true
 			_clear_snake_rays()
-		2:
-			snake_second_talk_timer = SNAKE_SECOND_TALK_INTERVAL + 3.0
-			snake_ray_timer = SNAKE_RAY_INTERVAL + 2.0
-		3:
+		1:
 			snake_scroll_active = false
+		2:
+			snake_scroll_active = false
+	if count_after >= 3 and count_before != 2:
+		_play_bgm(BGM_SNAKE_FIGHT)
 
 
 func _trim_snake_body_after_reverse() -> void:
@@ -2515,6 +2643,8 @@ func _capture_death_checkpoint() -> void:
 		"blur_alpha": blur_overlay.color.a,
 		"fissure_open": fissure_open,
 		"slime_visible": slime_state,
+		"slime_cells": _pack_vector2i_array(slime_cells),
+		"slime_waits": slime_waits.duplicate(),
 		"slime_reinforcement_timer": slime_reinforcement_timer,
 		"slime_reinforcement_cursor": slime_reinforcement_cursor,
 		"sentence_active": sentence_active,
@@ -2527,6 +2657,8 @@ func _capture_death_checkpoint() -> void:
 		"sentence_map_index": sentence_map_index,
 		"snake_success_count": snake_success_count,
 		"snake_reverse_count": snake_reverse_count,
+		"snake_reverse_current_index": snake_reverse_current_index,
+		"snake_reverse_completed": snake_reverse_completed.duplicate(),
 		"snake_current_keyword": snake_current_keyword,
 		"snake_stone_mode": snake_stone_mode,
 		"snake_used_keywords": snake_used_keywords.duplicate(),
@@ -2582,7 +2714,14 @@ func _restore_death_checkpoint() -> void:
 
 	if current_map == MAP_SLIME_RIGHT:
 		var restored_slime_visible: Array = death_checkpoint["slime_visible"]
-		_restore_slimes(restored_slime_visible)
+		var restored_slime_cells: Array[Vector2i] = []
+		if death_checkpoint.has("slime_cells"):
+			restored_slime_cells = _unpack_vector2i_array(death_checkpoint["slime_cells"])
+		_restore_slimes(restored_slime_visible, restored_slime_cells)
+		if death_checkpoint.has("slime_waits"):
+			var restored_slime_waits: Array = death_checkpoint["slime_waits"]
+			for i in range(mini(slime_waits.size(), restored_slime_waits.size())):
+				slime_waits[i] = float(restored_slime_waits[i])
 		slime_reinforcement_timer = float(death_checkpoint["slime_reinforcement_timer"])
 		slime_reinforcement_cursor = int(death_checkpoint["slime_reinforcement_cursor"])
 	else:
@@ -2590,6 +2729,14 @@ func _restore_death_checkpoint() -> void:
 
 	snake_success_count = int(death_checkpoint.get("snake_success_count", 0))
 	snake_reverse_count = int(death_checkpoint.get("snake_reverse_count", 0))
+	snake_reverse_current_index = int(death_checkpoint.get("snake_reverse_current_index", -1))
+	snake_reverse_completed.clear()
+	if death_checkpoint.has("snake_reverse_completed"):
+		var restored_reverse_completed: Dictionary = death_checkpoint["snake_reverse_completed"]
+		snake_reverse_completed = restored_reverse_completed.duplicate()
+	else:
+		for index in range(snake_reverse_count):
+			_mark_snake_reverse_completed(index)
 	snake_current_keyword = String(death_checkpoint.get("snake_current_keyword", ""))
 	snake_stone_mode = bool(death_checkpoint.get("snake_stone_mode", false))
 	snake_scroll_active = bool(death_checkpoint.get("snake_scroll_active", false))
@@ -2717,6 +2864,9 @@ func _show_slimes() -> void:
 		actor_layer.add_child(label)
 		slime_labels.append(label)
 		slime_visible.append(label.visible)
+		slime_cells.append(cell)
+		slime_waits.append(_slime_next_wait(i))
+		slime_moving.append(false)
 
 
 func _clear_slimes() -> void:
@@ -2724,16 +2874,21 @@ func _clear_slimes() -> void:
 		label.queue_free()
 	slime_labels.clear()
 	slime_visible.clear()
+	slime_cells.clear()
+	slime_waits.clear()
+	slime_moving.clear()
 	slime_reinforcement_timer = 0.0
 	slime_reinforcement_cursor = 0
 	slime_move_animation_time = 0.0
 
 
-func _restore_slimes(visible_state: Array) -> void:
+func _restore_slimes(visible_state: Array, restored_cells: Array[Vector2i] = []) -> void:
 	_clear_slimes()
 	slime_move_animation_time = 0.0
 	for i in range(SLIME_CELLS.size()):
 		var cell: Vector2i = SLIME_CELLS[i]
+		if i < restored_cells.size():
+			cell = restored_cells[i]
 		var label := _make_world_cell_label("史", MAP_SLIME_RIGHT, cell.x, cell.y, DIALOGUE_COLOR)
 		label.z_index = 18
 		label.pivot_offset = Vector2(CELL * 0.5, CELL * 0.5)
@@ -2741,6 +2896,9 @@ func _restore_slimes(visible_state: Array) -> void:
 		actor_layer.add_child(label)
 		slime_labels.append(label)
 		slime_visible.append(label.visible)
+		slime_cells.append(cell)
+		slime_waits.append(_slime_next_wait(i))
+		slime_moving.append(false)
 
 
 func _update_slime_reinforcements(delta: float) -> void:
@@ -2762,8 +2920,133 @@ func _reveal_slime_index(index: int) -> void:
 	label.visible = true
 	label.modulate.a = 0.0
 	slime_visible[index] = true
+	slime_waits[index] = _slime_next_wait(index)
 	var tween := create_tween()
 	tween.tween_property(label, "modulate:a", 1.0, 0.45)
+
+
+func _update_slime_movement(delta: float) -> void:
+	if not _slime_should_move():
+		return
+	for i in range(slime_labels.size()):
+		if i >= slime_visible.size() or not slime_visible[i]:
+			continue
+		if i >= slime_moving.size() or slime_moving[i]:
+			continue
+		if i >= slime_waits.size():
+			continue
+		slime_waits[i] -= delta
+		if slime_waits[i] > 0.0:
+			continue
+		var next_cell := _slime_next_cell(i)
+		slime_waits[i] = _slime_next_wait(i)
+		if next_cell == slime_cells[i]:
+			continue
+		_start_slime_move(i, next_cell)
+
+
+func _slime_should_move() -> bool:
+	return phase == Phase.SLIME_STAGE1 or phase == Phase.SLIME_STAGE2 or phase == Phase.SLIME_STAGE3 or phase == Phase.SLIME_STAGE4
+
+
+func _slime_next_wait(index: int) -> float:
+	if phase == Phase.SLIME_STAGE4:
+		return rng.randf_range(SLIME_CHASE_WAIT_MIN, SLIME_CHASE_WAIT_MAX)
+	if index == 0:
+		return rng.randf_range(SLIME_RANDOM_WAIT_MIN, SLIME_RANDOM_WAIT_MAX)
+	return rng.randf_range(SLIME_RANDOM_WAIT_MIN, SLIME_RANDOM_WAIT_MAX)
+
+
+func _slime_next_cell(index: int) -> Vector2i:
+	if index < 0 or index >= slime_cells.size():
+		return Vector2i.ZERO
+	var current: Vector2i = slime_cells[index]
+	if phase == Phase.SLIME_STAGE4:
+		return _slime_cell_toward_player(current)
+	if index == 0:
+		var down := current + Vector2i.DOWN
+		if _is_slime_move_cell_free(down, index):
+			return down
+	var directions: Array[Vector2i] = [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]
+	var start_index := rng.randi_range(0, directions.size() - 1)
+	for offset in range(directions.size()):
+		var direction: Vector2i = directions[(start_index + offset) % directions.size()]
+		var candidate := current + direction
+		if _is_slime_move_cell_free(candidate, index):
+			return candidate
+	return current
+
+
+func _slime_cell_toward_player(current: Vector2i) -> Vector2i:
+	var directions: Array[Vector2i] = []
+	var delta := player_cell - current
+	var step_x := 0
+	if delta.x > 0:
+		step_x = 1
+	elif delta.x < 0:
+		step_x = -1
+	var step_y := 0
+	if delta.y > 0:
+		step_y = 1
+	elif delta.y < 0:
+		step_y = -1
+	if absi(delta.x) >= absi(delta.y):
+		directions.append(Vector2i(step_x, 0))
+		directions.append(Vector2i(0, step_y))
+	else:
+		directions.append(Vector2i(0, step_y))
+		directions.append(Vector2i(step_x, 0))
+	directions.append(Vector2i.LEFT)
+	directions.append(Vector2i.RIGHT)
+	directions.append(Vector2i.UP)
+	directions.append(Vector2i.DOWN)
+	for direction in directions:
+		if direction == Vector2i.ZERO:
+			continue
+		var candidate := current + direction
+		if _is_slime_move_cell_free(candidate, -1):
+			return candidate
+	return current
+
+
+func _is_slime_move_cell_free(cell: Vector2i, moving_index: int) -> bool:
+	if cell == player_cell:
+		return true
+	if cell.x < 0 or cell.x >= GRID_W or cell.y < 0 or cell.y >= GRID_H:
+		return false
+	if sentence_active and _is_sentence_cell(cell):
+		return false
+	if not _is_walkable(MAP_SLIME_RIGHT, cell):
+		return false
+	for i in range(slime_cells.size()):
+		if i == moving_index:
+			continue
+		if i < slime_visible.size() and slime_visible[i] and slime_cells[i] == cell:
+			return false
+	return true
+
+
+func _start_slime_move(index: int, target_cell: Vector2i) -> void:
+	if index < 0 or index >= slime_labels.size() or index >= slime_cells.size():
+		return
+	if index >= slime_moving.size() or index >= slime_visible.size() or not slime_visible[index]:
+		return
+	slime_moving[index] = true
+	slime_cells[index] = target_cell
+	var label := slime_labels[index]
+	label.pivot_offset = Vector2(CELL * 0.5, CELL * 0.5)
+	var target_position := Vector2(MAP_SLIME_RIGHT * VIEWPORT_SIZE.x + target_cell.x * CELL, target_cell.y * CELL)
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(label, "position", target_position, SLIME_MOVE_TIME).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "scale", Vector2(1.2, 0.85), SLIME_MOVE_TIME * 0.58).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "scale", Vector2.ONE, SLIME_MOVE_TIME * 0.42).set_delay(SLIME_MOVE_TIME * 0.58)
+	await tween.finished
+	if index >= slime_cells.size() or index >= slime_moving.size():
+		return
+	slime_moving[index] = false
+	if current_map == MAP_SLIME_RIGHT and _slime_should_move() and index < slime_visible.size() and slime_visible[index] and target_cell == player_cell:
+		_slime_failure("", "我被史莱姆杀死了。")
 
 
 func _fade_slime_indices(indices: Array) -> void:
@@ -2807,8 +3090,8 @@ func _run_slimes_away() -> void:
 func _is_visible_slime_cell(cell: Vector2i) -> bool:
 	if current_map != MAP_SLIME_RIGHT:
 		return false
-	for i in range(SLIME_CELLS.size()):
-		if slime_visible.size() > i and slime_visible[i] and SLIME_CELLS[i] == cell:
+	for i in range(slime_cells.size()):
+		if slime_visible.size() > i and slime_visible[i] and slime_cells[i] == cell:
 			return true
 	return false
 
@@ -2818,15 +3101,18 @@ func _update_slime_visual_animation(delta: float) -> void:
 		return
 	slime_move_animation_time = fmod(slime_move_animation_time + delta, SLIME_MOVE_CYCLE_LENGTH)
 	var animated_scale := _sample_slime_move_scale(slime_move_animation_time)
-	for label in slime_labels:
+	for i in range(slime_labels.size()):
+		var label := slime_labels[i]
 		if not is_instance_valid(label):
 			continue
 		label.pivot_offset = Vector2(CELL * 0.5, CELL * 0.5)
+		if i < slime_moving.size() and slime_moving[i]:
+			continue
 		label.scale = animated_scale if label.visible else Vector2.ONE
 
 
 func _sample_slime_move_scale(time: float) -> Vector2:
-	if time >= SLIME_MOVE_ANIMATION_LENGTH:
+	if time >= SLIME_MOVE_TIME:
 		return Vector2.ONE
 	for i in range(SLIME_MOVE_KEY_TIMES.size() - 1):
 		var start_time: float = SLIME_MOVE_KEY_TIMES[i]
@@ -2877,6 +3163,9 @@ func _render_dialogue(map_index: int, lines: Array, with_continue: bool) -> void
 		if map_index == MAP_SNAKE:
 			start_x = maxi(1, int((GRID_W - line.length()) / 2.0))
 			y = 2 + line_index
+		elif map_index == MAP_SLIME_LEFT:
+			start_x = maxi(1, int((GRID_W - line.length()) / 2.0))
+			y = 7 + line_index
 		for i in range(line.length()):
 			var text := line.substr(i, 1)
 			if text == " ":
@@ -3024,6 +3313,55 @@ func _get_opportunity_brightness(elapsed: float) -> float:
 	if loop_elapsed < 5.0:
 		return 1.0 - 0.8 * ((loop_elapsed - 1.0) / 4.0)
 	return 0.2
+
+
+func _clear_treasure_tutorial_text() -> void:
+	for label in treasure_tutorial_labels:
+		if is_instance_valid(label):
+			label.queue_free()
+	treasure_tutorial_labels.clear()
+
+
+func _show_treasure_tutorial_text(lines: Array[String], start_y: int) -> void:
+	_clear_treasure_tutorial_text()
+	for line_index in range(lines.size()):
+		var line := String(lines[line_index])
+		var start_x := _centered_text_x(line)
+		for i in range(line.length()):
+			var text := line.substr(i, 1)
+			if text == " ":
+				continue
+			var label := _make_world_cell_label(text, MAP_TREASURE, start_x + i, start_y + line_index, DIALOGUE_COLOR)
+			label.z_index = 21
+			actor_layer.add_child(label)
+			treasure_tutorial_labels.append(label)
+
+
+func _centered_text_x(text: String) -> int:
+	return maxi(0, int((GRID_W - text.length()) / 2.0))
+
+
+func _start_treasure_delete_text(text_lines: Array[String], target_line: int, target_char: String, callback: Callable, start_y: int) -> void:
+	var lines: Array = []
+	var starts: Array[Vector2i] = []
+	target_line = clampi(target_line, 0, maxi(0, text_lines.size() - 1))
+	var target_offset := String(text_lines[target_line]).find(target_char)
+	if target_offset == -1:
+		target_offset = 0
+	for line_index in range(text_lines.size()):
+		var line := String(text_lines[line_index])
+		lines.append(_chars(line))
+		starts.append(Vector2i(_centered_text_x(line), start_y + line_index))
+	var success_cell := starts[target_line] + Vector2i(target_offset, 0)
+	_start_delete_sentence_lines(
+		lines,
+		starts,
+		[success_cell],
+		[],
+		callback,
+		Callable(),
+		MAP_TREASURE
+	)
 
 
 func _start_delete_sentence(chars: Array[String], target_index: int, callback: Callable) -> void:
@@ -3304,6 +3642,8 @@ func _make_legal_line(pos: Vector2, size: Vector2, color: Color) -> ColorRect:
 
 
 func _clear_sentence() -> void:
+	if sentence_map_index == MAP_SNAKE and phase == Phase.SNAKE_SECOND:
+		snake_reverse_current_index = -1
 	for label in active_sentence_labels:
 		label.queue_free()
 	active_sentence_labels.clear()
