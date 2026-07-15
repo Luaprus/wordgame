@@ -20,6 +20,8 @@ const GemBurstEffect = preload("res://scripts/gem_burst_effect.gd")
 const LightGlowEffect = preload("res://scripts/light_glow_effect.gd")
 const PullParticleEffect = preload("res://scripts/pull_particle_effect.gd")
 const TreeSpriteScene = preload("res://scenes/animations/TreeSprite.tscn")
+const SplitBaseTexture = preload("res://assets/animations/split/base_white.png")
+const SplitParticleTexture = preload("res://assets/animations/split/unzip_split.png")
 const OriginalFont = preload("res://Fonts/Zpix-v3.1.6.ttf")
 const PushEffectTexture = preload("res://assets/animations/push/u_glove_S.png")
 
@@ -624,12 +626,20 @@ func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> 
 		if effect_type == "word_merge_flash" or effect_type == "bridge_word_merge_flash":
 			call_deferred("_run_word_merge_flash", request.duplicate(true), _visual_effect_generation)
 			continue
+		if effect_type == KEY_INFO_EMPHASIS:
+			if not key_info_emphasis_played:
+				key_info_emphasis_played = true
+				call_deferred("_run_key_info_emphasis", request.duplicate(true), _visual_effect_generation)
+			continue
 		if effect_type == "bridge_tree_transition":
 			var context: Dictionary = visual_contexts[i] if i < visual_contexts.size() else {}
 			call_deferred("_run_bridge_tree_transition", request.duplicate(true), context, _visual_effect_generation)
 			continue
 		if effect_type == "bridge_collapse_sequence":
 			call_deferred("_run_bridge_collapse_sequence", request.duplicate(true), _visual_effect_generation)
+		if effect_type == "word_split_transition":
+			var split_context: Dictionary = visual_contexts[i] if i < visual_contexts.size() else {}
+			call_deferred("_run_word_split_transition", request.duplicate(true), split_context, _visual_effect_generation)
 
 func _prepare_visual_effect_contexts(visual_requests: Array) -> Array:
 	var contexts: Array = []
@@ -637,7 +647,13 @@ func _prepare_visual_effect_contexts(visual_requests: Array) -> Array:
 		var request_dict: Dictionary = request
 		var effect_type := str(request_dict.get("type", ""))
 		if effect_type != "bridge_tree_transition":
-			contexts.append({})
+			if effect_type == "word_split_transition":
+				contexts.append({
+					"part_specs": _capture_visual_specs_for_cells(request_dict.get("part_cells", [])),
+					"part_groups": _find_groups_for_cells(request_dict.get("part_cells", []))
+				})
+			else:
+				contexts.append({})
 			continue
 		var context := {
 			"tree_overlays": [],
@@ -1078,6 +1094,133 @@ func _tween_canvas_items_alpha(targets: Array, alpha: float, duration: float) ->
 		tween.kill()
 		return
 	await tween.finished
+
+func _run_word_split_transition(request: Dictionary, context: Dictionary, generation: int) -> void:
+	if generation != _visual_effect_generation or bridge_tree_effect_layer == null:
+		return
+	var part_specs: Array = context.get("part_specs", [])
+	var part_groups: Array = context.get("part_groups", [])
+	var part_cells: Array = request.get("part_cells", [])
+	if part_specs.size() < 2 or part_cells.size() < 2:
+		return
+	var source_cell: Vector2i = request.get("source_cell", Vector2i.ZERO)
+	var source_position := _grid_to_pixels(source_cell)
+	var move_duration := float(request.get("move_duration", 0.5))
+	var settle_duration := float(request.get("settle_duration", 0.18))
+	var jump_height := float(request.get("jump_height", 30.0))
+	var square_alpha := float(request.get("square_alpha", 0.5))
+	var square_color: Color = request.get("square_color", Color(0.96, 0.92, 0.62, 1.0))
+	var part_jump_heights: Array = request.get("part_jump_heights", [jump_height, 0.0])
+	var source_fade_duration := float(request.get("source_fade_duration", 0.08))
+	var part_fade_in_duration := float(request.get("part_fade_in_duration", 0.06))
+	var particle_duration := float(request.get("particle_duration", 0.4))
+	var particle_frame_count := int(request.get("particle_frame_count", 15))
+	var source_overlay := _build_split_source_overlay(str(request.get("source_text", "")), source_position, square_color, square_alpha)
+	var part_overlays := _build_split_part_overlays(part_specs, source_position, square_color, square_alpha)
+	var particle := _build_split_particle_overlay(source_position)
+	if source_overlay:
+		bridge_tree_effect_layer.add_child(source_overlay)
+	for overlay: Node2D in part_overlays:
+		bridge_tree_effect_layer.add_child(overlay)
+	if particle:
+		bridge_tree_effect_layer.add_child(particle)
+	_set_groups_alpha(part_groups, 0.0)
+	var tween := create_tween()
+	tween.set_parallel(true)
+	if source_overlay:
+		tween.tween_property(source_overlay, "modulate:a", 0.0, source_fade_duration).set_delay(part_fade_in_duration)
+	for overlay: Node2D in part_overlays:
+		tween.tween_property(overlay, "modulate:a", 1.0, part_fade_in_duration)
+	for i in range(part_overlays.size()):
+		var overlay: Node2D = part_overlays[i]
+		if i >= part_cells.size():
+			continue
+		var target_position := _grid_to_pixels(part_cells[i])
+		var part_jump_height := 0.0
+		if i < part_jump_heights.size():
+			part_jump_height = float(part_jump_heights[i])
+		tween.tween_method(
+			Callable(self, "_set_word_split_overlay_progress").bind(overlay, source_position, target_position, part_jump_height),
+			0.0,
+			1.0,
+			move_duration
+		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	if particle:
+		tween.tween_property(particle, "modulate:a", 0.0, particle_duration)
+		tween.tween_property(particle, "frame", maxi(0, particle_frame_count - 1), particle_duration).from(0)
+	await tween.finished
+	if generation != _visual_effect_generation:
+		_clear_split_transition_nodes(source_overlay, part_overlays, particle)
+		return
+	var settle_tween := create_tween()
+	settle_tween.set_parallel(true)
+	if source_overlay:
+		settle_tween.tween_property(source_overlay, "modulate:a", 0.0, settle_duration)
+	for overlay: Node2D in part_overlays:
+		settle_tween.tween_property(overlay, "modulate:a", 0.0, settle_duration)
+	for group in part_groups:
+		if group == null or not is_instance_valid(group):
+			continue
+		var canvas_item := group as CanvasItem
+		if canvas_item == null:
+			continue
+		settle_tween.tween_property(canvas_item, "modulate:a", 1.0, settle_duration)
+	await settle_tween.finished
+	_clear_split_transition_nodes(source_overlay, part_overlays, particle)
+
+func _build_split_source_overlay(source_text: String, source_position: Vector2, square_color: Color, square_alpha: float) -> Node2D:
+	if source_text.is_empty():
+		return null
+	var overlay := Node2D.new()
+	overlay.position = source_position
+	overlay.z_index = 40
+	var square := Sprite2D.new()
+	square.texture = SplitBaseTexture
+	square.position = Vector2(world.cell_size, world.cell_size) * 0.5
+	square.modulate = Color(square_color.r, square_color.g, square_color.b, square_alpha)
+	overlay.add_child(square)
+	var label := _make_word_label(source_text)
+	label.position = Vector2(0, -2)
+	overlay.add_child(label)
+	return overlay
+
+func _build_split_part_overlays(part_specs: Array, source_position: Vector2, square_color: Color, square_alpha: float) -> Array:
+	var overlays: Array = []
+	for spec_value in part_specs:
+		var spec: Dictionary = spec_value
+		var overlay := Node2D.new()
+		overlay.position = source_position
+		overlay.z_index = 41
+		overlay.modulate.a = 0.0
+		var label := _make_word_label(str(spec.get("text", "")), spec.get("color", Color.WHITE))
+		label.position = Vector2(0, -2)
+		overlay.add_child(label)
+		overlays.append(overlay)
+	return overlays
+
+func _build_split_particle_overlay(source_position: Vector2) -> Sprite2D:
+	var particle := Sprite2D.new()
+	particle.texture = SplitParticleTexture
+	particle.hframes = 5
+	particle.vframes = 3
+	particle.frame = 0
+	particle.position = source_position + Vector2(world.cell_size, world.cell_size) * 0.5
+	particle.z_index = 42
+	return particle
+
+func _set_word_split_overlay_progress(progress: float, overlay: Node2D, start: Vector2, finish: Vector2, jump_height: float) -> void:
+	if overlay == null or not is_instance_valid(overlay):
+		return
+	var position := start.lerp(finish, progress)
+	position.y -= sin(progress * PI) * jump_height
+	overlay.position = position
+
+func _clear_split_transition_nodes(source_overlay: Node2D, part_overlays: Array, particle: Sprite2D) -> void:
+	if source_overlay != null and is_instance_valid(source_overlay):
+		source_overlay.queue_free()
+	_clear_effect_overlays(part_overlays)
+	if particle != null and is_instance_valid(particle):
+		particle.queue_free()
 
 func _play_player_river_enter(request: Dictionary) -> void:
 	var submerge_offset := float(request.get("submerge_offset", world.cell_size * 0.5))

@@ -344,6 +344,12 @@ static func _distance_solved_effect() -> Dictionary:
 	spawn.append_array(_bridge_spawn(0))
 	return {
 		"remove_at": _all_dynamic_cells(),
+		"visual_effect": BridgeTreeVisuals.key_info_emphasis([
+			Vector2i(7, 7),
+			Vector2i(8, 7),
+			Vector2i(9, 7),
+			Vector2i(10, 7)
+		]),
 		"spawn": spawn,
 		"spawn_text": _phase_two_text()
 	}

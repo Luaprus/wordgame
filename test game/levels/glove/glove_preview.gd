@@ -28,7 +28,7 @@ const RETURN_TO_MAIN_SHORTCUT_KEY := KEY_ESCAPE
 
 var world := GridWorld.new()
 var page_camera := PageCamera.new()
-var route_runner := GloveRouteRunner.new()
+var route_runner: GloveRouteRunner = GloveRouteRunner.new()
 var player_mover := SmoothGridMover.new()
 var entity_movers: Dictionary = {}
 var entity_labels: Dictionary = {}
@@ -159,10 +159,10 @@ func _unhandled_input(event: InputEvent) -> void:
 				_demo_step()
 
 func _run_named_route(route_path: String) -> void:
-	var route := route_runner.load_route_file(route_path)
+	var route: Dictionary = route_runner.load_route_file(route_path)
 	if route.is_empty():
 		return
-	var result := route_runner.run_route(world, route)
+	var result: Dictionary = route_runner.run_route(world, route)
 	_last_route_key = _route_key_for_path(route_path)
 	_last_route_report = result.get("report", {})
 	if not bool(result.get("success", false)):
@@ -170,7 +170,7 @@ func _run_named_route(route_path: String) -> void:
 	_refresh_view(str(world.last_message))
 
 func start_demo_for_route(route_path: String) -> void:
-	var route := route_runner.load_route_file(route_path)
+	var route: Dictionary = route_runner.load_route_file(route_path)
 	if route.is_empty():
 		return
 	initialize_preview_world()
@@ -215,7 +215,7 @@ func _demo_step() -> void:
 		if bool(step.get("demo_auto_move", false)) and bool(result.get("turned", false)) and not bool(result.get("moved", false)) and str(step.get("action", "")) == "move":
 			result = world.try_player_action("move", _demo_direction(step.get("direction", Vector2i.ZERO)))
 	else:
-		var run_result := route_runner.run_route(world, {"steps": [step]})
+		var run_result: Dictionary = route_runner.run_route(world, {"steps": [step]})
 		var report: Dictionary = run_result.get("report", {})
 		var records: Array = report.get("steps", [])
 		result = records[0] if not records.is_empty() else {"success": false, "message": "演示步骤没有执行记录"}

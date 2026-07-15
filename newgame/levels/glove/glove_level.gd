@@ -6,7 +6,7 @@ const GloveEffects = preload("res://scripts/levels/glove/glove_effects.gd")
 const LEVEL_NAME := "手套关 巨掌迷宫"
 
 static func build_level() -> Dictionary:
-	var cell_configs := GloveLayouts.pushable_cell_configs()
+	var cell_configs: Dictionary = GloveLayouts.pushable_cell_configs()
 	cell_configs[Vector2i(24, 4)] = GloveEffects.final_hero_cell_config()
 	return {
 		"name": LEVEL_NAME,
