@@ -1,6 +1,7 @@
 extends RefCounted
 
 const BridgeTreeVisuals = preload("res://levels/helmet/bridge_tree_visuals.gd")
+const WordSplitVisuals = preload("res://scripts/word_split_visuals.gd")
 
 const LEVEL_NAME := "四目头盔 过河第五关"
 const SCREEN_SIZE := Vector2i(32, 18)
@@ -372,7 +373,10 @@ static func _bridge_split_effect() -> Dictionary:
 static func _bridge_split_blocked_effect() -> Dictionary:
 	return {
 		"remove_at": _river_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _bridge_cells()),
+		"visual_effects": [
+			BridgeTreeVisuals.split_effect(_tree_cells(), _bridge_cells(), _creek_cells_for_blocked_bridge()),
+			WordSplitVisuals.effect("桥", ["乔", "木"])
+		],
 		"replace_text": [_hint_bridge_split_replace()],
 		"spawn": _creek_and_tree_spawn(false)
 	}
@@ -380,7 +384,10 @@ static func _bridge_split_blocked_effect() -> Dictionary:
 static func _bridge_split_open_effect() -> Dictionary:
 	return {
 		"remove_at": _river_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.split_effect(_tree_cells(), _bridge_cells()),
+		"visual_effects": [
+			BridgeTreeVisuals.split_effect(_tree_cells(), _bridge_cells(), _creek_cells_for_blocked_bridge()),
+			WordSplitVisuals.effect("桥", ["乔", "木"])
+		],
 		"replace_text": [_hint_bridge_split_replace()],
 		"spawn": _creek_and_tree_spawn(true)
 	}
@@ -402,6 +409,11 @@ static func _dry_with_bridge_effect() -> Dictionary:
 	remove_at.append_array(_creek_hint_cells())
 	return {
 		"remove_at": remove_at,
+		"visual_effect": BridgeTreeVisuals.key_info_emphasis([
+			Vector2i(7, 12),
+			Vector2i(8, 12),
+			Vector2i(9, 12)
+		]),
 		"spawn": spawn,
 		"spawn_text": _dry_creek_hint_text()
 	}
@@ -411,6 +423,11 @@ static func _dry_without_bridge_effect() -> Dictionary:
 	remove_at.append_array(_creek_hint_cells())
 	return {
 		"remove_at": remove_at,
+		"visual_effect": BridgeTreeVisuals.key_info_emphasis([
+			Vector2i(7, 12),
+			Vector2i(8, 12),
+			Vector2i(9, 12)
+		]),
 		"spawn": _creek_and_tree_spawn(true),
 		"spawn_text": _dry_creek_hint_text()
 	}
