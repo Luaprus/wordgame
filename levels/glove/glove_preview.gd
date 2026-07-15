@@ -1433,8 +1433,8 @@ func _handle_intro_input(key_event: InputEventKey) -> void:
 	if intro_completion_pending or push_recovery_active:
 		return
 	if key_event.pressed and not key_event.echo and key_event.keycode == KEY_SPACE:
-		if intro_quote_started and not intro_bottom_rewrite_started and not intro_world.has_pending_timed_effect():
-			_start_intro_bottom_rewrite()
+		return
+	if intro_world.player_input_locked:
 		return
 	if intro_bottom_rewrite_started and intro_world.has_pending_timed_effect():
 		return
@@ -1479,6 +1479,7 @@ func _apply_intro_direction_step(direction: Vector2i) -> void:
 		_play_player_walk_visual(intro_player_sprite)
 	if not intro_quote_started and _intro_no_reached_target():
 		intro_quote_started = true
+		intro_world.player_input_locked = true
 		acquisition_tutorial_label.visible = false
 	_check_intro_completion()
 
@@ -1526,9 +1527,14 @@ func _advance_intro_typewriter(delta: float) -> void:
 		intro_effect_elapsed -= intro_world.pending_timed_delay
 		intro_world.resolve_pending_timed_effect()
 		_sync_intro_world_view()
+		if intro_quote_started and not intro_bottom_rewrite_started and not intro_world.has_pending_timed_effect():
+			_start_intro_bottom_rewrite()
+			return
 		if intro_bottom_rewrite_started and not intro_top_rewrite_started and not intro_world.has_pending_timed_effect():
 			_start_intro_top_rewrite()
 			return
+	if intro_top_rewrite_started and not intro_world.has_pending_timed_effect():
+		intro_world.player_input_locked = false
 
 func _start_intro_top_rewrite() -> void:
 	intro_top_rewrite_started = true
