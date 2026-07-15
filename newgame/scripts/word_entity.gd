@@ -16,6 +16,8 @@ var interact_caption_solid := false
 var interact_effect: Dictionary = {}
 var split_positions: Array[Vector2i] = []
 var highlighted := false
+var temporary_description := false
+var persistent := false
 var visual_rotation_degrees := 0.0
 var visual_color := Color.WHITE
 var visual_horizontal_shake_amplitude := 0.0
@@ -47,6 +49,8 @@ func set_from_config(config: Dictionary) -> void:
 		split_positions.clear()
 		for pos in config.split_positions:
 			split_positions.append(pos)
+	temporary_description = config.get("temporary_description", temporary_description)
+	persistent = config.get("persistent", persistent)
 	visual_rotation_degrees = float(config.get("visual_rotation_degrees", visual_rotation_degrees))
 	visual_color = config.get("visual_color", visual_color)
 	visual_horizontal_shake_amplitude = float(config.get("visual_horizontal_shake_amplitude", visual_horizontal_shake_amplitude))

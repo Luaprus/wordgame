@@ -24,6 +24,7 @@ var player_abilities: PackedStringArray = PackedStringArray()
 var current_page_origin := Vector2i.ZERO
 var bounded := false
 var allow_edge_transition := true
+var edge_transition_rows: Array = []
 var entities: Dictionary = {}
 var highlighted_cells: Array[Vector2i] = []
 var last_message := ""
@@ -62,6 +63,8 @@ var highlight_animation_duration := 0.8
 
 var _next_id := 1
 var _map_caption_ids: Dictionary = {}
+var _sentence_caption_ids: Dictionary = {}
+var _active_sentence_matches: Dictionary = {}
 
 func load_level(level: Dictionary) -> void:
 	clear()
@@ -69,6 +72,7 @@ func load_level(level: Dictionary) -> void:
 	screen_size = level.get("screen_size", screen_size)
 	bounded = bool(level.get("bounded", false))
 	allow_edge_transition = bool(level.get("allow_edge_transition", true))
+	edge_transition_rows = level.get("edge_transition_rows", []).duplicate()
 	rows = level.get("rows", [])
 	player_pos = level.get("player_start", player_pos)
 	facing = level.get("player_facing", Vector2i(1, 0))
@@ -124,6 +128,7 @@ func clear() -> void:
 	player_text = "我"
 	bounded = false
 	allow_edge_transition = true
+	edge_transition_rows.clear()
 	player_abilities = PackedStringArray()
 	ignored_row_texts = PackedStringArray(["我"])
 	entity_configs.clear()
@@ -153,6 +158,8 @@ func clear() -> void:
 	current_page_origin = Vector2i.ZERO
 	_next_id = 1
 	_map_caption_ids.clear()
+	_sentence_caption_ids.clear()
+	_active_sentence_matches.clear()
 	rule_engine.reset()
 
 func try_player_action(action: String, direction := Vector2i.ZERO) -> Dictionary:
@@ -305,7 +312,7 @@ func _check_move_bounds(target: Vector2i) -> Dictionary:
 		return {"success": true}
 	if target.x < 0 or target.y < 0 or target.y >= screen_size.y:
 		return {"success": false, "message": "boundary"}
-	if target.x >= screen_size.x and allow_edge_transition:
+	if target.x >= screen_size.x and allow_edge_transition and (edge_transition_rows.is_empty() or edge_transition_rows.has(target.y)):
 		return {
 			"success": true,
 			"transition": "next_level",
@@ -607,7 +614,9 @@ func try_merge_entities(from_pos: Vector2i, to_pos: Vector2i) -> Dictionary:
 	var second_text := str(second.text)
 	var first_pos := first.grid_pos
 	var second_pos := second.grid_pos
-	var split_positions := _merge_split_positions(merged_text, first, second)
+	var split_positions: Array[Vector2i] = []
+	if bool(current_level.get("preserve_merge_split_positions", true)):
+		split_positions = _merge_split_positions(merged_text, first, second)
 	entities.erase(first.id)
 	entities.erase(second.id)
 	var merged := add_entity(merged_text, to_pos, _config_for_text_at(merged_text, to_pos, {
@@ -674,21 +683,53 @@ func check_sentence_rules() -> Dictionary:
 		entity.highlighted = false
 	var result := {}
 	var evaluation: Dictionary = rule_engine.evaluate(entities, sentence_rules, Callable(self, "get_entity_at"))
-	for cell in evaluation.get("highlighted_cells", []):
-		highlighted_cells.append(cell)
-		highlight_animation_strengths[_cell_key(cell)] = 1.0
-		var entity := get_entity_at(cell)
-		if entity:
-			entity.highlighted = true
 	var matches: Dictionary = evaluation.get("matches", {})
+	var active_matches: Dictionary = {}
 	for sentence in matches.keys():
 		var match: Dictionary = matches[sentence]
 		var config: Dictionary = match.get("config", {})
 		var found_cells: Array[Vector2i] = match.get("cells", [])
+		if not _sentence_player_condition_matches(config, found_cells):
+			continue
+		active_matches[sentence] = match
+	for sentence_key in sentence_rules.keys():
+		var rule_sentence := str(sentence_key)
+		var rule_config: Dictionary = sentence_rules[sentence_key]
+		if bool(rule_config.get("remove_caption_on_miss", false)) and not active_matches.has(rule_sentence):
+			_remove_sentence_caption(rule_sentence)
+	for sentence in active_matches.keys():
+		var match: Dictionary = active_matches[sentence]
+		var config: Dictionary = match.get("config", {})
+		var found_cells: Array[Vector2i] = match.get("cells", [])
+		for cell in found_cells:
+			highlighted_cells.append(cell)
+			highlight_animation_strengths[_cell_key(cell)] = 1.0
+			var entity := get_entity_at(cell)
+			if entity:
+				entity.highlighted = true
 		last_message = str(match.get("message", ""))
+		if not _active_sentence_matches.has(sentence) and config.has("on_match_effect"):
+			_apply_map_effect(config.on_match_effect)
 		_spawn_sentence_caption(str(sentence), config, found_cells)
 		result[sentence] = {"message": last_message, "cells": found_cells}
+	_active_sentence_matches = {}
+	for sentence in active_matches.keys():
+		_active_sentence_matches[sentence] = true
 	return result
+
+func _sentence_player_condition_matches(config: Dictionary, cells: Array[Vector2i]) -> bool:
+	if not config.has("required_player_at"):
+		return true
+	var requirement: Dictionary = config.required_player_at
+	if not str(requirement.get("text", "")).is_empty() and player_text != str(requirement.text):
+		return false
+	if cells.is_empty():
+		return false
+	var anchor := cells[0]
+	if str(requirement.get("anchor", "first")) == "last":
+		anchor = cells[cells.size() - 1]
+	var offset: Vector2i = requirement.get("offset", Vector2i.ZERO)
+	return player_pos == anchor + offset
 
 func update_page() -> void:
 	current_page_origin = Vector2i(
@@ -748,7 +789,19 @@ func _spawn_sentence_caption(sentence: String, config: Dictionary, cells: Array[
 	var caption_text := str(config.get("message", ""))
 	if caption_text.is_empty():
 		return
-	spawn_map_caption(caption_text, cells[0] + Vector2i(0, 1), config)
+	var caption := spawn_map_caption(caption_text, cells[0] + Vector2i(0, 1), config)
+	if caption:
+		_sentence_caption_ids[sentence] = caption.id
+
+func _remove_sentence_caption(sentence: String) -> void:
+	if not _sentence_caption_ids.has(sentence):
+		return
+	var caption_id := str(_sentence_caption_ids[sentence])
+	var caption: WordEntity = entities.get(caption_id)
+	if caption and _map_caption_ids.get(caption.text, "") == caption.id:
+		_map_caption_ids.erase(caption.text)
+	entities.erase(caption_id)
+	_sentence_caption_ids.erase(sentence)
 
 func _spawn_interaction_caption(entity: WordEntity) -> void:
 	if entity.interact_caption_lines.is_empty():
@@ -765,7 +818,17 @@ func _spawn_interaction_caption(entity: WordEntity) -> void:
 func _split_positions_for(entity: WordEntity) -> Array[Vector2i]:
 	if not entity.split_positions.is_empty():
 		return entity.split_positions.duplicate()
-	return [entity.grid_pos, entity.grid_pos + facing]
+	var forward_pos := entity.grid_pos + facing
+	if _can_use_default_split_cell(entity, forward_pos):
+		return [entity.grid_pos, forward_pos]
+	# The forward cell is blocked: split toward the player and make room behind them.
+	return [entity.grid_pos, entity.grid_pos - facing]
+
+func _can_use_default_split_cell(entity: WordEntity, pos: Vector2i) -> bool:
+	if not _check_entity_bounds(pos).success:
+		return false
+	var blocker := get_entity_at(pos)
+	return blocker == null or blocker.id == entity.id
 
 func _make_room_for_split(entity: WordEntity, split_positions: Array[Vector2i], removable_positions: Array = []) -> Dictionary:
 	var split_direction := Vector2i.RIGHT
@@ -778,13 +841,29 @@ func _make_room_for_split(entity: WordEntity, split_positions: Array[Vector2i], 
 			if i == 0:
 				push_direction = -split_direction
 			var pushed_pos := player_pos + push_direction
-			if get_entity_at(pushed_pos):
-				return {"success": false, "message": "player split target blocked"}
+			if not _is_valid_split_escape(pushed_pos, split_positions):
+				var side_escape := _find_split_side_escape(split_positions)
+				if side_escape == Vector2i.ZERO:
+					return {"success": false, "message": "player split target blocked"}
+				pushed_pos = side_escape
 			player_pos = pushed_pos
 		var blocker := get_entity_at(pos)
 		if blocker and blocker.id != entity.id and not removable_positions.has(pos):
 			return {"success": false, "message": "split target blocked"}
 	return {"success": true}
+
+func _is_valid_split_escape(pos: Vector2i, split_positions: Array[Vector2i]) -> bool:
+	if not _check_entity_bounds(pos).success or split_positions.has(pos):
+		return false
+	return get_entity_at(pos) == null
+
+func _find_split_side_escape(split_positions: Array[Vector2i]) -> Vector2i:
+	var side_directions := [Vector2i(-facing.y, facing.x), Vector2i(facing.y, -facing.x)]
+	for side in side_directions:
+		var candidate: Vector2i = player_pos + side
+		if _is_valid_split_escape(candidate, split_positions):
+			return candidate
+	return Vector2i.ZERO
 
 func _merge_split_positions(merged_text: String, first: WordEntity, second: WordEntity) -> Array[Vector2i]:
 	var parts: Array = split_rules.get(merged_text, [])
@@ -812,6 +891,8 @@ func _apply_map_effect(config: Dictionary) -> void:
 	var preserved_entities: Array[Dictionary] = []
 	for text in config.get("preserve_texts", []):
 		preserved_entities.append_array(_snapshot_entities_by_text(str(text)))
+	if bool(config.get("preserve_persistent_entities", false)):
+		preserved_entities.append_array(_snapshot_persistent_entities())
 	if bool(config.get("reset_level", false)):
 		var reset_player_pos = config.get("reset_player_pos", current_level.get("player_start", player_pos))
 		load_level(current_level.duplicate(true))
@@ -837,6 +918,8 @@ func _apply_map_effect(config: Dictionary) -> void:
 	if config.has("set_player_pos"):
 		player_pos = config.set_player_pos
 		update_page()
+	if config.has("swap_player_with_entities"):
+		_swap_player_with_entities(config.swap_player_with_entities)
 	if config.has("set_player_visible"):
 		player_visible = bool(config.set_player_visible)
 	if config.has("set_player_text"):
@@ -1173,11 +1256,14 @@ func _erase_matching_entities(remove_config: Dictionary) -> void:
 	var positions: Array = remove_config.get("positions", [])
 	var texts: Array = remove_config.get("texts", [])
 	var require_solid = remove_config.get("solid", null)
+	var require_temporary_description = remove_config.get("temporary_description", null)
 	var erased_ids: Array[String] = []
 	for entity in entities.values():
 		if not texts.is_empty() and not texts.has(entity.text):
 			continue
 		if require_solid != null and entity.solid != bool(require_solid):
+			continue
+		if require_temporary_description != null and entity.temporary_description != bool(require_temporary_description):
 			continue
 		var matches_position := positions.is_empty()
 		for pos in positions:
@@ -1206,6 +1292,10 @@ func _snapshot_entities_by_text(text: String) -> Array[Dictionary]:
 				"pushable": entity.pushable,
 				"deletable": entity.deletable,
 				"splittable": entity.splittable,
+				"temporary_description": entity.temporary_description,
+				"persistent": entity.persistent,
+				"visual_rotation_degrees": entity.visual_rotation_degrees,
+				"visual_color": entity.visual_color,
 				"interact_text": entity.interact_text,
 				"interact_effect": entity.interact_effect.duplicate(true),
 				"interact_caption_lines": entity.interact_caption_lines.duplicate(),
@@ -1216,6 +1306,57 @@ func _snapshot_entities_by_text(text: String) -> Array[Dictionary]:
 			}
 		})
 	return snapshots
+
+func _snapshot_persistent_entities() -> Array[Dictionary]:
+	var snapshots: Array[Dictionary] = []
+	for entity in entities.values():
+		if not entity.persistent:
+			continue
+		snapshots.append({
+			"id": entity.id,
+			"text": entity.text,
+			"pos": entity.grid_pos,
+			"config": {
+				"solid": entity.solid,
+				"pushable": entity.pushable,
+				"deletable": entity.deletable,
+				"splittable": entity.splittable,
+				"temporary_description": entity.temporary_description,
+				"persistent": entity.persistent,
+				"visual_rotation_degrees": entity.visual_rotation_degrees,
+				"visual_color": entity.visual_color,
+				"interact_text": entity.interact_text,
+				"interact_effect": entity.interact_effect.duplicate(true),
+				"interact_caption_lines": entity.interact_caption_lines.duplicate(),
+				"interact_caption_solid": entity.interact_caption_solid,
+				"interact_caption_pos": entity.interact_caption_pos,
+				"has_interact_caption_pos": entity.has_interact_caption_pos,
+				"split_positions": entity.split_positions.duplicate()
+			}
+		})
+	return snapshots
+
+func _swap_player_with_entities(swap_config: Dictionary) -> void:
+	var source_positions: Array = swap_config.get("positions", [])
+	if source_positions.is_empty():
+		return
+	var source_origin: Vector2i = source_positions[0]
+	var player_origin := player_pos
+	var target_offsets: Array = swap_config.get("target_offsets", [])
+	var moved_entities: Array[WordEntity] = []
+	for source_pos in source_positions:
+		var entity := get_any_entity_at(source_pos)
+		if entity and not moved_entities.has(entity):
+			moved_entities.append(entity)
+	for index in range(moved_entities.size()):
+		var entity := moved_entities[index]
+		var offset := entity.grid_pos - source_origin
+		if index < target_offsets.size():
+			offset = target_offsets[index]
+		move_entity_to(entity.id, player_origin + offset)
+		entity.set_from_config(swap_config.get("config", {}))
+	player_pos = swap_config.get("player_target", source_origin)
+	update_page()
 
 func _set_matching_entity_config(matching_config: Dictionary) -> void:
 	var positions: Array = matching_config.get("positions", [])
