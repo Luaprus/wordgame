@@ -2,17 +2,21 @@ extends Node2D
 
 const GridWorld = preload("res://scripts/grid_world.gd")
 const GloveLevel = preload("res://levels/glove/glove_level.gd")
+const GloveLayouts = preload("res://scripts/levels/glove/glove_layouts.gd")
 const GloveEffects = preload("res://scripts/levels/glove/glove_effects.gd")
+const GloveLoopingPrompt = preload("res://scripts/levels/glove/glove_looping_prompt.gd")
 const GloveRouteRunner = preload("res://scripts/levels/glove/glove_route_runner.gd")
 const PageCamera = preload("res://scripts/page_camera.gd")
 const PrecisionMovement = preload("res://scripts/precision_movement.gd")
 const PlayerDirectionMarker = preload("res://scripts/player_moving/player_direction_marker.gd")
 const SmoothGridMover = preload("res://scripts/smooth_grid_mover.gd")
-const OriginalFont = preload("res://Fonts/Zpix-v3.1.6.ttf")
+const OriginalFont = preload("res://Fonts/Zpix.tres")
 
 const MOVE_REPEAT_INTERVAL := 0.28
 const FAST_MOVE_REPEAT_INTERVAL := 0.12
-const WORD_FONT_SIZE := 34
+const GLOVE_GAMEPLAY_FONT_SIZE := 54
+const GLOVE_GAMEPLAY_LINE_SPACING := 0
+const WORD_FONT_SIZE := GLOVE_GAMEPLAY_FONT_SIZE
 const CORRECT_ROUTE_PATH := "res://../harness/demo_routes/glove/glove_correct_route_runtime.json"
 const WRONG_ROUTE_PATH := "res://../harness/demo_routes/glove/glove_wrong_route_runtime.json"
 const PATH_OPENED_ROUTE_PATH := "res://../harness/demo_routes/glove/glove_path_opened_runtime.json"
@@ -23,8 +27,51 @@ const STARTUP_ROUTE_ARG_PREFIX := "--glove-route="
 const STARTUP_DEMO_ARG_PREFIX := "--glove-demo="
 const STARTUP_CAPTURE_ARG_PREFIX := "--glove-capture="
 const STARTUP_DEBUG_ARG_PREFIX := "--glove-debug="
+const STARTUP_SKIP_ACQUISITION_ARG := "--glove-skip-acquisition"
 const MAIN_SCENE_PATH := "res://Main.tscn"
 const RETURN_TO_MAIN_SHORTCUT_KEY := KEY_ESCAPE
+const GESTURE_TRANSITION_SWITCH_SECONDS := 0.5
+const GESTURE_FLASH_PEAK_ALPHA := 0.3
+const GLOVE_ACQUIRE_VIDEO_PATH := "res://assets/video/glove_acquire.ogv"
+const GLOVE_PUT_ON_SOUND_PATH := "res://assets/audio/glove_put_on.wav"
+const GLOVE_MELODY_SOUND_PATH := "res://assets/audio/glove_melody.wav"
+const DELETE_CUT_SOUND_PATH := "res://assets/audio/delete_cut.wav"
+const DELETE_CUT_DURATION := 1.15
+const ACQUIRE_DIALOGUE_TEXT := "不知道该如何使用这力量，又该承担怎样的责任。\n我犹豫地向前踏出了一步。勇者的觉悟不言自明。"
+const ACQUIRE_DIALOGUE_CHAR_DELAY := 0.1
+const ACQUIRE_TUTORIAL_TEXT := "「找出该被搬移的文字，用『方向键』推动看看文\n字吧。展现出勇者该有的觉悟，只在一步之遥。」"
+const HERO_QUOTE_TEXT := "勇者说：「你已经学会了使用这股力量，\n现在你把剑给我，继续向前完成勇者试炼吧」"
+const HERO_QUOTE_STEP := 60.0
+const HERO_QUOTE_GRID_ORIGIN := Vector2(300, 300)
+const HERO_QUOTE_GRID_ORIGIN_CELL := Vector2i(5, 5)
+const HERO_EXIT_FLASH_DURATION := 1.0
+const GESTURE_INTRO_FALL_DURATION := 0.9
+const GESTURE_INTRO_REVEAL_DURATION := 0.7
+const GESTURE_INTRO_SWAP_INTERVAL := 0.075
+const GESTURE_INTRO_SWAP_DURATION := 0.18
+const GESTURE_INTRO_START_OFFSET_Y := -780.0
+const INTRO_GRID_X_STEP := 600.0 / 11.0
+const INTRO_TEXT_ORIGIN := Vector2i(4, 8)
+const INTRO_PLAYER_START := Vector2i(4, 9)
+const INTRO_NO_START := Vector2i(4, 8)
+const INTRO_NO_TARGET := Vector2i(4, 9)
+const INTRO_NO_FINAL_TARGET := Vector2i(3, 10)
+const INTRO_COMPLETION_DELAY := 0.3
+const INTRO_COMPLETION_SHAKE_DURATION := 0.5
+const INTRO_TOP_REMAINDER := "知道该如何使用这力量，又该承担怎样的责任。"
+const INTRO_BOTTOM_REMAINDER := "犹豫地向前踏出了一步。勇者的觉悟不言自明。"
+const INTRO_BOTTOM_REWRITE := [
+	"相信自己能够扛起重担，将艰难噩耗化为冲劲，",
+	"留下一丝遗憾，为荒腔走板的世界开启改变契机。"
+]
+const INTRO_TOP_REWRITE := [
+	"「当文字不小心陷在死角里，用『ＡＬＴ』加方向",
+	"键先拉回正道再说吧！不过这比推动费劲多了。」"
+]
+const INTRO_BRAVE_QUOTE := [
+	"「这份觉悟够清楚，但这样子就算是勇者了吗？谁",
+	"知道你是不是碰巧蒙到？你最好再进一步发挥！」"
+]
 
 var world := GridWorld.new()
 var page_camera := PageCamera.new()
@@ -57,6 +104,89 @@ var demo_elapsed := 0.0
 var demo_running := false
 var demo_paused := false
 var demo_delay := 0.32
+var brave_loop_prompt := GloveLoopingPrompt.new()
+var brave_loop_labels: Array[Label] = []
+var like_loop_prompt := GloveLoopingPrompt.new("加油！")
+var like_loop_prefix: Label
+var like_loop_labels: Array[Label] = []
+var gesture_loop_prompt := GloveLoopingPrompt.new("改变手势，扭转守势！")
+var gesture_loop_prefix: Label
+var gesture_loop_labels: Array[Label] = []
+var gesture_flash_layer: CanvasLayer
+var gesture_flash_overlay: ColorRect
+var gesture_transition_active := false
+var gesture_transition_elapsed := 0.0
+var gesture_transition_duration := 1.0
+var acquisition_layer: CanvasLayer
+var acquisition_video: VideoStreamPlayer
+var acquisition_put_on_sound: AudioStreamPlayer
+var acquisition_melody_sound: AudioStreamPlayer
+var glove_acquisition_active := false
+var acquisition_dialogue_label: Label
+var acquisition_dialogue_indicator: Label
+var acquisition_dialogue_active := false
+var acquisition_dialogue_elapsed := 0.0
+var acquisition_dialogue_index := 0
+var acquisition_tutorial_label: Label
+var acquisition_tutorial_active := false
+var acquisition_tutorial_elapsed := 0.0
+var acquisition_tutorial_index := 0
+var intro_world := GridWorld.new()
+var intro_active := false
+var intro_quote_started := false
+var intro_bottom_rewrite_started := false
+var intro_top_rewrite_started := false
+var intro_completed := false
+var intro_completion_pending := false
+var intro_completion_elapsed := 0.0
+var intro_effect_elapsed := 0.0
+var intro_layer: Node2D
+var intro_top_remainder: Label
+var intro_bottom_remainder: Label
+var intro_player: Label
+var intro_player_mover := SmoothGridMover.new()
+var intro_player_visual_ready := false
+var intro_entity_labels: Dictionary = {}
+var intro_entity_movers: Dictionary = {}
+var hero_quote_label: Label
+var hero_quote_player: Label
+var hero_quote_characters: Node2D
+var hero_quote_player_mover := SmoothGridMover.new()
+var hero_quote_active := false
+var hero_quote_elapsed := 0.0
+var hero_quote_index := 0
+var hero_quote_player_active := false
+var hero_quote_world := GridWorld.new()
+var hero_quote_world_active := false
+var hero_quote_entities: Node2D
+var hero_quote_entity_labels: Dictionary = {}
+var hero_quote_entity_movers: Dictionary = {}
+var hero_exit_arrow: Label
+var hero_exit_flash: ColorRect
+var hero_exit_transition_active := false
+var hero_exit_transition_elapsed := 0.0
+var gesture_intro_world := GridWorld.new()
+var gesture_intro_layer: CanvasLayer
+var gesture_intro_hand_root: Node2D
+var gesture_intro_word_root: Node2D
+var gesture_intro_player: Label
+var gesture_intro_active := false
+var gesture_intro_reveal_started := false
+var gesture_intro_swap_started := false
+var gesture_intro_elapsed := 0.0
+var gesture_intro_reveal_elapsed := 0.0
+var gesture_intro_swap_elapsed := 0.0
+var gesture_intro_next_diagonal := 0
+var gesture_intro_last_diagonal := 0
+var gesture_intro_hand_labels: Dictionary = {}
+var gesture_intro_reveal_labels: Array[Label] = []
+var gesture_intro_active_swaps: Array[Dictionary] = []
+var delete_cut_sound: AudioStreamPlayer
+var delete_cut_root: Node2D
+var delete_cut_left: Label
+var delete_cut_right: Label
+var delete_cut_slash: Line2D
+var delete_cut_elapsed := 0.0
 
 func _ready() -> void:
 	_build_scene()
@@ -66,6 +196,7 @@ func _ready() -> void:
 	apply_startup_route_args(startup_args)
 	apply_startup_demo_args(startup_args)
 	apply_startup_debug_args(startup_args)
+	apply_startup_skip_acquisition(startup_args)
 	apply_startup_capture_args(startup_args)
 
 func initialize_preview_world() -> void:
@@ -84,9 +215,26 @@ func initialize_preview_world() -> void:
 	if _scene_ready:
 		page_camera.sync_to_world(world)
 		_refresh_view()
+		_consume_visual_effect_request()
 
 func _process(delta: float) -> void:
 	world.advance_highlight_animation(delta)
+	if intro_active:
+		intro_world.advance_highlight_animation(delta)
+	_advance_gesture_transition(delta)
+	_advance_delete_cut(delta)
+	_advance_acquisition_dialogue(delta)
+	_advance_intro_typewriter(delta)
+	_advance_intro_completion_transition(delta)
+	_advance_hero_quote(delta)
+	_advance_hero_exit_transition(delta)
+	_advance_gesture_intro(delta)
+	if brave_loop_prompt.advance(delta):
+		_sync_brave_loop_prompt()
+	if like_loop_prompt.advance(delta):
+		_sync_like_loop_prompt()
+	if gesture_loop_prompt.advance(delta):
+		_sync_gesture_loop_prompt()
 	if demo_running and not demo_paused:
 		demo_elapsed += delta
 		if demo_elapsed >= demo_delay:
@@ -95,6 +243,21 @@ func _process(delta: float) -> void:
 	var direction := _current_held_direction()
 	if direction == Vector2i.ZERO:
 		move_repeat_elapsed = 0.0
+	elif intro_active:
+		move_repeat_elapsed += delta
+		var intro_interval := FAST_MOVE_REPEAT_INTERVAL if Input.is_key_pressed(KEY_SHIFT) else MOVE_REPEAT_INTERVAL
+		while move_repeat_elapsed >= intro_interval:
+			move_repeat_elapsed -= intro_interval
+			_apply_intro_direction_step(direction)
+	elif hero_quote_active:
+		if not hero_quote_player_active:
+			move_repeat_elapsed = 0.0
+		else:
+			move_repeat_elapsed += delta
+			var hero_interval := FAST_MOVE_REPEAT_INTERVAL if Input.is_key_pressed(KEY_SHIFT) else MOVE_REPEAT_INTERVAL
+			while move_repeat_elapsed >= hero_interval:
+				move_repeat_elapsed -= hero_interval
+				_apply_hero_quote_direction_step(direction)
 	else:
 		move_repeat_elapsed += delta
 		var interval := FAST_MOVE_REPEAT_INTERVAL if Input.is_key_pressed(KEY_SHIFT) else MOVE_REPEAT_INTERVAL
@@ -107,6 +270,26 @@ func _process(delta: float) -> void:
 		var previous_player := player_mover.current_position
 		player_mover.advance(delta)
 		changed = changed or previous_player != player_mover.current_position
+	if hero_quote_player_active:
+		var previous_hero_player := hero_quote_player_mover.current_position
+		hero_quote_player.position = hero_quote_player_mover.advance(delta)
+		changed = changed or previous_hero_player != hero_quote_player_mover.current_position
+	if hero_quote_world_active:
+		for mover in hero_quote_entity_movers.values():
+			var previous_hero_entity: Vector2 = mover.current_position
+			mover.advance(delta)
+			changed = changed or previous_hero_entity != mover.current_position
+		_apply_hero_quote_visual_positions()
+	if intro_active:
+		if intro_player_visual_ready:
+			var previous_intro_player := intro_player_mover.current_position
+			intro_player.position = intro_player_mover.advance(delta)
+			changed = changed or previous_intro_player != intro_player_mover.current_position
+		for mover in intro_entity_movers.values():
+			var previous_intro_entity: Vector2 = mover.current_position
+			mover.advance(delta)
+			changed = changed or previous_intro_entity != mover.current_position
+		_apply_intro_visual_positions()
 	for mover in entity_movers.values():
 		var previous_position: Vector2 = mover.current_position
 		mover.advance(delta)
@@ -118,6 +301,15 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not event is InputEventKey:
 		return
 	var key_event := event as InputEventKey
+	if acquisition_dialogue_active or acquisition_tutorial_active:
+		_handle_acquisition_dialogue_input(key_event)
+		return
+	if intro_active:
+		_handle_intro_input(key_event)
+		return
+	if hero_quote_active:
+		_handle_hero_quote_input(key_event)
+		return
 	if key_event.pressed and not key_event.echo:
 		var shortcut_scene_path := resolve_scene_shortcut_from_keycode(key_event.keycode)
 		if not shortcut_scene_path.is_empty():
@@ -272,6 +464,9 @@ func _build_scene() -> void:
 	map_layer = Node2D.new()
 	map_layer.name = "MapLayer"
 	add_child(map_layer)
+	_build_brave_loop_prompt()
+	_build_like_loop_prompt()
+	_build_gesture_loop_prompt()
 	transition_reference_overlay = Sprite2D.new()
 	transition_reference_overlay.name = "TransitionReferenceOverlay"
 	transition_reference_overlay.centered = false
@@ -279,6 +474,22 @@ func _build_scene() -> void:
 	transition_reference_overlay.visible = false
 	transition_reference_overlay.texture = _load_transition_reference_texture()
 	add_child(transition_reference_overlay)
+	gesture_flash_layer = CanvasLayer.new()
+	gesture_flash_layer.name = "GestureFlashLayer"
+	gesture_flash_layer.layer = 100
+	add_child(gesture_flash_layer)
+	gesture_flash_overlay = ColorRect.new()
+	gesture_flash_overlay.name = "GestureFlashOverlay"
+	gesture_flash_overlay.color = Color(1.0, 1.0, 1.0, 1.0)
+	gesture_flash_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	gesture_flash_overlay.size = Vector2(1920, 1080)
+	gesture_flash_overlay.visible = false
+	gesture_flash_layer.add_child(gesture_flash_overlay)
+	_build_acquisition_overlay()
+	_build_gesture_intro_overlay()
+	delete_cut_sound = AudioStreamPlayer.new()
+	delete_cut_sound.stream = load(DELETE_CUT_SOUND_PATH)
+	add_child(delete_cut_sound)
 	player_label = _make_word_label("我", Color(0.92, 0.92, 0.92), Color(0.05, 0.05, 0.05))
 	player_label.name = "Player"
 	map_layer.add_child(player_label)
@@ -322,6 +533,9 @@ func _refresh_view(_message := "") -> void:
 	if not _scene_ready:
 		return
 	_sync_entity_labels()
+	_sync_brave_loop_prompt()
+	_sync_like_loop_prompt()
+	_sync_gesture_loop_prompt()
 	_sync_direction_marker()
 	player_label.text = world.player_text
 	player_label.visible = world.player_visible
@@ -352,6 +566,7 @@ func _sync_entity_labels() -> void:
 		var entity_mover = entity_movers.get(entity.id)
 		entity_mover.move_to(_grid_to_pixels(entity.grid_pos), move_visual_duration)
 		_sync_entity_label_group(group, entity)
+		group.visible = not _is_looping_like_dialogue(entity)
 	for id in entity_labels.keys():
 		if not alive.has(id):
 			entity_labels[id].queue_free()
@@ -364,6 +579,83 @@ func _apply_visual_positions() -> void:
 		var mover = entity_movers.get(id)
 		if mover:
 			entity_labels[id].position = mover.current_position
+
+func _build_brave_loop_prompt() -> void:
+	for index in range(GloveLoopingPrompt.TEXT.length()):
+		var label := _make_word_label("")
+		label.name = "BraveLoopPrompt_%d" % index
+		label.position = _grid_to_pixels(Vector2i(24, 5 + index))
+		map_layer.add_child(label)
+		brave_loop_labels.append(label)
+
+func _sync_brave_loop_prompt() -> void:
+	if brave_loop_labels.is_empty():
+		return
+	var visible := _has_fixed_brave()
+	var text := brave_loop_prompt.visible_text()
+	for index in range(brave_loop_labels.size()):
+		var label := brave_loop_labels[index]
+		label.visible = visible and index < text.length()
+		label.text = text.substr(index, 1) if index < text.length() else ""
+
+func _build_like_loop_prompt() -> void:
+	like_loop_prefix = _make_word_label("勇：")
+	like_loop_prefix.name = "LikeLoopPromptPrefix"
+	like_loop_prefix.position = _grid_to_pixels(Vector2i(1, 8))
+	like_loop_prefix.visible = false
+	map_layer.add_child(like_loop_prefix)
+	for index in range(like_loop_prompt.text.length()):
+		var label := _make_word_label("")
+		label.name = "LikeLoopPrompt_%d" % index
+		label.position = _grid_to_pixels(Vector2i(3 + index, 8))
+		label.visible = false
+		map_layer.add_child(label)
+		like_loop_labels.append(label)
+
+func _sync_like_loop_prompt() -> void:
+	if like_loop_prefix == null:
+		return
+	var visible := _has_like_dialogue()
+	like_loop_prefix.visible = visible
+	var text := like_loop_prompt.visible_text()
+	for index in range(like_loop_labels.size()):
+		var label := like_loop_labels[index]
+		label.visible = visible and index < text.length()
+		label.text = text.substr(index, 1) if index < text.length() else ""
+
+func _has_like_dialogue() -> bool:
+	var dialogue = world.get_any_entity_at(Vector2i(1, 8))
+	return dialogue != null and dialogue.text == GloveEffects.DIALOGUE_LIKE
+
+func _is_looping_like_dialogue(entity) -> bool:
+	return entity.grid_pos == Vector2i(1, 8) and entity.text == GloveEffects.DIALOGUE_LIKE
+
+func _build_gesture_loop_prompt() -> void:
+	gesture_loop_prefix = _make_word_label("勇：")
+	gesture_loop_prefix.name = "GestureLoopPromptPrefix"
+	gesture_loop_prefix.position = _grid_to_pixels(Vector2i(1, 16))
+	map_layer.add_child(gesture_loop_prefix)
+	for index in range(gesture_loop_prompt.text.length()):
+		var label := _make_word_label("")
+		label.name = "GestureLoopPrompt_%d" % index
+		label.position = _grid_to_pixels(Vector2i(3 + index, 16))
+		map_layer.add_child(label)
+		gesture_loop_labels.append(label)
+
+func _sync_gesture_loop_prompt() -> void:
+	if gesture_loop_prefix == null:
+		return
+	var visible := _has_fixed_brave()
+	gesture_loop_prefix.visible = visible
+	var text := gesture_loop_prompt.visible_text()
+	for index in range(gesture_loop_labels.size()):
+		var label := gesture_loop_labels[index]
+		label.visible = visible and index < text.length()
+		label.text = text.substr(index, 1) if index < text.length() else ""
+
+func _has_fixed_brave() -> bool:
+	var brave = world.get_any_entity_at(Vector2i(24, 4))
+	return brave != null and brave.text == "勇"
 
 func _sync_entity_label_group(group: Node2D, entity) -> void:
 	var text := str(entity.text)
@@ -388,12 +680,965 @@ func _sync_entity_label_group(group: Node2D, entity) -> void:
 		label.scale = Vector2.ONE * (1.0 + highlight_strength * 0.14)
 
 func _apply_result(result: Dictionary) -> void:
+	_consume_gesture_transition_request()
 	_refresh_view(str(result.get("message", "")))
+	_consume_visual_effect_request()
 	if result.has("pending_delay"):
 		if world_event_timer.is_stopped():
 			world_event_timer.start(float(result.pending_delay))
 	elif world.has_pending_timed_effect() and world_event_timer.is_stopped():
 		world_event_timer.start(world.pending_timed_delay)
+
+func _consume_gesture_transition_request() -> void:
+	var request: Dictionary = world.consume_gesture_transition_request()
+	if request.is_empty():
+		return
+	gesture_transition_active = true
+	gesture_transition_elapsed = 0.0
+	gesture_transition_duration = float(request.get("duration", 1.0))
+	gesture_flash_overlay.color.a = 0.0
+	gesture_flash_overlay.visible = true
+
+func _advance_gesture_transition(delta: float) -> void:
+	if not gesture_transition_active:
+		return
+	gesture_transition_elapsed += delta
+	if gesture_transition_elapsed <= GESTURE_TRANSITION_SWITCH_SECONDS:
+		gesture_flash_overlay.color.a = GESTURE_FLASH_PEAK_ALPHA * gesture_transition_elapsed / GESTURE_TRANSITION_SWITCH_SECONDS
+	else:
+		var restore_elapsed := gesture_transition_elapsed - GESTURE_TRANSITION_SWITCH_SECONDS
+		gesture_flash_overlay.color.a = GESTURE_FLASH_PEAK_ALPHA * (1.0 - restore_elapsed / GESTURE_TRANSITION_SWITCH_SECONDS)
+	var shake_strength := 8.0
+	var shake := Vector2(sin(gesture_transition_elapsed * 100.0), cos(gesture_transition_elapsed * 83.0)) * shake_strength
+	map_layer.position = page_camera.offset_pixels() + shake
+	if gesture_transition_elapsed < gesture_transition_duration:
+		return
+	gesture_transition_active = false
+	gesture_flash_overlay.visible = false
+	map_layer.position = page_camera.offset_pixels()
+
+func _build_acquisition_overlay() -> void:
+	acquisition_layer = CanvasLayer.new()
+	acquisition_layer.name = "GloveAcquisitionLayer"
+	acquisition_layer.layer = 120
+	acquisition_layer.visible = false
+	add_child(acquisition_layer)
+	var backdrop := ColorRect.new()
+	backdrop.color = Color(0.0, 0.0, 0.0, 1.0)
+	backdrop.size = Vector2(1920, 1080)
+	acquisition_layer.add_child(backdrop)
+	acquisition_video = VideoStreamPlayer.new()
+	acquisition_video.name = "GloveAcquisitionVideo"
+	acquisition_video.expand = true
+	acquisition_video.size = Vector2(1920, 1080)
+	acquisition_video.visible = false
+	acquisition_video.finished.connect(_finish_glove_acquisition)
+	acquisition_layer.add_child(acquisition_video)
+	acquisition_put_on_sound = AudioStreamPlayer.new()
+	acquisition_put_on_sound.stream = load(GLOVE_PUT_ON_SOUND_PATH)
+	acquisition_layer.add_child(acquisition_put_on_sound)
+	acquisition_melody_sound = AudioStreamPlayer.new()
+	acquisition_melody_sound.stream = load(GLOVE_MELODY_SOUND_PATH)
+	acquisition_layer.add_child(acquisition_melody_sound)
+	acquisition_dialogue_label = Label.new()
+	acquisition_dialogue_label.name = "AcquireDialogueLabel"
+	acquisition_dialogue_label.position = Vector2(272, 572)
+	acquisition_dialogue_label.size = Vector2(1700, 160)
+	acquisition_dialogue_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	acquisition_dialogue_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	acquisition_dialogue_label.add_theme_font_override("font", OriginalFont)
+	acquisition_dialogue_label.add_theme_font_size_override("font_size", GLOVE_GAMEPLAY_FONT_SIZE)
+	acquisition_dialogue_label.add_theme_constant_override("line_spacing", GLOVE_GAMEPLAY_LINE_SPACING)
+	acquisition_dialogue_label.add_theme_color_override("font_color", Color(0.92, 0.92, 0.92))
+	acquisition_dialogue_label.visible = false
+	acquisition_layer.add_child(acquisition_dialogue_label)
+	acquisition_tutorial_label = Label.new()
+	acquisition_tutorial_label.name = "AcquireTutorialLabel"
+	acquisition_tutorial_label.position = Vector2(290, 314)
+	acquisition_tutorial_label.size = Vector2(1700, 150)
+	acquisition_tutorial_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	acquisition_tutorial_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	acquisition_tutorial_label.add_theme_font_override("font", OriginalFont)
+	acquisition_tutorial_label.add_theme_font_size_override("font_size", GLOVE_GAMEPLAY_FONT_SIZE)
+	acquisition_tutorial_label.add_theme_constant_override("line_spacing", GLOVE_GAMEPLAY_LINE_SPACING)
+	acquisition_tutorial_label.add_theme_color_override("font_color", Color(0.92, 0.92, 0.92))
+	acquisition_tutorial_label.visible = false
+	acquisition_layer.add_child(acquisition_tutorial_label)
+	intro_layer = Node2D.new()
+	intro_layer.name = "GlovePushTutorialLayer"
+	acquisition_layer.add_child(intro_layer)
+	intro_top_remainder = _make_intro_word_label(INTRO_TOP_REMAINDER)
+	intro_top_remainder.position = _intro_grid_to_pixels(INTRO_NO_START + Vector2i.RIGHT)
+	intro_top_remainder.visible = false
+	intro_layer.add_child(intro_top_remainder)
+	intro_bottom_remainder = _make_intro_word_label(INTRO_BOTTOM_REMAINDER)
+	intro_bottom_remainder.position = _intro_grid_to_pixels(INTRO_PLAYER_START + Vector2i.RIGHT)
+	intro_bottom_remainder.visible = false
+	intro_layer.add_child(intro_bottom_remainder)
+	intro_player = _make_intro_word_label("我")
+	intro_player.name = "GlovePushTutorialPlayer"
+	intro_player.position = _intro_grid_to_pixels(INTRO_PLAYER_START)
+	intro_player.visible = false
+	intro_layer.add_child(intro_player)
+	hero_quote_label = Label.new()
+	hero_quote_label.name = "HeroQuoteLabel"
+	hero_quote_label.position = HERO_QUOTE_GRID_ORIGIN
+	hero_quote_label.size = Vector2(1300, 220)
+	hero_quote_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	hero_quote_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	hero_quote_label.add_theme_font_override("font", OriginalFont)
+	hero_quote_label.add_theme_font_size_override("font_size", GLOVE_GAMEPLAY_FONT_SIZE)
+	hero_quote_label.add_theme_constant_override("line_spacing", GLOVE_GAMEPLAY_LINE_SPACING)
+	hero_quote_label.add_theme_color_override("font_color", Color(0.92, 0.92, 0.92))
+	hero_quote_label.visible = false
+	acquisition_layer.add_child(hero_quote_label)
+	hero_quote_characters = Node2D.new()
+	hero_quote_characters.name = "HeroQuoteCharacters"
+	acquisition_layer.add_child(hero_quote_characters)
+	hero_quote_entities = Node2D.new()
+	hero_quote_entities.name = "HeroQuoteEntities"
+	acquisition_layer.add_child(hero_quote_entities)
+	hero_quote_player = Label.new()
+	hero_quote_player.name = "HeroQuotePlayer"
+	hero_quote_player.text = "我"
+	hero_quote_player.position = _hero_quote_cell_for_index(HERO_QUOTE_TEXT.find("我"))
+	hero_quote_player.size = Vector2(HERO_QUOTE_STEP, HERO_QUOTE_STEP)
+	hero_quote_player.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hero_quote_player.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	hero_quote_player.add_theme_font_override("font", OriginalFont)
+	hero_quote_player.add_theme_font_size_override("font_size", GLOVE_GAMEPLAY_FONT_SIZE)
+	hero_quote_player.add_theme_color_override("font_color", Color(0.92, 0.92, 0.92))
+	hero_quote_player.visible = false
+	acquisition_layer.add_child(hero_quote_player)
+	hero_exit_arrow = Label.new()
+	hero_exit_arrow.name = "HeroQuoteExitArrow"
+	hero_exit_arrow.text = "->"
+	hero_exit_arrow.position = Vector2(1710, 900)
+	hero_exit_arrow.size = Vector2(150, 80)
+	hero_exit_arrow.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hero_exit_arrow.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	hero_exit_arrow.add_theme_font_override("font", OriginalFont)
+	hero_exit_arrow.add_theme_font_size_override("font_size", GLOVE_GAMEPLAY_FONT_SIZE)
+	hero_exit_arrow.add_theme_color_override("font_color", Color(0.92, 0.92, 0.92))
+	hero_exit_arrow.visible = false
+	acquisition_layer.add_child(hero_exit_arrow)
+	hero_exit_flash = ColorRect.new()
+	hero_exit_flash.name = "HeroQuoteExitFlash"
+	hero_exit_flash.color = Color(1.0, 1.0, 1.0, 0.0)
+	hero_exit_flash.size = Vector2(1920, 1080)
+	hero_exit_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hero_exit_flash.visible = false
+	acquisition_layer.add_child(hero_exit_flash)
+	acquisition_dialogue_indicator = Label.new()
+	acquisition_dialogue_indicator.name = "AcquireDialogueContinue"
+	acquisition_dialogue_indicator.text = "▽"
+	acquisition_dialogue_indicator.position = Vector2(1510, 315)
+	acquisition_dialogue_indicator.size = Vector2(54, 70)
+	acquisition_dialogue_indicator.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	acquisition_dialogue_indicator.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	acquisition_dialogue_indicator.add_theme_font_override("font", OriginalFont)
+	acquisition_dialogue_indicator.add_theme_font_size_override("font_size", GLOVE_GAMEPLAY_FONT_SIZE)
+	acquisition_dialogue_indicator.add_theme_color_override("font_color", Color(0.92, 0.92, 0.92))
+	acquisition_dialogue_indicator.visible = false
+	acquisition_layer.add_child(acquisition_dialogue_indicator)
+
+func _build_gesture_intro_overlay() -> void:
+	gesture_intro_layer = CanvasLayer.new()
+	gesture_intro_layer.name = "GloveGestureIntroLayer"
+	gesture_intro_layer.layer = 140
+	gesture_intro_layer.visible = false
+	add_child(gesture_intro_layer)
+	var backdrop := ColorRect.new()
+	backdrop.color = Color.BLACK
+	backdrop.size = Vector2(1920, 1080)
+	gesture_intro_layer.add_child(backdrop)
+	gesture_intro_hand_root = Node2D.new()
+	gesture_intro_hand_root.name = "GestureIntroHand"
+	gesture_intro_layer.add_child(gesture_intro_hand_root)
+	gesture_intro_word_root = Node2D.new()
+	gesture_intro_word_root.name = "GestureIntroWords"
+	gesture_intro_layer.add_child(gesture_intro_word_root)
+	gesture_intro_player = _make_word_label("我")
+	gesture_intro_player.name = "GestureIntroPlayer"
+	gesture_intro_player.position = _grid_to_pixels(GloveLayouts.PLAYER_START)
+	gesture_intro_player.visible = false
+	gesture_intro_word_root.add_child(gesture_intro_player)
+
+func _gesture_intro_initial_cells() -> Array[Vector2i]:
+	var cells: Array[Vector2i] = []
+	for cell in GloveLayouts.hand_cells("zero"):
+		if cell.y <= 9:
+			cells.append(cell)
+	return cells
+
+func _gesture_intro_remaining_cells() -> Array[Vector2i]:
+	var cells: Array[Vector2i] = []
+	for cell in GloveLayouts.hand_cells("zero"):
+		if cell.y > 9:
+			cells.append(cell)
+	return cells
+
+func _start_gesture_level_intro() -> void:
+	if gesture_intro_active:
+		return
+	gesture_intro_active = true
+	gesture_intro_reveal_started = false
+	gesture_intro_swap_started = false
+	gesture_intro_elapsed = 0.0
+	gesture_intro_reveal_elapsed = 0.0
+	gesture_intro_swap_elapsed = 0.0
+	gesture_intro_hand_labels.clear()
+	gesture_intro_reveal_labels.clear()
+	gesture_intro_active_swaps.clear()
+	for child in gesture_intro_hand_root.get_children():
+		child.queue_free()
+	for child in gesture_intro_word_root.get_children():
+		if child != gesture_intro_player:
+			child.queue_free()
+	gesture_intro_hand_root.position = Vector2(0.0, GESTURE_INTRO_START_OFFSET_Y)
+	gesture_intro_player.visible = false
+	gesture_intro_layer.visible = true
+	map_layer.visible = false
+	world.player_input_locked = true
+	world.player_event_locked = true
+	var initial_cells := _gesture_intro_initial_cells()
+	var initial_spawn: Array[Dictionary] = []
+	for cell in initial_cells:
+		initial_spawn.append({"text": "堂", "pos": cell, "config": {"solid": true}})
+	gesture_intro_world.load_level({
+		"name": "手势关开场",
+		"screen_size": Vector2i(32, 18),
+		"bounded": true,
+		"allow_edge_transition": false,
+		"player_start": GloveLayouts.PLAYER_START,
+		"player_facing": Vector2i.RIGHT,
+		"player_text": "我",
+		"player_input_locked": true,
+		"rows": [],
+		"initial_spawn": initial_spawn
+	})
+	for cell in initial_cells:
+		var label := _make_gesture_intro_word_label("堂", cell)
+		gesture_intro_hand_root.add_child(label)
+		gesture_intro_hand_labels[cell] = label
+
+func _make_gesture_intro_word_label(text: String, cell: Vector2i) -> Label:
+	var label := _make_word_label(text)
+	label.position = _grid_to_pixels(cell)
+	label.name = "GestureIntro_%s_%s_%s" % [text, cell.x, cell.y]
+	return label
+
+func _start_gesture_intro_reveal() -> void:
+	gesture_intro_reveal_started = true
+	gesture_intro_reveal_elapsed = 0.0
+	for cell in _gesture_intro_remaining_cells():
+		gesture_intro_world.add_entity("堂", cell, {"solid": true})
+		var label := _make_gesture_intro_word_label("堂", cell)
+		label.modulate.a = 0.0
+		gesture_intro_hand_root.add_child(label)
+		gesture_intro_hand_labels[cell] = label
+		gesture_intro_reveal_labels.append(label)
+	var subtitle := "俯瞰这一个巨大手掌，是零的手势"
+	for index in range(subtitle.length()):
+		var cell := GloveLayouts.BOTTOM_LINE.pos + Vector2i(index, 0)
+		gesture_intro_world.add_entity(subtitle.substr(index, 1), cell, {"solid": true})
+		var label := _make_gesture_intro_word_label(subtitle.substr(index, 1), cell)
+		label.modulate.a = 0.0
+		gesture_intro_word_root.add_child(label)
+		gesture_intro_reveal_labels.append(label)
+	gesture_intro_player.modulate.a = 0.0
+	gesture_intro_player.visible = true
+	gesture_intro_reveal_labels.append(gesture_intro_player)
+
+func _start_gesture_intro_swap() -> void:
+	gesture_intro_swap_started = true
+	gesture_intro_swap_elapsed = 0.0
+	var cells := GloveLayouts.hand_cells("zero")
+	gesture_intro_next_diagonal = 1000
+	gesture_intro_last_diagonal = -1000
+	for cell in cells:
+		gesture_intro_next_diagonal = mini(gesture_intro_next_diagonal, cell.x + cell.y)
+		gesture_intro_last_diagonal = maxi(gesture_intro_last_diagonal, cell.x + cell.y)
+	_start_gesture_intro_swap_wave()
+
+func _start_gesture_intro_swap_wave() -> void:
+	if gesture_intro_next_diagonal > gesture_intro_last_diagonal:
+		return
+	for cell in GloveLayouts.hand_cells("zero"):
+		if cell.x + cell.y != gesture_intro_next_diagonal:
+			continue
+		var old_label: Label = gesture_intro_hand_labels.get(cell)
+		if old_label == null:
+			continue
+		var new_label := _make_gesture_intro_word_label("掌", cell + Vector2i.DOWN)
+		gesture_intro_hand_root.add_child(new_label)
+		gesture_intro_active_swaps.append({"cell": cell, "old": old_label, "new": new_label, "elapsed": 0.0})
+	gesture_intro_next_diagonal += 1
+
+func _advance_gesture_intro(delta: float) -> void:
+	if not gesture_intro_active:
+		return
+	if not gesture_intro_reveal_started:
+		gesture_intro_elapsed += delta
+		var landing_progress := clampf(gesture_intro_elapsed / GESTURE_INTRO_FALL_DURATION, 0.0, 1.0)
+		gesture_intro_hand_root.position.y = _gesture_intro_landing_y(landing_progress)
+		if landing_progress >= 1.0:
+			gesture_intro_hand_root.position.y = 0.0
+			_start_gesture_intro_reveal()
+		return
+	if not gesture_intro_swap_started:
+		gesture_intro_reveal_elapsed += delta
+		var reveal_progress := clampf(gesture_intro_reveal_elapsed / GESTURE_INTRO_REVEAL_DURATION, 0.0, 1.0)
+		for label in gesture_intro_reveal_labels:
+			label.modulate.a = reveal_progress
+		if reveal_progress >= 1.0:
+			_start_gesture_intro_swap()
+		return
+	gesture_intro_swap_elapsed += delta
+	while gesture_intro_swap_elapsed >= GESTURE_INTRO_SWAP_INTERVAL:
+		gesture_intro_swap_elapsed -= GESTURE_INTRO_SWAP_INTERVAL
+		_start_gesture_intro_swap_wave()
+	for index in range(gesture_intro_active_swaps.size() - 1, -1, -1):
+		var swap: Dictionary = gesture_intro_active_swaps[index]
+		swap.elapsed = float(swap.elapsed) + delta
+		var progress := clampf(float(swap.elapsed) / GESTURE_INTRO_SWAP_DURATION, 0.0, 1.0)
+		var cell: Vector2i = swap.cell
+		var old_label: Label = swap.old
+		var new_label: Label = swap.new
+		old_label.position = _grid_to_pixels(cell) + Vector2(0.0, -world.cell_size * progress)
+		new_label.position = _grid_to_pixels(cell) + Vector2(0.0, world.cell_size * (1.0 - progress))
+		if progress < 1.0:
+			gesture_intro_active_swaps[index] = swap
+			continue
+		old_label.queue_free()
+		gesture_intro_hand_labels[cell] = new_label
+		var old_entity = gesture_intro_world.get_entity_at(cell)
+		if old_entity != null:
+			gesture_intro_world.entities.erase(old_entity.id)
+		gesture_intro_world.add_entity("掌", cell, {"solid": true})
+		gesture_intro_active_swaps.remove_at(index)
+	if gesture_intro_next_diagonal > gesture_intro_last_diagonal and gesture_intro_active_swaps.is_empty():
+		_finish_gesture_level_intro()
+
+func _gesture_intro_landing_y(progress: float) -> float:
+	if progress < 0.68:
+		return lerpf(GESTURE_INTRO_START_OFFSET_Y, 72.0, ease(progress / 0.68, 2.2))
+	if progress < 0.86:
+		return lerpf(72.0, -22.0, (progress - 0.68) / 0.18)
+	return lerpf(-22.0, 0.0, (progress - 0.86) / 0.14)
+
+func _finish_gesture_level_intro() -> void:
+	gesture_intro_active = false
+	gesture_intro_layer.visible = false
+	map_layer.visible = true
+	world.player_input_locked = false
+	world.player_event_locked = false
+	_refresh_view()
+
+func _consume_visual_effect_request() -> void:
+	for raw_request in world.consume_visual_effects():
+		var request: Dictionary = raw_request
+		match str(request.get("type", "")):
+			"glove_acquire":
+				_start_glove_acquisition()
+			"delete_cut":
+				_start_delete_cut(request)
+
+func _start_glove_acquisition() -> void:
+	if glove_acquisition_active:
+		return
+	glove_acquisition_active = true
+	acquisition_dialogue_active = false
+	acquisition_tutorial_active = false
+	hero_quote_active = false
+	hero_quote_player_active = false
+	acquisition_layer.visible = true
+	acquisition_video.visible = false
+	acquisition_dialogue_label.visible = false
+	acquisition_tutorial_label.visible = false
+	hero_quote_label.visible = false
+	hero_quote_player.visible = false
+	acquisition_dialogue_indicator.visible = false
+	acquisition_put_on_sound.play()
+	call_deferred("_play_glove_acquisition_video")
+
+func _play_glove_acquisition_video() -> void:
+	await get_tree().create_timer(0.5).timeout
+	if not glove_acquisition_active:
+		return
+	acquisition_melody_sound.play()
+	acquisition_video.stream = load(GLOVE_ACQUIRE_VIDEO_PATH)
+	if acquisition_video.stream == null:
+		_finish_glove_acquisition()
+		return
+	acquisition_video.visible = true
+	acquisition_video.play()
+
+func _finish_glove_acquisition() -> void:
+	if not glove_acquisition_active:
+		return
+	glove_acquisition_active = false
+	acquisition_video.stop()
+	acquisition_video.visible = false
+	acquisition_dialogue_active = true
+	acquisition_dialogue_elapsed = 0.0
+	acquisition_dialogue_index = 0
+	acquisition_dialogue_label.text = ""
+	acquisition_dialogue_label.visible = true
+	acquisition_tutorial_label.visible = false
+	acquisition_dialogue_indicator.visible = false
+
+func _advance_acquisition_dialogue(delta: float) -> void:
+	if acquisition_dialogue_active and acquisition_dialogue_index < ACQUIRE_DIALOGUE_TEXT.length():
+		acquisition_dialogue_elapsed += delta
+		while acquisition_dialogue_elapsed >= ACQUIRE_DIALOGUE_CHAR_DELAY and acquisition_dialogue_index < ACQUIRE_DIALOGUE_TEXT.length():
+			acquisition_dialogue_elapsed -= ACQUIRE_DIALOGUE_CHAR_DELAY
+			acquisition_dialogue_index += 1
+			acquisition_dialogue_label.text = ACQUIRE_DIALOGUE_TEXT.left(acquisition_dialogue_index)
+		if acquisition_dialogue_index >= ACQUIRE_DIALOGUE_TEXT.length():
+			_start_acquisition_tutorial()
+	if not acquisition_tutorial_active or acquisition_tutorial_index >= ACQUIRE_TUTORIAL_TEXT.length():
+		return
+	acquisition_tutorial_elapsed += delta
+	while acquisition_tutorial_elapsed >= ACQUIRE_DIALOGUE_CHAR_DELAY and acquisition_tutorial_index < ACQUIRE_TUTORIAL_TEXT.length():
+		acquisition_tutorial_elapsed -= ACQUIRE_DIALOGUE_CHAR_DELAY
+		acquisition_tutorial_index += 1
+		acquisition_tutorial_label.text = ACQUIRE_TUTORIAL_TEXT.left(acquisition_tutorial_index)
+	if acquisition_tutorial_index >= ACQUIRE_TUTORIAL_TEXT.length():
+		_start_intro_push_tutorial()
+
+func _start_acquisition_tutorial() -> void:
+	acquisition_dialogue_active = false
+	acquisition_tutorial_active = true
+	acquisition_tutorial_elapsed = 0.0
+	acquisition_tutorial_index = 0
+	acquisition_tutorial_label.text = ""
+	acquisition_tutorial_label.visible = true
+	acquisition_dialogue_indicator.visible = false
+
+func _handle_acquisition_dialogue_input(key_event: InputEventKey) -> void:
+	if not key_event.pressed or key_event.echo:
+		return
+	if key_event.keycode != KEY_SPACE and key_event.keycode != KEY_ENTER:
+		return
+	if acquisition_dialogue_active and acquisition_dialogue_index < ACQUIRE_DIALOGUE_TEXT.length():
+		acquisition_dialogue_index = ACQUIRE_DIALOGUE_TEXT.length()
+		acquisition_dialogue_label.text = ACQUIRE_DIALOGUE_TEXT
+		_start_acquisition_tutorial()
+		return
+	if acquisition_tutorial_active and acquisition_tutorial_index < ACQUIRE_TUTORIAL_TEXT.length():
+		acquisition_tutorial_index = ACQUIRE_TUTORIAL_TEXT.length()
+		acquisition_tutorial_label.text = ACQUIRE_TUTORIAL_TEXT
+		_start_intro_push_tutorial()
+		return
+	if acquisition_tutorial_active:
+		_start_intro_push_tutorial()
+		return
+	acquisition_dialogue_active = false
+	acquisition_tutorial_active = false
+
+func _start_intro_push_tutorial() -> void:
+	if intro_active:
+		return
+	hero_quote_active = false
+	hero_quote_player_active = false
+	hero_quote_label.visible = false
+	hero_quote_player.visible = false
+	_clear_hero_quote_characters()
+	intro_world.load_level({
+		"name": "手套推动教学",
+		"screen_size": Vector2i(32, 18),
+		"bounded": true,
+		"allow_edge_transition": false,
+		"player_start": INTRO_PLAYER_START,
+		"player_facing": Vector2i.DOWN,
+		"player_text": "我",
+		"rows": [],
+		"initial_spawn": [
+			{"text": "不", "pos": INTRO_NO_START, "config": {"solid": true, "pushable": true}},
+			{"text": "「找出该被搬移的文字，用『方向键』推动看看文", "pos": Vector2i(4, 4), "config": {"solid": true, "pushable": false}},
+			{"text": "字吧。展现出勇者该有的觉悟，只在一步之遥。」", "pos": Vector2i(4, 5), "config": {"solid": true, "pushable": false}},
+			{"text": INTRO_TOP_REMAINDER, "pos": INTRO_NO_START + Vector2i.RIGHT, "config": {"solid": true, "pushable": false}},
+			{"text": INTRO_BOTTOM_REMAINDER, "pos": INTRO_PLAYER_START + Vector2i.RIGHT, "config": {"solid": true, "pushable": false}}
+		],
+		"entity_move_effects": [
+			{
+				"text": "不",
+				"from": INTRO_NO_START,
+				"to": INTRO_NO_TARGET,
+				"effect": {
+					"remove_texts": [
+						"「找出该被搬移的文字，用『方向键』推动看看文",
+						"字吧。展现出勇者该有的觉悟，只在一步之遥。」"
+					],
+					"start_typewriter": {
+						"lines": INTRO_BRAVE_QUOTE,
+						"pos": Vector2i(4, 4),
+						"char_delay": ACQUIRE_DIALOGUE_CHAR_DELAY,
+						"config": {"solid": true, "pushable": false}
+					}
+				}
+			}
+		]
+	})
+	intro_active = true
+	intro_quote_started = false
+	intro_bottom_rewrite_started = false
+	intro_top_rewrite_started = false
+	intro_completed = false
+	intro_completion_pending = false
+	intro_completion_elapsed = 0.0
+	intro_layer.position = Vector2.ZERO
+	intro_effect_elapsed = 0.0
+	intro_player_visual_ready = false
+	intro_entity_labels.clear()
+	intro_entity_movers.clear()
+	held_move_directions.clear()
+	move_repeat_elapsed = 0.0
+	acquisition_dialogue_active = false
+	acquisition_tutorial_active = false
+	acquisition_dialogue_label.visible = false
+	acquisition_tutorial_label.visible = false
+	acquisition_dialogue_indicator.visible = false
+	intro_top_remainder.visible = false
+	intro_bottom_remainder.visible = false
+	intro_player.visible = true
+	_sync_intro_world_view()
+
+func _handle_intro_input(key_event: InputEventKey) -> void:
+	if intro_completion_pending:
+		return
+	if key_event.pressed and not key_event.echo and key_event.keycode == KEY_SPACE:
+		if intro_quote_started and not intro_bottom_rewrite_started and not intro_world.has_pending_timed_effect():
+			_start_intro_bottom_rewrite()
+		return
+	if intro_bottom_rewrite_started and intro_world.has_pending_timed_effect():
+		return
+	var direction := _direction_from_key(key_event.keycode)
+	if direction == Vector2i.ZERO or key_event.echo:
+		return
+	_set_direction_held(direction, key_event.pressed)
+	if not key_event.pressed:
+		return
+	move_repeat_elapsed = 0.0
+	_apply_intro_direction_step(direction)
+
+func _start_intro_bottom_rewrite() -> void:
+	intro_bottom_rewrite_started = true
+	intro_effect_elapsed = 0.0
+	intro_bottom_remainder.visible = false
+	intro_world._apply_map_effect({
+		"remove_texts": [INTRO_BOTTOM_REMAINDER],
+		"start_typewriter": {
+			"lines": INTRO_BOTTOM_REWRITE,
+			"pos": INTRO_NO_TARGET + Vector2i.RIGHT,
+			"line_offsets": [Vector2i.ZERO, Vector2i.LEFT],
+			"char_delay": ACQUIRE_DIALOGUE_CHAR_DELAY,
+			"config": {"solid": true, "pushable": false}
+		}
+	})
+	_sync_intro_world_view()
+
+func _apply_intro_direction_step(direction: Vector2i) -> void:
+	var result: Dictionary
+	if Input.is_key_pressed(KEY_ALT):
+		result = intro_world.pull_front(direction)
+	else:
+		result = intro_world.try_move_player(direction)
+	if not bool(result.get("success", false)):
+		return
+	_sync_intro_world_view()
+	if not intro_quote_started and _intro_no_reached_target():
+		intro_quote_started = true
+		acquisition_tutorial_label.visible = false
+	_check_intro_completion()
+
+func _intro_no_reached_target() -> bool:
+	var no_word = intro_world.get_entity_at(INTRO_NO_TARGET)
+	return no_word != null and no_word.text == "不"
+
+func _check_intro_completion() -> void:
+	if intro_completed or intro_completion_pending:
+		return
+	var no_word = intro_world.get_entity_at(INTRO_NO_FINAL_TARGET)
+	if no_word == null or no_word.text != "不":
+		return
+	intro_completion_pending = true
+	intro_completion_elapsed = 0.0
+	intro_world.player_input_locked = true
+
+func _advance_intro_completion_transition(delta: float) -> void:
+	if not intro_completion_pending:
+		return
+	intro_completion_elapsed += maxf(delta, 0.0)
+	if intro_completion_elapsed <= INTRO_COMPLETION_DELAY:
+		return
+	var shake_elapsed := intro_completion_elapsed - INTRO_COMPLETION_DELAY
+	if shake_elapsed < INTRO_COMPLETION_SHAKE_DURATION:
+		intro_layer.position = Vector2(
+			sin(shake_elapsed * 90.0) * 10.0,
+			cos(shake_elapsed * 73.0) * 8.0
+		)
+		return
+	intro_completion_pending = false
+	intro_completed = true
+	intro_active = false
+	held_move_directions.clear()
+	move_repeat_elapsed = 0.0
+	intro_layer.position = Vector2.ZERO
+	intro_layer.visible = false
+	_start_hero_quote()
+
+func _advance_intro_typewriter(delta: float) -> void:
+	if not intro_active or not intro_world.has_pending_timed_effect():
+		return
+	intro_effect_elapsed += delta
+	while intro_world.has_pending_timed_effect() and intro_effect_elapsed >= intro_world.pending_timed_delay:
+		intro_effect_elapsed -= intro_world.pending_timed_delay
+		intro_world.resolve_pending_timed_effect()
+		_sync_intro_world_view()
+		if intro_bottom_rewrite_started and not intro_top_rewrite_started and not intro_world.has_pending_timed_effect():
+			_start_intro_top_rewrite()
+			return
+
+func _start_intro_top_rewrite() -> void:
+	intro_top_rewrite_started = true
+	intro_effect_elapsed = 0.0
+	for entity_id in intro_world.entities.keys():
+		var entity = intro_world.entities.get(entity_id)
+		if entity.grid_pos.y == 4 or entity.grid_pos.y == 5:
+			intro_world.entities.erase(entity_id)
+	intro_world._apply_map_effect({
+		"start_typewriter": {
+			"lines": INTRO_TOP_REWRITE,
+			"pos": Vector2i(4, 4),
+			"char_delay": ACQUIRE_DIALOGUE_CHAR_DELAY,
+			"config": {"solid": true, "pushable": false}
+		}
+	})
+	_sync_intro_world_view()
+
+func _sync_intro_world_view() -> void:
+	if not intro_active:
+		return
+	var player_target := _intro_grid_to_pixels(intro_world.player_pos)
+	if not intro_player_visual_ready:
+		intro_player_mover.snap_to(player_target)
+		intro_player_visual_ready = true
+	else:
+		intro_player_mover.move_to(player_target, move_visual_duration)
+	var alive := {}
+	for entity in intro_world.entities.values():
+		alive[entity.id] = true
+		var label: Label = intro_entity_labels.get(entity.id)
+		if label == null:
+			label = _make_intro_word_label(entity.text)
+			label.name = "GlovePushTutorialWord_%s" % entity.id
+			intro_layer.add_child(label)
+			intro_entity_labels[entity.id] = label
+			var mover := SmoothGridMover.new()
+			mover.snap_to(_intro_grid_to_pixels(entity.grid_pos))
+			intro_entity_movers[entity.id] = mover
+		else:
+			label.text = entity.text
+		var mover: SmoothGridMover = intro_entity_movers.get(entity.id)
+		mover.move_to(_intro_grid_to_pixels(entity.grid_pos), move_visual_duration)
+	for entity_id in intro_entity_labels.keys():
+		if alive.has(entity_id):
+			continue
+		intro_entity_labels[entity_id].queue_free()
+		intro_entity_labels.erase(entity_id)
+		intro_entity_movers.erase(entity_id)
+	_apply_intro_visual_positions()
+
+func _apply_intro_visual_positions() -> void:
+	if not intro_active:
+		return
+	if intro_player_visual_ready:
+		intro_player.position = intro_player_mover.current_position
+	for entity_id in intro_entity_labels.keys():
+		var mover: SmoothGridMover = intro_entity_movers.get(entity_id)
+		intro_entity_labels[entity_id].position = mover.current_position
+
+func _make_intro_word_label(text: String) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.size = Vector2(1800, 60) if text.length() > 1 else Vector2(60, 60)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_override("font", OriginalFont)
+	label.add_theme_font_size_override("font_size", GLOVE_GAMEPLAY_FONT_SIZE)
+	label.add_theme_color_override("font_color", Color(0.92, 0.92, 0.92))
+	return label
+
+func _intro_grid_to_pixels(pos: Vector2i) -> Vector2:
+	return Vector2(pos.x * INTRO_GRID_X_STEP, pos.y * 60)
+
+func _start_hero_quote() -> void:
+	acquisition_dialogue_active = false
+	acquisition_tutorial_active = false
+	hero_quote_active = true
+	hero_quote_elapsed = 0.0
+	hero_quote_index = 0
+	hero_quote_player_active = false
+	hero_quote_world_active = false
+	hero_exit_transition_active = false
+	hero_exit_transition_elapsed = 0.0
+	acquisition_dialogue_label.visible = false
+	acquisition_tutorial_label.visible = false
+	acquisition_dialogue_indicator.visible = false
+	hero_quote_label.text = ""
+	hero_quote_label.visible = false
+	_clear_hero_quote_characters()
+	hero_quote_characters.visible = true
+	_clear_hero_quote_entities()
+	hero_exit_arrow.visible = false
+	hero_exit_flash.visible = false
+	hero_quote_player.position = _hero_quote_cell_for_index(HERO_QUOTE_TEXT.find("我"))
+	hero_quote_player_mover.snap_to(hero_quote_player.position)
+	hero_quote_player.visible = false
+
+func _advance_hero_quote(delta: float) -> void:
+	if not hero_quote_active or hero_quote_index >= HERO_QUOTE_TEXT.length():
+		return
+	hero_quote_elapsed += delta
+	while hero_quote_elapsed >= ACQUIRE_DIALOGUE_CHAR_DELAY and hero_quote_index < HERO_QUOTE_TEXT.length():
+		hero_quote_elapsed -= ACQUIRE_DIALOGUE_CHAR_DELAY
+		_add_hero_quote_character(hero_quote_index)
+		hero_quote_index += 1
+		hero_quote_label.text = HERO_QUOTE_TEXT.left(hero_quote_index)
+	if hero_quote_index >= HERO_QUOTE_TEXT.length():
+		hero_quote_label.text = HERO_QUOTE_TEXT.replace("我", "　")
+		var player_character = hero_quote_characters.get_node_or_null("HeroQuoteCharacter_%d" % HERO_QUOTE_TEXT.find("我"))
+		if player_character:
+			player_character.queue_free()
+		hero_quote_player.position = _hero_quote_cell_for_index(HERO_QUOTE_TEXT.find("我"))
+		hero_quote_player_mover.snap_to(hero_quote_player.position)
+		hero_quote_player.visible = true
+		hero_quote_player_active = true
+		_build_hero_quote_world()
+
+func _clear_hero_quote_characters() -> void:
+	for character in hero_quote_characters.get_children():
+		character.queue_free()
+
+func _clear_hero_quote_entities() -> void:
+	for entity_label in hero_quote_entity_labels.values():
+		entity_label.queue_free()
+	hero_quote_entity_labels.clear()
+	hero_quote_entity_movers.clear()
+
+func _build_hero_quote_world() -> void:
+	var initial_spawn: Array[Dictionary] = []
+	var player_index := HERO_QUOTE_TEXT.find("我")
+	for index in range(HERO_QUOTE_TEXT.length()):
+		var character := HERO_QUOTE_TEXT.substr(index, 1)
+		if character == "\n" or index == player_index:
+			continue
+		initial_spawn.append({
+			"text": character,
+			"pos": _hero_quote_grid_cell_for_index(index),
+			"config": {"solid": true, "pushable": false}
+		})
+	hero_quote_world.load_level({
+		"name": "勇者台词",
+		"screen_size": Vector2i(32, 18),
+		"bounded": true,
+		"allow_edge_transition": false,
+		"player_start": _hero_quote_grid_cell_for_index(player_index),
+		"player_facing": Vector2i.RIGHT,
+		"player_text": "我",
+		"rows": [],
+		"initial_spawn": initial_spawn
+	})
+	hero_quote_world_active = true
+	hero_quote_characters.visible = false
+	hero_quote_player_mover.snap_to(_hero_quote_grid_to_pixels(hero_quote_world.player_pos))
+	hero_quote_player.position = hero_quote_player_mover.current_position
+	hero_exit_arrow.visible = true
+	_sync_hero_quote_world_view()
+
+func _sync_hero_quote_world_view() -> void:
+	if not hero_quote_world_active:
+		return
+	var player_target := _hero_quote_grid_to_pixels(hero_quote_world.player_pos)
+	hero_quote_player_mover.move_to(player_target, move_visual_duration)
+	var alive := {}
+	for entity in hero_quote_world.entities.values():
+		alive[entity.id] = true
+		var label: Label = hero_quote_entity_labels.get(entity.id)
+		if label == null:
+			label = _make_hero_quote_word_label(entity.text)
+			label.name = "HeroQuoteEntity_%s" % entity.id
+			hero_quote_entities.add_child(label)
+			hero_quote_entity_labels[entity.id] = label
+			var mover := SmoothGridMover.new()
+			mover.snap_to(_hero_quote_grid_to_pixels(entity.grid_pos))
+			hero_quote_entity_movers[entity.id] = mover
+		var mover: SmoothGridMover = hero_quote_entity_movers.get(entity.id)
+		mover.move_to(_hero_quote_grid_to_pixels(entity.grid_pos), move_visual_duration)
+	for entity_id in hero_quote_entity_labels.keys():
+		if alive.has(entity_id):
+			continue
+		hero_quote_entity_labels[entity_id].queue_free()
+		hero_quote_entity_labels.erase(entity_id)
+		hero_quote_entity_movers.erase(entity_id)
+	_apply_hero_quote_visual_positions()
+
+func _apply_hero_quote_visual_positions() -> void:
+	if not hero_quote_world_active:
+		return
+	hero_quote_player.position = hero_quote_player_mover.current_position
+	for entity_id in hero_quote_entity_labels.keys():
+		var mover: SmoothGridMover = hero_quote_entity_movers.get(entity_id)
+		hero_quote_entity_labels[entity_id].position = mover.current_position
+
+func _make_hero_quote_word_label(text: String) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.size = Vector2(HERO_QUOTE_STEP, HERO_QUOTE_STEP)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_override("font", OriginalFont)
+	label.add_theme_font_size_override("font_size", GLOVE_GAMEPLAY_FONT_SIZE)
+	label.add_theme_color_override("font_color", Color(0.92, 0.92, 0.92))
+	return label
+
+func _add_hero_quote_character(index: int) -> void:
+	if index < 0 or index >= HERO_QUOTE_TEXT.length():
+		return
+	var character := HERO_QUOTE_TEXT.substr(index, 1)
+	if character == "\n":
+		return
+	var label := Label.new()
+	label.name = "HeroQuoteCharacter_%d" % index
+	label.text = character
+	label.position = _hero_quote_cell_for_index(index)
+	label.size = Vector2(HERO_QUOTE_STEP, HERO_QUOTE_STEP)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_override("font", OriginalFont)
+	label.add_theme_font_size_override("font_size", GLOVE_GAMEPLAY_FONT_SIZE)
+	label.add_theme_color_override("font_color", Color(0.92, 0.92, 0.92))
+	hero_quote_characters.add_child(label)
+
+func _hero_quote_cell_for_index(index: int) -> Vector2:
+	return _hero_quote_grid_to_pixels(_hero_quote_grid_cell_for_index(index))
+
+func _hero_quote_grid_cell_for_index(index: int) -> Vector2i:
+	var column := 0
+	var row := 0
+	for character_index in range(index):
+		if HERO_QUOTE_TEXT.substr(character_index, 1) == "\n":
+			row += 1
+			column = 0
+		else:
+			column += 1
+	return HERO_QUOTE_GRID_ORIGIN_CELL + Vector2i(column, row)
+
+func _hero_quote_grid_to_pixels(pos: Vector2i) -> Vector2:
+	return Vector2(pos.x * HERO_QUOTE_STEP, pos.y * HERO_QUOTE_STEP)
+
+func _handle_hero_quote_input(key_event: InputEventKey) -> void:
+	if hero_exit_transition_active:
+		return
+	if not hero_quote_player_active:
+		return
+	var direction := _direction_from_key(key_event.keycode)
+	if direction == Vector2i.ZERO or key_event.echo:
+		return
+	_set_direction_held(direction, key_event.pressed)
+	if not key_event.pressed:
+		return
+	move_repeat_elapsed = 0.0
+	_apply_hero_quote_direction_step(direction)
+
+func _apply_hero_quote_direction_step(direction: Vector2i) -> void:
+	if hero_quote_world_active:
+		var result := hero_quote_world.try_move_player(direction)
+		if not bool(result.get("success", false)):
+			return
+		_sync_hero_quote_world_view()
+		if hero_quote_world.player_pos.x >= hero_quote_world.screen_size.x - 1:
+			_start_hero_exit_transition()
+		return
+	var next_position := hero_quote_player_mover.current_position + Vector2(direction) * HERO_QUOTE_STEP
+	if next_position.x < 0.0 or next_position.x > 1860.0 or next_position.y < 0.0 or next_position.y > 1020.0:
+		return
+	hero_quote_player_mover.move_to(next_position, move_visual_duration)
+
+func _start_hero_exit_transition() -> void:
+	if hero_exit_transition_active:
+		return
+	hero_exit_transition_active = true
+	hero_exit_transition_elapsed = 0.0
+	hero_quote_world.player_input_locked = true
+	hero_exit_arrow.visible = false
+	hero_exit_flash.color.a = 0.0
+	hero_exit_flash.visible = true
+
+func _advance_hero_exit_transition(delta: float) -> void:
+	if not hero_exit_transition_active:
+		return
+	hero_exit_transition_elapsed += maxf(delta, 0.0)
+	var progress := clampf(hero_exit_transition_elapsed / HERO_EXIT_FLASH_DURATION, 0.0, 1.0)
+	hero_exit_flash.color.a = sin(progress * PI) * 0.95
+	if progress < 1.0:
+		return
+	hero_exit_transition_active = false
+	hero_exit_flash.visible = false
+	_enter_glove_gesture_level()
+
+func _enter_glove_gesture_level() -> void:
+	hero_quote_active = false
+	hero_quote_player_active = false
+	hero_quote_world_active = false
+	hero_exit_arrow.visible = false
+	hero_quote_player.visible = false
+	hero_quote_entities.visible = false
+	acquisition_layer.visible = false
+	_start_gesture_level_intro()
+
+func _start_delete_cut(request: Dictionary) -> void:
+	if delete_cut_root != null and is_instance_valid(delete_cut_root):
+		delete_cut_root.queue_free()
+	delete_cut_root = Node2D.new()
+	delete_cut_root.name = "DeleteCutEffect"
+	delete_cut_root.position = _grid_to_pixels(request.get("pos", Vector2i.ZERO))
+	map_layer.add_child(delete_cut_root)
+	delete_cut_left = _make_word_label(str(request.get("text", "")))
+	delete_cut_left.size = Vector2(world.cell_size * 0.5, world.cell_size)
+	delete_cut_left.clip_contents = true
+	delete_cut_root.add_child(delete_cut_left)
+	delete_cut_right = _make_word_label(str(request.get("text", "")))
+	delete_cut_right.size = Vector2(world.cell_size * 0.5, world.cell_size)
+	delete_cut_right.position.x = world.cell_size * 0.5
+	delete_cut_right.clip_contents = true
+	delete_cut_root.add_child(delete_cut_right)
+	delete_cut_slash = Line2D.new()
+	delete_cut_slash.width = 3.0
+	delete_cut_slash.default_color = Color(1.0, 1.0, 1.0, 0.95)
+	delete_cut_slash.points = PackedVector2Array([Vector2(-8, 8), Vector2(world.cell_size + 8, world.cell_size - 8)])
+	delete_cut_root.add_child(delete_cut_slash)
+	delete_cut_elapsed = 0.0
+	delete_cut_sound.play()
+
+func _advance_delete_cut(delta: float) -> void:
+	if delete_cut_root == null or not is_instance_valid(delete_cut_root):
+		return
+	delete_cut_elapsed += delta
+	var progress := clampf(delete_cut_elapsed / DELETE_CUT_DURATION, 0.0, 1.0)
+	delete_cut_left.position = Vector2(-26.0 * progress, 18.0 * progress)
+	delete_cut_left.rotation = -0.38 * progress
+	delete_cut_right.position = Vector2(world.cell_size * 0.5 + 26.0 * progress, -18.0 * progress)
+	delete_cut_right.rotation = 0.38 * progress
+	delete_cut_left.modulate.a = 1.0 - progress
+	delete_cut_right.modulate.a = 1.0 - progress
+	delete_cut_slash.modulate.a = maxf(0.0, 1.0 - progress * 1.8)
+	if progress < 1.0:
+		return
+	delete_cut_root.queue_free()
+	delete_cut_root = null
 
 func _resolve_world_event() -> void:
 	_apply_result(world.resolve_pending_timed_effect())
@@ -442,9 +1687,24 @@ func _set_direction_held(direction: Vector2i, pressed: bool) -> void:
 		held_move_directions.append(direction)
 
 func _current_held_direction() -> Vector2i:
-	if held_move_directions.is_empty():
-		return Vector2i.ZERO
-	return held_move_directions[held_move_directions.size() - 1]
+	for index in range(held_move_directions.size() - 1, -1, -1):
+		var direction := held_move_directions[index]
+		if _is_direction_physically_held(direction):
+			return direction
+		held_move_directions.remove_at(index)
+	return Vector2i.ZERO
+
+func _is_direction_physically_held(direction: Vector2i) -> bool:
+	match direction:
+		Vector2i.RIGHT:
+			return Input.is_key_pressed(KEY_RIGHT) or Input.is_key_pressed(KEY_D)
+		Vector2i.LEFT:
+			return Input.is_key_pressed(KEY_LEFT) or Input.is_key_pressed(KEY_A)
+		Vector2i.UP:
+			return Input.is_key_pressed(KEY_UP) or Input.is_key_pressed(KEY_W)
+		Vector2i.DOWN:
+			return Input.is_key_pressed(KEY_DOWN) or Input.is_key_pressed(KEY_S)
+	return false
 
 func _apply_direction_step(direction: Vector2i) -> void:
 	var result: Dictionary
@@ -472,11 +1732,18 @@ func apply_startup_demo_args(args: PackedStringArray) -> void:
 
 func apply_startup_debug_args(args: PackedStringArray) -> void:
 	for arg in args:
-		if str(arg) != STARTUP_DEBUG_ARG_PREFIX + "release":
-			continue
-		world.apply_preview_effect(GloveEffects.release_preview_effect())
-		world.facing = Vector2i.UP
-		_refresh_view()
+		match str(arg):
+			STARTUP_DEBUG_ARG_PREFIX + "release":
+				world.apply_preview_effect(GloveEffects.release_preview_effect())
+				world.facing = Vector2i.UP
+				_refresh_view()
+			STARTUP_DEBUG_ARG_PREFIX + "gesture_intro":
+				call_deferred("_start_gesture_level_intro")
+
+func apply_startup_skip_acquisition(args: PackedStringArray) -> void:
+	if not args.has(STARTUP_SKIP_ACQUISITION_ARG):
+		return
+	call_deferred("_finish_glove_acquisition")
 
 func resolve_route_path_from_args(args: PackedStringArray) -> String:
 	for arg in args:

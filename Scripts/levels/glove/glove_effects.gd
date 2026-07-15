@@ -109,14 +109,20 @@ static func gesture_slot_move_effects() -> Array[Dictionary]:
 	return effects
 
 static func delete_word_effects() -> Array[Dictionary]:
+	var effect := _switch_hand_effect("release", "巨大手掌已经放开。")
+	effect["start_delete_visual"] = {
+		"type": "delete_cut",
+		"text": "不",
+		"pos": DELETE_NO_POS
+	}
 	return [{
 		"text": "不",
 		"pos": DELETE_NO_POS,
-		"effect": _switch_hand_effect("release", "巨大手掌已经放开。")
+		"effect": effect
 	}]
 
 static func release_preview_effect() -> Dictionary:
-	var effect := _switch_hand_effect("release", "人工验收：五指张开")
+	var effect := _switch_hand_effect("release", "人工验收：五指张开", false)
 	effect["remove_at"] = effect.get("remove_at", []) + [
 		Vector2i(12, 13), Vector2i(13, 13), Vector2i(14, 13), Vector2i(15, 13),
 		Vector2i(16, 13), Vector2i(17, 13), Vector2i(18, 13), Vector2i(19, 13)
@@ -275,7 +281,20 @@ static func _lifeline_open_condition(index: int) -> Dictionary:
 		}
 	}
 
-static func _switch_hand_effect(state_name: String, message: String) -> Dictionary:
+static func _switch_hand_effect(state_name: String, message: String, animate := true) -> Dictionary:
+	var hand_effect := _hand_layout_effect(state_name, message)
+	if not animate:
+		return hand_effect
+	hand_effect["set_input_locked"] = false
+	return {
+		"start_gesture_transition": {
+			"switch_delay": 0.5,
+			"duration": 1.0,
+			"effect": hand_effect
+		}
+	}
+
+static func _hand_layout_effect(state_name: String, message: String) -> Dictionary:
 	var effect := {
 		"remove_at": GloveLayouts.all_hand_cells(),
 		"remove_texts": [DIALOGUE_INITIAL, DIALOGUE_OPENING, DIALOGUE_LIKE, "：改变手势，扭转守势！", "怜爱之深，", "责任之切，", "勇者之情。", "逼退", "手的生命线", "线", "线线"],

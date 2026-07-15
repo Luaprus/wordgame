@@ -53,6 +53,7 @@ var typewriter_delay := 0.2
 var pending_interact_effect: Dictionary = {}
 var fullscreen_video_finished_effect: Dictionary = {}
 var fullscreen_video_request: Dictionary = {}
+var gesture_transition_request: Dictionary = {}
 var visual_effect_requests: Array = []
 var current_level: Dictionary = {}
 var rule_engine := RuleEngine.new()
@@ -98,6 +99,11 @@ func load_level(level: Dictionary) -> void:
 	pending_interact_effect = level.get("initial_interact_effect", {}).duplicate(true)
 	pending_timed_effect = level.get("initial_timed_effect", {})
 	pending_timed_delay = float(level.get("initial_timed_delay", 0.0))
+	var initial_visual_effect: Dictionary = level.get("initial_visual_effect", {}).duplicate(true)
+	if not initial_visual_effect.is_empty():
+		visual_effect_requests.append(initial_visual_effect)
+		if bool(initial_visual_effect.get("lock_input", false)):
+			player_input_locked = true
 	_parse_rows(rows)
 	for spawn_config in level.get("initial_spawn", []):
 		var entry: Dictionary = spawn_config
@@ -141,6 +147,7 @@ func clear() -> void:
 	pending_interact_effect.clear()
 	fullscreen_video_finished_effect.clear()
 	fullscreen_video_request.clear()
+	gesture_transition_request.clear()
 	visual_effect_requests.clear()
 	current_page_origin = Vector2i.ZERO
 	_next_id = 1
@@ -706,6 +713,11 @@ func _merge_split_positions(merged_text: String, first: WordEntity, second: Word
 	return [first.grid_pos, second.grid_pos]
 
 func _apply_map_effect(config: Dictionary) -> void:
+	if config.has("start_delete_visual"):
+		visual_effect_requests.append(config.start_delete_visual.duplicate(true))
+	if config.has("start_gesture_transition"):
+		_start_gesture_transition(config.start_gesture_transition)
+		return
 	var preserved_entities: Array[Dictionary] = []
 	for text in config.get("preserve_texts", []):
 		preserved_entities.append_array(_snapshot_entities_by_text(str(text)))
@@ -822,6 +834,11 @@ func consume_visual_effects() -> Array:
 	visual_effect_requests.clear()
 	return requests
 
+func consume_visual_effect_request() -> Dictionary:
+	if visual_effect_requests.is_empty():
+		return {}
+	return visual_effect_requests.pop_front()
+
 func _apply_move_player_toward(move_config: Dictionary) -> void:
 	var target: Vector2i = move_config.get("target", player_pos)
 	var step_delay := float(move_config.get("step_delay", 0.12))
@@ -913,6 +930,20 @@ func _trigger_entity_move_effect(entity: WordEntity, old_pos: Vector2i, new_pos:
 func has_pending_timed_effect() -> bool:
 	return not pending_timed_effect.is_empty()
 
+func consume_gesture_transition_request() -> Dictionary:
+	var request := gesture_transition_request.duplicate(true)
+	gesture_transition_request.clear()
+	return request
+
+func _start_gesture_transition(definition: Dictionary) -> void:
+	player_input_locked = true
+	pending_timed_effect = definition.get("effect", {}).duplicate(true)
+	pending_timed_delay = float(definition.get("switch_delay", 0.25))
+	gesture_transition_request = {
+		"duration": float(definition.get("duration", 1.0)),
+		"switch_delay": pending_timed_delay
+	}
+
 func has_fullscreen_video_finished_effect() -> bool:
 	return not fullscreen_video_finished_effect.is_empty()
 
@@ -941,13 +972,17 @@ func _start_typewriter(definition: Dictionary) -> void:
 	typewriter_queue.clear()
 	var lines: Array = definition.get("lines", [])
 	var origin: Vector2i = definition.get("pos", Vector2i.ZERO)
+	var line_offsets: Array = definition.get("line_offsets", [])
 	var config: Dictionary = definition.get("config", {})
 	for line_index in range(lines.size()):
 		var line := str(lines[line_index])
+		var line_offset := Vector2i.ZERO
+		if line_index < line_offsets.size():
+			line_offset = line_offsets[line_index]
 		for char_index in range(line.length()):
 			typewriter_queue.append({
 				"text": line.substr(char_index, 1),
-				"pos": origin + Vector2i(char_index, line_index),
+				"pos": origin + Vector2i(char_index, line_index) + line_offset,
 				"config": config
 			})
 	typewriter_after_effect = definition.get("after_effect", {}).duplicate(true)
