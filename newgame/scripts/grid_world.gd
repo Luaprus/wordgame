@@ -54,6 +54,7 @@ var typewriter_after_effect: Dictionary = {}
 var typewriter_delay := 0.2
 var pending_interact_effect: Dictionary = {}
 var pending_scene_path := ""
+var pending_level_index := -1
 var fullscreen_video_finished_effect: Dictionary = {}
 var fullscreen_video_request: Dictionary = {}
 var visual_effect_requests: Array = []
@@ -154,6 +155,7 @@ func clear() -> void:
 	typewriter_delay = 0.2
 	pending_interact_effect.clear()
 	pending_scene_path = ""
+	pending_level_index = -1
 	fullscreen_video_finished_effect.clear()
 	fullscreen_video_request.clear()
 	visual_effect_requests.clear()
@@ -955,6 +957,8 @@ func _apply_map_effect(config: Dictionary) -> void:
 		player_event_locked = bool(config.set_event_locked)
 	if config.has("scene_path"):
 		pending_scene_path = str(config.scene_path)
+	if config.has("level_index"):
+		pending_level_index = int(config.level_index)
 	if config.has("visual_effect"):
 		var visual_effect_dict: Dictionary = config.visual_effect.duplicate(true)
 		if not deferred_bridge_removals.is_empty():
