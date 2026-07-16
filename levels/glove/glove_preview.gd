@@ -83,7 +83,7 @@ const PLAYER_WALK_FRAME_TIME := 0.055
 const PLAYER_WALK_VISUAL_TIME := 0.12
 const PLAYER_MOVE_REPEAT_TIME := 0.12
 const PLAYER_BLOCKED_RETRY_TIME := 0.12
-const INTRO_GRID_X_STEP := 600.0 / 11.0
+const INTRO_GRID_X_STEP := 60.0
 const INTRO_TEXT_ORIGIN := Vector2i(4, 8)
 const INTRO_PLAYER_START := Vector2i(4, 9)
 const INTRO_NO_START := Vector2i(4, 8)
@@ -1610,6 +1610,8 @@ func _apply_intro_direction_step(direction: Vector2i) -> void:
 	if not intro_quote_started and _intro_no_reached_target():
 		intro_quote_started = true
 		intro_world.player_input_locked = true
+		# The first push is a one-shot tutorial event, not a reusable sentence rule.
+		intro_world.entity_move_effects = []
 		acquisition_tutorial_label.visible = false
 	_check_intro_completion()
 
@@ -1664,7 +1666,13 @@ func _advance_intro_typewriter(delta: float) -> void:
 			_start_intro_top_rewrite()
 			return
 	if intro_top_rewrite_started and not intro_world.has_pending_timed_effect():
-		intro_world.player_input_locked = false
+		_finish_intro_rewrite()
+
+func _finish_intro_rewrite() -> void:
+	intro_world.player_input_locked = false
+	push_recovery_active = false
+	if push_recovery_timer:
+		push_recovery_timer.stop()
 
 func _start_intro_top_rewrite() -> void:
 	intro_top_rewrite_started = true
@@ -2892,6 +2900,21 @@ func apply_startup_debug_args(args: PackedStringArray) -> void:
 				call_deferred("_prepare_hero_encroach_debug")
 			STARTUP_DEBUG_ARG_PREFIX + "gesture_intro":
 				call_deferred("_start_gesture_level_intro")
+			STARTUP_DEBUG_ARG_PREFIX + "intro_push":
+				call_deferred("_start_intro_push_tutorial_debug")
+
+func _start_intro_push_tutorial_debug() -> void:
+	glove_acquisition_active = false
+	acquisition_dialogue_active = false
+	acquisition_tutorial_active = false
+	acquisition_video.stop()
+	acquisition_video.visible = false
+	acquisition_put_on_sound.stop()
+	acquisition_melody_sound.stop()
+	acquisition_dialogue_label.visible = false
+	acquisition_tutorial_label.visible = false
+	acquisition_dialogue_indicator.visible = false
+	_start_intro_push_tutorial()
 
 func apply_startup_skip_acquisition(args: PackedStringArray) -> void:
 	if not args.has(STARTUP_SKIP_ACQUISITION_ARG):
