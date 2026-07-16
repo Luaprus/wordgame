@@ -437,6 +437,26 @@ static func _stable_bridge_effect() -> Dictionary:
 	}
 
 static func _shore_merge_effect() -> Dictionary:
+	return {
+		"condition": {
+			"pos": Vector2i(19, 7),
+			"text": "桥",
+			"then": _shore_merge_bridge_state_effect(),
+			"else": _shore_merge_tree_state_effect()
+		}
+	}
+
+static func _shore_split_effect() -> Dictionary:
+	return {
+		"condition": {
+			"pos": Vector2i(19, 7),
+			"text": "桥",
+			"then": _shore_split_bridge_state_effect(),
+			"else": _shore_split_tree_state_effect()
+		}
+	}
+
+static func _shore_merge_bridge_state_effect() -> Dictionary:
 	var spawn := _creek_remainder_spawn()
 	spawn.append_array(_straight_bridge_spawn())
 	var remove_at := _river_dynamic_cells()
@@ -454,7 +474,19 @@ static func _shore_merge_effect() -> Dictionary:
 		"spawn_text": _creek_hint_text_without_water_parts()
 	}
 
-static func _shore_split_effect() -> Dictionary:
+static func _shore_merge_tree_state_effect() -> Dictionary:
+	return {
+		"remove_at": _creek_hint_cells_except_shore(),
+		"visual_effect": BridgeTreeVisuals.key_info_emphasis([
+			Vector2i(7, 10),
+			Vector2i(8, 10),
+			Vector2i(9, 10),
+			Vector2i(10, 10)
+		]),
+		"spawn_text": _creek_hint_text_without_water_parts()
+	}
+
+static func _shore_split_bridge_state_effect() -> Dictionary:
 	var spawn := _creek_remainder_spawn()
 	var loose_bridge := _loose_bridge_spawn()
 	for entry in loose_bridge:
@@ -468,6 +500,12 @@ static func _shore_split_effect() -> Dictionary:
 	return {
 		"remove_at": remove_at,
 		"spawn": spawn,
+		"spawn_text": _creek_hint_text_without_water_parts()
+	}
+
+static func _shore_split_tree_state_effect() -> Dictionary:
+	return {
+		"remove_at": _creek_hint_cells(),
 		"spawn_text": _creek_hint_text_without_water_parts()
 	}
 
