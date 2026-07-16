@@ -11,7 +11,7 @@
 				0
 			],
 			"id": "initial_layout",
-			"input_locked": false,
+			"input_locked": true,
 			"label": "起始布局锚点",
 			"last_message": "",
 			"player_pos": [
@@ -33,14 +33,14 @@
 	"feature_id": "F024",
 	"final_state": {
 		"facing": [
-			0,
-			-1
+			1,
+			0
 		],
-		"input_locked": false,
+		"input_locked": true,
 		"last_message": "",
 		"player_pos": [
 			20,
-			13
+			15
 		],
 		"visible": true
 	},
@@ -60,7 +60,7 @@
 					0
 				],
 				"id": "initial_layout",
-				"input_locked": false,
+				"input_locked": true,
 				"label": "起始布局锚点",
 				"last_message": "",
 				"player_pos": [
@@ -102,12 +102,13 @@
 		{
 			"caption": "walk from start to lower lifeline clue",
 			"expectation_failures": [
+				"player_pos expected (20, 13) got (20, 15)",
 				"text_at (21, 13) expected 线线 got "
 			],
 			"expectations_checked": 2,
 			"facing": [
-				0,
-				-1
+				1,
+				0
 			],
 			"index": 1,
 			"input_data": {
@@ -123,10 +124,10 @@
 				]
 			},
 			"last_message": "",
-			"message": "text_at (21, 13) expected 线线 got ",
+			"message": "player_pos expected (20, 13) got (20, 15); text_at (21, 13) expected 线线 got ",
 			"player_pos": [
 				20,
-				13
+				15
 			],
 			"runtime_trace": {
 				"animation_ids": [],

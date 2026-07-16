@@ -91,4 +91,3 @@ func _deferred_change_scene(path):
 	
 	var nt = Time.get_ticks_msec()
 	print("load_scene_time: ", nt - pt)
-

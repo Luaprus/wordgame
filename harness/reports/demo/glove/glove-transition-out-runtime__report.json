@@ -7,16 +7,16 @@
 		{
 			"caption": "reuse verified correct route through transition",
 			"facing": [
-				0,
-				-1
+				1,
+				0
 			],
 			"id": "transition_out",
-			"input_locked": false,
+			"input_locked": true,
 			"label": "黑屏转场候选锚点",
 			"last_message": "",
 			"player_pos": [
 				20,
-				13
+				15
 			],
 			"ref": "GLOVE-SHOT-009",
 			"review_note": "通过完整真实正确路线稳定命中黑屏对白态；对白出现时机和镜头边界仍需人工确认。",
@@ -34,14 +34,14 @@
 	"feature_id": "F026",
 	"final_state": {
 		"facing": [
-			0,
-			-1
+			1,
+			0
 		],
-		"input_locked": false,
+		"input_locked": true,
 		"last_message": "",
 		"player_pos": [
 			20,
-			13
+			15
 		],
 		"visible": true
 	},
@@ -57,16 +57,16 @@
 			"checkpoint": {
 				"caption": "reuse verified correct route through transition",
 				"facing": [
-					0,
-					-1
+					1,
+					0
 				],
 				"id": "transition_out",
-				"input_locked": false,
+				"input_locked": true,
 				"label": "黑屏转场候选锚点",
 				"last_message": "",
 				"player_pos": [
 					20,
-					13
+					15
 				],
 				"ref": "GLOVE-SHOT-009",
 				"review_note": "通过完整真实正确路线稳定命中黑屏对白态；对白出现时机和镜头边界仍需人工确认。",
@@ -81,14 +81,13 @@
 				"visible": true
 			},
 			"expectation_failures": [
-				"player_pos expected (24, 5) got (20, 13)",
-				"visible expected false got true",
-				"input_locked expected true got false"
+				"player_pos expected (24, 5) got (20, 15)",
+				"visible expected false got true"
 			],
 			"expectations_checked": 3,
 			"facing": [
-				0,
-				-1
+				1,
+				0
 			],
 			"index": 0,
 			"input_data": {
@@ -96,10 +95,10 @@
 				"through_caption": "enter transition"
 			},
 			"last_message": "",
-			"message": "player_pos expected (24, 5) got (20, 13); visible expected false got true; input_locked expected true got false",
+			"message": "player_pos expected (24, 5) got (20, 15); visible expected false got true",
 			"player_pos": [
 				20,
-				13
+				15
 			],
 			"runtime_trace": {
 				"animation_ids": [],

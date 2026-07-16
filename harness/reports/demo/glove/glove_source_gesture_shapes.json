@@ -1,7 +1,7 @@
 {
 	"level_id": "glove",
-	"runtime_layout_path": "L:/wordgame-new/wordgame/newgame/scripts/levels/glove/glove_layouts.gd",
-	"source_scene_path": "L:/wordgame-new/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn",
+	"runtime_layout_path": "E:/wordgame copy/newgame/scripts/levels/glove/glove_layouts.gd",
+	"source_scene_path": "E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn",
 	"states": [
 		{
 			"prefix_matches_runtime": false,

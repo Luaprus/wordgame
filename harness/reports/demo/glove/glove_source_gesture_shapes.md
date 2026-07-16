@@ -3,8 +3,8 @@
 这份文档区分两层信息：原始 scene 的视觉版型，以及当前 runtime 使用的碰撞版型。
 视觉尾巴表示只出现在源码 `big_text` 末尾、但当前运行时没有纳入碰撞的尾部行。
 
-- 源码 scene：`L:/wordgame-new/wordgame/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn`
-- 运行时布局：`L:/wordgame-new/wordgame/newgame/scripts/levels/glove/glove_layouts.gd`
+- 源码 scene：`E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn`
+- 运行时布局：`E:/wordgame copy/newgame/scripts/levels/glove/glove_layouts.gd`
 
 ## zero
 

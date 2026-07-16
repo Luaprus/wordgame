@@ -33,7 +33,6 @@ func _init() -> void:
 	_assert_gate_scene_path(ArtifactHall.HAND_GATE_POS, ArtifactHall.HAND_SCENE_PATH, "hand gate", failures)
 	_assert_gate_scene_path(ArtifactHall.PRINCESS_GATE_POS, ArtifactHall.PRINCESS_SCENE_PATH, "princess gate", failures)
 	_assert_gate_level_index(ArtifactHall.HELMET_GATE_POS, ArtifactHall.HELMET_LEVEL_INDEX, "helmet gate", failures)
-
 	if failures.is_empty():
 		print("artifact hall tests passed")
 		quit(0)

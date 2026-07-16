@@ -134,6 +134,9 @@ var intro_reveal_max_distance := 0.0
 var creek_wave_elapsed := 0.0
 var bridge_shake_elapsed := 0.0
 
+func _is_helmet_tutorial_level() -> bool:
+	return current_level_index >= 0 and current_level_index < LEVEL_SEQUENCE.size() and LEVEL_SEQUENCE[current_level_index] == HelmetTutorial
+
 func _ready() -> void:
 	main_menu = get_node_or_null("MainMenu") as Control
 	var startup_scene_path := resolve_startup_scene_path(OS.get_cmdline_user_args())

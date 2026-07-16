@@ -7,16 +7,16 @@
 		{
 			"caption": "switch to the good-hand gesture",
 			"facing": [
-				0,
-				-1
+				1,
+				0
 			],
 			"id": "good_hand_followup",
-			"input_locked": false,
+			"input_locked": true,
 			"label": "好手势连续路线候选锚点",
 			"last_message": "",
 			"player_pos": [
 				20,
-				13
+				15
 			],
 			"ref": "GLOVE-SHOT-008",
 			"review_note": "已用真实拉字、推字和移动切到好手势；截图时机仍需人工确认。",
@@ -34,14 +34,14 @@
 	"feature_id": "F024",
 	"final_state": {
 		"facing": [
-			0,
-			-1
+			1,
+			0
 		],
-		"input_locked": false,
+		"input_locked": true,
 		"last_message": "",
 		"player_pos": [
 			20,
-			13
+			15
 		],
 		"visible": true
 	},
@@ -57,16 +57,16 @@
 			"checkpoint": {
 				"caption": "switch to the good-hand gesture",
 				"facing": [
-					0,
-					-1
+					1,
+					0
 				],
 				"id": "good_hand_followup",
-				"input_locked": false,
+				"input_locked": true,
 				"label": "好手势连续路线候选锚点",
 				"last_message": "",
 				"player_pos": [
 					20,
-					13
+					15
 				],
 				"ref": "GLOVE-SHOT-008",
 				"review_note": "已用真实拉字、推字和移动切到好手势；截图时机仍需人工确认。",
@@ -81,14 +81,15 @@
 				"visible": true
 			},
 			"expectation_failures": [
-				"player_pos expected (30, 15) got (20, 13)",
+				"player_pos expected (30, 15) got (20, 15)",
+				"facing expected (0, -1) got (1, 0)",
 				"last_message expected 巨大手掌，是好的手势。 got ",
 				"text_at (7, 8) expected 掌 got 勇：别被一条线给困住了！"
 			],
 			"expectations_checked": 4,
 			"facing": [
-				0,
-				-1
+				1,
+				0
 			],
 			"index": 0,
 			"input_data": {
@@ -96,10 +97,10 @@
 				"through_caption": "switch to good gesture"
 			},
 			"last_message": "",
-			"message": "player_pos expected (30, 15) got (20, 13); last_message expected 巨大手掌，是好的手势。 got ; text_at (7, 8) expected 掌 got 勇：别被一条线给困住了！",
+			"message": "player_pos expected (30, 15) got (20, 15); facing expected (0, -1) got (1, 0); last_message expected 巨大手掌，是好的手势。 got ; text_at (7, 8) expected 掌 got 勇：别被一条线给困住了！",
 			"player_pos": [
 				20,
-				13
+				15
 			],
 			"runtime_trace": {
 				"animation_ids": [],

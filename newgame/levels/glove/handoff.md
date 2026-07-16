@@ -202,3 +202,11 @@ powershell -ExecutionPolicy Bypass -File E:\wordgame copy\tools\run_all_tests.ps
 - 参考源场景：`D:/文字游戏/Scenes/Maps/第三章/04_手套教學.tscn`。
 - 源 BGM：`D:/文字游戏/Sounds/bgm/ch3/BGM_3_18_fate_road_AB.ogg`。
 - 当前接入：进入 `res://levels/glove/glove_preview.tscn` 时由 `glove_preview.gd` 播放该 BGM，使用源文件的循环导入配置。
+
+## 2026-07-15 勇者围拢移植
+
+- 原版文字表现来源：`参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/11_添譜來堂_開場.tscn`。
+- 用户已明确覆盖原场景的四面随机 `hero_walk()`：不能再按 36 字、上下左右、随机延迟和前段手套教学触发实现。
+- 正确接入：玩家完成手势关、与终点“勇”交互，依次确认到“4397号勇者，请无畏地上前吧！”页面；再次确认该页后清屏，才启动围拢。
+- 动画：上、左、右三面最外层隔格出现第一波并内移；补另一组隔格为第二波并同移；第三波后，第一、二波再向内两格；最后逐格补满顶部五行与左右五列。完成后停住并锁定输入。
+- 自动验证：`res://tests/test_glove_hero_encroach.gd` 校验第三页确认接点、第一波三面隔格、最终五层墙完整无重叠、输入锁定和停帧。

@@ -7,14 +7,14 @@
 	"feature_id": "F025",
 	"final_state": {
 		"facing": [
-			0,
-			-1
+			1,
+			0
 		],
-		"input_locked": false,
+		"input_locked": true,
 		"last_message": "",
 		"player_pos": [
 			20,
-			13
+			15
 		],
 		"visible": true
 	},
@@ -28,12 +28,12 @@
 		{
 			"caption": "reuse verified correct route through one gesture",
 			"expectation_failures": [
-				"player_pos expected (29, 14) got (20, 13)"
+				"player_pos expected (29, 14) got (20, 15)"
 			],
 			"expectations_checked": 1,
 			"facing": [
-				0,
-				-1
+				1,
+				0
 			],
 			"index": 0,
 			"input_data": {
@@ -41,10 +41,10 @@
 				"through_caption": "switch to one gesture"
 			},
 			"last_message": "",
-			"message": "player_pos expected (29, 14) got (20, 13)",
+			"message": "player_pos expected (29, 14) got (20, 15)",
 			"player_pos": [
 				20,
-				13
+				15
 			],
 			"runtime_trace": {
 				"animation_ids": [],

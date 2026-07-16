@@ -7,16 +7,16 @@
 		{
 			"caption": "reuse verified correct route through right sword swap",
 			"facing": [
-				0,
-				-1
+				1,
+				0
 			],
 			"id": "sword_swap_right",
-			"input_locked": false,
+			"input_locked": true,
 			"label": "掌中剑右移规则锚点",
 			"last_message": "",
 			"player_pos": [
 				20,
-				13
+				15
 			],
 			"ref": "",
 			"review_note": "该锚点通过完整真实正确路线证明：二手势会让掌中剑从左源坐标换到右源坐标。当前没有直连截图基线，因此它用于源码/规则交接。",
@@ -32,14 +32,14 @@
 	"feature_id": "F024",
 	"final_state": {
 		"facing": [
-			0,
-			-1
+			1,
+			0
 		],
-		"input_locked": false,
+		"input_locked": true,
 		"last_message": "",
 		"player_pos": [
 			20,
-			13
+			15
 		],
 		"visible": true
 	},
@@ -55,16 +55,16 @@
 			"checkpoint": {
 				"caption": "reuse verified correct route through right sword swap",
 				"facing": [
-					0,
-					-1
+					1,
+					0
 				],
 				"id": "sword_swap_right",
-				"input_locked": false,
+				"input_locked": true,
 				"label": "掌中剑右移规则锚点",
 				"last_message": "",
 				"player_pos": [
 					20,
-					13
+					15
 				],
 				"ref": "",
 				"review_note": "该锚点通过完整真实正确路线证明：二手势会让掌中剑从左源坐标换到右源坐标。当前没有直连截图基线，因此它用于源码/规则交接。",
@@ -77,14 +77,14 @@
 				"visible": true
 			},
 			"expectation_failures": [
-				"player_pos expected (4, 1) got (20, 13)",
+				"player_pos expected (4, 1) got (20, 15)",
 				"last_message expected 二指伸直，掌中剑换到了右边。 got ",
 				"text_at (28, 6) expected 剑 got "
 			],
 			"expectations_checked": 4,
 			"facing": [
-				0,
-				-1
+				1,
+				0
 			],
 			"index": 0,
 			"input_data": {
@@ -92,10 +92,10 @@
 				"through_caption": "shift embedded sword right"
 			},
 			"last_message": "",
-			"message": "player_pos expected (4, 1) got (20, 13); last_message expected 二指伸直，掌中剑换到了右边。 got ; text_at (28, 6) expected 剑 got ",
+			"message": "player_pos expected (4, 1) got (20, 15); last_message expected 二指伸直，掌中剑换到了右边。 got ; text_at (28, 6) expected 剑 got ",
 			"player_pos": [
 				20,
-				13
+				15
 			],
 			"runtime_trace": {
 				"animation_ids": [],

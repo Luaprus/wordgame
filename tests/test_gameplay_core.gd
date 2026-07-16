@@ -3,6 +3,7 @@ extends SceneTree
 const GridWorld = preload("res://scripts/grid_world.gd")
 const MainSceneScript = preload("res://scripts/main.gd")
 const GLOVE_PREVIEW_SCENE_PATH := "res://levels/glove/glove_preview.tscn"
+const HALL_PREVIEW_SCENE_PATH := "res://levels/hall/artifact_hall_preview.tscn"
 
 var failures: Array[String] = []
 
@@ -355,10 +356,11 @@ func test_main_scene_resolves_glove_startup_entry_arg() -> void:
 		"main scene maps --entry=glove to the glove preview scene"
 	)
 	assert_equal(
-		str(main_view.resolve_startup_scene_path(PackedStringArray(["--entry=helmet"]))),
-		"",
-		"main scene keeps the default helmet flow for unknown or default entry keys"
+		str(main_view.resolve_startup_scene_path(PackedStringArray(["--entry=hall"]))),
+		HALL_PREVIEW_SCENE_PATH,
+		"main scene maps --entry=hall to the artifact hall preview scene"
 	)
+	assert_equal(str(main_view.resolve_startup_scene_path(PackedStringArray(["--entry=helmet"]))), "", "main scene keeps the default helmet flow for unknown or default entry keys")
 	main_view.queue_free()
 
 func test_main_scene_resolves_glove_scene_shortcut() -> void:
@@ -371,6 +373,11 @@ func test_main_scene_resolves_glove_scene_shortcut() -> void:
 		str(main_view.resolve_scene_shortcut_from_keycode(KEY_F9)),
 		GLOVE_PREVIEW_SCENE_PATH,
 		"main scene reserves F9 as the glove preview shortcut"
+	)
+	assert_equal(
+		str(main_view.resolve_scene_shortcut_from_keycode(KEY_F10)),
+		HALL_PREVIEW_SCENE_PATH,
+		"main scene reserves F10 as the artifact hall preview shortcut"
 	)
 	assert_equal(
 		str(main_view.resolve_scene_shortcut_from_keycode(KEY_F5)),

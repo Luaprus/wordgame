@@ -47,18 +47,18 @@
 			"evidence_type": "screenshot_grid",
 			"evidence_type_label": "截图+格子锚点",
 			"facing": [
-				0,
-				-1
+				1,
+				0
 			],
 			"id": "good_hand_followup",
-			"input_locked": false,
+			"input_locked": true,
 			"label": "好手势连续路线候选锚点",
 			"last_message": "",
 			"manual_review_status": "pending",
 			"manual_review_status_label": "待复查",
 			"player_pos": [
 				20,
-				13
+				15
 			],
 			"ref": "GLOVE-SHOT-008",
 			"review_note": "已用真实拉字、推字和移动切到好手势；截图时机仍需人工确认。",
@@ -81,18 +81,18 @@
 			"evidence_type": "screenshot_grid",
 			"evidence_type_label": "截图+格子锚点",
 			"facing": [
-				0,
-				-1
+				1,
+				0
 			],
 			"id": "transition_out",
-			"input_locked": false,
+			"input_locked": true,
 			"label": "黑屏转场候选锚点",
 			"last_message": "",
 			"manual_review_status": "pending",
 			"manual_review_status_label": "待复查",
 			"player_pos": [
 				20,
-				13
+				15
 			],
 			"ref": "GLOVE-SHOT-009",
 			"review_note": "通过完整真实正确路线稳定命中黑屏对白态；对白出现时机和镜头边界仍需人工确认。",
@@ -121,7 +121,7 @@
 				0
 			],
 			"id": "initial_layout",
-			"input_locked": false,
+			"input_locked": true,
 			"label": "起始布局锚点",
 			"last_message": "",
 			"manual_review_status": "pending",
@@ -150,18 +150,18 @@
 			"evidence_type": "rule_only",
 			"evidence_type_label": "规则锚点",
 			"facing": [
-				0,
-				-1
+				1,
+				0
 			],
 			"id": "sword_swap_right",
-			"input_locked": false,
+			"input_locked": true,
 			"label": "掌中剑右移规则锚点",
 			"last_message": "",
 			"manual_review_status": "pending",
 			"manual_review_status_label": "待复查",
 			"player_pos": [
 				20,
-				13
+				15
 			],
 			"ref": "",
 			"review_note": "该锚点通过完整真实正确路线证明：二手势会让掌中剑从左源坐标换到右源坐标。当前没有直连截图基线，因此它用于源码/规则交接。",
@@ -182,18 +182,18 @@
 			"evidence_type": "screenshot_grid",
 			"evidence_type_label": "截图+格子锚点",
 			"facing": [
-				0,
-				-1
+				1,
+				0
 			],
 			"id": "path_opened",
-			"input_locked": false,
+			"input_locked": true,
 			"label": "开路后中段锚点",
 			"last_message": "",
 			"manual_review_status": "pending",
 			"manual_review_status_label": "待复查",
 			"player_pos": [
 				20,
-				13
+				15
 			],
 			"ref": "GLOVE-SHOT-012",
 			"route_id": "glove-path-opened-runtime",
@@ -211,16 +211,16 @@
 	],
 	"display_name": "手套关",
 	"failed_report_count": 11,
-	"generated_at": "2026-07-16 12:15:12",
+	"generated_at": "2026-07-16 16:08:35",
 	"generated_from": {
-		"flow_handoff_path": "L:/wordgame-new/wordgame/harness/demo_routes/glove/glove_flow_handoff.md",
-		"handoff_path": "L:/wordgame-new/wordgame/newgame/levels/glove/handoff.md",
-		"manifest_path": "L:/wordgame-new/wordgame/newgame/levels/glove/level_manifest.json",
-		"manual_review_checklist_path": "L:/wordgame-new/wordgame/harness/demo_routes/glove/manual_review_checklist.md",
-		"route_walkthroughs_path": "L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_route_walkthroughs.md",
-		"source_evidence_markdown_path": "L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_source_evidence.md",
-		"source_evidence_path": "L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_source_evidence.json",
-		"summary_path": "L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_runtime_reports_summary.json"
+		"flow_handoff_path": "E:/wordgame copy/harness/demo_routes/glove/glove_flow_handoff.md",
+		"handoff_path": "E:/wordgame copy/newgame/levels/glove/handoff.md",
+		"manifest_path": "E:/wordgame copy/newgame/levels/glove/level_manifest.json",
+		"manual_review_checklist_path": "E:/wordgame copy/harness/demo_routes/glove/manual_review_checklist.md",
+		"route_walkthroughs_path": "E:/wordgame copy/harness/reports/demo/glove/glove_route_walkthroughs.md",
+		"source_evidence_markdown_path": "E:/wordgame copy/harness/reports/demo/glove/glove_source_evidence.md",
+		"source_evidence_path": "E:/wordgame copy/harness/reports/demo/glove/glove_source_evidence.json",
+		"summary_path": "E:/wordgame copy/harness/reports/demo/glove/glove_runtime_reports_summary.json"
 	},
 	"level_id": "glove",
 	"manual_review_focus": [
@@ -313,14 +313,14 @@
 			"caption": "walk from start to lower lifeline clue",
 			"caption_localized": "从起点走到下方生命线线索",
 			"facing": [
-				0,
-				-1
+				1,
+				0
 			],
 			"input_summary": "移动路径：上、上",
-			"last_message": "text_at (21, 13) expected 线线 got ",
+			"last_message": "player_pos expected (20, 13) got (20, 15); text_at (21, 13) expected 线线 got ",
 			"player_pos": [
 				20,
-				13
+				15
 			],
 			"resolution_note": "",
 			"review_status": "pending",
@@ -335,14 +335,14 @@
 			"caption": "walk from opened lifeline to mid path anchor",
 			"caption_localized": "沿开路走到中段锚点",
 			"facing": [
-				0,
-				-1
+				1,
+				0
 			],
 			"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“沿开路走到中段锚点”",
-			"last_message": "player_pos expected (24, 14) got (20, 13); last_message expected 好手逼退了生命线。 got ",
+			"last_message": "player_pos expected (24, 14) got (20, 15); facing expected (0, -1) got (1, 0); input_locked expected false got true; last_message expected 好手逼退了生命线。 got ",
 			"player_pos": [
 				20,
-				13
+				15
 			],
 			"resolution_note": "",
 			"review_status": "pending",
@@ -357,14 +357,14 @@
 			"caption": "reuse verified correct route through transition",
 			"caption_localized": "复用已验证正确路线直到黑屏转场",
 			"facing": [
-				0,
-				-1
+				1,
+				0
 			],
 			"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“进入黑屏转场”",
-			"last_message": "player_pos expected (24, 5) got (20, 13); visible expected false got true; input_locked expected true got false",
+			"last_message": "player_pos expected (24, 5) got (20, 15); visible expected false got true",
 			"player_pos": [
 				20,
-				13
+				15
 			],
 			"resolution_note": "",
 			"review_status": "pending",
@@ -401,15 +401,15 @@
 					"caption": "walk from start to lower lifeline clue",
 					"caption_localized": "从起点走到下方生命线线索",
 					"facing": [
-						0,
-						-1
+						1,
+						0
 					],
 					"index": 1,
 					"input_summary": "移动路径：上、上",
-					"last_message": "text_at (21, 13) expected 线线 got ",
+					"last_message": "player_pos expected (20, 13) got (20, 15); text_at (21, 13) expected 线线 got ",
 					"player_pos": [
 						20,
-						13
+						15
 					],
 					"type": "move_path"
 				}
@@ -424,15 +424,15 @@
 					"caption": "从起点走到生命线前",
 					"caption_localized": "从起点走到生命线前",
 					"facing": [
-						0,
-						-1
+						1,
+						0
 					],
 					"index": 0,
 					"input_summary": "移动路径：上、上、上",
-					"last_message": "player_pos expected (20, 12) got (20, 13); text_at (21, 12) expected 线 got 掌",
+					"last_message": "player_pos expected (20, 12) got (20, 15); facing expected (0, -1) got (1, 0); text_at (21, 12) expected 线 got 掌",
 					"player_pos": [
 						20,
-						13
+						15
 					],
 					"type": "move_path"
 				}
@@ -447,15 +447,15 @@
 					"caption": "复用真实主路线直到切换一手势",
 					"caption_localized": "复用真实主路线直到切换一手势",
 					"facing": [
-						0,
-						-1
+						1,
+						0
 					],
 					"index": 0,
 					"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“切到一手势打开左侧通道”",
 					"last_message": "verified route segment failed",
 					"player_pos": [
 						20,
-						13
+						15
 					],
 					"type": "route_segment"
 				}
@@ -470,15 +470,15 @@
 					"caption": "复用真实路线直到放开手势",
 					"caption_localized": "复用真实路线直到放开手势",
 					"facing": [
-						0,
-						-1
+						1,
+						0
 					],
 					"index": 0,
 					"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_release_after_delete_runtime.json；执行到“切换到放开状态”",
 					"last_message": "verified route segment failed",
 					"player_pos": [
 						20,
-						13
+						15
 					],
 					"type": "route_segment"
 				}
@@ -493,15 +493,15 @@
 					"caption": "reuse verified correct route through right sword swap",
 					"caption_localized": "复用已验证正确路线直到掌中剑右移",
 					"facing": [
-						0,
-						-1
+						1,
+						0
 					],
 					"index": 0,
 					"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“把掌中剑换到右边”",
-					"last_message": "player_pos expected (4, 1) got (20, 13); last_message expected 二指伸直，掌中剑换到了右边。 got ; text_at (28, 6) expected 剑 got ",
+					"last_message": "player_pos expected (4, 1) got (20, 15); last_message expected 二指伸直，掌中剑换到了右边。 got ; text_at (28, 6) expected 剑 got ",
 					"player_pos": [
 						20,
-						13
+						15
 					],
 					"type": "route_segment"
 				}
@@ -516,15 +516,15 @@
 					"caption": "switch to the good-hand gesture",
 					"caption_localized": "切到好手势辅助状态",
 					"facing": [
-						0,
-						-1
+						1,
+						0
 					],
 					"index": 0,
 					"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“切到好手势”",
-					"last_message": "player_pos expected (30, 15) got (20, 13); last_message expected 巨大手掌，是好的手势。 got ; text_at (7, 8) expected 掌 got 勇：别被一条线给困住了！",
+					"last_message": "player_pos expected (30, 15) got (20, 15); facing expected (0, -1) got (1, 0); last_message expected 巨大手掌，是好的手势。 got ; text_at (7, 8) expected 掌 got 勇：别被一条线给困住了！",
 					"player_pos": [
 						20,
-						13
+						15
 					],
 					"type": "route_segment"
 				}
@@ -539,15 +539,15 @@
 					"caption": "reuse verified correct route through one gesture",
 					"caption_localized": "复用已验证正确路线直到一手势",
 					"facing": [
-						0,
-						-1
+						1,
+						0
 					],
 					"index": 0,
 					"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“切到一手势打开左侧通道”",
-					"last_message": "player_pos expected (29, 14) got (20, 13)",
+					"last_message": "player_pos expected (29, 14) got (20, 15)",
 					"player_pos": [
 						20,
-						13
+						15
 					],
 					"type": "route_segment"
 				}
@@ -562,15 +562,15 @@
 					"caption": "复用真实路线切到好手势",
 					"caption_localized": "复用真实路线切到好手势",
 					"facing": [
-						0,
-						-1
+						1,
+						0
 					],
 					"index": 0,
 					"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_good_clue_runtime.json；执行到“切到好手势辅助状态”",
 					"last_message": "verified route segment failed",
 					"player_pos": [
 						20,
-						13
+						15
 					],
 					"type": "route_segment"
 				}
@@ -585,15 +585,15 @@
 					"caption": "reuse verified correct route through opened path",
 					"caption_localized": "reuse verified correct route through opened path",
 					"facing": [
-						0,
-						-1
+						1,
+						0
 					],
 					"index": 0,
 					"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“沿开路走到中段锚点”",
-					"last_message": "player_pos expected (24, 14) got (20, 13)",
+					"last_message": "player_pos expected (24, 14) got (20, 15)",
 					"player_pos": [
 						20,
-						13
+						15
 					],
 					"type": "route_segment"
 				}
@@ -608,15 +608,15 @@
 					"caption": "walk from opened lifeline to mid path anchor",
 					"caption_localized": "沿开路走到中段锚点",
 					"facing": [
-						0,
-						-1
+						1,
+						0
 					],
 					"index": 0,
 					"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“沿开路走到中段锚点”",
-					"last_message": "player_pos expected (24, 14) got (20, 13); last_message expected 好手逼退了生命线。 got ",
+					"last_message": "player_pos expected (24, 14) got (20, 15); facing expected (0, -1) got (1, 0); input_locked expected false got true; last_message expected 好手逼退了生命线。 got ",
 					"player_pos": [
 						20,
-						13
+						15
 					],
 					"type": "route_segment"
 				}
@@ -631,15 +631,15 @@
 					"caption": "reuse verified correct route through transition",
 					"caption_localized": "复用已验证正确路线直到黑屏转场",
 					"facing": [
-						0,
-						-1
+						1,
+						0
 					],
 					"index": 0,
 					"input_summary": "复用已验证真实路线：res://../harness/demo_routes/glove/glove_correct_route_runtime.json；执行到“进入黑屏转场”",
-					"last_message": "player_pos expected (24, 5) got (20, 13); visible expected false got true; input_locked expected true got false",
+					"last_message": "player_pos expected (24, 5) got (20, 15); visible expected false got true",
 					"player_pos": [
 						20,
-						13
+						15
 					],
 					"type": "route_segment"
 				}
@@ -682,13 +682,13 @@
 		{
 			"baseline_id": "GLOVE-SHOT-009",
 			"diff_pixel_count": 0,
-			"report_path": "L:/wordgame-new/wordgame/newgame/../harness/reports/visual/glove/GLOVE-SHOT-009__report.json",
+			"report_path": "E:/wordgame copy/newgame/../harness/reports/visual/glove/GLOVE-SHOT-009__report.json",
 			"status": "pass"
 		},
 		{
 			"baseline_id": "GLOVE-SHOT-010",
 			"diff_pixel_count": 0,
-			"report_path": "L:/wordgame-new/wordgame/newgame/../harness/reports/visual/glove/GLOVE-SHOT-010__report.json",
+			"report_path": "E:/wordgame copy/newgame/../harness/reports/visual/glove/GLOVE-SHOT-010__report.json",
 			"status": "pass"
 		}
 	]
