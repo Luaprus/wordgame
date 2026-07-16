@@ -197,3 +197,8 @@ powershell -ExecutionPolicy Bypass -File E:\wordgame copy\tools\run_all_tests.ps
   - 启动参数传入 `--entry=glove` 时，主入口会直接跳到手套关试玩页
   - 在手套试玩页里按 `Esc`，会返回 `res://Main.tscn`
 - 这层桥接只解决“如何稳定进入/退出手套关供人工验收”，不代表手套关已经完全并回头盔主流程，也不改变本交接稿里关于 candidate / manual review 的结论。
+## 2026-07-16 获取动画 BGM
+
+- 参考源场景：`D:/文字游戏/Scenes/Maps/第三章/04_手套教學.tscn`。
+- 源 BGM：`D:/文字游戏/Sounds/bgm/ch3/BGM_3_18_fate_road_AB.ogg`。
+- 当前接入：进入 `res://levels/glove/glove_preview.tscn` 时由 `glove_preview.gd` 播放该 BGM，使用源文件的循环导入配置。

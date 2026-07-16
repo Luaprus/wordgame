@@ -9,6 +9,7 @@ const PrecisionMovement = preload("res://scripts/precision_movement.gd")
 const PlayerDirectionMarker = preload("res://scripts/player_moving/player_direction_marker.gd")
 const SmoothGridMover = preload("res://scripts/smooth_grid_mover.gd")
 const OriginalFont = preload("res://Fonts/Zpix-v3.1.6.ttf")
+const ACQUISITION_BGM_PATH := "res://assets/audio/bgm/ch3/BGM_3_18_fate_road_AB.ogg"
 
 const MOVE_REPEAT_INTERVAL := 0.28
 const FAST_MOVE_REPEAT_INTERVAL := 0.12
@@ -36,6 +37,7 @@ var entity_labels: Dictionary = {}
 var player_label: Label
 var map_layer: Node2D
 var transition_reference_overlay: Sprite2D
+var acquisition_bgm_player: AudioStreamPlayer
 var world_event_timer: Timer
 var direction_marker: Node2D
 var direction_marker_fill: Polygon2D
@@ -60,9 +62,11 @@ var demo_paused := false
 var demo_delay := 0.32
 
 func _ready() -> void:
+	_build_acquisition_audio()
 	_build_scene()
 	_scene_ready = true
 	initialize_preview_world()
+	_play_acquisition_bgm()
 	var startup_args := OS.get_cmdline_user_args()
 	apply_startup_route_args(startup_args)
 	apply_startup_demo_args(startup_args)
@@ -85,6 +89,18 @@ func initialize_preview_world() -> void:
 	if _scene_ready:
 		page_camera.sync_to_world(world)
 		_refresh_view()
+
+func _build_acquisition_audio() -> void:
+	acquisition_bgm_player = AudioStreamPlayer.new()
+	acquisition_bgm_player.name = "AcquisitionBGM"
+	acquisition_bgm_player.bus = StringName("BGM") if AudioServer.get_bus_index("BGM") >= 0 else StringName("Master")
+	add_child(acquisition_bgm_player)
+
+func _play_acquisition_bgm() -> void:
+	if acquisition_bgm_player == null or not ResourceLoader.exists(ACQUISITION_BGM_PATH):
+		return
+	acquisition_bgm_player.stream = load(ACQUISITION_BGM_PATH)
+	acquisition_bgm_player.play()
 
 func _process(delta: float) -> void:
 	world.advance_highlight_animation(delta)

@@ -48,9 +48,13 @@
     "source_deviation": "原版 goose:position 入水只从 y=30 到 y=40；本次按用户截图和口述的半个字高度强化为 30px。"
   },
   "required_resources": {
+    "acquisition_bgm_source": "D:/文字游戏/Sounds/bgm/ch4/BGM_4_29_vault_AB.ogg",
+    "acquisition_bgm_target": "res://assets/audio/bgm/ch4/BGM_4_29_vault_AB.ogg",
     "new_external_art": [],
-    "new_external_audio": [],
-    "notes": "本次没有新增贴图或音效；动画为复刻源场景 river_in/river_out 行为的代码偏移。"
+    "new_external_audio": [
+      "D:/文字游戏/Sounds/bgm/ch4/BGM_4_29_vault_AB.ogg"
+    ],
+    "notes": "溪流动画复刻源场景 river_in/river_out 行为；四目头盔获取流程新增源场景使用的 BGM。"
   },
   "bridge_split_animation": {
     "source_animation_scene": "D:/文字游戏/Scenes/Animations/split_animation.tscn",

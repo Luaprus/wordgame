@@ -120,6 +120,8 @@
     ]
   },
   "required_resources": {
+    "acquisition_bgm_source": "D:/文字游戏/Sounds/bgm/ch3/BGM_3_18_fate_road_AB.ogg",
+    "acquisition_bgm_target": "res://assets/audio/bgm/ch3/BGM_3_18_fate_road_AB.ogg",
     "animation_baselines": "harness/baselines/levels/glove/animation_baselines.json",
     "audio_baselines": "harness/baselines/levels/glove/audio_baselines.json",
     "behavior_baselines": "harness/baselines/levels/glove/behavior_baselines.json",
