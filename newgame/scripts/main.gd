@@ -3,6 +3,7 @@ extends Node2D
 const GridWorld = preload("res://scripts/grid_world.gd")
 const WordEntity = preload("res://scripts/word_entity.gd")
 const LevelLoader = preload("res://scripts/level_loader.gd")
+const ArtifactHall = preload("res://levels/hall/artifact_hall.gd")
 const HelmetTutorial = preload("res://levels/helmet/helmet_tutorial.gd")
 const HelmetR1 = preload("res://levels/helmet/helmet_r1.gd")
 const HelmetR2 = preload("res://levels/helmet/helmet_r2.gd")
@@ -424,8 +425,13 @@ func _update_intro_sequence(delta: float) -> void:
 	_refresh_view()
 	_play_gem_burst_preview()
 
+func _is_helmet_tutorial_level() -> bool:
+	return current_level_index >= 0 \
+		and current_level_index < LEVEL_SEQUENCE.size() \
+		and LEVEL_SEQUENCE[current_level_index] == HelmetTutorial
+
 func _begin_gem_reveal() -> void:
-	if current_level_index != 0 or intro_phase != "prompt":
+	if not _is_helmet_tutorial_level() or intro_phase != "prompt":
 		return
 	var light_cells := _current_light_cells()
 	world._apply_map_effect({
@@ -459,7 +465,7 @@ func _restore_gems_without_light_overlap() -> Array:
 	return restored
 
 func _begin_intro_prompt() -> void:
-	if current_level_index != 0 or intro_phase != "lights":
+	if not _is_helmet_tutorial_level() or intro_phase != "lights":
 		return
 	world.set_input_locked(true)
 	world.set_event_locked(true)
@@ -1888,7 +1894,7 @@ func _clear_effect_overlays(overlays: Array) -> void:
 				node.queue_free()
 
 func _play_gem_burst_preview() -> void:
-	if current_level_index != 0 or gem_burst_effect == null:
+	if not _is_helmet_tutorial_level() or gem_burst_effect == null:
 		return
 	gem_burst_effect.play_at(
 		_grid_to_pixels_float(GEM_ORIGIN_GRID),
@@ -1934,7 +1940,7 @@ func _load_level_index(index: int, overrides := {}) -> void:
 	world.update_page()
 	_clear_entity_visuals()
 	_reset_player_river_visual()
-	if current_level_index == 0:
+	if _is_helmet_tutorial_level():
 		intro_phase = "lights"
 		intro_reveal_elapsed = 0.0
 		intro_reveal_max_distance = 0.0
