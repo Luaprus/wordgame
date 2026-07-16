@@ -13,6 +13,8 @@ const ME_DEFAULT_TEXTURE := preload("res://assets/sprites/me/me_default.png")
 const ME_WALK_TEXTURE := preload("res://assets/sprites/me/me_walk.png")
 const START_AT_SNAKE_FOR_TEST := false
 
+@export var start_at_snake_second_phase := false
+
 const MAP_MAZE := 0
 const MAP_TREASURE := 1
 const MAP_SLIME_LEFT := 2
@@ -55,7 +57,7 @@ const SE_SNAKE_HOLY := "res://assets/audio/se/MEL/MEL_2_24_sword.wav"
 const SWORD_VIDEO := "res://assets/video/u_sword.ogv"
 const BACKSPACE_SPLASH_TEXTURE := preload("res://assets/sprites/backspace_splash/splash.png")
 const BACKSPACE_CUT_SHADER := preload("res://assets/shaders/cut2.gdshader")
-const BACKSPACE_CUT_ANIMATION_CHARS := ["忘", "对", "不", "来", "没", "断", "难", "伤"]
+const BACKSPACE_CUT_ANIMATION_CHARS := ["忘", "对", "不", "来", "没", "断", "难", "伤", "你", "走", "过"]
 const BACKSPACE_CUT_ANGLE_DEGREES := 45.0
 const BACKSPACE_CUT_MASK_EXTRA_X := 14.0
 
@@ -405,7 +407,9 @@ func _ready() -> void:
 	_render_reference_maps()
 	_create_actors()
 	_set_hint("")
-	if START_AT_SNAKE_FOR_TEST:
+	if start_at_snake_second_phase:
+		call_deferred("_enter_snake_second_phase_direct")
+	elif START_AT_SNAKE_FOR_TEST:
 		call_deferred("_enter_snake_boss_direct")
 
 
@@ -1312,6 +1316,17 @@ func _enter_snake_boss_direct() -> void:
 	_prepare_snake_boss_state()
 	world_layer.position.x = -MAP_SNAKE * VIEWPORT_SIZE.x
 	_begin_snake_boss_scene()
+
+
+func _enter_snake_second_phase_direct() -> void:
+	_prepare_snake_boss_state()
+	world_layer.position.x = -MAP_SNAKE * VIEWPORT_SIZE.x
+	current_map = MAP_SNAKE
+	player_cell = SNAKE_PLAYER_SPAWN
+	last_direction = Vector2i.UP
+	player_label.visible = true
+	_update_player_position()
+	_start_snake_second_phase()
 
 
 func _prepare_snake_boss_state() -> void:
@@ -2233,7 +2248,6 @@ func _show_snake_reverse_sentence() -> void:
 	var target_start: Vector2i = starts[target_line_index] + Vector2i(target_offset, 0)
 	var success_cell: Vector2i = target_start + Vector2i(int(data["success"]), 0)
 	var fail_cells: Array[Vector2i] = _line_cells_except(target_start, line.length(), success_cell)
-	_stand_near_sentence_cell(success_cell)
 	_start_delete_sentence_lines(
 		lines,
 		starts,

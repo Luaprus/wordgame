@@ -29,7 +29,8 @@ func _init() -> void:
 	if scene is PackedScene:
 		var instance: Node = (scene as PackedScene).instantiate()
 		assert_true(instance is Control, "sword flow scene instantiates as Control")
-		for cut_char in ["断", "没", "不", "对", "难"]:
+		assert_true(bool(instance.get("start_at_snake_second_phase")), "hall sword scene enters snake second phase directly")
+		for cut_char in ["断", "没", "不", "对", "难", "你", "走", "过"]:
 			var label := Label.new()
 			label.text = cut_char
 			assert_true(instance.call("_uses_backspace_cut_animation", label), "%s uses backspace cut animation" % cut_char)

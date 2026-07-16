@@ -57,3 +57,8 @@
 - 为避免之后合并冲突把“触发源”删掉但“播放器”还留着，新增测试：
   - `res://tests/test_interaction_visual_effect_requests.gd`
   只要推字、合字、拉字请求断链，这条测试就会失败。
+## 2026-07-16 获取动画 BGM
+
+- 参考源场景：`D:/文字游戏/Scenes/Maps/第四章/12_寶庫_穹頂.tscn`。
+- 源 BGM：`D:/文字游戏/Sounds/bgm/ch4/BGM_4_29_vault_AB.ogg`。
+- 当前接入：四目头盔教程关加载时由 `scripts/main.gd` 播放该 BGM，离开头盔教程关时停止；头盔获取视频仍使用原有 `res://assets/video/u_helmet.ogv`。

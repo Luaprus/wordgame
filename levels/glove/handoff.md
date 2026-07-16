@@ -203,5 +203,6 @@ powershell -ExecutionPolicy Bypass -File E:\wordgame copy\tools\run_all_tests.ps
 - 原版文字表现来源：`参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/11_添譜來堂_開場.tscn`。
 - 用户已明确覆盖原场景的四面随机 `hero_walk()`：不能再按 36 字、上下左右、随机延迟和前段手套教学触发实现。
 - 正确接入：玩家完成手势关、与终点“勇”交互，依次确认到“4397号勇者，请无畏地上前吧！”页面；再次确认该页后清屏，才启动围拢。
-- 动画：上、左、右三面最外层隔格出现第一波并内移；补另一组隔格为第二波并同移；第三波后，第一、二波再向内两格；最后逐格补满顶部五行与左右五列。完成后停住并锁定输入。
-- 自动验证：`res://tests/test_glove_hero_encroach.gd` 校验第三页确认接点、第一波三面隔格、最终五层墙完整无重叠、输入锁定和停帧。
+- 正式流程使用后来单独恢复的源码版预览作为实现基准：`res://harness/source_previews/hero_encroach_source_preview.gd` / `res://harness/source_previews/hero_encroach_source_preview.tscn`。旧的简化“三波补满五层墙”逻辑只保留为历史函数，不再作为正式流程的行为依据。
+- 动画时序：清屏后立即生成第一批“勇”；约 1.1s、2.6s、3.7s、5.5s 分阶段推进，单格移动约 0.3s，移动之间保留约 0.05s 间隔，并带源码式随机延迟。后处理阶段会让靠中的左右两列渐隐、外侧空隙同步渐显补“勇”，顶部左右锚点保留，最后用打字机效果打出收束文字。
+- 自动验证：`res://tests/test_glove_hero_encroach.gd` 校验第三页确认接点、正式流程进入 source mode、最终左右边框/顶部锚点/中间缺口/打字机收束文字、输入锁定和停帧。

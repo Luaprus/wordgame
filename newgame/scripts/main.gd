@@ -60,6 +60,7 @@ const HALL_DOOR_FINAL_SHIFT_X := -13.0
 const HIGHLIGHT_VISUAL_CONFIG_PATH := "res://assets/animations/highlight/highlight_visual_config.json"
 const GLOVE_PREVIEW_SCENE_PATH := "res://levels/glove/glove_preview.tscn"
 const HALL_PREVIEW_SCENE_PATH := "res://levels/hall/artifact_hall_preview.tscn"
+const HELMET_ACQUISITION_BGM_PATH := "res://assets/audio/bgm/ch4/BGM_4_29_vault_AB.ogg"
 const SWORD_FLOW_SCENE_PATH := "res://scenes/Maps/第二章/05_聖劍寶庫_復刻.tscn"
 const STARTUP_ENTRY_ARG_PREFIX := "--entry="
 const SWORD_SCENE_SHORTCUT_KEY := KEY_F8
@@ -102,6 +103,7 @@ var direction_marker_fill: Polygon2D
 var direction_marker_outline: Line2D
 var direction_marker_timer: Timer
 var fullscreen_video_player: VideoStreamPlayer
+var level_bgm_player: AudioStreamPlayer
 var gem_burst_effect
 var light_glow_effect
 var pull_particle_effect
@@ -266,6 +268,11 @@ func _build_ui() -> void:
 	fullscreen_video_player.set_anchors_preset(Control.PRESET_FULL_RECT)
 	fullscreen_video_player.finished.connect(_on_fullscreen_video_finished)
 	canvas.add_child(fullscreen_video_player)
+	level_bgm_player = AudioStreamPlayer.new()
+	level_bgm_player.name = "LevelBGM"
+	level_bgm_player.bus = StringName("BGM") if AudioServer.get_bus_index("BGM") >= 0 else StringName("Master")
+	canvas.add_child(level_bgm_player)
+	_sync_level_bgm()
 
 func _refresh_view(_message := "") -> void:
 	_sync_entity_labels()
@@ -2016,6 +2023,20 @@ func _load_level_index(index: int, overrides := {}) -> void:
 			child.queue_free()
 	if player_sprite:
 		_set_player_idle_visual()
+	_sync_level_bgm()
+
+func _sync_level_bgm() -> void:
+	if level_bgm_player == null:
+		return
+	if not _is_helmet_tutorial_level():
+		level_bgm_player.stop()
+		return
+	if level_bgm_player.playing and level_bgm_player.stream != null and level_bgm_player.stream.resource_path == HELMET_ACQUISITION_BGM_PATH:
+		return
+	if not ResourceLoader.exists(HELMET_ACQUISITION_BGM_PATH):
+		return
+	level_bgm_player.stream = load(HELMET_ACQUISITION_BGM_PATH)
+	level_bgm_player.play()
 
 func _startup_level_overrides() -> Dictionary:
 	var overrides := {}

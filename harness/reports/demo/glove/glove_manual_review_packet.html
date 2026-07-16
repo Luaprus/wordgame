@@ -47,7 +47,7 @@ li{margin:4px 0;}
 <div class="meta">
 <div>关卡标识</div><div><span class="pill">glove</span></div>
 <div>关卡名称</div><div>手套关</div>
-<div>生成时间</div><div>2026-07-13 08:20:13</div>
+<div>生成时间</div><div>2026-07-16 12:15:12</div>
 <div>运行报告</div><div><span class="ok">11 条</span>，失败 <span class="warn">11 条</span></div>
 <div>辅助设置</div><div><span class="warn">0</span> 条非玩家真实输入；该数字降到 0 前，不能把 route 当作完整原版操作复刻。</div>
 <div>人工复查进度</div><div>待复查 <span class="warn">2</span>，人工确认 <span class="ok">0</span>，人工驳回 <span class="danger">0</span></div>
@@ -55,14 +55,14 @@ li{margin:4px 0;}
 </div>
 </section>
 <section><h2>先看这些文件</h2><div class="path-list">
-<a href="file:///E:/wordgame%20copy/newgame/levels/glove/level_manifest.json">关卡清单：E:/wordgame copy/newgame/levels/glove/level_manifest.json</a>
-<a href="file:///E:/wordgame%20copy/newgame/levels/glove/handoff.md">交接说明：E:/wordgame copy/newgame/levels/glove/handoff.md</a>
-<a href="file:///E:/wordgame%20copy/harness/demo_routes/glove/glove_flow_handoff.md">流程说明：E:/wordgame copy/harness/demo_routes/glove/glove_flow_handoff.md</a>
-<a href="file:///E:/wordgame%20copy/harness/demo_routes/glove/manual_review_checklist.md">人工复查清单：E:/wordgame copy/harness/demo_routes/glove/manual_review_checklist.md</a>
-<a href="file:///E:/wordgame%20copy/harness/reports/demo/glove/glove_runtime_reports_summary.json">route 汇总：E:/wordgame copy/harness/reports/demo/glove/glove_runtime_reports_summary.json</a>
-<a href="file:///E:/wordgame%20copy/harness/reports/demo/glove/glove_route_walkthroughs.md">route 步骤明细：E:/wordgame copy/harness/reports/demo/glove/glove_route_walkthroughs.md</a>
-<a href="file:///E:/wordgame%20copy/harness/reports/demo/glove/glove_source_evidence.json">源码证据 JSON：E:/wordgame copy/harness/reports/demo/glove/glove_source_evidence.json</a>
-<a href="file:///E:/wordgame%20copy/harness/reports/demo/glove/glove_source_evidence.md">源码证据 Markdown：E:/wordgame copy/harness/reports/demo/glove/glove_source_evidence.md</a>
+<a href="file:///L:/wordgame-new/wordgame/newgame/levels/glove/level_manifest.json">关卡清单：L:/wordgame-new/wordgame/newgame/levels/glove/level_manifest.json</a>
+<a href="file:///L:/wordgame-new/wordgame/newgame/levels/glove/handoff.md">交接说明：L:/wordgame-new/wordgame/newgame/levels/glove/handoff.md</a>
+<a href="file:///L:/wordgame-new/wordgame/harness/demo_routes/glove/glove_flow_handoff.md">流程说明：L:/wordgame-new/wordgame/harness/demo_routes/glove/glove_flow_handoff.md</a>
+<a href="file:///L:/wordgame-new/wordgame/harness/demo_routes/glove/manual_review_checklist.md">人工复查清单：L:/wordgame-new/wordgame/harness/demo_routes/glove/manual_review_checklist.md</a>
+<a href="file:///L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_runtime_reports_summary.json">route 汇总：L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_runtime_reports_summary.json</a>
+<a href="file:///L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_route_walkthroughs.md">route 步骤明细：L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_route_walkthroughs.md</a>
+<a href="file:///L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_source_evidence.json">源码证据 JSON：L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_source_evidence.json</a>
+<a href="file:///L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_source_evidence.md">源码证据 Markdown：L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_source_evidence.md</a>
 </div></section>
 <section><h2>组员怎么复查</h2><div class="grid">
 <div class="card"><h3>先核主流程</h3><div>先对照正确路线、错误路线和黑屏收尾三段，确认大面玩法顺序没有偏。</div></div>
@@ -150,85 +150,7 @@ li{margin:4px 0;}
 </section>
 <section><h2>源码证据</h2>
 <p class="muted small">这些不是玩法完成证明，而是从原始 scene 中直接抽出的规则线索，用来缩小人工复查范围。</p>
-<div class="card" style="margin-bottom:12px;">
-<h3>爱手势在原始 scene 中确实存在</h3>
-<div>原始拳头关 scene 同时出现了爱手势节点、爱手势成立开关、第一次爱手势标记，以及切到手势动画状态 5 的逻辑。</div>
-<div class="small muted" style="margin-top:4px;">爱手势状态值：5</div>
-<div class="small muted" style="margin-top:4px;">首次成就：3-5</div>
-<div class="small muted" style="margin-top:4px;">PT 测试节点：T_愛的手勢</div>
-<div class="small muted" style="margin-top:8px;">来源：E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn</div>
-<div class="small muted" style="margin-top:8px;">证据：愛的手勢, ch3_愛的手勢成立, 第一次愛的手勢, change_gesture_animation</div>
-<div class="small" style="margin-top:8px;">结论：“爱手势是否存在”已经不是猜测；源码明确支持这个状态。当前仍未收口的是玩家如何稳定获得并激活它。</div>
-</div>
-<div class="card" style="margin-bottom:12px;">
-<h3>爱字在原始 scene 中有可推标签来源</h3>
-<div>原始拳头关 scene 在“零的手势”节点里挂了一段调查文本，其中 `愛` 被包在 `&lt;l&gt;...&lt;/l&gt;` 标签里，并通过 `label_settings` 明确标成 `can_push = true`。</div>
-<div class="small muted" style="margin-top:8px;">节点：零的手勢</div>
-<div class="small muted" style="margin-top:4px;">可推字：愛</div>
-<div class="small muted" style="margin-top:4px;">调查文本坐标：[1, 12]</div>
-<div class="small muted" style="margin-top:4px;">触发条件：s:ch3_手掌調查敘述出現==false</div>
-<div class="small muted" style="margin-top:8px;">来源：E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn</div>
-<div class="small muted" style="margin-top:8px;">证据：憐&lt;l&gt;愛&lt;/l&gt;之深, &quot;can_push&quot;: true, ch3_手掌調查敘述出現, 零的手勢</div>
-<div class="small" style="margin-top:8px;">结论：这说明原版里确实存在一个可被推出的“爱”字来源，所以当前问题已经从“爱字是不是完全没有来源”收缩成“调查文本如何触发、爱字如何落地、玩家能否稳定把它送入手势槽”。</div>
-<div class="small muted" style="margin-top:8px;white-space:pre-wrap;">命令片段：<code>@[type] {
-	&quot;texts&quot;: &quot;憐&lt;l&gt;愛&lt;/l&gt;之深，&amp;||責求之切，&amp;||勇者之情。&quot;, 
-	&quot;pos&quot;: [1,12], 
-	&quot;tags&quot;: [&quot;hand&quot;],
-	&quot;label_settings&quot;: {
-		&quot;l&quot;: {
-			&quot;can_push&quot;: true
-		}
-	},
-	&quot;z_index&quot;: 9,
-    &quot;is_dialog_end&quot;: true
-}</code></div>
-</div>
-<div class="card" style="margin-bottom:12px;">
-<h3>好手势与赞手势在源码里共用同一手势状态</h3>
-<div>原始拳头关 scene 把“好的手势成立”和“赞的手势成立”并到同一段逻辑里，并统一切到手势动画状态 1。</div>
-<div class="small muted" style="margin-top:8px;">来源：E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn</div>
-<div class="small muted" style="margin-top:8px;">证据：好的手勢成立, 讚的手勢成立, 好還是讚的手勢成立, change_gesture_animation</div>
-<div class="small" style="margin-top:8px;">结论：当前运行版把“好”和“赞”映射到同一个 like 布局不是拍脑袋，而是有源码级依据。后续更该核对的是碰撞细节，而不是先怀疑两者是否同态。</div>
-</div>
-<div class="card" style="margin-bottom:12px;">
-<h3>放开状态在原始 scene 中是独立手势分支</h3>
-<div>原始拳头关 scene 通过“＿会轻易放开”句子规则调用手势状态 6；在 [6,3] 播放 7 字合法句动画、齿轮岩石音效和镜头震动后切到放开布局。恢复“不”会调用状态 -1 返回此前的一般手势。</div>
-<div class="small muted" style="margin-top:8px;">来源：E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn</div>
-<div class="small muted" style="margin-top:8px;">证据：＿會輕易放開, arg_array: [6], arg_array: [-1], Vector2(6,3), SE_3_58_gear_rock.wav, shake_camera(80,15), animation key 0.8</div>
-<div class="small" style="margin-top:8px;">结论：删“不”后进入放开的规则、音效和关键时间点已有源码直接证据；剩余人工项只需核对实际缓动、画面震动观感和截图落帧。</div>
-</div>
-<div class="card" style="margin-bottom:12px;">
-<h3>掌中剑换位在原始 scene 中有明确状态标记</h3>
-<div>原始拳头关 scene 里存在“拿到掌中剑了”和“第一次剑换位置”等状态开关，用来区分剑是否已经换位。</div>
-<div class="small muted" style="margin-top:8px;">来源：E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn</div>
-<div class="small muted" style="margin-top:8px;">证据：拿到掌中劍了, 第一次劍換位置</div>
-<div class="small" style="margin-top:8px;">结论：当前运行版把掌中剑换位当成规则锚点是合理的。它在源码里本来就是一个独立的状态切换，不是纯视觉装饰。</div>
-</div>
-<div class="card" style="margin-bottom:12px;">
-<h3>拳头关黑屏与尾声三段对白链路已由源码确认</h3>
-<div>拳头关先用 2 秒遮屏，将玩家移动到 [24,5]，随后无额外转场效果进入 `第三章/16_添譜來堂_尾聲`；尾声开场依次显示三段对白。</div>
-<div class="small muted" style="margin-top:8px;">来源：E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn | E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/16_添譜來堂_尾聲.tscn</div>
-<div class="small muted" style="margin-top:8px;">证据：time_sec: 2.0, move_to_point [24,5], 第三章/16_添譜來堂_尾聲, 果然有兩把刷子, 你與我們都不同, 四三九七號勇者, 請無畏地上前吧</div>
-<div class="small" style="margin-top:8px;">结论：当前运行版可以直接按源码实现三页对白和目标地图记录；仍需人工核对的是逐帧打字速度、停顿和镜头构图，而不是文案或去向。</div>
-</div>
-<div class="card" style="margin-bottom:12px;">
-<h3>@[type]/@[clear_typed] 在测试地图里表现为打字机对白层</h3>
-<div>测试地图 map0001 / map0002 里的 `@[type]` 文本会用 `tags` 与 `clear_typed` 管理，同一事件本体的 `now_pos` 与 `type` 的 `pos` 明显分离。</div>
-<div class="small muted" style="margin-top:4px;">示例事件地图坐标：[6, 1]</div>
-<div class="small muted" style="margin-top:4px;">示例打字机坐标：[3, 9]</div>
-<div class="small muted" style="margin-top:4px;">示例标签：room</div>
-<div class="small muted" style="margin-top:4px;">示例地图：E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/map0002.tscn</div>
-<div class="small muted" style="margin-top:8px;">来源：E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/map0001.tscn | E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/map0002.tscn</div>
-<div class="small muted" style="margin-top:8px;">证据：@[clear_typed] &quot;typed&quot;, @[clear_typed] &quot;room&quot;, &quot;pos&quot;:[4,8], &quot;pos&quot;:[3,9], now_pos = Vector2( 6, 1 )</div>
-<div class="small" style="margin-top:8px;">结论：因此 love 线索里的 `pos: [1, 12]` 目前更应视为打字机对白层坐标候选，不应直接当成已确认的世界落点。`愛` 如何从对白层变成可实际推动的地图字，仍需更强证据。</div>
-</div>
-<div class="card" style="margin-bottom:12px;">
-<h3>Typewriter.gdc 暗示标签字会在运行时生成实体</h3>
-<div>原始 `Typewriter.gdc` 同时包含 `generated_in_runtime`、`exist_event`、`both`、`copy`、`label_settings`、`has_defalut_tag` 等关键 token。这说明 typewriter 系统不只是打印纯 UI 文本，而是在处理“已有事件 / 复制 / 运行时生成”这类对象分支。</div>
-<div class="small muted" style="margin-top:8px;">来源：E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/Typewriter.gdc</div>
-<div class="small muted" style="margin-top:8px;">证据：generated_in_runtime, exist_event, both, copy, label_settings, has_defalut_tag</div>
-<div class="small" style="margin-top:8px;">结论：结合 `零的手勢` 节点里 `&lt;l&gt;愛&lt;/l&gt;` + `can_push = true` 的 scene 配置，当前最强结论是：`愛` 不是先作为普通对白出现、再被另一个系统二次落成地图字；它更像是在 typewriter 层激活期间直接生成的可推动运行时字实体。这个结论仍属于源码推断，不等于已经逐帧复核过原版运行表现。</div>
-</div>
+<div class="muted">当前没有源码证据。</div>
 </section>
 <section><h2>回传模板</h2><ol>
 <li>状态名：这一段是什么状态。</li>
@@ -287,8 +209,8 @@ li{margin:4px 0;}
 </section>
 <section><h2>视觉 Smoke</h2>
 <table><thead><tr><th>截图基线</th><th>状态</th><th>像素差</th><th>报告路径</th></tr></thead><tbody>
-<tr><td><code>GLOVE-SHOT-009</code></td><td>通过</td><td>0</td><td><code>E:/wordgame copy/newgame/../harness/reports/visual/glove/GLOVE-SHOT-009__report.json</code></td></tr>
-<tr><td><code>GLOVE-SHOT-010</code></td><td>通过</td><td>0</td><td><code>E:/wordgame copy/newgame/../harness/reports/visual/glove/GLOVE-SHOT-010__report.json</code></td></tr>
+<tr><td><code>GLOVE-SHOT-009</code></td><td>通过</td><td>0</td><td><code>L:/wordgame-new/wordgame/newgame/../harness/reports/visual/glove/GLOVE-SHOT-009__report.json</code></td></tr>
+<tr><td><code>GLOVE-SHOT-010</code></td><td>通过</td><td>0</td><td><code>L:/wordgame-new/wordgame/newgame/../harness/reports/visual/glove/GLOVE-SHOT-010__report.json</code></td></tr>
 </tbody></table></section>
 <section><h2>当前验收条件</h2><ul>
 <li><strong>试玩入口能正常打开，且没有缺资源报错。</strong><span class="muted small">（preview_scene_opens_without_missing_resources）</span></li>

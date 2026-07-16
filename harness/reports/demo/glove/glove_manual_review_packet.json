@@ -211,16 +211,16 @@
 	],
 	"display_name": "手套关",
 	"failed_report_count": 11,
-	"generated_at": "2026-07-13 08:20:13",
+	"generated_at": "2026-07-16 12:15:12",
 	"generated_from": {
-		"flow_handoff_path": "E:/wordgame copy/harness/demo_routes/glove/glove_flow_handoff.md",
-		"handoff_path": "E:/wordgame copy/newgame/levels/glove/handoff.md",
-		"manifest_path": "E:/wordgame copy/newgame/levels/glove/level_manifest.json",
-		"manual_review_checklist_path": "E:/wordgame copy/harness/demo_routes/glove/manual_review_checklist.md",
-		"route_walkthroughs_path": "E:/wordgame copy/harness/reports/demo/glove/glove_route_walkthroughs.md",
-		"source_evidence_markdown_path": "E:/wordgame copy/harness/reports/demo/glove/glove_source_evidence.md",
-		"source_evidence_path": "E:/wordgame copy/harness/reports/demo/glove/glove_source_evidence.json",
-		"summary_path": "E:/wordgame copy/harness/reports/demo/glove/glove_runtime_reports_summary.json"
+		"flow_handoff_path": "L:/wordgame-new/wordgame/harness/demo_routes/glove/glove_flow_handoff.md",
+		"handoff_path": "L:/wordgame-new/wordgame/newgame/levels/glove/handoff.md",
+		"manifest_path": "L:/wordgame-new/wordgame/newgame/levels/glove/level_manifest.json",
+		"manual_review_checklist_path": "L:/wordgame-new/wordgame/harness/demo_routes/glove/manual_review_checklist.md",
+		"route_walkthroughs_path": "L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_route_walkthroughs.md",
+		"source_evidence_markdown_path": "L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_source_evidence.md",
+		"source_evidence_path": "L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_source_evidence.json",
+		"summary_path": "L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_runtime_reports_summary.json"
 	},
 	"level_id": "glove",
 	"manual_review_focus": [
@@ -677,200 +677,18 @@
 			"label": "原始地图：D:/文字游戏/Scenes/Maps/第三章/16_添譜來堂_尾聲.tscn [GLOVE-TRANSITION-OUT] 黑屏对白与收尾状态候选来源。"
 		}
 	],
-	"source_findings": [
-		{
-			"achievement_id": "3-5",
-			"evidence_tokens": [
-				"愛的手勢",
-				"ch3_愛的手勢成立",
-				"第一次愛的手勢",
-				"change_gesture_animation"
-			],
-			"first_love_switch": "ch3_第一次愛的手勢",
-			"id": "SRC-LOVE-GESTURE",
-			"implication": "“爱手势是否存在”已经不是猜测；源码明确支持这个状态。当前仍未收口的是玩家如何稳定获得并激活它。",
-			"love_activation_switch": "ch3_愛的手勢成立",
-			"love_state_value": 5,
-			"pt_love_test_node": "T_愛的手勢",
-			"pt_source_path": "E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/50_添譜來堂_拳頭PT用.tscn",
-			"source_path": "E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn",
-			"summary": "原始拳头关 scene 同时出现了爱手势节点、爱手势成立开关、第一次爱手势标记，以及切到手势动画状态 5 的逻辑。",
-			"title": "爱手势在原始 scene 中确实存在"
-		},
-		{
-			"commands_excerpt": "@[type] {\n\t\"texts\": \"憐<l>愛</l>之深，&||責求之切，&||勇者之情。\", \n\t\"pos\": [1,12], \n\t\"tags\": [\"hand\"],\n\t\"label_settings\": {\n\t\t\"l\": {\n\t\t\t\"can_push\": true\n\t\t}\n\t},\n\t\"z_index\": 9,\n    \"is_dialog_end\": true\n}",
-			"computed_label_grid_candidate": [
-				2,
-				12
-			],
-			"computed_label_grid_method": "type 起点 x + 标签前可见字符数；标签标记与停顿控制符不占格",
-			"computed_label_grid_status": "source_inference",
-			"evidence_tokens": [
-				"憐<l>愛</l>之深",
-				"\"can_push\": true",
-				"ch3_手掌調查敘述出現",
-				"零的手勢"
-			],
-			"gating_condition": "s:ch3_手掌調查敘述出現==false",
-			"id": "SRC-LOVE-WORD-SOURCE",
-			"implication": "这说明原版里确实存在一个可被推出的“爱”字来源，所以当前问题已经从“爱字是不是完全没有来源”收缩成“调查文本如何触发、爱字如何落地、玩家能否稳定把它送入手势槽”。",
-			"label_can_push": true,
-			"pushable_label_tag": "l",
-			"pushable_label_text": "愛",
-			"source_path": "E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn",
-			"source_scene_node": "零的手勢",
-			"summary": "原始拳头关 scene 在“零的手势”节点里挂了一段调查文本，其中 `愛` 被包在 `<l>...</l>` 标签里，并通过 `label_settings` 明确标成 `can_push = true`。",
-			"title": "爱字在原始 scene 中有可推标签来源",
-			"typed_text_pos": [
-				1,
-				12
-			],
-			"typed_texts_raw": "憐<l>愛</l>之深，&||責求之切，&||勇者之情。"
-		},
-		{
-			"evidence_tokens": [
-				"好的手勢成立",
-				"讚的手勢成立",
-				"好還是讚的手勢成立",
-				"change_gesture_animation"
-			],
-			"id": "SRC-GOOD-LIKE-SHARED",
-			"implication": "当前运行版把“好”和“赞”映射到同一个 like 布局不是拍脑袋，而是有源码级依据。后续更该核对的是碰撞细节，而不是先怀疑两者是否同态。",
-			"source_path": "E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn",
-			"summary": "原始拳头关 scene 把“好的手势成立”和“赞的手势成立”并到同一段逻辑里，并统一切到手势动画状态 1。",
-			"title": "好手势与赞手势在源码里共用同一手势状态"
-		},
-		{
-			"audio_path": "res://Sounds/se/第三章 音效/SE_3_58_gear_rock.wav",
-			"camera_shake": [
-				80,
-				15
-			],
-			"evidence_tokens": [
-				"＿會輕易放開",
-				"arg_array: [6]",
-				"arg_array: [-1]",
-				"Vector2(6,3)",
-				"SE_3_58_gear_rock.wav",
-				"shake_camera(80,15)",
-				"animation key 0.8"
-			],
-			"gesture_switch_key_seconds": 0.8,
-			"id": "SRC-RELEASE-GESTURE",
-			"implication": "删“不”后进入放开的规则、音效和关键时间点已有源码直接证据；剩余人工项只需核对实际缓动、画面震动观感和截图落帧。",
-			"release_gesture_argument": 6,
-			"release_sentence": "＿會輕易放開",
-			"restore_gesture_argument": -1,
-			"restore_sentence": "不會輕易放開",
-			"sentence_animation_pos": [
-				6,
-				3
-			],
-			"sentence_text_count": 7,
-			"source_path": "E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn",
-			"summary": "原始拳头关 scene 通过“＿会轻易放开”句子规则调用手势状态 6；在 [6,3] 播放 7 字合法句动画、齿轮岩石音效和镜头震动后切到放开布局。恢复“不”会调用状态 -1 返回此前的一般手势。",
-			"title": "放开状态在原始 scene 中是独立手势分支"
-		},
-		{
-			"evidence_tokens": [
-				"拿到掌中劍了",
-				"第一次劍換位置"
-			],
-			"id": "SRC-SWORD-SWAP",
-			"implication": "当前运行版把掌中剑换位当成规则锚点是合理的。它在源码里本来就是一个独立的状态切换，不是纯视觉装饰。",
-			"source_path": "E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn",
-			"summary": "原始拳头关 scene 里存在“拿到掌中剑了”和“第一次剑换位置”等状态开关，用来区分剑是否已经换位。",
-			"title": "掌中剑换位在原始 scene 中有明确状态标记"
-		},
-		{
-			"dialogue_page_count": 3,
-			"evidence_tokens": [
-				"time_sec: 2.0",
-				"move_to_point [24,5]",
-				"第三章/16_添譜來堂_尾聲",
-				"果然有兩把刷子",
-				"你與我們都不同",
-				"四三九七號勇者",
-				"請無畏地上前吧"
-			],
-			"fade_seconds": 2.0,
-			"handoff_player_pos": [
-				24,
-				5
-			],
-			"id": "SRC-TRANSITION-TAIL",
-			"implication": "当前运行版可以直接按源码实现三页对白和目标地图记录；仍需人工核对的是逐帧打字速度、停顿和镜头构图，而不是文案或去向。",
-			"source_path": "E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/15_添譜來堂_拳頭.tscn | E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/16_添譜來堂_尾聲.tscn",
-			"summary": "拳头关先用 2 秒遮屏，将玩家移动到 [24,5]，随后无额外转场效果进入 `第三章/16_添譜來堂_尾聲`；尾声开场依次显示三段对白。",
-			"target_map": "第三章/16_添譜來堂_尾聲",
-			"title": "拳头关黑屏与尾声三段对白链路已由源码确认",
-			"transition_type": "none"
-		},
-		{
-			"evidence_tokens": [
-				"@[clear_typed] \"typed\"",
-				"@[clear_typed] \"room\"",
-				"\"pos\":[4,8]",
-				"\"pos\":[3,9]",
-				"now_pos = Vector2( 6, 1 )"
-			],
-			"id": "SRC-TYPEWRITER-LAYER",
-			"implication": "因此 love 线索里的 `pos: [1, 12]` 目前更应视为打字机对白层坐标候选，不应直接当成已确认的世界落点。`愛` 如何从对白层变成可实际推动的地图字，仍需更强证据。",
-			"intro_clear_tag": "typed",
-			"intro_source_path": "E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/map0001.tscn",
-			"intro_typed_pos": [
-				4,
-				8
-			],
-			"sample_clear_tag": "room",
-			"sample_event_now_pos": [
-				6,
-				1
-			],
-			"sample_source_path": "E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/map0002.tscn",
-			"sample_tag": "room",
-			"sample_typed_pos": [
-				3,
-				9
-			],
-			"source_path": "E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/map0001.tscn | E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/測試用/map0002.tscn",
-			"summary": "测试地图 map0001 / map0002 里的 `@[type]` 文本会用 `tags` 与 `clear_typed` 管理，同一事件本体的 `now_pos` 与 `type` 的 `pos` 明显分离。",
-			"title": "@[type]/@[clear_typed] 在测试地图里表现为打字机对白层"
-		},
-		{
-			"contains_both": true,
-			"contains_copy": true,
-			"contains_exist_event": true,
-			"contains_generated_in_runtime": true,
-			"contains_has_default_tag": true,
-			"contains_label_settings": true,
-			"evidence_tokens": [
-				"generated_in_runtime",
-				"exist_event",
-				"both",
-				"copy",
-				"label_settings",
-				"has_defalut_tag"
-			],
-			"id": "SRC-TYPEWRITER-RUNTIME-GENERATION",
-			"implication": "结合 `零的手勢` 节点里 `<l>愛</l>` + `can_push = true` 的 scene 配置，当前最强结论是：`愛` 不是先作为普通对白出现、再被另一个系统二次落成地图字；它更像是在 typewriter 层激活期间直接生成的可推动运行时字实体。这个结论仍属于源码推断，不等于已经逐帧复核过原版运行表现。",
-			"source_path": "E:/wordgame copy/newgame/../参考资料/文字游戏源码/文字遊戲_pck/res/Scripts/Typewriter.gdc",
-			"summary": "原始 `Typewriter.gdc` 同时包含 `generated_in_runtime`、`exist_event`、`both`、`copy`、`label_settings`、`has_defalut_tag` 等关键 token。这说明 typewriter 系统不只是打印纯 UI 文本，而是在处理“已有事件 / 复制 / 运行时生成”这类对象分支。",
-			"supports_runtime_pushable_label_inference": true,
-			"title": "Typewriter.gdc 暗示标签字会在运行时生成实体"
-		}
-	],
+	"source_findings": [],
 	"visual_reports": [
 		{
 			"baseline_id": "GLOVE-SHOT-009",
 			"diff_pixel_count": 0,
-			"report_path": "E:/wordgame copy/newgame/../harness/reports/visual/glove/GLOVE-SHOT-009__report.json",
+			"report_path": "L:/wordgame-new/wordgame/newgame/../harness/reports/visual/glove/GLOVE-SHOT-009__report.json",
 			"status": "pass"
 		},
 		{
 			"baseline_id": "GLOVE-SHOT-010",
 			"diff_pixel_count": 0,
-			"report_path": "E:/wordgame copy/newgame/../harness/reports/visual/glove/GLOVE-SHOT-010__report.json",
+			"report_path": "L:/wordgame-new/wordgame/newgame/../harness/reports/visual/glove/GLOVE-SHOT-010__report.json",
 			"status": "pass"
 		}
 	]
