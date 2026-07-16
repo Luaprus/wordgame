@@ -11,6 +11,7 @@ func _init() -> void:
 	_assert_char(world, ArtifactHall.SWORD_GATE_POS, "门", "sword gate uses 门", failures)
 	_assert_char(world, ArtifactHall.HAND_GATE_POS, "门", "hand gate uses 门", failures)
 	_assert_char(world, ArtifactHall.HELMET_GATE_POS, "门", "helmet gate uses 门", failures)
+	_assert_char(world, ArtifactHall.PRINCESS_GATE_POS, "门", "princess gate uses 门", failures)
 	_assert_no_text(world, "闩", "artifact hall no longer contains 闩", failures)
 
 	_assert_char(world, Vector2i(6, 10), "剑", "sword gate name includes 剑", failures)
@@ -30,6 +31,7 @@ func _init() -> void:
 
 	_assert_gate_scene_path(ArtifactHall.SWORD_GATE_POS, ArtifactHall.SWORD_SCENE_PATH, "sword gate", failures)
 	_assert_gate_scene_path(ArtifactHall.HAND_GATE_POS, ArtifactHall.HAND_SCENE_PATH, "hand gate", failures)
+	_assert_gate_scene_path(ArtifactHall.PRINCESS_GATE_POS, ArtifactHall.PRINCESS_SCENE_PATH, "princess gate", failures)
 	_assert_gate_level_index(ArtifactHall.HELMET_GATE_POS, ArtifactHall.HELMET_LEVEL_INDEX, "helmet gate", failures)
 
 	if failures.is_empty():

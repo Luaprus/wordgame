@@ -8,9 +8,14 @@ const BGM_PATH := "res://Sounds/bgm/ch1/BGM_title.ogg"
 const CLICK_SE_PATH := "res://Sounds/se/menu_click.wav"
 const SETTINGS_PATH := "user://main_menu.cfg"
 
-const TITLE_TEXT := "這是一段關於　的故事"
-const START_TEXT := "我開始冒險"
-const SETTINGS_TEXT := "調整設定"
+const TITLE_TEXT := "这是一段关于我的故事"
+const START_TEXT := "开始游戏"
+const SETTINGS_TEXT := "调整设定"
+const EXIT_TEXT := "退出游戏"
+const MENU_FONT_SIZE := 58
+const WORD_CELL_SIZE := 60.0
+
+enum WordLocation { STORY, START, SETTINGS, EXIT }
 
 const TITLE_POSITION := Vector2(0, -60)
 const CAPTION_RECT := Rect2(0, 780, 1920, 84)
@@ -21,6 +26,7 @@ const OPTIONS_SIZE := Vector2(1920, 96)
 var _title_logo: Node2D
 var _start_button: Button
 var _settings_button: Button
+var _exit_button: Button
 var _settings_panel: Control
 var _fade_panel: ColorRect
 var _message_label: Label
@@ -29,6 +35,10 @@ var _se_player: AudioStreamPlayer
 var _bgm_slider: HSlider
 var _se_slider: HSlider
 var _fullscreen_toggle: CheckButton
+var _story_slot: Control
+var _word_label: Label
+var _word_location := WordLocation.STORY
+var _last_button_location := WordLocation.START
 
 
 func _ready() -> void:
@@ -43,7 +53,7 @@ func _ready() -> void:
 	_play_bgm()
 	_fade_in()
 	_play_title_animation()
-	_start_button.grab_focus()
+	call_deferred("_sync_word_position")
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -52,6 +62,31 @@ func _unhandled_input(event: InputEvent) -> void:
 			_hide_settings()
 		else:
 			get_tree().quit()
+		return
+	if _settings_panel.visible or not event is InputEventKey:
+		return
+	var key_event := event as InputEventKey
+	if not key_event.pressed or key_event.echo:
+		return
+	match key_event.physical_keycode:
+		KEY_S:
+			if _word_location == WordLocation.STORY:
+				_set_word_location(_last_button_location)
+		KEY_W:
+			if _word_location != WordLocation.STORY:
+				_set_word_location(WordLocation.STORY)
+		KEY_D:
+			if _word_location == WordLocation.START:
+				_set_word_location(WordLocation.SETTINGS)
+			elif _word_location == WordLocation.SETTINGS:
+				_set_word_location(WordLocation.EXIT)
+		KEY_A:
+			if _word_location == WordLocation.EXIT:
+				_set_word_location(WordLocation.SETTINGS)
+			elif _word_location == WordLocation.SETTINGS:
+				_set_word_location(WordLocation.START)
+		KEY_ENTER, KEY_KP_ENTER, KEY_SPACE:
+			_activate_word_location()
 
 
 func _build_audio() -> void:
@@ -78,12 +113,31 @@ func _build_screen() -> void:
 	_title_logo.position = TITLE_POSITION
 	add_child(_title_logo)
 
-	var caption := _make_label(TITLE_TEXT, 54, Color(0.78, 0.78, 0.78, 1.0))
-	caption.name = "Caption"
-	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	caption.position = CAPTION_RECT.position
-	caption.size = CAPTION_RECT.size
-	add_child(caption)
+	var story_line := HBoxContainer.new()
+	story_line.name = "StoryLine"
+	story_line.alignment = BoxContainer.ALIGNMENT_CENTER
+	story_line.position = CAPTION_RECT.position
+	story_line.size = CAPTION_RECT.size
+	add_child(story_line)
+
+	var story_prefix := _make_label("这是一段关于", 54, Color(0.78, 0.78, 0.78, 1.0))
+	story_prefix.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	story_line.add_child(story_prefix)
+	_story_slot = Control.new()
+	_story_slot.custom_minimum_size = Vector2(WORD_CELL_SIZE, CAPTION_RECT.size.y)
+	story_line.add_child(_story_slot)
+	var story_suffix := _make_label("的故事", 54, Color(0.78, 0.78, 0.78, 1.0))
+	story_suffix.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	story_line.add_child(story_suffix)
+
+	_word_label = _make_label("我", 54, Color(0.92, 0.92, 0.92, 1.0))
+	_word_label.name = "PlayerWord"
+	_word_label.size = Vector2(WORD_CELL_SIZE, WORD_CELL_SIZE)
+	_word_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_word_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_word_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_word_label.z_index = 2
+	add_child(_word_label)
 
 	_build_menu()
 	_build_settings_panel()
@@ -119,6 +173,66 @@ func _build_menu() -> void:
 	_settings_button = _make_menu_button(SETTINGS_TEXT)
 	_settings_button.pressed.connect(_show_settings)
 	options.add_child(_settings_button)
+
+	_exit_button = _make_menu_button(EXIT_TEXT)
+	_exit_button.pressed.connect(_on_exit_pressed)
+	options.add_child(_exit_button)
+
+
+func _sync_word_position() -> void:
+	if _word_label == null:
+		return
+	if _word_location == WordLocation.STORY:
+		if _story_slot == null:
+			return
+		_word_label.size = Vector2(WORD_CELL_SIZE, CAPTION_RECT.size.y)
+		_word_label.position = _story_slot.global_position + Vector2(
+			(_story_slot.size.x - _word_label.size.x) * 0.5,
+			0.0
+		)
+		return
+	var button := _button_for_location(_word_location)
+	if button == null:
+		return
+	_word_label.size = Vector2(WORD_CELL_SIZE, button.size.y)
+	var text_width := TITLE_FONT.get_string_size(button.text, HORIZONTAL_ALIGNMENT_LEFT, -1, MENU_FONT_SIZE).x
+	var first_char_width := TITLE_FONT.get_string_size(button.text.substr(0, 1), HORIZONTAL_ALIGNMENT_LEFT, -1, MENU_FONT_SIZE).x
+	var content_margin := 8.0
+	var text_start_x := button.global_position.x + content_margin + (button.size.x - content_margin * 2.0 - text_width) * 0.5
+	var first_char_center_x := text_start_x + first_char_width * 0.5
+	var target_center := Vector2(first_char_center_x - WORD_CELL_SIZE, button.global_position.y + button.size.y * 0.5)
+	_word_label.position = target_center - _word_label.size * 0.5
+
+
+func _set_word_location(location: int) -> void:
+	_word_location = location
+	if location != WordLocation.STORY:
+		_last_button_location = location
+		var button := _button_for_location(location)
+		if button:
+			button.grab_focus()
+	_sync_word_position()
+
+
+func _button_for_location(location: int) -> Button:
+	match location:
+		WordLocation.START:
+			return _start_button
+		WordLocation.SETTINGS:
+			return _settings_button
+		WordLocation.EXIT:
+			return _exit_button
+	return null
+
+
+func _activate_word_location() -> void:
+	match _word_location:
+		WordLocation.START:
+			_on_start_pressed()
+		WordLocation.SETTINGS:
+			_show_settings()
+		WordLocation.EXIT:
+			_on_exit_pressed()
 
 
 func _play_title_animation() -> void:
@@ -208,7 +322,7 @@ func _make_menu_button(text: String) -> Button:
 	button.custom_minimum_size = Vector2(360, 86)
 	button.focus_mode = Control.FOCUS_ALL
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	_style_text_control(button, 58, Color(0.78, 0.78, 0.78, 1.0))
+	_style_text_control(button, MENU_FONT_SIZE, Color(0.78, 0.78, 0.78, 1.0))
 	button.add_theme_color_override("font_hover_color", Color.WHITE)
 	button.add_theme_color_override("font_focus_color", Color.WHITE)
 	button.add_theme_color_override("font_pressed_color", Color(0.92, 0.92, 0.92, 1.0))
@@ -258,6 +372,11 @@ func _on_start_pressed() -> void:
 		_change_scene(DEFAULT_START_SCENE)
 	else:
 		_message_label.text = "冒險入口尚未接入。"
+
+
+func _on_exit_pressed() -> void:
+	_play_click()
+	get_tree().quit()
 
 
 func _change_scene(scene: PackedScene) -> void:
