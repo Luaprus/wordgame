@@ -43,10 +43,12 @@ func _init() -> void:
 	world.split_front()
 	_assert_char(world, PrincessCage.BALL_POS + Vector2i(-1, -1), "王", "球 splits into 王", failures)
 	_assert_char(world, PrincessCage.BALL_POS + Vector2i(0, -1), "求", "球 splits into 求", failures)
+	_assert_visual_request(world.consume_visual_effects(), "word_split_transition", "球 split emits its split animation", failures)
 	var ball_merge := world.try_merge_entities(PrincessCage.BALL_POS + Vector2i(-1, -1), PrincessCage.BALL_POS + Vector2i(0, -1))
 	if not ball_merge.success:
 		failures.append("王 and 求 merge back into 球")
 	else:
+		_assert_visual_request(world.consume_visual_effects(), "word_merge_flash", "王 and 求 merge emits its merge animation", failures)
 		var merged_ball = world.get_any_entity_at(PrincessCage.BALL_POS + Vector2i(0, -1))
 		if merged_ball == null or merged_ball.text != "球" or not merged_ball.splittable:
 			failures.append("merged 球 remains available for another split")
@@ -58,17 +60,20 @@ func _init() -> void:
 			_assert_char(world, Vector2i(6, 6), "王", "merged 球 splits from its current position", failures)
 			_assert_char(world, Vector2i(7, 6), "求", "merged 球 splits forward from its current position", failures)
 	var extra_rules := {
-		"口+奂": "唤", "手+奂": "换", "求+夂": "救", "水+酉": "酒"
+		"口+奂": "唤", "手+奂": "换", "求+攵": "救", "水+酉": "酒"
 	}
 	for merge_key in extra_rules:
 		if world.merge_rules.get(merge_key, "") != extra_rules[merge_key]:
 			failures.append("%s merge rule is present" % merge_key)
 	var reverse_splits := {
-		"唤": ["口", "奂"], "换": ["手", "奂"], "救": ["求", "夂"], "酒": ["水", "酉"]
+		"唤": ["口", "奂"], "换": ["手", "奂"], "救": ["求", "攵"], "酒": ["水", "酉"]
 	}
 	for merged_word in reverse_splits:
 		if world.split_rules.get(merged_word, []) != reverse_splits[merged_word]:
 			failures.append("%s can split back into its source characters" % merged_word)
+	if world.split_rules.get("故", []) != ["古", "攵"]:
+		failures.append("故 splits into 古 and 攵")
+	_test_distinct_princess_split_visuals(world, failures)
 	if world.get_any_entity_at(PrincessCage.DESCRIPTION_POS) != null:
 		failures.append("non-preserved description text disappears after deleting 不")
 	_test_special_sentences(failures)
@@ -93,6 +98,30 @@ func _assert_word_config(world, pos: Vector2i, text: String, pushable: bool, mes
 	var entity = world.get_any_entity_at(pos)
 	if entity == null or entity.text != text or entity.pushable != pushable:
 		failures.append(message)
+
+func _assert_visual_request(requests: Array, expected_type: String, message: String, failures: Array[String]) -> void:
+	for request_value in requests:
+		var request: Dictionary = request_value
+		if str(request.get("type", "")) == expected_type:
+			return
+	failures.append(message)
+
+func _test_distinct_princess_split_visuals(world, failures: Array[String]) -> void:
+	var signatures := {}
+	for source_text in ["球", "扣", "故", "醒", "涣"]:
+		var effect_config: Dictionary = world.split_effects.get(source_text, {})
+		var visual: Dictionary = effect_config.get("visual_effect", {})
+		if str(visual.get("type", "")) != "word_split_transition":
+			failures.append("%s has a split transition" % source_text)
+			continue
+		var signature := "%s|%s|%s" % [
+			str(visual.get("part_jump_heights", [])),
+			str(visual.get("part_delays", [])),
+			str(visual.get("move_duration", 0.0))
+		]
+		if signatures.has(signature):
+			failures.append("%s has a distinct split animation" % source_text)
+		signatures[signature] = true
 
 func _test_special_sentences(failures: Array[String]) -> void:
 	var rescue_world := _make_sentence_world("救公主", "before")
@@ -135,7 +164,7 @@ func _test_rescue_transition(failures: Array[String]) -> void:
 	var visual_requests: Array = rescue_world.consume_visual_effects()
 	if not interaction.success or visual_requests.is_empty() or visual_requests[0].get("type", "") != "black_screen_transition":
 		failures.append("interacting with the green princess requests the black-screen transition")
-	elif int(visual_requests[0].get("target_level_index", -1)) != 3:
+	elif str(visual_requests[0].get("target_scene_path", "")) != "res://levels/princess/princess_rescue_preview.tscn":
 		failures.append("the rescued princess targets the post-rescue scene")
 	var transition_world := GridWorld.new()
 	transition_world.load_level(PrincessRescueTransition.build_level())

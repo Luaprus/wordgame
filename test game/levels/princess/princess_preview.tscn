@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://levels/princess/princess_preview.gd" id="1_princess_preview"]
 
-[node name="PrincessCageTest" type="Node2D"]
+[node name="PrincessCagePreview" type="Node2D"]
 script = ExtResource("1_princess_preview")
 
 [node name="Background" type="ColorRect" parent="."]

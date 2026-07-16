@@ -53,13 +53,11 @@ static func build_level() -> Dictionary:
 		"split_effects": _split_effects(),
 		"merge_rules": _merge_rules(),
 		"sentence_rules": _sentence_rules(),
-		"entity_delete_effects": [
-			{
-				"text": "不",
-				"pos": NOT_POS,
-				"effect": _delete_not_effect()
-			}
-		],
+		"entity_delete_effects": [{
+			"text": "不",
+			"pos": NOT_POS,
+			"effect": _delete_not_effect()
+		}],
 		"entities": {
 			"笼": {"solid": true, "pushable": false, "splittable": false},
 			"公": {"solid": true, "pushable": false, "splittable": false},
@@ -235,9 +233,10 @@ static func _rescue_princess_effect() -> Dictionary:
 	return {
 		"set_input_locked": true,
 		"set_event_locked": true,
-		"remove_matching": [
-			{"positions": [Vector2i(15, 3), Vector2i(16, 3), PRINCESS_ESCAPE_POS, PRINCESS_ESCAPE_POS + Vector2i.RIGHT], "texts": ["公", "主"]}
-		],
+		"remove_matching": [{
+			"positions": [Vector2i(15, 3), Vector2i(16, 3), PRINCESS_ESCAPE_POS, PRINCESS_ESCAPE_POS + Vector2i.RIGHT],
+			"texts": ["公", "主"]
+		}],
 		"spawn": [
 			{"text": "公", "pos": PRINCESS_ESCAPE_POS, "config": _rescued_princess_config()},
 			{"text": "主", "pos": PRINCESS_ESCAPE_POS + Vector2i.RIGHT, "config": _rescued_princess_config()}

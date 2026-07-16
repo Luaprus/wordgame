@@ -667,6 +667,8 @@ func _word_merge_visual_pair(first_text: String, second_text: String, merged_tex
 		return ["鸟", "我"]
 	if merged_text == "他" and texts.has("人") and texts.has("也"):
 		return ["人", "也"]
+	if bool(current_level.get("animate_all_word_merges", false)):
+		return [first_text, second_text]
 	return []
 
 func _word_merge_visual_order(first_text: String, second_text: String, first_pos: Vector2i, second_pos: Vector2i, fallback_pair: Array) -> Array:

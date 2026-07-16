@@ -667,6 +667,8 @@ func _word_merge_visual_pair(first_text: String, second_text: String, merged_tex
 		return ["鸟", "我"]
 	if merged_text == "他" and texts.has("人") and texts.has("也"):
 		return ["人", "也"]
+	if bool(current_level.get("animate_all_word_merges", false)):
+		return [first_text, second_text]
 	return []
 
 func _word_merge_visual_order(first_text: String, second_text: String, first_pos: Vector2i, second_pos: Vector2i, fallback_pair: Array) -> Array:
@@ -1453,6 +1455,7 @@ func _snapshot_entities_by_text(text: String) -> Array[Dictionary]:
 				"persistent": entity.persistent,
 				"visual_rotation_degrees": entity.visual_rotation_degrees,
 				"visual_color": entity.visual_color,
+				"visual_style": entity.visual_style,
 				"interact_text": entity.interact_text,
 				"interact_effect": entity.interact_effect.duplicate(true),
 				"interact_caption_lines": entity.interact_caption_lines.duplicate(),
@@ -1482,6 +1485,7 @@ func _snapshot_persistent_entities() -> Array[Dictionary]:
 				"persistent": entity.persistent,
 				"visual_rotation_degrees": entity.visual_rotation_degrees,
 				"visual_color": entity.visual_color,
+				"visual_style": entity.visual_style,
 				"interact_text": entity.interact_text,
 				"interact_effect": entity.interact_effect.duplicate(true),
 				"interact_caption_lines": entity.interact_caption_lines.duplicate(),

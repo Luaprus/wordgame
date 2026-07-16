@@ -1452,6 +1452,7 @@ func _run_word_split_transition(request: Dictionary, context: Dictionary, genera
 	var part_specs: Array = context.get("part_specs", [])
 	var part_groups: Array = context.get("part_groups", [])
 	var part_cells: Array = request.get("part_cells", [])
+	var part_texts: Array = request.get("part_texts", [])
 	if part_specs.size() < 2 or part_cells.size() < 2:
 		return
 	var source_cell: Vector2i = request.get("source_cell", Vector2i.ZERO)
@@ -1462,13 +1463,17 @@ func _run_word_split_transition(request: Dictionary, context: Dictionary, genera
 	var square_alpha := float(request.get("square_alpha", 0.5))
 	var square_color: Color = request.get("square_color", Color(0.96, 0.92, 0.62, 1.0))
 	var part_jump_heights: Array = request.get("part_jump_heights", [jump_height, 0.0])
+	var part_delays: Array = request.get("part_delays", [0.0, 0.0])
 	var source_fade_duration := float(request.get("source_fade_duration", 0.08))
 	var part_fade_in_duration := float(request.get("part_fade_in_duration", 0.06))
 	var particle_duration := float(request.get("particle_duration", 0.4))
 	var particle_frame_count := int(request.get("particle_frame_count", 15))
+	var particle_color: Color = request.get("particle_color", Color.WHITE)
 	var source_overlay := _build_split_source_overlay(str(request.get("source_text", "")), source_position, square_color, square_alpha)
-	var part_overlays := _build_split_part_overlays(part_specs, source_position, square_color, square_alpha)
+	var part_overlays := _build_split_part_overlays(part_specs, part_texts, source_position)
 	var particle := _build_split_particle_overlay(source_position)
+	if particle:
+		particle.modulate = particle_color
 	if source_overlay:
 		bridge_tree_effect_layer.add_child(source_overlay)
 	for overlay: Node2D in part_overlays:
@@ -1490,12 +1495,15 @@ func _run_word_split_transition(request: Dictionary, context: Dictionary, genera
 		var part_jump_height := 0.0
 		if i < part_jump_heights.size():
 			part_jump_height = float(part_jump_heights[i])
+		var part_delay := 0.0
+		if i < part_delays.size():
+			part_delay = float(part_delays[i])
 		tween.tween_method(
 			Callable(self, "_set_word_split_overlay_progress").bind(overlay, source_position, target_position, part_jump_height),
 			0.0,
 			1.0,
 			move_duration
-		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		).set_delay(part_delay).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	if particle:
 		tween.tween_property(particle, "modulate:a", 0.0, particle_duration)
 		tween.tween_property(particle, "frame", maxi(0, particle_frame_count - 1), particle_duration).from(0)
@@ -1535,15 +1543,17 @@ func _build_split_source_overlay(source_text: String, source_position: Vector2, 
 	overlay.add_child(label)
 	return overlay
 
-func _build_split_part_overlays(part_specs: Array, source_position: Vector2, square_color: Color, square_alpha: float) -> Array:
+func _build_split_part_overlays(part_specs: Array, part_texts: Array, source_position: Vector2) -> Array:
 	var overlays: Array = []
-	for spec_value in part_specs:
+	for index in range(part_specs.size()):
+		var spec_value = part_specs[index]
 		var spec: Dictionary = spec_value
 		var overlay := Node2D.new()
 		overlay.position = source_position
 		overlay.z_index = 41
 		overlay.modulate.a = 0.0
-		var label := _make_word_label(str(spec.get("text", "")), spec.get("color", Color.WHITE))
+		var part_text := str(part_texts[index]) if index < part_texts.size() else str(spec.get("text", ""))
+		var label := _make_word_label(part_text, spec.get("color", Color.WHITE))
 		label.position = Vector2(0, -2)
 		overlay.add_child(label)
 		overlays.append(overlay)
@@ -2234,6 +2244,37 @@ func _switch_to_scene(scene_path: String) -> void:
 	if scene_path.is_empty() or get_tree() == null:
 		return
 	get_tree().change_scene_to_file(scene_path)
+
+func _run_black_screen_transition(request: Dictionary) -> void:
+	if get_tree() == null:
+		return
+	world.set_input_locked(true)
+	world.set_event_locked(true)
+	var cover := ColorRect.new()
+	cover.name = "BlackScreenTransition"
+	cover.position = Vector2.ZERO
+	cover.size = get_viewport_rect().size
+	cover.color = Color.BLACK
+	cover.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cover.modulate.a = 0.0
+	cover.z_index = 2000
+	add_child(cover)
+	var duration := maxf(float(request.get("duration", 1.0)), 0.01)
+	var tween := create_tween()
+	tween.tween_property(cover, "modulate:a", 1.0, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await tween.finished
+	var target_scene_path := str(request.get("target_scene_path", ""))
+	if not target_scene_path.is_empty():
+		_switch_to_scene(target_scene_path)
+		return
+	var target_level_index := int(request.get("target_level_index", -1))
+	if target_level_index >= 0:
+		_switch_to_level_index(target_level_index)
+		cover.queue_free()
+		return
+	world.set_input_locked(false)
+	world.set_event_locked(false)
+	cover.queue_free()
 
 func _switch_to_level_index(level_index: int) -> void:
 	_load_level_index(level_index)
