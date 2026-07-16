@@ -11,6 +11,8 @@ const HAND_NOT_POS := HAND_DESC_POS + Vector2i(3, 0)
 const HELMET_DESC_POS := Vector2i(23, 15)
 const SWORD_SCENE_PATH := "res://scenes/Maps/第二章/05_聖劍寶庫_復刻.tscn"
 const HAND_SCENE_PATH := "res://levels/glove/glove_preview.tscn"
+const PRINCESS_GATE_POS := Vector2i(16, 17)
+const PRINCESS_SCENE_PATH := "res://levels/princess/princess_preview.tscn"
 const HELMET_LEVEL_INDEX := 1
 const RETURN_POET_START := Vector2i(0, 15)
 const RETURN_POET_POS := Vector2i(2, 15)
@@ -80,6 +82,7 @@ static func _cell_configs() -> Dictionary:
 		SWORD_GATE_POS: _open_gate_cell_config(SWORD_GATE_POS),
 		HAND_GATE_POS: _open_gate_cell_config(HAND_GATE_POS),
 		HELMET_GATE_POS: _open_gate_cell_config(HELMET_GATE_POS),
+		PRINCESS_GATE_POS: _open_gate_cell_config(PRINCESS_GATE_POS),
 		Vector2i(5, 4): {"visual_color": RED},
 		Vector2i(4, 5): {"visual_color": RED},
 		Vector2i(5, 5): {"visual_color": RED},
@@ -116,6 +119,9 @@ static func _open_gate_visual_effect(gate_pos: Vector2i) -> Dictionary:
 	if gate_pos == HELMET_GATE_POS:
 		after_open_interact_text = " "
 		after_open_interact_effect = {"level_index": HELMET_LEVEL_INDEX}
+	if gate_pos == PRINCESS_GATE_POS:
+		after_open_interact_text = " "
+		after_open_interact_effect = {"scene_path": PRINCESS_SCENE_PATH}
 	var effect := {
 		"set_matching_config": [
 			{
@@ -284,6 +290,7 @@ static func _hall_rows() -> Array:
 	_put(rows, Vector2i(26, 10), "盔")
 	_put(rows, Vector2i(26, 11), "之")
 	_put(rows, HELMET_GATE_POS, "门")
+	_put(rows, PRINCESS_GATE_POS, "门")
 	return rows
 
 static func _blank_rows() -> Array:

@@ -33,6 +33,11 @@
     "runtime_entry": "res://Main.tscn",
     "level_script": "res://levels/hall/artifact_hall.gd",
     "preview_scene": "res://levels/hall/artifact_hall_preview.tscn",
+    "final_door": {
+      "grid_position": [16, 17],
+      "scene_path": "res://levels/princess/princess_preview.tscn",
+      "logic_source": "res://levels/princess/princess_cage.gd"
+    },
     "world_script": "res://scripts/grid_world.gd",
     "render_script": "res://scripts/main.gd",
     "entity_script": "res://scripts/word_entity.gd"

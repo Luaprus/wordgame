@@ -44,3 +44,9 @@
 
 - 当前使用源项目 `door_open.png` 的 10x3 帧表和源音轨，未做运行时文字补间替代
 - 目前做过脚本加载和关卡测试，没做 GUI 逐帧人工目测
+## 公主关卡入口
+
+- 大厅最底行新增门字，逻辑坐标为 `Vector2i(16, 17)`。
+- 按现有门规则首次交互播放开门动画，再次交互进入 `res://levels/princess/princess_preview.tscn`。
+- 公主牢笼关卡逻辑来自 `res://levels/princess/princess_cage.gd`。
+- 新入口复用大厅已有的源门动画 `D:/文字游戏/Scenes/Animations/door_open.tscn`，没有新增原创贴图或音效。
