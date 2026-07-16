@@ -24,9 +24,9 @@ static func build_level() -> Dictionary:
 			"                     溪溪溪溪溪      ",
 			"                     溪溪溪溪溪      ",
 			"                     溪溪溪溪溪      ",
-			"                   树 溪溪溪溪溪      ",
-			"                  树树树溪溪溪溪溪      ",
-			"                   木 溪溪溪溪溪      ",
+			"                树    溪溪溪溪溪      ",
+			"               树树树   溪溪溪溪溪      ",
+			"                木    溪溪溪溪溪      ",
 			"                     溪溪溪溪溪      ",
 			"                     溪溪溪溪溪      ",
 			"                  溪溪溪溪溪溪溪溪      ",
@@ -83,13 +83,13 @@ static func build_level() -> Dictionary:
 		}
 	}
 
-static func _tree_cells() -> Array[Vector2i]:
+static func _tree_cells(offset := 0) -> Array[Vector2i]:
 	return [
-		Vector2i(19, 8),
-		Vector2i(18, 9),
-		Vector2i(19, 9),
-		Vector2i(20, 9),
-		Vector2i(19, 10)
+		Vector2i(19 + offset, 8),
+		Vector2i(18 + offset, 9),
+		Vector2i(19 + offset, 9),
+		Vector2i(20 + offset, 9),
+		Vector2i(19 + offset, 10)
 	]
 
 static func _creek_cells() -> Array[Vector2i]:
@@ -136,7 +136,8 @@ static func _all_dynamic_cells() -> Array[Vector2i]:
 
 static func _river_dynamic_cells() -> Array[Vector2i]:
 	var cells: Array[Vector2i] = []
-	cells.append_array(_tree_cells())
+	cells.append_array(_tree_cells(-3))
+	cells.append_array(_tree_cells(0))
 	cells.append_array(_creek_cells())
 	cells.append_array(_bridge_cells(-3))
 	cells.append_array(_bridge_cells(0))
@@ -248,15 +249,15 @@ static func _creek_remainder_spawn(offset := 0) -> Array[Dictionary]:
 			spawn.append({"text": "溪", "pos": cell})
 	return spawn
 
-static func _creek_and_tree_spawn() -> Array[Dictionary]:
+static func _creek_and_tree_spawn(tree_offset := 0) -> Array[Dictionary]:
 	var spawn: Array[Dictionary] = []
 	for cell in _creek_cells():
 		spawn.append({"text": "溪", "pos": cell})
-	spawn.append({"text": "树", "pos": Vector2i(19, 8)})
-	spawn.append({"text": "树", "pos": Vector2i(18, 9)})
-	spawn.append({"text": "树", "pos": Vector2i(19, 9)})
-	spawn.append({"text": "树", "pos": Vector2i(20, 9)})
-	spawn.append({"text": "木", "pos": Vector2i(19, 10)})
+	for cell in _tree_cells(tree_offset):
+		var tree_text := "树"
+		if cell == Vector2i(19 + tree_offset, 10):
+			tree_text = "木"
+		spawn.append({"text": tree_text, "pos": cell})
 	return spawn
 
 static func _phase_one_bridge_interact_effect() -> Dictionary:
@@ -315,7 +316,7 @@ static func _bridge_phase_one_effect() -> Dictionary:
 	spawn.append_array(_phase_one_bridge_spawn())
 	return {
 		"remove_at": _river_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _bridge_cells(-3), {}, _creek_cells_for_bridge(-3)),
+		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(-3), _bridge_cells(-3), {}, _creek_cells_for_bridge(-3)),
 		"replace_text": [_hint_bridge_merge_replace()],
 		"spawn": spawn
 	}
@@ -325,7 +326,7 @@ static func _bridge_phase_two_remerge_effect() -> Dictionary:
 	spawn.append_array(_bridge_spawn(0))
 	return {
 		"remove_at": _river_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(), _bridge_cells(0), {}, _creek_cells_for_bridge(0)),
+		"visual_effect": BridgeTreeVisuals.merge_effect(_tree_cells(0), _bridge_cells(0), {}, _creek_cells_for_bridge(0)),
 		"replace_text": [_hint_bridge_merge_replace()],
 		"spawn": spawn
 	}
@@ -369,12 +370,12 @@ static func _restore_initial_effect_at(offset: int) -> Dictionary:
 		"remove_at": _river_dynamic_cells(),
 		"visual_effects": [
 			BridgeTreeVisuals.split_effect(
-				_tree_cells(),
+				_tree_cells(offset),
 				_bridge_cells(offset),
 				_creek_cells_for_bridge(offset)
 			),
 			WordSplitVisuals.effect("桥", ["乔", "木"])
 		],
 		"replace_text": [_hint_bridge_split_replace()],
-		"spawn": _creek_and_tree_spawn()
+		"spawn": _creek_and_tree_spawn(offset)
 	}
