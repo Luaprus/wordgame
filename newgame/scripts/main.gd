@@ -437,6 +437,11 @@ func _update_intro_sequence(delta: float) -> void:
 	_refresh_view()
 	_play_gem_burst_preview()
 
+func _is_helmet_tutorial_level() -> bool:
+	return current_level_index >= 0 \
+		and current_level_index < LEVEL_SEQUENCE.size() \
+		and LEVEL_SEQUENCE[current_level_index] == HelmetTutorial
+
 func _begin_gem_reveal() -> void:
 	if not _is_helmet_tutorial_level() or intro_phase != "prompt":
 		return
