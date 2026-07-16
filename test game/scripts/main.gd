@@ -3,6 +3,7 @@ extends Node2D
 const GridWorld = preload("res://scripts/grid_world.gd")
 const WordEntity = preload("res://scripts/word_entity.gd")
 const LevelLoader = preload("res://scripts/level_loader.gd")
+const ArtifactHall = preload("res://levels/hall/artifact_hall.gd")
 const HelmetTutorial = preload("res://levels/helmet/helmet_tutorial.gd")
 const HelmetR1 = preload("res://levels/helmet/helmet_r1.gd")
 const HelmetR2 = preload("res://levels/helmet/helmet_r2.gd")
@@ -24,6 +25,7 @@ const SplitBaseTexture = preload("res://assets/animations/split/base_white.png")
 const SplitParticleTexture = preload("res://assets/animations/split/unzip_split.png")
 const OriginalFont = preload("res://Fonts/Zpix-v3.1.6.ttf")
 const PushEffectTexture = preload("res://assets/animations/push/u_glove_S.png")
+const HallDoorOpenScene = preload("res://scenes/animations/hall_door_open.tscn")
 
 const WORD_FONT_SIZE := 56
 const GEM_COLOR := Color(0.0, 0.58, 0.62, 1.0)
@@ -50,11 +52,21 @@ const BRIDGE_MERGE_YELLOW_SOFT := Color(1.0, 0.92, 0.22, 0.16)
 const KEY_INFO_EMPHASIS := "key_info_emphasis"
 const RIVER_DEPTH_STEP := 10
 const RIVER_PLAYER_DEPTH_OFFSET := 5
+const HALL_DOOR_OPEN_DEPTH := 20
+const HALL_DOOR_LEFT_X := -14.0
+const HALL_DOOR_RIGHT_X := 34.0
+const HALL_DOOR_FRAGMENT_WIDTH := 14.0
+const HALL_DOOR_FINAL_SHIFT_X := -13.0
 const HIGHLIGHT_VISUAL_CONFIG_PATH := "res://assets/animations/highlight/highlight_visual_config.json"
 const GLOVE_PREVIEW_SCENE_PATH := "res://levels/glove/glove_preview.tscn"
+const HALL_PREVIEW_SCENE_PATH := "res://levels/hall/artifact_hall_preview.tscn"
+const SWORD_FLOW_SCENE_PATH := "res://scenes/Maps/第二章/05_聖劍寶庫_復刻.tscn"
 const STARTUP_ENTRY_ARG_PREFIX := "--entry="
+const SWORD_SCENE_SHORTCUT_KEY := KEY_F8
 const GLOVE_SCENE_SHORTCUT_KEY := KEY_F9
+const HALL_SCENE_SHORTCUT_KEY := KEY_F10
 const LEVEL_SEQUENCE := [
+	ArtifactHall,
 	HelmetTutorial,
 	HelmetR1,
 	HelmetR2,
@@ -80,6 +92,7 @@ var entity_movers: Dictionary = {}
 var entity_labels: Dictionary = {}
 var player_label: Label
 var player_sprite: Sprite2D
+var main_menu: Control
 var map_layer: Node2D
 var bridge_tree_effect_layer: Node2D
 var demo_timer: Timer
@@ -120,9 +133,13 @@ var creek_wave_elapsed := 0.0
 var bridge_shake_elapsed := 0.0
 
 func _ready() -> void:
+	main_menu = get_node_or_null("MainMenu") as Control
 	var startup_scene_path := resolve_startup_scene_path(OS.get_cmdline_user_args())
 	if not startup_scene_path.is_empty():
 		call_deferred("_switch_to_scene", startup_scene_path)
+		return
+	# Main.tscn is a menu entry scene; do not build the game world underneath it.
+	if main_menu != null:
 		return
 	highlight_visual_config = load_highlight_visual_config()
 	_load_level_index(startup_level_index, _startup_level_overrides())
@@ -132,6 +149,8 @@ func _ready() -> void:
 	_refresh_view()
 
 func _process(delta: float) -> void:
+	if main_menu != null and is_instance_valid(main_menu) and main_menu.visible:
+		return
 	world.advance_highlight_animation(delta)
 	_update_player_visual_animation(delta)
 	if player_move_repeat_timer > 0.0:
@@ -160,6 +179,8 @@ func _process(delta: float) -> void:
 	_update_gem_labels()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if main_menu != null and is_instance_valid(main_menu) and main_menu.visible:
+		return
 	if not event is InputEventKey:
 		return
 	var key_event := event as InputEventKey
@@ -355,6 +376,9 @@ func _is_intro_prompt_entity(entity) -> bool:
 			return true
 	return false
 
+func _is_helmet_tutorial_level() -> bool:
+	return current_level_index >= 0 and current_level_index < LEVEL_SEQUENCE.size() and LEVEL_SEQUENCE[current_level_index] == HelmetTutorial
+
 func _apply_intro_visibility() -> void:
 	for id in entity_labels.keys():
 		var entity: WordEntity = world.entities.get(id)
@@ -414,7 +438,7 @@ func _update_intro_sequence(delta: float) -> void:
 	_play_gem_burst_preview()
 
 func _begin_gem_reveal() -> void:
-	if current_level_index != 0 or intro_phase != "prompt":
+	if not _is_helmet_tutorial_level() or intro_phase != "prompt":
 		return
 	var light_cells := _current_light_cells()
 	world._apply_map_effect({
@@ -448,7 +472,7 @@ func _restore_gems_without_light_overlap() -> Array:
 	return restored
 
 func _begin_intro_prompt() -> void:
-	if current_level_index != 0 or intro_phase != "lights":
+	if not _is_helmet_tutorial_level() or intro_phase != "lights":
 		return
 	world.set_input_locked(true)
 	world.set_event_locked(true)
@@ -474,6 +498,8 @@ func _is_creek_visual_entity(entity: WordEntity) -> bool:
 	return current_level_index > 0 and entity != null and entity.text == "溪" and entity.grid_pos.x >= CREEK_MIN_X
 
 func _entity_depth_for(entity: WordEntity) -> int:
+	if _is_hall_door_open_entity(entity):
+		return HALL_DOOR_OPEN_DEPTH
 	if _is_creek_visual_entity(entity):
 		return entity.grid_pos.y * RIVER_DEPTH_STEP
 	return 10 if entity.text == "光" and not entity.solid else 0
@@ -504,6 +530,9 @@ func _sync_entity_label_group(group: Node2D, entity) -> void:
 	if _is_tree_animated_entity(entity):
 		_sync_tree_sprite_group(group)
 		return
+	if _is_hall_door_open_entity(entity):
+		_sync_hall_door_open_group(group, entity)
+		return
 
 	var text := str(entity.text)
 	for child in group.get_children():
@@ -533,6 +562,45 @@ func _sync_entity_label_group(group: Node2D, entity) -> void:
 		var pulse_scale := 1.0 + (highlight_strength * maxf(pulse_scale_max - 1.0, 0.0))
 		label.scale = Vector2.ONE * pulse_scale
 
+func _is_hall_door_open_entity(entity: WordEntity) -> bool:
+	return entity != null and entity.text == "门" and entity.visual_style == "hall_door_open"
+
+func _sync_hall_door_open_group(group: Node2D, entity: WordEntity) -> void:
+	var left_label := group.get_node_or_null("HallDoorLeft") as Label
+	var right_label := group.get_node_or_null("HallDoorRight") as Label
+	if left_label == null or right_label == null or group.get_child_count() != 2:
+		_clear_group_children(group)
+		left_label = _make_half_cell_word_label("丨", HALL_DOOR_LEFT_X + HALL_DOOR_FINAL_SHIFT_X, "HallDoorLeft")
+		right_label = _make_half_cell_word_label("亅", HALL_DOOR_RIGHT_X + HALL_DOOR_FINAL_SHIFT_X, "HallDoorRight")
+		group.add_child(left_label)
+		group.add_child(right_label)
+	var highlight_strength := world.get_highlight_animation_strength(entity.grid_pos)
+	var base_color: Color = entity.visual_color
+	if entity.highlighted:
+		base_color = _highlight_config_color("matched_color", Color(1.0, 0.95, 0.32))
+	var animated_color: Color = base_color.lerp(_highlight_config_color("accent_color", Color(1.0, 0.78, 0.18)), highlight_strength)
+	var pulse_scale_max := float(highlight_visual_config.get("pulse_scale_max", 1.14))
+	var pulse_scale := 1.0 + (highlight_strength * maxf(pulse_scale_max - 1.0, 0.0))
+	for label in [left_label, right_label]:
+		if label == null:
+			continue
+		label.add_theme_color_override("font_color", animated_color)
+		label.scale = Vector2.ONE * pulse_scale
+
+func _make_half_cell_word_label(text: String, x_offset: float, node_name: String) -> Label:
+	var label := _make_word_label(text)
+	label.name = node_name
+	label.position = Vector2(x_offset, -2.0)
+	label.size = Vector2(HALL_DOOR_FRAGMENT_WIDTH, world.cell_size + 4.0)
+	label.pivot_offset = label.size * 0.5
+	label.add_theme_font_size_override("font_size", WORD_FONT_SIZE - 2)
+	return label
+
+func _clear_group_children(group: Node2D) -> void:
+	for child in group.get_children():
+		group.remove_child(child)
+		child.queue_free()
+
 func _is_tree_animated_entity(entity: WordEntity) -> bool:
 	return entity != null and entity.text == "树"
 
@@ -560,7 +628,17 @@ func _apply_result(result: Dictionary) -> void:
 	_refresh_view(str(result.get("message", "")))
 	_consume_visual_effects(visual_requests, visual_contexts)
 	_consume_fullscreen_video_request()
-	if current_level_index == 0 and intro_phase == "lights" and result.get("success", false) and not world.has_pending_timed_effect():
+	if not world.pending_scene_path.is_empty():
+		var scene_path: String = world.pending_scene_path
+		world.pending_scene_path = ""
+		call_deferred("_switch_to_scene", scene_path)
+		return
+	if world.pending_level_index >= 0:
+		var level_index: int = world.pending_level_index
+		world.pending_level_index = -1
+		call_deferred("_switch_to_level_index", level_index)
+		return
+	if _is_helmet_tutorial_level() and intro_phase == "lights" and result.get("success", false) and not world.has_pending_timed_effect():
 		_begin_intro_prompt()
 	if result.has("pending_delay"):
 		if world_event_timer.is_stopped():
@@ -657,6 +735,12 @@ func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> 
 		if effect_type == "word_merge_flash" or effect_type == "bridge_word_merge_flash":
 			call_deferred("_run_word_merge_flash", request.duplicate(true), _visual_effect_generation)
 			continue
+		if effect_type == "hall_door_open":
+			call_deferred("_run_hall_door_open_source_effect", request.duplicate(true), _visual_effect_generation)
+			continue
+		if effect_type == "black_screen_transition":
+			call_deferred("_run_black_screen_transition", request.duplicate(true))
+			continue
 		if effect_type == KEY_INFO_EMPHASIS:
 			if not key_info_emphasis_played:
 				key_info_emphasis_played = true
@@ -664,6 +748,9 @@ func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> 
 			continue
 		if effect_type == "bridge_tree_transition":
 			call_deferred("_run_bridge_tree_transition", request.duplicate(true), visual_context, _visual_effect_generation)
+			continue
+		if effect_type == "bridge_tree_relocate":
+			call_deferred("_run_bridge_tree_relocate", request.duplicate(true), _visual_effect_generation)
 			continue
 		if effect_type == "bridge_collapse_sequence":
 			call_deferred("_run_bridge_collapse_sequence", request.duplicate(true), _visual_effect_generation)
@@ -787,6 +874,8 @@ func _run_visual_effect_after_key_info(request: Dictionary, context: Dictionary,
 		call_deferred("_run_word_merge_flash", request.duplicate(true), generation)
 	elif effect_type == "bridge_tree_transition":
 		call_deferred("_run_bridge_tree_transition", request.duplicate(true), context, generation)
+	elif effect_type == "bridge_tree_relocate":
+		call_deferred("_run_bridge_tree_relocate", request.duplicate(true), generation)
 	elif effect_type == "bridge_collapse_sequence":
 		call_deferred("_run_bridge_collapse_sequence", request.duplicate(true), generation)
 	elif effect_type == "word_split_transition":
@@ -1061,6 +1150,35 @@ func _run_key_info_emphasis(request: Dictionary, generation: int) -> void:
 		return
 	_clear_effect_overlays([overlay])
 	key_info_effect_active = false
+
+func _run_bridge_tree_relocate(request: Dictionary, generation: int) -> void:
+	if generation != _visual_effect_generation:
+		return
+	var source_cells: Array = request.get("source_cells", [])
+	var target_cells: Array = request.get("target_cells", [])
+	var fade_out_duration := float(request.get("fade_out_duration", 0.55))
+	var fade_in_duration := float(request.get("fade_in_duration", 0.4))
+	var source_groups: Array = _find_groups_for_cells(source_cells)
+	if not source_groups.is_empty():
+		var fade_out := create_tween()
+		fade_out.set_parallel(true)
+		for group in source_groups:
+			fade_out.tween_property(group, "modulate:a", 0.0, fade_out_duration)
+		await fade_out.finished
+		if generation != _visual_effect_generation:
+			return
+	world.remove_entities_at(request.get("deferred_remove_at", []))
+	world.spawn_entities(request.get("deferred_spawn", []))
+	_refresh_view()
+	var target_groups: Array = _find_groups_for_cells(target_cells)
+	_set_groups_alpha(target_groups, 0.0)
+	if target_groups.is_empty():
+		return
+	var fade_in := create_tween()
+	fade_in.set_parallel(true)
+	for group in target_groups:
+		fade_in.tween_property(group, "modulate:a", 1.0, fade_in_duration)
+	await fade_in.finished
 
 func _add_key_info_strip(parent: Node2D, position: Vector2, size: Vector2, strip_name: String) -> void:
 	var strip := ColorRect.new()
@@ -1503,6 +1621,34 @@ func _play_player_push_flash(request: Dictionary) -> void:
 	tween.tween_callback(Callable(sprite, "queue_free"))
 	await tween.finished
 
+func _run_hall_door_open_source_effect(request: Dictionary, generation: int) -> void:
+	if generation != _visual_effect_generation or bridge_tree_effect_layer == null:
+		return
+	var cell: Vector2i = request.get("cell", Vector2i.ZERO)
+	var opened_groups: Array = _find_groups_for_cells([cell])
+	_set_groups_alpha(opened_groups, 0.0)
+	var door_instance: Node2D = HallDoorOpenScene.instantiate() as Node2D
+	if door_instance == null:
+		_set_groups_alpha(opened_groups, 1.0)
+		return
+	door_instance.name = "HallDoorOpenSource"
+	door_instance.position = _grid_to_pixels(cell)
+	door_instance.z_index = 640
+	bridge_tree_effect_layer.add_child(door_instance)
+	var animation_player: AnimationPlayer = door_instance.get_node_or_null("AnimationPlayer") as AnimationPlayer
+	if animation_player == null:
+		_set_groups_alpha(opened_groups, 1.0)
+		_clear_effect_overlays([door_instance])
+		return
+	animation_player.play("open")
+	await animation_player.animation_finished
+	if generation != _visual_effect_generation:
+		_set_groups_alpha(opened_groups, 1.0)
+		_clear_effect_overlays([door_instance])
+		return
+	_set_groups_alpha(opened_groups, 1.0)
+	_clear_effect_overlays([door_instance])
+
 func _run_word_merge_flash(request: Dictionary, generation: int) -> void:
 	if generation != _visual_effect_generation or bridge_tree_effect_layer == null:
 		return
@@ -1794,7 +1940,7 @@ func _clear_effect_overlays(overlays: Array) -> void:
 				node.queue_free()
 
 func _play_gem_burst_preview() -> void:
-	if current_level_index != 0 or gem_burst_effect == null:
+	if not _is_helmet_tutorial_level() or gem_burst_effect == null:
 		return
 	gem_burst_effect.play_at(
 		_grid_to_pixels_float(GEM_ORIGIN_GRID),
@@ -1840,7 +1986,7 @@ func _load_level_index(index: int, overrides := {}) -> void:
 	world.update_page()
 	_clear_entity_visuals()
 	_reset_player_river_visual()
-	if current_level_index == 0:
+	if _is_helmet_tutorial_level():
 		intro_phase = "lights"
 		intro_reveal_elapsed = 0.0
 		intro_reveal_max_distance = 0.0
@@ -2065,14 +2211,22 @@ func resolve_startup_scene_path(args: PackedStringArray) -> String:
 	return ""
 
 func resolve_scene_shortcut_from_keycode(keycode: Key) -> String:
+	if keycode == SWORD_SCENE_SHORTCUT_KEY:
+		return SWORD_FLOW_SCENE_PATH
 	if keycode == GLOVE_SCENE_SHORTCUT_KEY:
 		return GLOVE_PREVIEW_SCENE_PATH
+	if keycode == HALL_SCENE_SHORTCUT_KEY:
+		return HALL_PREVIEW_SCENE_PATH
 	return ""
 
 func _entry_scene_path_for_key(entry_key: String) -> String:
 	match entry_key:
+		"sword":
+			return SWORD_FLOW_SCENE_PATH
 		"glove":
 			return GLOVE_PREVIEW_SCENE_PATH
+		"hall":
+			return HALL_PREVIEW_SCENE_PATH
 		_:
 			return ""
 
@@ -2080,3 +2234,7 @@ func _switch_to_scene(scene_path: String) -> void:
 	if scene_path.is_empty() or get_tree() == null:
 		return
 	get_tree().change_scene_to_file(scene_path)
+
+func _switch_to_level_index(level_index: int) -> void:
+	_load_level_index(level_index)
+	_refresh_view()

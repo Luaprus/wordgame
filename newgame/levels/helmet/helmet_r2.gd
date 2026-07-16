@@ -260,6 +260,14 @@ static func _creek_and_tree_spawn(tree_offset := 0) -> Array[Dictionary]:
 		spawn.append({"text": tree_text, "pos": cell})
 	return spawn
 
+static func _bridge_state_spawn(offset := 0, include_hint_effect := false) -> Array[Dictionary]:
+	var spawn := _creek_remainder_spawn(offset)
+	if include_hint_effect and offset == -3:
+		spawn.append_array(_phase_one_bridge_spawn())
+	else:
+		spawn.append_array(_bridge_spawn(offset))
+	return spawn
+
 static func _phase_one_bridge_interact_effect() -> Dictionary:
 	return {
 		"remove_at": _text_block_cells(),
@@ -332,27 +340,87 @@ static func _bridge_phase_two_remerge_effect() -> Dictionary:
 	}
 
 static func _distance_unsolved_effect() -> Dictionary:
-	var spawn := _creek_remainder_spawn(-3)
-	spawn.append_array(_phase_one_bridge_spawn())
 	return {
-		"remove_at": _all_dynamic_cells(),
-		"spawn": spawn,
-		"spawn_text": _phase_one_text_without_distance_parts()
+		"condition": {
+			"pos": Vector2i(19, 7),
+			"text": "桥",
+			"then": _distance_unsolved_bridge_effect(),
+			"else": _distance_unsolved_tree_effect()
+		}
 	}
 
 static func _distance_solved_effect() -> Dictionary:
-	var spawn := _creek_remainder_spawn(0)
-	spawn.append_array(_bridge_spawn(0))
 	return {
-		"remove_at": _all_dynamic_cells(),
-		"visual_effect": BridgeTreeVisuals.key_info_emphasis([
-			Vector2i(7, 7),
-			Vector2i(8, 7),
-			Vector2i(9, 7),
-			Vector2i(10, 7)
-		]),
-		"spawn": spawn,
+		"condition": {
+			"pos": Vector2i(16, 7),
+			"text": "桥",
+			"then": _distance_solved_bridge_effect(),
+			"else": _distance_solved_tree_effect()
+		}
+	}
+
+static func _distance_solved_bridge_effect() -> Dictionary:
+	return {
+		"remove_at": _text_block_cells(),
+		"visual_effects": [
+			BridgeTreeVisuals.key_info_emphasis([
+				Vector2i(7, 7),
+				Vector2i(8, 7),
+				Vector2i(9, 7),
+				Vector2i(10, 7)
+			]),
+			BridgeTreeVisuals.relocate_effect(
+				_bridge_cells(-3),
+				_bridge_cells(0),
+				_river_dynamic_cells(),
+				_bridge_state_spawn(0)
+			)
+		],
 		"spawn_text": _phase_two_text()
+	}
+
+static func _distance_solved_tree_effect() -> Dictionary:
+	return {
+		"remove_at": _text_block_cells(),
+		"visual_effects": [
+			BridgeTreeVisuals.key_info_emphasis([
+				Vector2i(7, 7),
+				Vector2i(8, 7),
+				Vector2i(9, 7),
+				Vector2i(10, 7)
+			]),
+			BridgeTreeVisuals.relocate_effect(
+				_tree_cells(-3),
+				_tree_cells(0),
+				_river_dynamic_cells(),
+				_creek_and_tree_spawn(0)
+			)
+		],
+		"spawn_text": _phase_two_text()
+	}
+
+static func _distance_unsolved_bridge_effect() -> Dictionary:
+	return {
+		"remove_at": _text_block_cells(),
+		"visual_effect": BridgeTreeVisuals.relocate_effect(
+			_bridge_cells(0),
+			_bridge_cells(-3),
+			_river_dynamic_cells(),
+			_bridge_state_spawn(-3, true)
+		),
+		"spawn_text": _phase_one_text_without_distance_parts()
+	}
+
+static func _distance_unsolved_tree_effect() -> Dictionary:
+	return {
+		"remove_at": _text_block_cells(),
+		"visual_effect": BridgeTreeVisuals.relocate_effect(
+			_tree_cells(0),
+			_tree_cells(-3),
+			_river_dynamic_cells(),
+			_creek_and_tree_spawn(-3)
+		),
+		"spawn_text": _phase_one_text_without_distance_parts()
 	}
 
 static func _restore_initial_effect() -> Dictionary:

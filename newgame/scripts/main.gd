@@ -629,12 +629,12 @@ func _apply_result(result: Dictionary) -> void:
 	_consume_visual_effects(visual_requests, visual_contexts)
 	_consume_fullscreen_video_request()
 	if not world.pending_scene_path.is_empty():
-		var scene_path := world.pending_scene_path
+		var scene_path: String = world.pending_scene_path
 		world.pending_scene_path = ""
 		call_deferred("_switch_to_scene", scene_path)
 		return
 	if world.pending_level_index >= 0:
-		var level_index := world.pending_level_index
+		var level_index: int = world.pending_level_index
 		world.pending_level_index = -1
 		call_deferred("_switch_to_level_index", level_index)
 		return
@@ -748,6 +748,9 @@ func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> 
 			continue
 		if effect_type == "bridge_tree_transition":
 			call_deferred("_run_bridge_tree_transition", request.duplicate(true), visual_context, _visual_effect_generation)
+			continue
+		if effect_type == "bridge_tree_relocate":
+			call_deferred("_run_bridge_tree_relocate", request.duplicate(true), _visual_effect_generation)
 			continue
 		if effect_type == "bridge_collapse_sequence":
 			call_deferred("_run_bridge_collapse_sequence", request.duplicate(true), _visual_effect_generation)
@@ -871,6 +874,8 @@ func _run_visual_effect_after_key_info(request: Dictionary, context: Dictionary,
 		call_deferred("_run_word_merge_flash", request.duplicate(true), generation)
 	elif effect_type == "bridge_tree_transition":
 		call_deferred("_run_bridge_tree_transition", request.duplicate(true), context, generation)
+	elif effect_type == "bridge_tree_relocate":
+		call_deferred("_run_bridge_tree_relocate", request.duplicate(true), generation)
 	elif effect_type == "bridge_collapse_sequence":
 		call_deferred("_run_bridge_collapse_sequence", request.duplicate(true), generation)
 	elif effect_type == "word_split_transition":
@@ -1145,6 +1150,35 @@ func _run_key_info_emphasis(request: Dictionary, generation: int) -> void:
 		return
 	_clear_effect_overlays([overlay])
 	key_info_effect_active = false
+
+func _run_bridge_tree_relocate(request: Dictionary, generation: int) -> void:
+	if generation != _visual_effect_generation:
+		return
+	var source_cells: Array = request.get("source_cells", [])
+	var target_cells: Array = request.get("target_cells", [])
+	var fade_out_duration := float(request.get("fade_out_duration", 0.55))
+	var fade_in_duration := float(request.get("fade_in_duration", 0.4))
+	var source_groups: Array = _find_groups_for_cells(source_cells)
+	if not source_groups.is_empty():
+		var fade_out := create_tween()
+		fade_out.set_parallel(true)
+		for group in source_groups:
+			fade_out.tween_property(group, "modulate:a", 0.0, fade_out_duration)
+		await fade_out.finished
+		if generation != _visual_effect_generation:
+			return
+	world.remove_entities_at(request.get("deferred_remove_at", []))
+	world.spawn_entities(request.get("deferred_spawn", []))
+	_refresh_view()
+	var target_groups: Array = _find_groups_for_cells(target_cells)
+	_set_groups_alpha(target_groups, 0.0)
+	if target_groups.is_empty():
+		return
+	var fade_in := create_tween()
+	fade_in.set_parallel(true)
+	for group in target_groups:
+		fade_in.tween_property(group, "modulate:a", 1.0, fade_in_duration)
+	await fade_in.finished
 
 func _add_key_info_strip(parent: Node2D, position: Vector2, size: Vector2, strip_name: String) -> void:
 	var strip := ColorRect.new()

@@ -37,3 +37,14 @@ static func split_effect(tree_cells: Array, bridge_cells: Array, delayed_water_c
 	split_visual["reveal_texts"] = ["溪", "树", "木"]
 	split_visual["delayed_water_cells"] = delayed_water_cells.duplicate()
 	return split_visual
+
+static func relocate_effect(source_cells: Array, target_cells: Array, deferred_remove_at: Array, deferred_spawn: Array) -> Dictionary:
+	return {
+		"type": "bridge_tree_relocate",
+		"source_cells": source_cells.duplicate(),
+		"target_cells": target_cells.duplicate(),
+		"deferred_remove_at": deferred_remove_at.duplicate(),
+		"deferred_spawn": deferred_spawn.duplicate(true),
+		"fade_out_duration": 0.55,
+		"fade_in_duration": 0.4
+	}
