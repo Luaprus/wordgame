@@ -3,6 +3,7 @@ extends Node2D
 const GridWorld = preload("res://scripts/grid_world.gd")
 const WordEntity = preload("res://scripts/word_entity.gd")
 const LevelLoader = preload("res://scripts/level_loader.gd")
+const ArtifactHall = preload("res://levels/hall/artifact_hall.gd")
 const HelmetTutorial = preload("res://levels/helmet/helmet_tutorial.gd")
 const HelmetR1 = preload("res://levels/helmet/helmet_r1.gd")
 const HelmetR2 = preload("res://levels/helmet/helmet_r2.gd")
@@ -36,8 +37,10 @@ const RIVER_DEPTH_STEP := 10
 const RIVER_PLAYER_DEPTH_OFFSET := 5
 const HIGHLIGHT_VISUAL_CONFIG_PATH := "res://assets/animations/highlight/highlight_visual_config.json"
 const GLOVE_PREVIEW_SCENE_PATH := "res://levels/glove/glove_preview.tscn"
+const HALL_PREVIEW_SCENE_PATH := "res://levels/hall/artifact_hall_preview.tscn"
 const STARTUP_ENTRY_ARG_PREFIX := "--entry="
 const GLOVE_SCENE_SHORTCUT_KEY := KEY_F9
+const HALL_SCENE_SHORTCUT_KEY := KEY_F10
 const LEVEL_SEQUENCE := [
 	HelmetTutorial,
 	HelmetR1,
@@ -483,6 +486,11 @@ func _apply_result(result: Dictionary) -> void:
 	_refresh_view(str(result.get("message", "")))
 	_consume_visual_effects()
 	_consume_fullscreen_video_request()
+	if not world.pending_scene_path.is_empty():
+		var scene_path := world.pending_scene_path
+		world.pending_scene_path = ""
+		call_deferred("_switch_to_scene", scene_path)
+		return
 	if current_level_index == 0 and intro_phase == "lights" and result.get("success", false) and not world.has_pending_timed_effect():
 		_begin_intro_prompt()
 	if result.has("pending_delay"):
@@ -835,12 +843,16 @@ func resolve_startup_scene_path(args: PackedStringArray) -> String:
 func resolve_scene_shortcut_from_keycode(keycode: Key) -> String:
 	if keycode == GLOVE_SCENE_SHORTCUT_KEY:
 		return GLOVE_PREVIEW_SCENE_PATH
+	if keycode == HALL_SCENE_SHORTCUT_KEY:
+		return HALL_PREVIEW_SCENE_PATH
 	return ""
 
 func _entry_scene_path_for_key(entry_key: String) -> String:
 	match entry_key:
 		"glove":
 			return GLOVE_PREVIEW_SCENE_PATH
+		"hall":
+			return HALL_PREVIEW_SCENE_PATH
 		_:
 			return ""
 

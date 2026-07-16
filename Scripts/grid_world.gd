@@ -24,6 +24,7 @@ var player_abilities: PackedStringArray = PackedStringArray()
 var current_page_origin := Vector2i.ZERO
 var bounded := false
 var allow_edge_transition := true
+var edge_transition_rows: Array = []
 var entities: Dictionary = {}
 var highlighted_cells: Array[Vector2i] = []
 var last_message := ""
@@ -51,6 +52,7 @@ var typewriter_queue: Array[Dictionary] = []
 var typewriter_after_effect: Dictionary = {}
 var typewriter_delay := 0.2
 var pending_interact_effect: Dictionary = {}
+var pending_scene_path := ""
 var fullscreen_video_finished_effect: Dictionary = {}
 var fullscreen_video_request: Dictionary = {}
 var gesture_transition_request: Dictionary = {}
@@ -69,6 +71,7 @@ func load_level(level: Dictionary) -> void:
 	screen_size = level.get("screen_size", screen_size)
 	bounded = bool(level.get("bounded", false))
 	allow_edge_transition = bool(level.get("allow_edge_transition", true))
+	edge_transition_rows = level.get("edge_transition_rows", []).duplicate()
 	rows = level.get("rows", [])
 	player_pos = level.get("player_start", player_pos)
 	facing = level.get("player_facing", Vector2i(1, 0))
@@ -123,6 +126,7 @@ func clear() -> void:
 	player_text = "我"
 	bounded = false
 	allow_edge_transition = true
+	edge_transition_rows.clear()
 	player_abilities = PackedStringArray()
 	ignored_row_texts = PackedStringArray(["我"])
 	entity_configs.clear()
@@ -145,6 +149,7 @@ func clear() -> void:
 	typewriter_after_effect.clear()
 	typewriter_delay = 0.2
 	pending_interact_effect.clear()
+	pending_scene_path = ""
 	fullscreen_video_finished_effect.clear()
 	fullscreen_video_request.clear()
 	gesture_transition_request.clear()
@@ -302,7 +307,7 @@ func _check_move_bounds(target: Vector2i) -> Dictionary:
 		return {"success": true}
 	if target.x < 0 or target.y < 0 or target.y >= screen_size.y:
 		return {"success": false, "message": "boundary"}
-	if target.x >= screen_size.x and allow_edge_transition:
+	if target.x >= screen_size.x and allow_edge_transition and (edge_transition_rows.is_empty() or edge_transition_rows.has(target.y)):
 		return {
 			"success": true,
 			"transition": "next_level",
@@ -793,6 +798,8 @@ func _apply_map_effect(config: Dictionary) -> void:
 		pending_timed_delay = float(config.get("pending_timed_delay", pending_timed_delay))
 	if config.has("last_message"):
 		last_message = str(config.last_message)
+	if config.has("scene_path"):
+		pending_scene_path = str(config.scene_path)
 	for text in config.get("remove_texts", []):
 		_erase_entities_by_text(str(text))
 	for pos in config.get("remove_at", []):
