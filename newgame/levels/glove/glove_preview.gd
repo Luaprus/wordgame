@@ -24,6 +24,7 @@ const STARTUP_DEMO_ARG_PREFIX := "--glove-demo="
 const STARTUP_CAPTURE_ARG_PREFIX := "--glove-capture="
 const STARTUP_DEBUG_ARG_PREFIX := "--glove-debug="
 const MAIN_SCENE_PATH := "res://Main.tscn"
+const HALL_SCENE_PATH := "res://levels/hall/artifact_hall_preview.tscn"
 const RETURN_TO_MAIN_SHORTCUT_KEY := KEY_ESCAPE
 
 var world := GridWorld.new()
@@ -122,6 +123,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		var shortcut_scene_path := resolve_scene_shortcut_from_keycode(key_event.keycode)
 		if not shortcut_scene_path.is_empty():
 			call_deferred("_switch_to_scene", shortcut_scene_path)
+			return
+		if key_event.keycode == KEY_F10:
+			call_deferred("_switch_to_scene", HALL_SCENE_PATH)
 			return
 	var direction := _direction_from_key(key_event.keycode)
 	if direction != Vector2i.ZERO:
