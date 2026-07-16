@@ -29,7 +29,7 @@ func _init() -> void:
 	if scene is PackedScene:
 		var instance: Node = (scene as PackedScene).instantiate()
 		assert_true(instance is Control, "sword flow scene instantiates as Control")
-		assert_true(bool(instance.get("start_at_snake_second_phase")), "hall sword scene enters snake second phase directly")
+		assert_true(not bool(instance.get("start_at_snake_second_phase")), "sword scene starts at the source treasure-room flow")
 		for cut_char in ["断", "没", "不", "对", "难", "你", "走", "过"]:
 			var label := Label.new()
 			label.text = cut_char

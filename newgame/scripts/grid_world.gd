@@ -49,6 +49,7 @@ var entity_move_effects: Variant = {}
 var step_effects: Array = []
 var pending_timed_effect: Dictionary = {}
 var pending_timed_delay := 0.0
+var pending_gesture_transition_request: Dictionary = {}
 var typewriter_queue: Array[Dictionary] = []
 var typewriter_after_effect: Dictionary = {}
 var typewriter_delay := 0.2
@@ -150,6 +151,7 @@ func clear() -> void:
 	highlight_animation_strengths.clear()
 	pending_timed_effect.clear()
 	pending_timed_delay = 0.0
+	pending_gesture_transition_request.clear()
 	typewriter_queue.clear()
 	typewriter_after_effect.clear()
 	typewriter_delay = 0.2
@@ -927,6 +929,15 @@ func _apply_map_effect(config: Dictionary) -> void:
 		player_pos = reset_player_pos
 		update_page()
 		return
+	if config.has("start_gesture_transition"):
+		var transition: Dictionary = config.start_gesture_transition
+		pending_gesture_transition_request = {
+			"duration": float(transition.get("duration", 1.0))
+		}
+		pending_timed_effect = transition.get("effect", {}).duplicate(true)
+		pending_timed_delay = float(transition.get("switch_delay", 0.5))
+		player_input_locked = true
+		return
 	if config.has("move_player_toward"):
 		_apply_move_player_toward(config.move_player_toward)
 		return
@@ -1071,6 +1082,11 @@ func consume_visual_effects() -> Array:
 	var requests: Array = visual_effect_requests.duplicate(true)
 	visual_effect_requests.clear()
 	return requests
+
+func consume_gesture_transition_request() -> Dictionary:
+	var request := pending_gesture_transition_request.duplicate(true)
+	pending_gesture_transition_request.clear()
+	return request
 
 func _get_deferred_bridge_merge_removals(config: Dictionary) -> Array[Vector2i]:
 	var bridge_cells := _get_deferred_bridge_merge_cells(config)

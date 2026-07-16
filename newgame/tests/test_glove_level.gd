@@ -1,4 +1,4 @@
-﻿extends SceneTree
+extends SceneTree
 
 const GLOVE_LEVEL_PATH := "res://levels/glove/glove_level.gd"
 const GLOVE_CORRECT_ROUTE_PATH := "res://../harness/demo_routes/glove/glove_correct_route.json"
@@ -2422,8 +2422,3 @@ func count_entities_by_text(world: RefCounted, expected_text: String) -> int:
 
 func fail(message: String) -> void:
 	failures.append(message)
-
-
-
-
-

@@ -90,6 +90,7 @@ const SLIME_MOVE_KEY_SCALES := [
 	Vector2(1.0, 1.0),
 	Vector2(1.0, 1.0),
 ]
+const SLIME_MOVE_KEY_OFFSET_Y := [0.0, -30.0, -30.0, 0.0]
 const OPPORTUNITY_CELLS := [
 	Vector2i(2, 7),
 	Vector2i(7, 3),
@@ -357,9 +358,11 @@ var fissure_labels: Array[Label] = []
 var fissure_open := false
 var slime_labels: Array[Label] = []
 var slime_visible: Array[bool] = []
+var slime_base_positions: Array[Vector2] = []
 var slime_reinforcement_timer := 0.0
 var slime_reinforcement_cursor := 0
 var slime_move_animation_time := 0.0
+var slime_move_animation_enabled := true
 var pending_death_sentence := ""
 var death_checkpoint: Dictionary = {}
 var death_checkpoint_valid := false
@@ -2805,6 +2808,7 @@ func _show_death_screen(death_sentence: String) -> void:
 func _show_slimes() -> void:
 	_clear_slimes()
 	slime_move_animation_time = 0.0
+	slime_move_animation_enabled = true
 	for i in range(SLIME_CELLS.size()):
 		var cell: Vector2i = SLIME_CELLS[i]
 		var label := _make_world_cell_label("史", MAP_SLIME_RIGHT, cell.x, cell.y, DIALOGUE_COLOR)
@@ -2814,6 +2818,7 @@ func _show_slimes() -> void:
 		actor_layer.add_child(label)
 		slime_labels.append(label)
 		slime_visible.append(label.visible)
+		slime_base_positions.append(label.position)
 
 
 func _clear_slimes() -> void:
@@ -2821,14 +2826,17 @@ func _clear_slimes() -> void:
 		label.queue_free()
 	slime_labels.clear()
 	slime_visible.clear()
+	slime_base_positions.clear()
 	slime_reinforcement_timer = 0.0
 	slime_reinforcement_cursor = 0
 	slime_move_animation_time = 0.0
+	slime_move_animation_enabled = true
 
 
 func _restore_slimes(visible_state: Array) -> void:
 	_clear_slimes()
 	slime_move_animation_time = 0.0
+	slime_move_animation_enabled = true
 	for i in range(SLIME_CELLS.size()):
 		var cell: Vector2i = SLIME_CELLS[i]
 		var label := _make_world_cell_label("史", MAP_SLIME_RIGHT, cell.x, cell.y, DIALOGUE_COLOR)
@@ -2838,6 +2846,7 @@ func _restore_slimes(visible_state: Array) -> void:
 		actor_layer.add_child(label)
 		slime_labels.append(label)
 		slime_visible.append(label.visible)
+		slime_base_positions.append(label.position)
 
 
 func _update_slime_reinforcements(delta: float) -> void:
@@ -2884,6 +2893,7 @@ func _fade_slime_indices(indices: Array) -> void:
 
 
 func _run_slimes_away() -> void:
+	slime_move_animation_enabled = false
 	var tween := create_tween()
 	tween.set_parallel(true)
 	var has_target := false
@@ -2911,15 +2921,19 @@ func _is_visible_slime_cell(cell: Vector2i) -> bool:
 
 
 func _update_slime_visual_animation(delta: float) -> void:
-	if slime_labels.is_empty():
+	if slime_labels.is_empty() or not slime_move_animation_enabled:
 		return
 	slime_move_animation_time = fmod(slime_move_animation_time + delta, SLIME_MOVE_CYCLE_LENGTH)
 	var animated_scale := _sample_slime_move_scale(slime_move_animation_time)
-	for label in slime_labels:
+	var animated_offset_y := _sample_slime_move_offset_y(slime_move_animation_time)
+	for i in range(slime_labels.size()):
+		var label := slime_labels[i]
 		if not is_instance_valid(label):
 			continue
 		label.pivot_offset = Vector2(CELL * 0.5, CELL * 0.5)
 		label.scale = animated_scale if label.visible else Vector2.ONE
+		if i < slime_base_positions.size():
+			label.position = slime_base_positions[i] + Vector2(0.0, animated_offset_y if label.visible else 0.0)
 
 
 func _sample_slime_move_scale(time: float) -> Vector2:
@@ -2933,6 +2947,19 @@ func _sample_slime_move_scale(time: float) -> Vector2:
 			var weight := clampf((time - start_time) / span, 0.0, 1.0)
 			return SLIME_MOVE_KEY_SCALES[i].lerp(SLIME_MOVE_KEY_SCALES[i + 1], weight)
 	return Vector2.ONE
+
+
+func _sample_slime_move_offset_y(time: float) -> float:
+	if time >= SLIME_MOVE_ANIMATION_LENGTH:
+		return 0.0
+	for i in range(SLIME_MOVE_KEY_TIMES.size() - 1):
+		var start_time: float = SLIME_MOVE_KEY_TIMES[i]
+		var end_time: float = SLIME_MOVE_KEY_TIMES[i + 1]
+		if time <= end_time:
+			var span := maxf(end_time - start_time, 0.001)
+			var weight := clampf((time - start_time) / span, 0.0, 1.0)
+			return lerpf(SLIME_MOVE_KEY_OFFSET_Y[i], SLIME_MOVE_KEY_OFFSET_Y[i + 1], weight)
+	return 0.0
 
 
 func _chars(text: String) -> Array[String]:

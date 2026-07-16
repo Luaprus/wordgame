@@ -1,0 +1,38 @@
+{
+  "level_id": "princess_cage",
+  "display_name": "解救公主关卡",
+  "owner": "codex",
+  "status": "in_progress",
+  "source": {
+    "external_root": "D:/文字游戏",
+    "animation_sources": [
+      "D:/文字游戏/Scenes/Animations/Backspace.tscn",
+      "D:/文字游戏/Scenes/Animations/Backspace.gd",
+      "D:/文字游戏/Sprites/backspace_splash/splash.png",
+      "D:/文字游戏/Shader/cut2.gdshader"
+    ]
+  },
+  "target": {
+    "preview_scene": "res://levels/princess/princess_preview.tscn",
+    "level_script": "res://levels/princess/princess_cage.gd"
+  },
+  "map": {
+    "runtime_model": "GridWorld dictionary level",
+    "screen_size": [32, 18],
+    "cell_size": 60,
+    "event_anchor": "cell_top_left",
+    "word_anchor": "cell_center"
+  },
+  "animation_ports": [
+    {
+      "id": "PRINCESS-BACKSPACE-NOT",
+      "trigger": "Backspace deletes the deletable 不 entity at NOT_POS",
+      "target_visual_request": "backspace_cut",
+      "target_assets": [
+        "res://assets/sprites/backspace_splash/splash.png",
+        "res://assets/shaders/cut2.gdshader"
+      ],
+      "verification": "static source and resource check"
+    }
+  ]
+}

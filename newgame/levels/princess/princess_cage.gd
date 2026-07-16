@@ -76,6 +76,12 @@ static func _delete_not_effect() -> Dictionary:
 	return {
 		"set_input_locked": true,
 		"set_event_locked": true,
+		"visual_effect": {
+			"type": "backspace_cut",
+			"text": "不",
+			"pos": NOT_POS,
+			"angle_degrees": 45.0
+		},
 		"set_pending_timed_effect": _reduce_description_effect(),
 		"pending_timed_delay": 1.0,
 		"last_message": "文字开始发生变化。"

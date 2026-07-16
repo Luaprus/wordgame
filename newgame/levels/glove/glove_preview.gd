@@ -19,7 +19,7 @@ const PlayerWalkTexture = preload("res://assets/player/me_walk.png")
 
 const MOVE_REPEAT_INTERVAL := 0.12
 const FAST_MOVE_REPEAT_INTERVAL := 0.12
-const GLOVE_GAMEPLAY_FONT_SIZE := 34
+const GLOVE_GAMEPLAY_FONT_SIZE := 54
 const GLOVE_GAMEPLAY_LINE_SPACING := 0
 const WORD_FONT_SIZE := GLOVE_GAMEPLAY_FONT_SIZE
 const CORRECT_ROUTE_PATH := "res://../harness/demo_routes/glove/glove_correct_route_runtime.json"
@@ -375,6 +375,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not event is InputEventKey:
 		return
 	var key_event := event as InputEventKey
+	if key_event.pressed and not key_event.echo and key_event.keycode == KEY_F10:
+		call_deferred("_switch_to_scene", HALL_SCENE_PATH)
+		return
 	if hero_encroach_debug_wait_for_input:
 		if key_event.pressed and not key_event.echo and (key_event.keycode == KEY_SPACE or key_event.keycode == KEY_ENTER):
 			_start_hero_encroach_transition()
@@ -394,9 +397,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		var shortcut_scene_path := resolve_scene_shortcut_from_keycode(key_event.keycode)
 		if not shortcut_scene_path.is_empty():
 			call_deferred("_switch_to_scene", shortcut_scene_path)
-			return
-		if key_event.keycode == KEY_F10:
-			call_deferred("_switch_to_scene", HALL_SCENE_PATH)
 			return
 	var direction := _direction_from_key(key_event.keycode)
 	if direction != Vector2i.ZERO:

@@ -58,7 +58,7 @@
 			"reviewer": ""
 		}
 	],
-	"generated_at": "2026-07-16 16:08:35",
+	"generated_at": "2026-07-16 16:36:00",
 	"level_id": "glove",
 	"note": "填写 checkpoint_reviews、route_step_reviews 和 focus_reviews 后，可用 glove_manual_review_import_main.gd 导入到 harness/demo_routes/glove/manual_review_overrides.json。",
 	"route_step_reviews": [

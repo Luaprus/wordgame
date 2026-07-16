@@ -23,6 +23,8 @@ const PullParticleEffect = preload("res://scripts/pull_particle_effect.gd")
 const TreeSpriteScene = preload("res://scenes/animations/TreeSprite.tscn")
 const SplitBaseTexture = preload("res://assets/animations/split/base_white.png")
 const SplitParticleTexture = preload("res://assets/animations/split/unzip_split.png")
+const BackspaceSplashTexture = preload("res://assets/sprites/backspace_splash/splash.png")
+const BackspaceCutShader = preload("res://assets/shaders/cut2.gdshader")
 const OriginalFont = preload("res://Fonts/Zpix-v3.1.6.ttf")
 const PushEffectTexture = preload("res://assets/animations/push/u_glove_S.png")
 const HallDoorOpenScene = preload("res://scenes/animations/hall_door_open.tscn")
@@ -47,6 +49,9 @@ const BRIDGE_COLLAPSE_FALL_DISTANCE := 72.0
 const BRIDGE_COLLAPSE_PLAYER_FALL_DISTANCE := 84.0
 const BRIDGE_COLLAPSE_MASK_PADDING := 6.0
 const PUSH_FLASH_FRAME_LOCAL_X := [-18.5, -20.0, -27.5, -38.5, -45.5, -50.0, -55.0, -58.0, -60.0, -61.0, -61.5, -62.0, -64.5, -65.0, -68.0, -68.0]
+const BACKSPACE_CUT_ANGLE_DEGREES := 45.0
+const BACKSPACE_CUT_MASK_EXTRA_X := 14.0
+const BACKSPACE_CUT_DURATION := 1.15
 const BRIDGE_MERGE_YELLOW := Color(1.0, 0.92, 0.22, 0.58)
 const BRIDGE_MERGE_YELLOW_SOFT := Color(1.0, 0.92, 0.22, 0.16)
 const KEY_INFO_EMPHASIS := "key_info_emphasis"
@@ -133,9 +138,6 @@ var intro_reveal_elapsed := 0.0
 var intro_reveal_max_distance := 0.0
 var creek_wave_elapsed := 0.0
 var bridge_shake_elapsed := 0.0
-
-func _is_helmet_tutorial_level() -> bool:
-	return current_level_index >= 0 and current_level_index < LEVEL_SEQUENCE.size() and LEVEL_SEQUENCE[current_level_index] == HelmetTutorial
 
 func _ready() -> void:
 	main_menu = get_node_or_null("MainMenu") as Control
@@ -742,6 +744,9 @@ func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> 
 		if effect_type == "player_push_flash":
 			_play_player_push_flash(request)
 			continue
+		if effect_type == "backspace_cut":
+			call_deferred("_run_backspace_cut_effect", request.duplicate(true), _visual_effect_generation)
+			continue
 		if effect_type == "word_merge_flash" or effect_type == "bridge_word_merge_flash":
 			call_deferred("_run_word_merge_flash", request.duplicate(true), _visual_effect_generation)
 			continue
@@ -766,6 +771,97 @@ func _consume_visual_effects(visual_requests: Array, visual_contexts: Array) -> 
 			call_deferred("_run_bridge_collapse_sequence", request.duplicate(true), _visual_effect_generation)
 		if effect_type == "word_split_transition":
 			call_deferred("_run_word_split_transition", request.duplicate(true), visual_context, _visual_effect_generation)
+
+func _run_backspace_cut_effect(request: Dictionary, generation: int) -> void:
+	if generation != _visual_effect_generation or map_layer == null:
+		return
+	var text := str(request.get("text", ""))
+	if text.is_empty():
+		return
+	var grid_pos: Vector2i = request.get("pos", Vector2i.ZERO)
+	var cell_origin := _grid_to_pixels(grid_pos)
+	var cell_size := Vector2(world.cell_size, world.cell_size)
+
+	var mask := ColorRect.new()
+	mask.name = "BackspaceCutMask"
+	mask.position = cell_origin - Vector2(BACKSPACE_CUT_MASK_EXTRA_X, 0.0)
+	mask.size = cell_size + Vector2(BACKSPACE_CUT_MASK_EXTRA_X * 2.0, 0.0)
+	mask.color = Color.BLACK
+	mask.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mask.z_index = 70
+	map_layer.add_child(mask)
+
+	var word_viewport := _build_backspace_word_viewport(text)
+	map_layer.add_child(word_viewport)
+	await get_tree().process_frame
+	if generation != _visual_effect_generation:
+		mask.queue_free()
+		word_viewport.queue_free()
+		return
+
+	var material := ShaderMaterial.new()
+	material.shader = BackspaceCutShader
+	material.set_shader_parameter("degree", float(request.get("angle_degrees", BACKSPACE_CUT_ANGLE_DEGREES)))
+	material.set_shader_parameter("time", 0.0)
+
+	var split_sprite := Sprite2D.new()
+	split_sprite.name = "BackspaceCutWord"
+	split_sprite.texture = word_viewport.get_texture()
+	split_sprite.material = material
+	split_sprite.centered = true
+	split_sprite.position = cell_origin + cell_size * 0.5
+	split_sprite.z_index = 72
+	map_layer.add_child(split_sprite)
+
+	var slash := Sprite2D.new()
+	slash.name = "BackspaceCutSplash"
+	slash.texture = BackspaceSplashTexture
+	slash.hframes = 10
+	slash.vframes = 2
+	slash.frame = 0
+	slash.z_index = 74
+	slash.centered = true
+	slash.position = cell_origin + cell_size * 0.5
+	slash.rotation_degrees = float(request.get("angle_degrees", BACKSPACE_CUT_ANGLE_DEGREES))
+	map_layer.add_child(slash)
+
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(material, "shader_parameter/time", 1.0, BACKSPACE_CUT_DURATION).from(0.0)
+	tween.tween_property(slash, "frame", 17, 0.5).from(0)
+	tween.tween_property(split_sprite, "modulate:a", 0.18, 0.72).set_delay(0.28)
+	await tween.finished
+	if generation != _visual_effect_generation:
+		mask.queue_free()
+		word_viewport.queue_free()
+		split_sprite.queue_free()
+		slash.queue_free()
+		return
+
+	split_sprite.modulate.a = 0.0
+	await get_tree().create_timer(0.08).timeout
+	split_sprite.modulate.a = 0.26
+	await get_tree().create_timer(0.08).timeout
+	split_sprite.modulate.a = 0.48
+	await get_tree().create_timer(0.06).timeout
+	split_sprite.modulate.a = 0.16
+	await get_tree().create_timer(0.08).timeout
+	mask.queue_free()
+	word_viewport.queue_free()
+	split_sprite.queue_free()
+	slash.queue_free()
+
+func _build_backspace_word_viewport(text: String) -> SubViewport:
+	var viewport := SubViewport.new()
+	viewport.name = "BackspaceWordViewport"
+	viewport.size = Vector2i(world.cell_size, world.cell_size)
+	viewport.transparent_bg = true
+	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	var rendered_label := _make_word_label(text, Color.WHITE)
+	rendered_label.position = Vector2.ZERO
+	rendered_label.size = Vector2(world.cell_size, world.cell_size)
+	viewport.add_child(rendered_label)
+	return viewport
 
 func _visual_requests_include_key_info(visual_requests: Array) -> bool:
 	if key_info_emphasis_played:
@@ -880,6 +976,8 @@ func _run_visual_effect_after_key_info(request: Dictionary, context: Dictionary,
 		_play_player_river_exit(request)
 	elif effect_type == "player_push_flash":
 		_play_player_push_flash(request)
+	elif effect_type == "backspace_cut":
+		call_deferred("_run_backspace_cut_effect", request.duplicate(true), generation)
 	elif effect_type == "word_merge_flash" or effect_type == "bridge_word_merge_flash":
 		call_deferred("_run_word_merge_flash", request.duplicate(true), generation)
 	elif effect_type == "bridge_tree_transition":

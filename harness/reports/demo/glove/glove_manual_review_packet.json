@@ -211,16 +211,16 @@
 	],
 	"display_name": "手套关",
 	"failed_report_count": 11,
-	"generated_at": "2026-07-16 16:08:35",
+	"generated_at": "2026-07-16 16:36:00",
 	"generated_from": {
-		"flow_handoff_path": "E:/wordgame copy/harness/demo_routes/glove/glove_flow_handoff.md",
-		"handoff_path": "E:/wordgame copy/newgame/levels/glove/handoff.md",
-		"manifest_path": "E:/wordgame copy/newgame/levels/glove/level_manifest.json",
-		"manual_review_checklist_path": "E:/wordgame copy/harness/demo_routes/glove/manual_review_checklist.md",
-		"route_walkthroughs_path": "E:/wordgame copy/harness/reports/demo/glove/glove_route_walkthroughs.md",
-		"source_evidence_markdown_path": "E:/wordgame copy/harness/reports/demo/glove/glove_source_evidence.md",
-		"source_evidence_path": "E:/wordgame copy/harness/reports/demo/glove/glove_source_evidence.json",
-		"summary_path": "E:/wordgame copy/harness/reports/demo/glove/glove_runtime_reports_summary.json"
+		"flow_handoff_path": "L:/wordgame-new/wordgame/harness/demo_routes/glove/glove_flow_handoff.md",
+		"handoff_path": "L:/wordgame-new/wordgame/newgame/levels/glove/handoff.md",
+		"manifest_path": "L:/wordgame-new/wordgame/newgame/levels/glove/level_manifest.json",
+		"manual_review_checklist_path": "L:/wordgame-new/wordgame/harness/demo_routes/glove/manual_review_checklist.md",
+		"route_walkthroughs_path": "L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_route_walkthroughs.md",
+		"source_evidence_markdown_path": "L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_source_evidence.md",
+		"source_evidence_path": "L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_source_evidence.json",
+		"summary_path": "L:/wordgame-new/wordgame/harness/reports/demo/glove/glove_runtime_reports_summary.json"
 	},
 	"level_id": "glove",
 	"manual_review_focus": [
@@ -682,13 +682,13 @@
 		{
 			"baseline_id": "GLOVE-SHOT-009",
 			"diff_pixel_count": 0,
-			"report_path": "E:/wordgame copy/newgame/../harness/reports/visual/glove/GLOVE-SHOT-009__report.json",
+			"report_path": "L:/wordgame-new/wordgame/newgame/../harness/reports/visual/glove/GLOVE-SHOT-009__report.json",
 			"status": "pass"
 		},
 		{
 			"baseline_id": "GLOVE-SHOT-010",
 			"diff_pixel_count": 0,
-			"report_path": "E:/wordgame copy/newgame/../harness/reports/visual/glove/GLOVE-SHOT-010__report.json",
+			"report_path": "L:/wordgame-new/wordgame/newgame/../harness/reports/visual/glove/GLOVE-SHOT-010__report.json",
 			"status": "pass"
 		}
 	]
