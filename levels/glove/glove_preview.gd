@@ -60,6 +60,19 @@ const HERO_ENCROACH_SOURCE_STAGE_TWO_TIME := 1.1
 const HERO_ENCROACH_SOURCE_STAGE_THREE_TIME := 2.6
 const HERO_ENCROACH_SOURCE_STAGE_FOUR_TIME := 3.7
 const HERO_ENCROACH_SOURCE_FINISH_TIME := 5.5
+const HERO_ENCROACH_FINAL_MESSAGE := "勇者们整齐地排成阵，留出一条笔直的道路。"
+const HERO_ENCROACH_FINAL_MESSAGE_CELL := Vector2i(6, 4)
+const HERO_ENCROACH_TYPEWRITER_CHAR_DELAY := 0.1
+const HERO_ENCROACH_EPILOGUE_TEXT := "我感到温热的期许和冀望。"
+const HERO_ENCROACH_EPILOGUE_TEXT_CELL := Vector2i(9, 5)
+const HERO_ENCROACH_EPILOGUE_BLUE_TEXT := "世界由 拯救"
+const HERO_ENCROACH_EPILOGUE_BLUE_CELL := Vector2i(12, 11)
+const HERO_ENCROACH_EPILOGUE_GREEN_TEXT := "公主由 解放"
+const HERO_ENCROACH_EPILOGUE_GREEN_CELL := Vector2i(12, 14)
+const HERO_ENCROACH_EPILOGUE_TEXT_CHAR_DELAY := 0.1
+const HERO_ENCROACH_EPILOGUE_FADE_DURATION := 0.35
+const HERO_ENCROACH_EPILOGUE_RETURN_DURATION := 1.0
+const ARTIFACT_HALL_SCENE_PATH := "res://levels/hall/artifact_hall_preview.tscn"
 const GESTURE_INTRO_FALL_DURATION := 0.9
 const GESTURE_INTRO_REVEAL_DURATION := 0.7
 const GESTURE_INTRO_SWAP_INTERVAL := 0.075
@@ -213,6 +226,26 @@ var hero_encroach_fill_index := 0
 var hero_encroach_fill_elapsed := 0.0
 var hero_encroach_completed := false
 var hero_encroach_debug_wait_for_input := false
+var hero_encroach_source_mode := false
+var hero_encroach_epilogue_layer: Node2D
+var hero_encroach_epilogue_characters: Node2D
+var hero_encroach_epilogue_entities: Node2D
+var hero_encroach_epilogue_player: Label
+var hero_encroach_epilogue_player_sprite: Sprite2D
+var hero_encroach_epilogue_player_mover := SmoothGridMover.new()
+var hero_encroach_epilogue_world := GridWorld.new()
+var hero_encroach_epilogue_entity_labels: Dictionary = {}
+var hero_encroach_epilogue_entity_movers: Dictionary = {}
+var hero_encroach_epilogue_blue_entity_ids: Array = []
+var hero_encroach_epilogue_active := false
+var hero_encroach_epilogue_player_active := false
+var hero_encroach_epilogue_world_active := false
+var hero_encroach_epilogue_elapsed := 0.0
+var hero_encroach_epilogue_index := 0
+var hero_encroach_epilogue_blue_visible := false
+var hero_encroach_epilogue_green_visible := false
+var hero_encroach_epilogue_return_active := false
+var hero_encroach_epilogue_return_elapsed := 0.0
 var gesture_intro_world := GridWorld.new()
 var gesture_intro_layer: CanvasLayer
 var gesture_intro_hand_root: Node2D
@@ -287,6 +320,7 @@ func _process(delta: float) -> void:
 	_advance_hero_quote(delta)
 	_advance_hero_exit_transition(delta)
 	_advance_hero_encroach(delta)
+	_advance_hero_encroach_epilogue(delta)
 	_advance_gesture_intro(delta)
 	if brave_loop_prompt.advance(delta):
 		_sync_brave_loop_prompt()
@@ -309,6 +343,15 @@ func _process(delta: float) -> void:
 			while move_repeat_elapsed >= intro_interval:
 				move_repeat_elapsed -= intro_interval
 				_apply_intro_direction_step(direction)
+	elif hero_encroach_epilogue_active:
+		if not hero_encroach_epilogue_player_active or hero_encroach_epilogue_return_active:
+			move_repeat_elapsed = 0.0
+		else:
+			move_repeat_elapsed += delta
+			var epilogue_interval := FAST_MOVE_REPEAT_INTERVAL if Input.is_key_pressed(KEY_SHIFT) else MOVE_REPEAT_INTERVAL
+			while move_repeat_elapsed >= epilogue_interval:
+				move_repeat_elapsed -= epilogue_interval
+				_apply_hero_encroach_epilogue_direction_step(direction)
 	elif hero_quote_active:
 		if not hero_quote_player_active:
 			move_repeat_elapsed = 0.0
@@ -337,6 +380,16 @@ func _process(delta: float) -> void:
 			mover.advance(delta)
 			changed = changed or previous_hero_entity != mover.current_position
 		_apply_hero_quote_visual_positions()
+	if hero_encroach_epilogue_player_active:
+		var previous_epilogue_player := hero_encroach_epilogue_player_mover.current_position
+		hero_encroach_epilogue_player.position = hero_encroach_epilogue_player_mover.advance(delta)
+		changed = changed or previous_epilogue_player != hero_encroach_epilogue_player_mover.current_position
+	if hero_encroach_epilogue_world_active:
+		for mover in hero_encroach_epilogue_entity_movers.values():
+			var previous_epilogue_entity: Vector2 = mover.current_position
+			mover.advance(delta)
+			changed = changed or previous_epilogue_entity != mover.current_position
+		_apply_hero_encroach_epilogue_visual_positions()
 	if intro_active:
 		if intro_player_visual_ready:
 			var previous_intro_player := intro_player_mover.current_position
@@ -367,6 +420,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if intro_active:
 		_handle_intro_input(key_event)
+		return
+	if hero_encroach_epilogue_active:
+		_handle_hero_encroach_epilogue_input(key_event)
 		return
 	if hero_quote_active:
 		_handle_hero_quote_input(key_event)
@@ -1002,6 +1058,21 @@ func _build_acquisition_overlay() -> void:
 	hero_encroach_root.name = "HeroEncroachLayer"
 	hero_encroach_root.visible = false
 	acquisition_layer.add_child(hero_encroach_root)
+	hero_encroach_epilogue_layer = Node2D.new()
+	hero_encroach_epilogue_layer.name = "HeroEncroachEpilogueLayer"
+	hero_encroach_epilogue_layer.visible = false
+	acquisition_layer.add_child(hero_encroach_epilogue_layer)
+	hero_encroach_epilogue_characters = Node2D.new()
+	hero_encroach_epilogue_characters.name = "HeroEncroachEpilogueCharacters"
+	hero_encroach_epilogue_layer.add_child(hero_encroach_epilogue_characters)
+	hero_encroach_epilogue_entities = Node2D.new()
+	hero_encroach_epilogue_entities.name = "HeroEncroachEpilogueEntities"
+	hero_encroach_epilogue_layer.add_child(hero_encroach_epilogue_entities)
+	hero_encroach_epilogue_player = _make_word_label("我")
+	hero_encroach_epilogue_player.name = "HeroEncroachEpiloguePlayer"
+	hero_encroach_epilogue_player.visible = false
+	hero_encroach_epilogue_layer.add_child(hero_encroach_epilogue_player)
+	hero_encroach_epilogue_player_sprite = _attach_player_sprite(hero_encroach_epilogue_player, float(world.cell_size))
 	acquisition_dialogue_indicator = Label.new()
 	acquisition_dialogue_indicator.name = "AcquireDialogueContinue"
 	acquisition_dialogue_indicator.text = "▽"
@@ -1927,19 +1998,22 @@ func _start_hero_encroach_transition() -> void:
 	hero_encroach_debug_wait_for_input = false
 	_clear_hero_encroach_screen()
 	_clear_hero_encroach_units()
+	_clear_hero_encroach_epilogue()
 	hero_encroach_active = true
 	hero_encroach_completed = false
+	hero_encroach_source_mode = true
 	hero_encroach_phase = 0
 	hero_encroach_phase_elapsed = 0.0
 	hero_encroach_fill_cells.clear()
 	hero_encroach_fill_index = 0
 	hero_encroach_fill_elapsed = 0.0
 	hero_encroach_root.visible = true
-	_spawn_hero_encroach_wave(0)
+	call_deferred("_run_hero_encroach_source_sequence")
 
 func _prepare_hero_encroach_debug() -> void:
 	hero_encroach_debug_wait_for_input = true
 	_clear_hero_encroach_screen()
+	_clear_hero_encroach_epilogue()
 	hero_encroach_root.visible = false
 
 func _clear_hero_encroach_screen() -> void:
@@ -1966,9 +2040,14 @@ func _clear_hero_encroach_screen() -> void:
 	hero_quote_player.visible = false
 	hero_quote_characters.visible = false
 	hero_quote_entities.visible = false
+	if hero_encroach_epilogue_layer != null:
+		hero_encroach_epilogue_layer.visible = false
 
 func _advance_hero_encroach(delta: float) -> void:
 	if not hero_encroach_active:
+		return
+	if hero_encroach_source_mode:
+		_advance_hero_encroach_source_routes(delta)
 		return
 	if not hero_encroach_motion.is_empty():
 		_advance_hero_encroach_motion(delta)
@@ -2103,6 +2182,35 @@ func _hero_encroach_final_wall_cells() -> Array[Vector2i]:
 			cells.append(Vector2i(31 - depth, y))
 	return cells
 
+func _run_hero_encroach_source_sequence() -> void:
+	if not hero_encroach_active or not hero_encroach_source_mode:
+		return
+	_spawn_hero_encroach_source_stage_one()
+	await get_tree().create_timer(HERO_ENCROACH_SOURCE_STAGE_TWO_TIME).timeout
+	if not hero_encroach_active or not hero_encroach_source_mode:
+		return
+	_spawn_hero_encroach_source_stage_two()
+	await get_tree().create_timer(HERO_ENCROACH_SOURCE_STAGE_THREE_TIME - HERO_ENCROACH_SOURCE_STAGE_TWO_TIME).timeout
+	if not hero_encroach_active or not hero_encroach_source_mode:
+		return
+	_spawn_hero_encroach_source_stage_three()
+	await get_tree().create_timer(HERO_ENCROACH_SOURCE_STAGE_FOUR_TIME - HERO_ENCROACH_SOURCE_STAGE_THREE_TIME).timeout
+	if not hero_encroach_active or not hero_encroach_source_mode:
+		return
+	_spawn_hero_encroach_source_stage_four()
+	await get_tree().create_timer(HERO_ENCROACH_SOURCE_FINISH_TIME - HERO_ENCROACH_SOURCE_STAGE_FOUR_TIME).timeout
+	if not hero_encroach_active or not hero_encroach_source_mode:
+		return
+	await _shift_hero_encroach_side_walls_outward()
+	if not hero_encroach_active or not hero_encroach_source_mode:
+		return
+	await _typewrite_hero_encroach_final_message()
+	if not hero_encroach_active or not hero_encroach_source_mode:
+		return
+	hero_encroach_active = false
+	hero_encroach_completed = true
+	_start_hero_encroach_epilogue()
+
 func _spawn_hero_encroach_source_stage_one() -> void:
 	for x in [2, 4, 6, 8, 10, 12, 19, 21, 23, 25, 27, 29]:
 		_add_hero_encroach_source_word(Vector2i(x, -1), ["up1"], _hero_encroach_repeat_route(Vector2i.DOWN, 2))
@@ -2221,6 +2329,8 @@ func _advance_hero_encroach_source_routes(delta: float) -> void:
 		var label: Label = unit.label
 		if not is_instance_valid(label):
 			continue
+		if not unit.has("route"):
+			continue
 		var remaining := delta
 		var delay := float(unit.route_delay)
 		if delay > 0.0:
@@ -2249,12 +2359,321 @@ func _advance_hero_encroach_source_routes(delta: float) -> void:
 			unit.route_pause = HERO_ENCROACH_SOURCE_STEP_GAP if route_index + 1 < route.size() else 0.0
 		hero_encroach_units[index] = unit
 
+func _shift_hero_encroach_side_walls_outward() -> void:
+	_ensure_hero_encroach_top_side_anchors()
+	var inner_wall_units: Array[Dictionary] = []
+	for unit in hero_encroach_units:
+		var label: Label = unit.label
+		if not is_instance_valid(label):
+			continue
+		var cell := _hero_encroach_label_cell(label)
+		if cell.y >= 3 and ((cell.x >= 5 and cell.x <= 6) or (cell.x >= 25 and cell.x <= 26)):
+			inner_wall_units.append(unit)
+	for unit in inner_wall_units:
+		var label: Label = unit.label
+		if is_instance_valid(label):
+			var tween := create_tween()
+			tween.tween_property(label, "modulate:a", 0.0, 0.35)
+
+	var occupied := {}
+	for unit in hero_encroach_units:
+		var label: Label = unit.label
+		if not is_instance_valid(label) or inner_wall_units.has(unit):
+			continue
+		occupied[_hero_encroach_label_cell(label)] = true
+	for y in range(3, 18):
+		for x in range(5):
+			_fade_in_missing_hero_encroach_word(Vector2i(x, y), occupied)
+		for x in range(27, 32):
+			_fade_in_missing_hero_encroach_word(Vector2i(x, y), occupied)
+	await get_tree().create_timer(0.35).timeout
+	for unit in inner_wall_units:
+		var label: Label = unit.label
+		if is_instance_valid(label):
+			label.queue_free()
+		hero_encroach_units.erase(unit)
+
+func _ensure_hero_encroach_top_side_anchors() -> void:
+	var occupied := {}
+	for unit in hero_encroach_units:
+		var label: Label = unit.label
+		if is_instance_valid(label):
+			occupied[_hero_encroach_label_cell(label)] = true
+	for y in range(3):
+		for x in range(14):
+			var left_cell := Vector2i(x, y)
+			if not occupied.has(left_cell):
+				_add_hero_encroach_word(left_cell, Vector2i.ZERO, 9)
+				occupied[left_cell] = true
+		for x in range(18, 32):
+			var right_cell := Vector2i(x, y)
+			if not occupied.has(right_cell):
+				_add_hero_encroach_word(right_cell, Vector2i.ZERO, 9)
+				occupied[right_cell] = true
+
+func _fade_in_missing_hero_encroach_word(cell: Vector2i, occupied: Dictionary) -> void:
+	if occupied.has(cell):
+		return
+	_add_hero_encroach_word(cell, Vector2i.ZERO, 9)
+	var unit: Dictionary = hero_encroach_units[hero_encroach_units.size() - 1]
+	var label: Label = unit.label
+	label.modulate.a = 0.0
+	var tween := create_tween()
+	tween.tween_property(label, "modulate:a", 1.0, 0.35)
+	occupied[cell] = true
+
+func _typewrite_hero_encroach_final_message() -> void:
+	var label := _make_word_label("")
+	label.name = "HeroEncroachFinalMessage"
+	label.size = Vector2(1440.0, world.cell_size)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	label.position = _grid_to_pixels(HERO_ENCROACH_FINAL_MESSAGE_CELL)
+	hero_encroach_root.add_child(label)
+	for index in range(HERO_ENCROACH_FINAL_MESSAGE.length()):
+		if not hero_encroach_active or not hero_encroach_source_mode:
+			return
+		label.text = HERO_ENCROACH_FINAL_MESSAGE.left(index + 1)
+		await get_tree().create_timer(HERO_ENCROACH_TYPEWRITER_CHAR_DELAY).timeout
+
+func _start_hero_encroach_epilogue() -> void:
+	_clear_hero_encroach_epilogue()
+	hero_encroach_epilogue_active = true
+	hero_encroach_epilogue_layer.visible = true
+	hero_encroach_root.visible = true
+	hero_encroach_epilogue_elapsed = 0.0
+	hero_encroach_epilogue_index = 0
+	hero_encroach_epilogue_blue_visible = false
+	hero_encroach_epilogue_green_visible = false
+	hero_encroach_epilogue_return_active = false
+	hero_encroach_epilogue_return_elapsed = 0.0
+	held_move_directions.clear()
+	_add_hero_encroach_epilogue_character(0)
+	hero_encroach_epilogue_index = 1
+
+func _clear_hero_encroach_epilogue() -> void:
+	if hero_encroach_epilogue_characters != null:
+		for child in hero_encroach_epilogue_characters.get_children():
+			child.queue_free()
+	if hero_encroach_epilogue_entities != null:
+		for child in hero_encroach_epilogue_entities.get_children():
+			child.queue_free()
+	hero_encroach_epilogue_entity_labels.clear()
+	hero_encroach_epilogue_entity_movers.clear()
+	hero_encroach_epilogue_blue_entity_ids.clear()
+	hero_encroach_epilogue_active = false
+	hero_encroach_epilogue_player_active = false
+	hero_encroach_epilogue_world_active = false
+	hero_encroach_epilogue_blue_visible = false
+	hero_encroach_epilogue_green_visible = false
+	hero_encroach_epilogue_return_active = false
+	if hero_encroach_epilogue_player != null:
+		hero_encroach_epilogue_player.visible = false
+	if hero_encroach_epilogue_layer != null:
+		hero_encroach_epilogue_layer.visible = false
+		hero_encroach_epilogue_layer.position = Vector2.ZERO
+
+func _advance_hero_encroach_epilogue(delta: float) -> void:
+	if not hero_encroach_epilogue_active:
+		return
+	if not hero_encroach_epilogue_player_active:
+		hero_encroach_epilogue_elapsed += maxf(delta, 0.0)
+		while hero_encroach_epilogue_elapsed >= HERO_ENCROACH_EPILOGUE_TEXT_CHAR_DELAY and hero_encroach_epilogue_index < HERO_ENCROACH_EPILOGUE_TEXT.length():
+			hero_encroach_epilogue_elapsed -= HERO_ENCROACH_EPILOGUE_TEXT_CHAR_DELAY
+			_add_hero_encroach_epilogue_character(hero_encroach_epilogue_index)
+			hero_encroach_epilogue_index += 1
+		if hero_encroach_epilogue_index >= HERO_ENCROACH_EPILOGUE_TEXT.length():
+			_finish_hero_encroach_epilogue_typewriter()
+	if hero_encroach_epilogue_return_active:
+		_advance_hero_encroach_epilogue_return(delta)
+
+func _add_hero_encroach_epilogue_character(index: int) -> void:
+	if index < 0 or index >= HERO_ENCROACH_EPILOGUE_TEXT.length():
+		return
+	var label := _make_word_label(HERO_ENCROACH_EPILOGUE_TEXT.substr(index, 1))
+	label.name = "HeroEncroachEpilogueCharacter_%d" % index
+	label.position = _grid_to_pixels(HERO_ENCROACH_EPILOGUE_TEXT_CELL + Vector2i(index, 0))
+	hero_encroach_epilogue_characters.add_child(label)
+
+func _finish_hero_encroach_epilogue_typewriter() -> void:
+	if hero_encroach_epilogue_player_active:
+		return
+	for child in hero_encroach_epilogue_characters.get_children():
+		child.queue_free()
+	_build_hero_encroach_epilogue_world()
+	hero_encroach_epilogue_player_active = true
+	hero_encroach_epilogue_player.visible = true
+	hero_encroach_epilogue_blue_visible = true
+	_fade_hero_encroach_epilogue_entities(hero_encroach_epilogue_blue_entity_ids)
+
+func _build_hero_encroach_epilogue_world() -> void:
+	var initial_spawn: Array[Dictionary] = []
+	for index in range(1, HERO_ENCROACH_EPILOGUE_TEXT.length()):
+		initial_spawn.append({
+			"text": HERO_ENCROACH_EPILOGUE_TEXT.substr(index, 1),
+			"pos": HERO_ENCROACH_EPILOGUE_TEXT_CELL + Vector2i(index, 0),
+			"config": {"solid": true}
+		})
+	for entry in _hero_encroach_epilogue_sentence_spawn(HERO_ENCROACH_EPILOGUE_BLUE_TEXT, HERO_ENCROACH_EPILOGUE_BLUE_CELL):
+		initial_spawn.append(entry)
+	hero_encroach_epilogue_world.load_level({
+		"name": "勇者围拢尾声",
+		"screen_size": Vector2i(32, 18),
+		"bounded": true,
+		"allow_edge_transition": false,
+		"player_start": HERO_ENCROACH_EPILOGUE_TEXT_CELL,
+		"player_facing": Vector2i.RIGHT,
+		"player_text": "我",
+		"rows": [],
+		"initial_spawn": initial_spawn
+	})
+	hero_encroach_epilogue_world_active = true
+	hero_encroach_epilogue_player_mover.snap_to(_grid_to_pixels(hero_encroach_epilogue_world.player_pos))
+	hero_encroach_epilogue_player.position = hero_encroach_epilogue_player_mover.current_position
+	for entity in hero_encroach_epilogue_world.entities.values():
+		if entity.grid_pos.y == HERO_ENCROACH_EPILOGUE_BLUE_CELL.y:
+			hero_encroach_epilogue_blue_entity_ids.append(entity.id)
+	_sync_hero_encroach_epilogue_world_view()
+	for entity_id in hero_encroach_epilogue_blue_entity_ids:
+		var label: Label = hero_encroach_epilogue_entity_labels.get(entity_id)
+		if label != null:
+			label.modulate.a = 0.0
+
+func _hero_encroach_epilogue_sentence_spawn(text: String, cell: Vector2i) -> Array[Dictionary]:
+	var entries: Array[Dictionary] = []
+	for index in range(text.length()):
+		var character := text.substr(index, 1)
+		if character == " ":
+			continue
+		entries.append({
+			"text": character,
+			"pos": cell + Vector2i(index, 0),
+			"config": {"solid": true}
+		})
+	return entries
+
+func _sync_hero_encroach_epilogue_world_view() -> void:
+	if not hero_encroach_epilogue_world_active:
+		return
+	hero_encroach_epilogue_player_mover.move_to(_grid_to_pixels(hero_encroach_epilogue_world.player_pos), move_visual_duration)
+	var alive := {}
+	for entity in hero_encroach_epilogue_world.entities.values():
+		alive[entity.id] = true
+		var label: Label = hero_encroach_epilogue_entity_labels.get(entity.id)
+		if label == null:
+			label = _make_word_label(entity.text)
+			label.name = "HeroEncroachEpilogueEntity_%s" % entity.id
+			hero_encroach_epilogue_entities.add_child(label)
+			hero_encroach_epilogue_entity_labels[entity.id] = label
+			var mover := SmoothGridMover.new()
+			mover.snap_to(_grid_to_pixels(entity.grid_pos))
+			hero_encroach_epilogue_entity_movers[entity.id] = mover
+		var mover: SmoothGridMover = hero_encroach_epilogue_entity_movers.get(entity.id)
+		mover.move_to(_grid_to_pixels(entity.grid_pos), move_visual_duration)
+	for entity_id in hero_encroach_epilogue_entity_labels.keys():
+		if alive.has(entity_id):
+			continue
+		hero_encroach_epilogue_entity_labels[entity_id].queue_free()
+		hero_encroach_epilogue_entity_labels.erase(entity_id)
+		hero_encroach_epilogue_entity_movers.erase(entity_id)
+	_apply_hero_encroach_epilogue_visual_positions()
+
+func _apply_hero_encroach_epilogue_visual_positions() -> void:
+	if not hero_encroach_epilogue_world_active:
+		return
+	hero_encroach_epilogue_player.position = hero_encroach_epilogue_player_mover.current_position
+	for entity_id in hero_encroach_epilogue_entity_labels.keys():
+		var mover: SmoothGridMover = hero_encroach_epilogue_entity_movers.get(entity_id)
+		if mover != null:
+			hero_encroach_epilogue_entity_labels[entity_id].position = mover.current_position
+
+func _fade_hero_encroach_epilogue_entities(entity_ids: Array) -> void:
+	for entity_id in entity_ids:
+		var label: Label = hero_encroach_epilogue_entity_labels.get(entity_id)
+		if label == null:
+			continue
+		var tween := create_tween()
+		tween.tween_property(label, "modulate:a", 1.0, HERO_ENCROACH_EPILOGUE_FADE_DURATION)
+
+func _handle_hero_encroach_epilogue_input(key_event: InputEventKey) -> void:
+	if hero_encroach_epilogue_return_active or not hero_encroach_epilogue_player_active:
+		return
+	var direction := _direction_from_key(key_event.keycode)
+	if direction == Vector2i.ZERO or key_event.echo:
+		return
+	_set_direction_held(direction, key_event.pressed)
+	if not key_event.pressed:
+		return
+	move_repeat_elapsed = 0.0
+	_apply_hero_encroach_epilogue_direction_step(direction)
+
+func _apply_hero_encroach_epilogue_direction_step(direction: Vector2i) -> void:
+	if not hero_encroach_epilogue_world_active or hero_encroach_epilogue_return_active:
+		return
+	var result := hero_encroach_epilogue_world.try_move_player(direction)
+	if not bool(result.get("success", false)):
+		return
+	_sync_hero_encroach_epilogue_world_view()
+	_play_player_walk_visual(hero_encroach_epilogue_player_sprite)
+	_check_hero_encroach_epilogue_triggers()
+
+func _check_hero_encroach_epilogue_triggers() -> void:
+	if not hero_encroach_epilogue_green_visible and hero_encroach_epilogue_world.player_pos == HERO_ENCROACH_EPILOGUE_BLUE_CELL + Vector2i(3, 0):
+		_reveal_hero_encroach_epilogue_green_sentence()
+		return
+	if hero_encroach_epilogue_green_visible and hero_encroach_epilogue_world.player_pos == HERO_ENCROACH_EPILOGUE_GREEN_CELL + Vector2i(3, 0):
+		_start_hero_encroach_epilogue_return()
+
+func _reveal_hero_encroach_epilogue_green_sentence() -> void:
+	if hero_encroach_epilogue_green_visible:
+		return
+	hero_encroach_epilogue_green_visible = true
+	var green_entity_ids: Array = []
+	for entry in _hero_encroach_epilogue_sentence_spawn(HERO_ENCROACH_EPILOGUE_GREEN_TEXT, HERO_ENCROACH_EPILOGUE_GREEN_CELL):
+		var entity = hero_encroach_epilogue_world.add_entity(entry.text, entry.pos, entry.config)
+		green_entity_ids.append(entity.id)
+	_sync_hero_encroach_epilogue_world_view()
+	for entity_id in green_entity_ids:
+		var label: Label = hero_encroach_epilogue_entity_labels.get(entity_id)
+		if label != null:
+			label.modulate.a = 0.0
+	_fade_hero_encroach_epilogue_entities(green_entity_ids)
+
+func _start_hero_encroach_epilogue_return() -> void:
+	if hero_encroach_epilogue_return_active:
+		return
+	hero_encroach_epilogue_return_active = true
+	hero_encroach_epilogue_return_elapsed = 0.0
+	hero_encroach_epilogue_world.player_input_locked = true
+	held_move_directions.clear()
+	hero_exit_flash.color.a = 0.0
+	hero_exit_flash.visible = true
+	hero_exit_flash.move_to_front()
+
+func _advance_hero_encroach_epilogue_return(delta: float) -> void:
+	hero_encroach_epilogue_return_elapsed += maxf(delta, 0.0)
+	var progress := clampf(hero_encroach_epilogue_return_elapsed / HERO_ENCROACH_EPILOGUE_RETURN_DURATION, 0.0, 1.0)
+	var shake := Vector2(sin(hero_encroach_epilogue_return_elapsed * 95.0), cos(hero_encroach_epilogue_return_elapsed * 79.0)) * 9.0 * (1.0 - progress)
+	hero_encroach_root.position = shake
+	hero_encroach_epilogue_layer.position = shake
+	hero_exit_flash.color.a = sin(progress * PI) * 0.95
+	if progress < 1.0:
+		return
+	hero_encroach_root.position = Vector2.ZERO
+	hero_encroach_epilogue_layer.position = Vector2.ZERO
+	hero_encroach_epilogue_return_active = false
+	hero_exit_flash.visible = false
+	_switch_to_scene(ARTIFACT_HALL_SCENE_PATH)
+
+func _hero_encroach_label_cell(label: Label) -> Vector2i:
+	return Vector2i(roundi(label.position.x / world.cell_size), roundi(label.position.y / world.cell_size))
+
 func _clear_hero_encroach_units() -> void:
 	if hero_encroach_root != null:
 		for child in hero_encroach_root.get_children():
 			child.queue_free()
 	hero_encroach_units.clear()
 	hero_encroach_motion.clear()
+	hero_encroach_source_mode = false
 
 func _enter_glove_gesture_level() -> void:
 	hero_quote_active = false

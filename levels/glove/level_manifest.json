@@ -146,9 +146,9 @@
     {
       "id": "GLOVE-ANIM-HERO-ENCROACH",
       "source_scene": "E:/wordgame copy/参考资料/文字游戏源码/文字遊戲_pck/res/Scenes/Maps/第三章/11_添譜來堂_開場.tscn",
-      "source_method": "文字勇者围拢表现参考；用户 2026-07-15 明确覆盖原 hero_walk 的四面随机规则。",
-      "behavior": "手势关终点的 4397 号勇者页面确认后清屏；上、左、右三面按隔格三波出现并内移，前两波再前进两格，最后补满顶部五行和左右五列，画面停住。",
-      "target_method": "_start_hero_encroach_transition / _advance_hero_encroach",
+      "source_method": "以 11_添譜來堂_開場.tscn 为原版时序来源；正式流程复用后来单独恢复的源码版预览 res://harness/source_previews/hero_encroach_source_preview.gd，不再使用旧的简化三波围拢实现。",
+      "behavior": "手势关终点的 4397 号勇者页面确认后清屏；进入 source mode 后按约 1.1s、2.6s、3.7s、5.5s 分阶段生成和推进勇字，单格移动约 0.3s，移动间隔约 0.05s，带源码式随机延迟；收束时靠中的左右两列渐隐，外侧空隙同步渐显补勇，顶部左右锚点保留，最后打字机显示收束文字并停住。",
+      "target_method": "_start_hero_encroach_transition / _run_hero_encroach_source_sequence / _advance_hero_encroach_source_routes",
       "verification": "res://tests/test_glove_hero_encroach.gd"
     }
   ]
