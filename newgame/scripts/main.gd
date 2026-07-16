@@ -3,6 +3,7 @@ extends Node2D
 const GridWorld = preload("res://scripts/grid_world.gd")
 const WordEntity = preload("res://scripts/word_entity.gd")
 const LevelLoader = preload("res://scripts/level_loader.gd")
+const ArtifactHall = preload("res://levels/hall/artifact_hall.gd")
 const HelmetTutorial = preload("res://levels/helmet/helmet_tutorial.gd")
 const HelmetR1 = preload("res://levels/helmet/helmet_r1.gd")
 const HelmetR2 = preload("res://levels/helmet/helmet_r2.gd")
@@ -91,6 +92,7 @@ var entity_movers: Dictionary = {}
 var entity_labels: Dictionary = {}
 var player_label: Label
 var player_sprite: Sprite2D
+var main_menu: Control
 var map_layer: Node2D
 var bridge_tree_effect_layer: Node2D
 var demo_timer: Timer
@@ -131,9 +133,13 @@ var creek_wave_elapsed := 0.0
 var bridge_shake_elapsed := 0.0
 
 func _ready() -> void:
+	main_menu = get_node_or_null("MainMenu") as Control
 	var startup_scene_path := resolve_startup_scene_path(OS.get_cmdline_user_args())
 	if not startup_scene_path.is_empty():
 		call_deferred("_switch_to_scene", startup_scene_path)
+		return
+	# Main.tscn is a menu entry scene; do not build the game world underneath it.
+	if main_menu != null:
 		return
 	highlight_visual_config = load_highlight_visual_config()
 	_load_level_index(startup_level_index, _startup_level_overrides())
@@ -143,6 +149,8 @@ func _ready() -> void:
 	_refresh_view()
 
 func _process(delta: float) -> void:
+	if main_menu != null and is_instance_valid(main_menu) and main_menu.visible:
+		return
 	world.advance_highlight_animation(delta)
 	_update_player_visual_animation(delta)
 	if player_move_repeat_timer > 0.0:
@@ -171,6 +179,8 @@ func _process(delta: float) -> void:
 	_update_gem_labels()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if main_menu != null and is_instance_valid(main_menu) and main_menu.visible:
+		return
 	if not event is InputEventKey:
 		return
 	var key_event := event as InputEventKey
@@ -366,6 +376,9 @@ func _is_intro_prompt_entity(entity) -> bool:
 			return true
 	return false
 
+func _is_helmet_tutorial_level() -> bool:
+	return current_level_index >= 0 and current_level_index < LEVEL_SEQUENCE.size() and LEVEL_SEQUENCE[current_level_index] == HelmetTutorial
+
 func _apply_intro_visibility() -> void:
 	for id in entity_labels.keys():
 		var entity: WordEntity = world.entities.get(id)
@@ -425,7 +438,7 @@ func _update_intro_sequence(delta: float) -> void:
 	_play_gem_burst_preview()
 
 func _begin_gem_reveal() -> void:
-	if current_level_index != 0 or intro_phase != "prompt":
+	if not _is_helmet_tutorial_level() or intro_phase != "prompt":
 		return
 	var light_cells := _current_light_cells()
 	world._apply_map_effect({
@@ -459,7 +472,7 @@ func _restore_gems_without_light_overlap() -> Array:
 	return restored
 
 func _begin_intro_prompt() -> void:
-	if current_level_index != 0 or intro_phase != "lights":
+	if not _is_helmet_tutorial_level() or intro_phase != "lights":
 		return
 	world.set_input_locked(true)
 	world.set_event_locked(true)
@@ -619,6 +632,11 @@ func _apply_result(result: Dictionary) -> void:
 		var scene_path := world.pending_scene_path
 		world.pending_scene_path = ""
 		call_deferred("_switch_to_scene", scene_path)
+		return
+	if world.pending_level_index >= 0:
+		var level_index := world.pending_level_index
+		world.pending_level_index = -1
+		call_deferred("_switch_to_level_index", level_index)
 		return
 	if _is_helmet_tutorial_level() and intro_phase == "lights" and result.get("success", false) and not world.has_pending_timed_effect():
 		_begin_intro_prompt()
@@ -1888,7 +1906,7 @@ func _clear_effect_overlays(overlays: Array) -> void:
 				node.queue_free()
 
 func _play_gem_burst_preview() -> void:
-	if current_level_index != 0 or gem_burst_effect == null:
+	if not _is_helmet_tutorial_level() or gem_burst_effect == null:
 		return
 	gem_burst_effect.play_at(
 		_grid_to_pixels_float(GEM_ORIGIN_GRID),
@@ -1934,7 +1952,7 @@ func _load_level_index(index: int, overrides := {}) -> void:
 	world.update_page()
 	_clear_entity_visuals()
 	_reset_player_river_visual()
-	if current_level_index == 0:
+	if _is_helmet_tutorial_level():
 		intro_phase = "lights"
 		intro_reveal_elapsed = 0.0
 		intro_reveal_max_distance = 0.0
@@ -2182,3 +2200,7 @@ func _switch_to_scene(scene_path: String) -> void:
 	if scene_path.is_empty() or get_tree() == null:
 		return
 	get_tree().change_scene_to_file(scene_path)
+
+func _switch_to_level_index(level_index: int) -> void:
+	_load_level_index(level_index)
+	_refresh_view()

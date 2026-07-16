@@ -54,7 +54,7 @@ const SE_SNAKE_HOLY := "res://assets/audio/se/MEL/MEL_2_24_sword.wav"
 const SWORD_VIDEO := "res://assets/video/u_sword.ogv"
 const BACKSPACE_SPLASH_TEXTURE := preload("res://assets/sprites/backspace_splash/splash.png")
 const BACKSPACE_CUT_SHADER := preload("res://assets/shaders/cut2.gdshader")
-const BACKSPACE_CUT_ANIMATION_CHARS := ["忘", "对", "不", "来", "没", "断", "难"]
+const BACKSPACE_CUT_ANIMATION_CHARS := ["忘", "对", "不", "来", "没", "断", "难", "伤"]
 const BACKSPACE_CUT_ANGLE_DEGREES := 45.0
 const BACKSPACE_CUT_MASK_EXTRA_X := 14.0
 

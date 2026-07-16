@@ -7,9 +7,12 @@ func _init() -> void:
 	var failures: Array[String] = []
 	var world := GridWorld.new()
 	world.load_level(ArtifactHall.build_level())
-	_assert_char(world, ArtifactHall.SWORD_GATE_POS, "门", "sword gate starts open", failures)
-	_assert_char(world, ArtifactHall.HAND_GATE_POS, "闩", "hand gate starts closed", failures)
-	_assert_char(world, ArtifactHall.HELMET_GATE_POS, "闩", "helmet gate starts closed", failures)
+
+	_assert_char(world, ArtifactHall.SWORD_GATE_POS, "门", "sword gate uses 门", failures)
+	_assert_char(world, ArtifactHall.HAND_GATE_POS, "门", "hand gate uses 门", failures)
+	_assert_char(world, ArtifactHall.HELMET_GATE_POS, "门", "helmet gate uses 门", failures)
+	_assert_no_text(world, "闩", "artifact hall no longer contains 闩", failures)
+
 	_assert_char(world, Vector2i(6, 10), "剑", "sword gate name includes 剑", failures)
 	_assert_char(world, Vector2i(6, 11), "之", "sword gate name includes 之", failures)
 	_assert_char(world, Vector2i(16, 10), "手", "hand gate name includes 手", failures)
@@ -25,110 +28,10 @@ func _init() -> void:
 	if world.get_any_entity_at(Vector2i(14, 3)) != null or world.get_any_entity_at(Vector2i(13, 4)) != null:
 		failures.append("hand pattern removes the two marked cells")
 
-	world.player_pos = ArtifactHall.SWORD_GATE_POS + Vector2i.LEFT
-	world.facing = Vector2i.RIGHT
-	var sword_gate_open := world.interact_front()
-	if not sword_gate_open.success:
-		failures.append("interacting with an opened hall gate triggers the door animation")
-	var sword_gate = world.get_any_entity_at(ArtifactHall.SWORD_GATE_POS)
-	if sword_gate == null or sword_gate.visual_style != "hall_door_open":
-		failures.append("interacting with the sword gate keeps the opened door visual state")
-	var sword_gate_block := world.try_move_player(Vector2i.RIGHT)
-	if sword_gate_block.success:
-		failures.append("opened hall gate still blocks the player like the source door interaction")
-	var found_door_visual := false
-	for request in world.consume_visual_effects():
-		if str(request.get("type", "")) != "hall_door_open":
-			continue
-		if request.get("cell", Vector2i(-1, -1)) != ArtifactHall.SWORD_GATE_POS:
-			continue
-		found_door_visual = true
-	if not found_door_visual:
-		failures.append("interacting with the sword gate emits a hall_door_open visual request")
-	var sword_transport := world.interact_front()
-	if not sword_transport.success:
-		failures.append("interacting with the opened sword gate remains available")
-	if world.pending_scene_path != ArtifactHall.SWORD_SCENE_PATH:
-		failures.append("opened sword gate interaction requests the Becks-Bess sword scene")
-	world.pending_scene_path = ""
+	_assert_gate_scene_path(ArtifactHall.SWORD_GATE_POS, ArtifactHall.SWORD_SCENE_PATH, "sword gate", failures)
+	_assert_gate_scene_path(ArtifactHall.HAND_GATE_POS, ArtifactHall.HAND_SCENE_PATH, "hand gate", failures)
+	_assert_gate_level_index(ArtifactHall.HELMET_GATE_POS, ArtifactHall.HELMET_LEVEL_INDEX, "helmet gate", failures)
 
-	world.player_pos = ArtifactHall.HAND_GATE_POS + Vector2i.LEFT
-	world.facing = Vector2i.RIGHT
-	world.interact_front()
-	_assert_text(world, ArtifactHall.HAND_DESC_POS, "手之门不会开", "interacting with the hand lock shows its description", failures)
-	var hand_word = world.get_any_entity_at(ArtifactHall.HAND_DESC_POS)
-	if hand_word == null or not hand_word.solid or not hand_word.pushable:
-		failures.append("手 in the hand-door description is solid and pushable")
-	var hand_desc_wall = world.get_any_entity_at(ArtifactHall.HAND_DESC_POS + Vector2i(1, 0))
-	if hand_desc_wall == null or not hand_desc_wall.solid:
-		failures.append("hand-door description blocks player movement")
-	world.move_entity_by(hand_word.id, Vector2i.LEFT)
-	world.move_entity_to(hand_word.id, Vector2i(5, 15))
-	if world.get_any_entity_at(ArtifactHall.HAND_DESC_POS) != null:
-		failures.append("hand must be moved away before the helmet character can occupy its position")
-	world.player_pos = ArtifactHall.HAND_GATE_POS + Vector2i.LEFT
-	world.facing = Vector2i.RIGHT
-	world.interact_front()
-	if world.get_any_entity_at(ArtifactHall.HAND_DESC_POS) != null:
-		failures.append("hand lock interaction must not regenerate moved description text")
-
-	world.player_pos = ArtifactHall.HAND_NOT_POS + Vector2i.LEFT
-	world.facing = Vector2i.RIGHT
-	world.delete_front()
-	_assert_char(world, ArtifactHall.HAND_GATE_POS, "门", "deleting 不 changes the hand lock into a door", failures)
-
-	world.player_pos = ArtifactHall.HELMET_GATE_POS + Vector2i.LEFT
-	world.facing = Vector2i.RIGHT
-	world.interact_front()
-	_assert_text(world, ArtifactHall.HELMET_DESC_POS, "盔之门无法打开", "interacting with the helmet lock shows its description", failures)
-	var helmet_key = world.get_any_entity_at(ArtifactHall.HELMET_DESC_POS)
-	if helmet_key == null or helmet_key.text != "盔" or not helmet_key.pushable:
-		failures.append("helmet description starts with a pushable 盔")
-	else:
-		world.move_entity_to(helmet_key.id, ArtifactHall.HELMET_DESC_POS + Vector2i.LEFT)
-		world.player_pos = ArtifactHall.HELMET_GATE_POS + Vector2i.LEFT
-		world.facing = Vector2i.RIGHT
-		world.interact_front()
-		if world.get_any_entity_at(ArtifactHall.HELMET_DESC_POS) != null:
-			failures.append("helmet lock interaction must not regenerate moved description text")
-		world.move_entity_to(helmet_key.id, ArtifactHall.HAND_DESC_POS + Vector2i.RIGHT)
-		world.move_entity_by(helmet_key.id, Vector2i.LEFT)
-	_assert_char(world, ArtifactHall.HAND_DESC_POS, "盔", "moving 盔 replaces 手 in the existing description", failures)
-	_assert_char(world, ArtifactHall.HELMET_GATE_POS, "门", "moving 盔 to the 手 position opens the helmet gate", failures)
-	world.player_pos = ArtifactHall.HELMET_GATE_POS + Vector2i.LEFT
-	world.facing = Vector2i.RIGHT
-	var helmet_gate_open := world.interact_front()
-	if not helmet_gate_open.success:
-		failures.append("interacting with the opened helmet gate triggers the gate event")
-	if not world.has_pending_timed_effect():
-		failures.append("opened helmet gate schedules the hall return event")
-	else:
-		world.resolve_pending_timed_effect()
-	if world.get_any_entity_at(ArtifactHall.HAND_DESC_POS) != null or world.get_any_entity_at(ArtifactHall.HELMET_DESC_POS) != null:
-		failures.append("entering the helmet door clears both door descriptions")
-	if world.get_any_entity_at(Vector2i(5, 15)) != null:
-		failures.append("entering the helmet door clears a moved temporary hand character")
-	_assert_char(world, ArtifactHall.RETURN_POET_START, "诗", "poet enters from the left after the helmet door", failures)
-	for _step in range(ArtifactHall.RETURN_POET_POS.x - ArtifactHall.RETURN_POET_START.x + 1):
-		world.resolve_pending_timed_effect()
-	_assert_char(world, ArtifactHall.RETURN_POET_POS, "诗", "poet reaches the hall dialogue position", failures)
-	_assert_text(world, ArtifactHall.RETURN_DIALOGUE_POS, "「你已经拿到了全部神器，」", "poet shows the first return line", failures)
-	_assert_text(world, ArtifactHall.RETURN_DIALOGUE_POS + Vector2i(0, 1), "「继续前进拯救公主吧！」", "poet shows the second return line", failures)
-	if world.get_any_entity_at(ArtifactHall.RETURN_ROAD_TOP_POS) != null:
-		failures.append("return road waits one second after the dialogue")
-	world.resolve_pending_timed_effect()
-	_assert_text(world, ArtifactHall.RETURN_ROAD_TOP_POS, ArtifactHall.RETURN_ROAD_TEXT, "upper return road appears after the delay", failures)
-	_assert_text(world, ArtifactHall.RETURN_ROAD_BOTTOM_POS, ArtifactHall.RETURN_ROAD_TEXT, "lower return road appears after the delay", failures)
-	if world.get_any_entity_at(ArtifactHall.RETURN_ROAD_TOP_POS + Vector2i.LEFT) != null:
-		failures.append("return road removes its leftmost extra column")
-	world.player_pos = Vector2i(31, 15)
-	var edge_result := world.try_move_player(Vector2i.RIGHT)
-	if not edge_result.has("transition"):
-		failures.append("empty corridor between the road rows exits to the princess scene")
-	world.player_pos = Vector2i(31, ArtifactHall.RETURN_ROAD_BOTTOM_POS.y)
-	var road_exit := world.try_move_player(Vector2i.RIGHT)
-	if road_exit.has("transition"):
-		failures.append("road text itself must not transition to the princess scene")
 	if failures.is_empty():
 		print("artifact hall tests passed")
 		quit(0)
@@ -136,11 +39,55 @@ func _init() -> void:
 		push_error(failure)
 	quit(1)
 
+func _assert_gate_scene_path(gate_pos: Vector2i, expected_scene_path: String, label: String, failures: Array[String]) -> void:
+	var world := GridWorld.new()
+	world.load_level(ArtifactHall.build_level())
+	_open_gate(world, gate_pos, label, failures)
+	var enter_result: Dictionary = world.interact_front()
+	if not enter_result.success:
+		failures.append("%s remains interactable after opening" % label)
+	if world.pending_scene_path != expected_scene_path:
+		failures.append("%s requests %s" % [label, expected_scene_path])
+
+func _assert_gate_level_index(gate_pos: Vector2i, expected_level_index: int, label: String, failures: Array[String]) -> void:
+	var world := GridWorld.new()
+	world.load_level(ArtifactHall.build_level())
+	_open_gate(world, gate_pos, label, failures)
+	var enter_result: Dictionary = world.interact_front()
+	if not enter_result.success:
+		failures.append("%s remains interactable after opening" % label)
+	if world.pending_level_index != expected_level_index:
+		failures.append("%s requests level index %d" % [label, expected_level_index])
+
+func _open_gate(world, gate_pos: Vector2i, label: String, failures: Array[String]) -> void:
+	world.player_pos = gate_pos + Vector2i.LEFT
+	world.facing = Vector2i.RIGHT
+	var open_result: Dictionary = world.interact_front()
+	if not open_result.success:
+		failures.append("%s triggers the door animation" % label)
+	var gate = world.get_any_entity_at(gate_pos)
+	if gate == null or gate.text != "门" or gate.visual_style != "hall_door_open":
+		failures.append("%s keeps the opened door visual state" % label)
+	var blocked_result: Dictionary = world.try_move_player(Vector2i.RIGHT)
+	if blocked_result.success:
+		failures.append("%s still blocks the player like the source door interaction" % label)
+	var found_door_visual := false
+	for request in world.consume_visual_effects():
+		if str(request.get("type", "")) != "hall_door_open":
+			continue
+		if request.get("cell", Vector2i(-1, -1)) != gate_pos:
+			continue
+		found_door_visual = true
+	if not found_door_visual:
+		failures.append("%s emits a hall_door_open visual request" % label)
+
 func _assert_char(world, pos: Vector2i, expected: String, message: String, failures: Array[String]) -> void:
 	var entity = world.get_any_entity_at(pos)
 	if entity == null or entity.text != expected:
 		failures.append(message)
 
-func _assert_text(world, start: Vector2i, text: String, message: String, failures: Array[String]) -> void:
-	for index in range(text.length()):
-		_assert_char(world, start + Vector2i(index, 0), text.substr(index, 1), message, failures)
+func _assert_no_text(world, text: String, message: String, failures: Array[String]) -> void:
+	for entity in world.entities.values():
+		if entity.text == text:
+			failures.append(message)
+			return
