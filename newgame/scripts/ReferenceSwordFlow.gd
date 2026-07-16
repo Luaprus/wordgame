@@ -2,6 +2,7 @@ extends Control
 
 const PlayerDirectionMarker = preload("res://scripts/player_moving/player_direction_marker.gd")
 const TreeSpriteScene = preload("res://scenes/animations/TreeSprite.tscn")
+const HALL_SCENE_PATH := "res://levels/hall/artifact_hall_preview.tscn"
 
 const CELL := 60
 const GRID_W := 32
@@ -430,6 +431,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	var key_event := event as InputEventKey
 	if not key_event.pressed or key_event.echo:
+		return
+	if key_event.keycode == KEY_F10:
+		get_tree().change_scene_to_file(HALL_SCENE_PATH)
 		return
 
 	if dialogue_active:
